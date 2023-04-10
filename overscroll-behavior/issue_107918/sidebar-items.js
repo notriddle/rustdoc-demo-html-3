@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Alef","Ayin","Bet","Chet","Dalet","Gimel","He","Kaf","Lamed","Mem","Nun","Pe","Qof","Resh","Samech","Shin","Tav","Tet","Tsadl","Waw","Yot","Zayin"]};
