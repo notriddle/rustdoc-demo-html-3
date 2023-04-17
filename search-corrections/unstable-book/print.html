@@ -385,7 +385,7 @@ fn shoot_lasers() {}
 
 #[cfg(feature = &quot;monkeys&quot;)] // This is UNEXPECTED, because &quot;monkeys&quot; is not in
                             // the values(feature) list
-fn write_shakespear() {}
+fn write_shakespeare() {}
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="codegen-backend"><a class="header" href="#codegen-backend"><code>codegen-backend</code></a></h1>
 <p>The tracking issue for this feature is: <a href="https://github.com/rust-lang/rust/issues/77933">#77933</a>.</p>
@@ -764,7 +764,7 @@ otherwise paths for panics within the standard library are still included in you
 <p>The <code>-Zmove-size-limit=N</code> compiler flag enables <code>large_assignments</code> lints which
 will warn when moving objects whose size exceeds <code>N</code> bytes.</p>
 <p>Lint warns only about moves in functions that participate in code generation.
-Consequently it will be ineffective for compiler invocatation that emit
+Consequently it will be ineffective for compiler invocation that emit
 metadata only, i.e., <code>cargo check</code> like workflows.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="no-unique-section-names"><a class="header" href="#no-unique-section-names"><code>no-unique-section-names</code></a></h1>
 <hr />
@@ -3925,7 +3925,7 @@ pub union GenericUnion&lt;T: Copy&gt; { // Unions with non-`Copy` fields are uns
 // This is okay even though `()` is a zero-sized type.
 pub const THIS_IS_OKAY: GenericUnion&lt;()&gt; = GenericUnion { field: () };
 <span class="boring">}</span></code></pre></pre>
-<p>Like transarent <code>struct</code>s, a transparent <code>union</code> of type <code>U</code> has the same
+<p>Like transparent <code>struct</code>s, a transparent <code>union</code> of type <code>U</code> has the same
 layout, size, and ABI as its single non-ZST field. If it is generic over a type
 <code>T</code>, and all its fields are ZSTs except for exactly one field of type <code>T</code>, then
 it has the same layout and ABI as <code>T</code> (even if <code>T</code> is a ZST when monomorphized).</p>
