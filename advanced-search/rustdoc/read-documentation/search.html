@@ -190,14 +190,13 @@ the standard library and functions that are included in the results list:</p>
 <div class="table-wrapper"><table><thead><tr><th>Query</th><th>Results</th></tr></thead><tbody>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=usize%20-%3E%20vec&amp;filter-crate=std"><code>usize -&gt; vec</code></a></td><td><code>slice::repeat</code> and <code>Vec::with_capacity</code></td></tr>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=vec,%20vec%20-%3E%20bool&amp;filter-crate=std"><code>vec, vec -&gt; bool</code></a></td><td><code>Vec::eq</code></td></tr>
-<tr><td><a href="../../std/vec/struct.Vec.html?search=option%3CT%3E%2C%20fnonce20-%3E20option%3CU%3E&amp;filter-crate=std"><code>option&lt;T&gt;, fnonce -&gt; option&lt;U&gt;</code></a></td><td><code>Option::map</code> and <code>Option::and_then</code></td></tr>
-<tr><td><a href="../../std/vec/struct.Vec.html?search=option%3CT%3E%2C%20fnonce20-%3E20option%3CT%3E&amp;filter-crate=std"><code>option&lt;T&gt;, fnonce -&gt; option&lt;T&gt;</code></a></td><td><code>Option::filter</code> and <code>Option::inspect</code></td></tr>
+<tr><td><a href="../../std/vec/struct.Vec.html?search=option%3CT%3E%2C%20fnonce%20-%3E%20option%3CU%3E&amp;filter-crate=std"><code>option&lt;T&gt;, fnonce -&gt; option&lt;U&gt;</code></a></td><td><code>Option::map</code> and <code>Option::and_then</code></td></tr>
+<tr><td><a href="../../std/vec/struct.Vec.html?search=option%3CT%3E%2C%20fnonce%20-%3E%20option%3CT%3E&amp;filter-crate=std"><code>option&lt;T&gt;, fnonce -&gt; option&lt;T&gt;</code></a></td><td><code>Option::filter</code> and <code>Option::inspect</code></td></tr>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=option%20-%3E%20default&amp;filter-crate=std"><code>option -&gt; default</code></a></td><td><code>Option::unwrap_or_default</code></td></tr>
-<tr><td>[<code>stdout, [u8]</code>][]</td><td><code>Stdout::write</code></td></tr>
+<tr><td><a href="../../std/vec/struct.Vec.html?search=stdout%2C%20%5Bu8%5D&amp;filter-crate=std"><code>stdout, [u8]</code></a></td><td><code>Stdout::write</code></td></tr>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=any%20-%3E%20!&amp;filter-crate=std"><code>any -&gt; !</code></a></td><td><code>panic::panic_any</code></td></tr>
 </tbody></table>
 </div>
-<p>[<code>stdout, [u8]</code>]: ../../std/vec/struct.Vec.html?search=stdout%2C%20[u8]&amp;filter-crate=std</p>
 <h3 id="how-type-based-search-works"><a class="header" href="#how-type-based-search-works">How type-based search works</a></h3>
 <p>In a complex type-based search, Rustdoc always treats every item as literal.
 If a name is used and nothing in the docs matches the individual item, such as
