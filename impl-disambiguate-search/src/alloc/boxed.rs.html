@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/boxed.rs`."><title>boxed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/boxed.rs`."><title>boxed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2426,7 +2426,26 @@
 <a href="#2426" id="2426">2426</a>
 <a href="#2427" id="2427">2427</a>
 <a href="#2428" id="2428">2428</a>
-</pre><pre class="rust"><code><span class="doccomment">//! The `Box&lt;T&gt;` type for heap allocation.
+<a href="#2429" id="2429">2429</a>
+<a href="#2430" id="2430">2430</a>
+<a href="#2431" id="2431">2431</a>
+<a href="#2432" id="2432">2432</a>
+<a href="#2433" id="2433">2433</a>
+<a href="#2434" id="2434">2434</a>
+<a href="#2435" id="2435">2435</a>
+<a href="#2436" id="2436">2436</a>
+<a href="#2437" id="2437">2437</a>
+<a href="#2438" id="2438">2438</a>
+<a href="#2439" id="2439">2439</a>
+<a href="#2440" id="2440">2440</a>
+<a href="#2441" id="2441">2441</a>
+<a href="#2442" id="2442">2442</a>
+<a href="#2443" id="2443">2443</a>
+<a href="#2444" id="2444">2444</a>
+<a href="#2445" id="2445">2445</a>
+<a href="#2446" id="2446">2446</a>
+<a href="#2447" id="2447">2447</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! The `Box&lt;T&gt;` type for heap allocation.
 //!
 //! [`Box&lt;T&gt;`], casually referred to as a &#39;box&#39;, provides the simplest form of
 //! heap allocation in Rust. Boxes provide ownership for this allocation, and
@@ -2578,22 +2597,19 @@
 <span class="kw">use </span>core::async_iter::AsyncIterator;
 <span class="kw">use </span>core::borrow;
 <span class="kw">use </span>core::cmp::Ordering;
-<span class="kw">use </span>core::convert::{From, TryFrom};
 <span class="kw">use </span>core::error::Error;
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::future::Future;
 <span class="kw">use </span>core::hash::{Hash, Hasher};
-<span class="attr">#[cfg(not(no_global_oom_handling))]
-</span><span class="kw">use </span>core::iter::FromIterator;
-<span class="kw">use </span>core::iter::{FusedIterator, Iterator};
+<span class="kw">use </span>core::iter::FusedIterator;
 <span class="kw">use </span>core::marker::Tuple;
-<span class="kw">use </span>core::marker::{Destruct, Unpin, Unsize};
-<span class="kw">use </span>core::mem;
+<span class="kw">use </span>core::marker::Unsize;
+<span class="kw">use </span>core::mem::{<span class="self">self</span>, SizedTypeProperties};
 <span class="kw">use </span>core::ops::{
     CoerceUnsized, Deref, DerefMut, DispatchFromDyn, Generator, GeneratorState, Receiver,
 };
 <span class="kw">use </span>core::pin::Pin;
-<span class="kw">use </span>core::ptr::{<span class="self">self</span>, Unique};
+<span class="kw">use </span>core::ptr::{<span class="self">self</span>, NonNull, Unique};
 <span class="kw">use </span>core::task::{Context, Poll};
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
@@ -2804,12 +2820,11 @@
     /// ```
     </span><span class="attr">#[cfg(not(no_global_oom_handling))]
     #[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[must_use]
     #[inline]
-    </span><span class="kw">pub const fn </span>new_in(x: T, alloc: A) -&gt; <span class="self">Self
+    </span><span class="kw">pub fn </span>new_in(x: T, alloc: A) -&gt; <span class="self">Self
     </span><span class="kw">where
-        </span>A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>boxed = <span class="self">Self</span>::new_uninit_in(alloc);
         <span class="kw">unsafe </span>{
@@ -2834,12 +2849,10 @@
     /// # Ok::&lt;(), std::alloc::AllocError&gt;(())
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>try_new_in(x: T, alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, AllocError&gt;
+    </span><span class="kw">pub fn </span>try_new_in(x: T, alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, AllocError&gt;
     <span class="kw">where
-        </span>T: ~<span class="kw">const </span>Destruct,
-        A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>boxed = <span class="self">Self</span>::try_new_uninit_in(alloc)<span class="question-mark">?</span>;
         <span class="kw">unsafe </span>{
@@ -2869,13 +2882,12 @@
     /// assert_eq!(*five, 5)
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[cfg(not(no_global_oom_handling))]
     #[must_use]
     </span><span class="comment">// #[unstable(feature = &quot;new_uninit&quot;, issue = &quot;63291&quot;)]
-    </span><span class="kw">pub const fn </span>new_uninit_in(alloc: A) -&gt; Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;
+    </span><span class="kw">pub fn </span>new_uninit_in(alloc: A) -&gt; Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
         <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
         <span class="comment">// NOTE: Prefer match over unwrap_or_else since closure sometimes not inlineable.
@@ -2910,13 +2922,16 @@
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
     </span><span class="comment">// #[unstable(feature = &quot;new_uninit&quot;, issue = &quot;63291&quot;)]
-    </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-    </span><span class="kw">pub const fn </span>try_new_uninit_in(alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;, AllocError&gt;
+    </span><span class="kw">pub fn </span>try_new_uninit_in(alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;, AllocError&gt;
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
-        <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
-        <span class="kw">let </span>ptr = alloc.allocate(layout)<span class="question-mark">?</span>.cast();
+        <span class="kw">let </span>ptr = <span class="kw">if </span>T::IS_ZST {
+            NonNull::dangling()
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
+            alloc.allocate(layout)<span class="question-mark">?</span>.cast()
+        };
         <span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(Box::from_raw_in(ptr.as_ptr(), alloc)) }
     }
 
@@ -2941,13 +2956,12 @@
     ///
     /// [zeroed]: mem::MaybeUninit::zeroed
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[cfg(not(no_global_oom_handling))]
     </span><span class="comment">// #[unstable(feature = &quot;new_uninit&quot;, issue = &quot;63291&quot;)]
     </span><span class="attr">#[must_use]
-    </span><span class="kw">pub const fn </span>new_zeroed_in(alloc: A) -&gt; Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;
+    </span><span class="kw">pub fn </span>new_zeroed_in(alloc: A) -&gt; Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
         <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
         <span class="comment">// NOTE: Prefer match over unwrap_or_else since closure sometimes not inlineable.
@@ -2982,13 +2996,16 @@
     /// [zeroed]: mem::MaybeUninit::zeroed
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
     </span><span class="comment">// #[unstable(feature = &quot;new_uninit&quot;, issue = &quot;63291&quot;)]
-    </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-    </span><span class="kw">pub const fn </span>try_new_zeroed_in(alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;, AllocError&gt;
+    </span><span class="kw">pub fn </span>try_new_zeroed_in(alloc: A) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;mem::MaybeUninit&lt;T&gt;, A&gt;, AllocError&gt;
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: Allocator,
     {
-        <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
-        <span class="kw">let </span>ptr = alloc.allocate_zeroed(layout)<span class="question-mark">?</span>.cast();
+        <span class="kw">let </span>ptr = <span class="kw">if </span>T::IS_ZST {
+            NonNull::dangling()
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>layout = Layout::new::&lt;mem::MaybeUninit&lt;T&gt;&gt;();
+            alloc.allocate_zeroed(layout)<span class="question-mark">?</span>.cast()
+        };
         <span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(Box::from_raw_in(ptr.as_ptr(), alloc)) }
     }
 
@@ -3001,12 +3018,11 @@
     /// construct a (pinned) `Box` in a different way than with [`Box::new_in`].
     </span><span class="attr">#[cfg(not(no_global_oom_handling))]
     #[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[must_use]
     #[inline(always)]
-    </span><span class="kw">pub const fn </span>pin_in(x: T, alloc: A) -&gt; Pin&lt;<span class="self">Self</span>&gt;
+    </span><span class="kw">pub fn </span>pin_in(x: T, alloc: A) -&gt; Pin&lt;<span class="self">Self</span>&gt;
     <span class="kw">where
-        </span>A: <span class="lifetime">&#39;static </span>+ ~<span class="kw">const </span>Allocator + ~<span class="kw">const </span>Destruct,
+        </span>A: <span class="lifetime">&#39;static </span>+ Allocator,
     {
         <span class="self">Self</span>::into_pin(<span class="self">Self</span>::new_in(x, alloc))
     }
@@ -3015,8 +3031,7 @@
     ///
     /// This conversion does not allocate on the heap and happens in place.
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;box_into_boxed_slice&quot;</span>, issue = <span class="string">&quot;71582&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-    </span><span class="kw">pub const fn </span>into_boxed_slice(boxed: <span class="self">Self</span>) -&gt; Box&lt;[T], A&gt; {
+    </span><span class="kw">pub fn </span>into_boxed_slice(boxed: <span class="self">Self</span>) -&gt; Box&lt;[T], A&gt; {
         <span class="kw">let </span>(raw, alloc) = Box::into_raw_with_allocator(boxed);
         <span class="kw">unsafe </span>{ Box::from_raw_in(raw <span class="kw">as </span><span class="kw-2">*mut </span>[T; <span class="number">1</span>], alloc) }
     }
@@ -3033,12 +3048,8 @@
     /// assert_eq!(Box::into_inner(c), 5);
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;box_into_inner&quot;</span>, issue = <span class="string">&quot;80437&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>into_inner(boxed: <span class="self">Self</span>) -&gt; T
-    <span class="kw">where
-        </span><span class="self">Self</span>: ~<span class="kw">const </span>Destruct,
-    {
+    </span><span class="kw">pub fn </span>into_inner(boxed: <span class="self">Self</span>) -&gt; T {
         <span class="kw-2">*</span>boxed
     }
 }
@@ -3119,14 +3130,16 @@
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>try_new_uninit_slice(len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;[mem::MaybeUninit&lt;T&gt;]&gt;, AllocError&gt; {
-        <span class="kw">unsafe </span>{
+        <span class="kw">let </span>ptr = <span class="kw">if </span>T::IS_ZST || len == <span class="number">0 </span>{
+            NonNull::dangling()
+        } <span class="kw">else </span>{
             <span class="kw">let </span>layout = <span class="kw">match </span>Layout::array::&lt;mem::MaybeUninit&lt;T&gt;&gt;(len) {
                 <span class="prelude-val">Ok</span>(l) =&gt; l,
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(AllocError),
             };
-            <span class="kw">let </span>ptr = Global.allocate(layout)<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(RawVec::from_raw_parts_in(ptr.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>, len, Global).into_box(len))
-        }
+            Global.allocate(layout)<span class="question-mark">?</span>.cast()
+        };
+        <span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(RawVec::from_raw_parts_in(ptr.as_ptr(), len, Global).into_box(len)) }
     }
 
     <span class="doccomment">/// Constructs a new boxed slice with uninitialized contents, with the memory
@@ -3151,14 +3164,16 @@
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>try_new_zeroed_slice(len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;[mem::MaybeUninit&lt;T&gt;]&gt;, AllocError&gt; {
-        <span class="kw">unsafe </span>{
+        <span class="kw">let </span>ptr = <span class="kw">if </span>T::IS_ZST || len == <span class="number">0 </span>{
+            NonNull::dangling()
+        } <span class="kw">else </span>{
             <span class="kw">let </span>layout = <span class="kw">match </span>Layout::array::&lt;mem::MaybeUninit&lt;T&gt;&gt;(len) {
                 <span class="prelude-val">Ok</span>(l) =&gt; l,
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(AllocError),
             };
-            <span class="kw">let </span>ptr = Global.allocate_zeroed(layout)<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(RawVec::from_raw_parts_in(ptr.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>, len, Global).into_box(len))
-        }
+            Global.allocate_zeroed(layout)<span class="question-mark">?</span>.cast()
+        };
+        <span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(RawVec::from_raw_parts_in(ptr.as_ptr(), len, Global).into_box(len)) }
     }
 }
 
@@ -3252,9 +3267,8 @@
     /// assert_eq!(*five, 5)
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;new_uninit&quot;</span>, issue = <span class="string">&quot;63291&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const unsafe fn </span>assume_init(<span class="self">self</span>) -&gt; Box&lt;T, A&gt; {
+    </span><span class="kw">pub unsafe fn </span>assume_init(<span class="self">self</span>) -&gt; Box&lt;T, A&gt; {
         <span class="kw">let </span>(raw, alloc) = Box::into_raw_with_allocator(<span class="self">self</span>);
         <span class="kw">unsafe </span>{ Box::from_raw_in(raw <span class="kw">as </span><span class="kw-2">*mut </span>T, alloc) }
     }
@@ -3287,9 +3301,8 @@
     /// }
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;new_uninit&quot;</span>, issue = <span class="string">&quot;63291&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>write(<span class="kw-2">mut </span>boxed: <span class="self">Self</span>, value: T) -&gt; Box&lt;T, A&gt; {
+    </span><span class="kw">pub fn </span>write(<span class="kw-2">mut </span>boxed: <span class="self">Self</span>, value: T) -&gt; Box&lt;T, A&gt; {
         <span class="kw">unsafe </span>{
             (<span class="kw-2">*</span>boxed).write(value);
             boxed.assume_init()
@@ -3533,9 +3546,8 @@
     ///
     /// [memory layout]: self#memory-layout
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>into_raw_with_allocator(b: <span class="self">Self</span>) -&gt; (<span class="kw-2">*mut </span>T, A) {
+    </span><span class="kw">pub fn </span>into_raw_with_allocator(b: <span class="self">Self</span>) -&gt; (<span class="kw-2">*mut </span>T, A) {
         <span class="kw">let </span>(leaked, alloc) = Box::into_unique(b);
         (leaked.as_ptr(), alloc)
     }
@@ -3545,10 +3557,9 @@
         issue = <span class="string">&quot;none&quot;</span>,
         reason = <span class="string">&quot;use `Box::leak(b).into()` or `Unique::from(Box::leak(b))` instead&quot;
     </span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
     #[doc(hidden)]
-    </span><span class="kw">pub const fn </span>into_unique(b: <span class="self">Self</span>) -&gt; (Unique&lt;T&gt;, A) {
+    </span><span class="kw">pub fn </span>into_unique(b: <span class="self">Self</span>) -&gt; (Unique&lt;T&gt;, A) {
         <span class="comment">// Box is recognized as a &quot;unique pointer&quot; by Stacked Borrows, but internally it is a
         // raw pointer for the type system. Turning it directly into a raw pointer would not be
         // recognized as &quot;releasing&quot; the unique pointer to permit aliased raw accesses,
@@ -3606,9 +3617,8 @@
     /// assert_eq!(*static_ref, [4, 2, 3]);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;box_leak&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>leak&lt;<span class="lifetime">&#39;a</span>&gt;(b: <span class="self">Self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T
+    </span><span class="kw">pub fn </span>leak&lt;<span class="lifetime">&#39;a</span>&gt;(b: <span class="self">Self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T
     <span class="kw">where
         </span>A: <span class="lifetime">&#39;a</span>,
     {
@@ -3660,9 +3670,19 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">unsafe impl</span>&lt;<span class="attr">#[may_dangle] </span>T: <span class="question-mark">?</span>Sized, A: Allocator&gt; Drop <span class="kw">for </span>Box&lt;T, A&gt; {
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="comment">// FIXME: Do nothing, drop is currently performed by compiler.
-    </span>}
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// the T in the Box is dropped by the compiler before the destructor is run
+
+        </span><span class="kw">let </span>ptr = <span class="self">self</span>.<span class="number">0</span>;
+
+        <span class="kw">unsafe </span>{
+            <span class="kw">let </span>layout = Layout::for_value_raw(ptr.as_ptr());
+            <span class="kw">if </span>layout.size() != <span class="number">0 </span>{
+                <span class="self">self</span>.<span class="number">1</span>.deallocate(From::from(ptr.cast()), layout);
+            }
+        }
+    }
 }
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
@@ -3677,8 +3697,7 @@
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span>Box&lt;[T]&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>Box&lt;[T]&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>ptr: Unique&lt;[T]&gt; = Unique::&lt;[T; <span class="number">0</span>]&gt;::dangling();
@@ -3688,8 +3707,7 @@
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;default_box_extra&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl const </span>Default <span class="kw">for </span>Box&lt;str&gt; {
+</span><span class="kw">impl </span>Default <span class="kw">for </span>Box&lt;str&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY: This is the same as `Unique::cast&lt;U&gt;` but with an unsized `U = str`.
@@ -3886,8 +3904,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;pin&quot;</span>, since = <span class="string">&quot;1.33.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; <span class="kw">const </span>From&lt;Box&lt;T, A&gt;&gt; <span class="kw">for </span>Pin&lt;Box&lt;T, A&gt;&gt;
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; From&lt;Box&lt;T, A&gt;&gt; <span class="kw">for </span>Pin&lt;Box&lt;T, A&gt;&gt;
 <span class="kw">where
     </span>A: <span class="lifetime">&#39;static</span>,
 {
@@ -3907,9 +3924,36 @@
     }
 }
 
+<span class="doccomment">/// Specialization trait used for `From&lt;&amp;[T]&gt;`.
+</span><span class="attr">#[cfg(not(no_global_oom_handling))]
+</span><span class="kw">trait </span>BoxFromSlice&lt;T&gt; {
+    <span class="kw">fn </span>from_slice(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="self">Self</span>;
+}
+
+<span class="attr">#[cfg(not(no_global_oom_handling))]
+</span><span class="kw">impl</span>&lt;T: Clone&gt; BoxFromSlice&lt;T&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
+    <span class="attr">#[inline]
+    </span>default <span class="kw">fn </span>from_slice(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="self">Self </span>{
+        slice.to_vec().into_boxed_slice()
+    }
+}
+
+<span class="attr">#[cfg(not(no_global_oom_handling))]
+</span><span class="kw">impl</span>&lt;T: Copy&gt; BoxFromSlice&lt;T&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>from_slice(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>len = slice.len();
+        <span class="kw">let </span>buf = RawVec::with_capacity(len);
+        <span class="kw">unsafe </span>{
+            ptr::copy_nonoverlapping(slice.as_ptr(), buf.ptr(), len);
+            buf.into_box(slice.len()).assume_init()
+        }
+    }
+}
+
 <span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;box_from_slice&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Copy&gt; From&lt;<span class="kw-2">&amp;</span>[T]&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
+</span><span class="kw">impl</span>&lt;T: Clone&gt; From&lt;<span class="kw-2">&amp;</span>[T]&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
     <span class="doccomment">/// Converts a `&amp;[T]` into a `Box&lt;[T]&gt;`
     ///
     /// This conversion allocates on the heap
@@ -3923,19 +3967,15 @@
     ///
     /// println!(&quot;{boxed_slice:?}&quot;);
     /// ```
+    </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>from(slice: <span class="kw-2">&amp;</span>[T]) -&gt; Box&lt;[T]&gt; {
-        <span class="kw">let </span>len = slice.len();
-        <span class="kw">let </span>buf = RawVec::with_capacity(len);
-        <span class="kw">unsafe </span>{
-            ptr::copy_nonoverlapping(slice.as_ptr(), buf.ptr(), len);
-            buf.into_box(slice.len()).assume_init()
-        }
+        &lt;<span class="self">Self </span><span class="kw">as </span>BoxFromSlice&lt;T&gt;&gt;::from_slice(slice)
     }
 }
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;box_from_cow&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Copy&gt; From&lt;Cow&lt;<span class="lifetime">&#39;_</span>, [T]&gt;&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
+</span><span class="kw">impl</span>&lt;T: Clone&gt; From&lt;Cow&lt;<span class="lifetime">&#39;_</span>, [T]&gt;&gt; <span class="kw">for </span>Box&lt;[T]&gt; {
     <span class="doccomment">/// Converts a `Cow&lt;&#39;_, [T]&gt;` into a `Box&lt;[T]&gt;`
     ///
     /// When `cow` is the `Cow::Borrowed` variant, this
@@ -4323,8 +4363,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; <span class="kw">const </span>Deref <span class="kw">for </span>Box&lt;T, A&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; Deref <span class="kw">for </span>Box&lt;T, A&gt; {
     <span class="kw">type </span>Target = T;
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
@@ -4333,8 +4372,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_box&quot;</span>, issue = <span class="string">&quot;92521&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; <span class="kw">const </span>DerefMut <span class="kw">for </span>Box&lt;T, A&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized, A: Allocator&gt; DerefMut <span class="kw">for </span>Box&lt;T, A&gt; {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
         <span class="kw-2">&amp;mut **</span><span class="self">self
     </span>}
@@ -4854,5 +4892,4 @@
         core::error::Error::source(<span class="kw-2">&amp;**</span><span class="self">self</span>)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

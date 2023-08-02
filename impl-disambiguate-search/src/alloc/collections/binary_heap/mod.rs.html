@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/binary_heap/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/binary_heap/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1776,7 +1776,98 @@
 <a href="#1776" id="1776">1776</a>
 <a href="#1777" id="1777">1777</a>
 <a href="#1778" id="1778">1778</a>
-</pre><pre class="rust"><code><span class="doccomment">//! A priority queue implemented with a binary heap.
+<a href="#1779" id="1779">1779</a>
+<a href="#1780" id="1780">1780</a>
+<a href="#1781" id="1781">1781</a>
+<a href="#1782" id="1782">1782</a>
+<a href="#1783" id="1783">1783</a>
+<a href="#1784" id="1784">1784</a>
+<a href="#1785" id="1785">1785</a>
+<a href="#1786" id="1786">1786</a>
+<a href="#1787" id="1787">1787</a>
+<a href="#1788" id="1788">1788</a>
+<a href="#1789" id="1789">1789</a>
+<a href="#1790" id="1790">1790</a>
+<a href="#1791" id="1791">1791</a>
+<a href="#1792" id="1792">1792</a>
+<a href="#1793" id="1793">1793</a>
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! A priority queue implemented with a binary heap.
 //!
 //! Insertion and popping the largest element have *O*(log(*n*)) time complexity.
 //! Checking the largest element is *O*(1). Converting a vector to a binary heap
@@ -1921,18 +2012,18 @@
 </span><span class="attr">#![allow(missing_docs)]
 #![stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 
-</span><span class="kw">use </span>core::fmt;
-<span class="kw">use </span>core::iter::{FromIterator, FusedIterator, InPlaceIterable, SourceIter, TrustedLen};
+</span><span class="kw">use </span>core::alloc::Allocator;
+<span class="kw">use </span>core::fmt;
+<span class="kw">use </span>core::iter::{FusedIterator, InPlaceIterable, SourceIter, TrustedLen};
 <span class="kw">use </span>core::mem::{<span class="self">self</span>, swap, ManuallyDrop};
 <span class="kw">use </span>core::num::NonZeroUsize;
 <span class="kw">use </span>core::ops::{Deref, DerefMut};
 <span class="kw">use </span>core::ptr;
 
+<span class="kw">use </span><span class="kw">crate</span>::alloc::Global;
 <span class="kw">use </span><span class="kw">crate</span>::collections::TryReserveError;
 <span class="kw">use </span><span class="kw">crate</span>::slice;
 <span class="kw">use </span><span class="kw">crate</span>::vec::{<span class="self">self</span>, AsVecIntoIter, Vec};
-
-<span class="kw">use </span><span class="kw">super</span>::SpecExtend;
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
@@ -2043,7 +2134,6 @@
 /// more detailed analysis.
 ///
 /// [`core::cmp::Reverse`]: core::cmp::Reverse
-/// [`Ord`]: core::cmp::Ord
 /// [`Cell`]: core::cell::Cell
 /// [`RefCell`]: core::cell::RefCell
 /// [push]: BinaryHeap::push
@@ -2052,8 +2142,11 @@
 /// [peek\_mut]: BinaryHeap::peek_mut
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;BinaryHeap&quot;</span>)]
-</span><span class="kw">pub struct </span>BinaryHeap&lt;T&gt; {
-    data: Vec&lt;T&gt;,
+</span><span class="kw">pub struct </span>BinaryHeap&lt;
+    T,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    data: Vec&lt;T, A&gt;,
 }
 
 <span class="doccomment">/// Structure wrapping a mutable reference to the greatest item on a
@@ -2064,22 +2157,26 @@
 ///
 /// [`peek_mut`]: BinaryHeap::peek_mut
 </span><span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-</span><span class="kw">pub struct </span>PeekMut&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a </span>+ Ord&gt; {
-    heap: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T&gt;,
+</span><span class="kw">pub struct </span>PeekMut&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: <span class="lifetime">&#39;a </span>+ Ord,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    heap: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T, A&gt;,
     <span class="comment">// If a set_len + sift_down are required, this is Some. If a &amp;mut T has not
     // yet been exposed to peek_mut()&#39;s caller, it&#39;s None.
     </span>original_len: <span class="prelude-ty">Option</span>&lt;NonZeroUsize&gt;,
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;collection_debug&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord + fmt::Debug&gt; fmt::Debug <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord + fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_tuple(<span class="string">&quot;PeekMut&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.heap.data[<span class="number">0</span>]).finish()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Drop <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Drop <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(original_len) = <span class="self">self</span>.original_len {
             <span class="comment">// SAFETY: That&#39;s how many elements were in the Vec at the time of
@@ -2096,7 +2193,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Deref <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Deref <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">type </span>Target = T;
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
         <span class="macro">debug_assert!</span>(!<span class="self">self</span>.heap.is_empty());
@@ -2106,7 +2203,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; DerefMut <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; DerefMut <span class="kw">for </span>PeekMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
         <span class="macro">debug_assert!</span>(!<span class="self">self</span>.heap.is_empty());
 
@@ -2134,10 +2231,10 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord&gt; PeekMut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord, A: Allocator&gt; PeekMut&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
     <span class="doccomment">/// Removes the peeked value from the heap and returns it.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut_pop&quot;</span>, since = <span class="string">&quot;1.18.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>pop(<span class="kw-2">mut </span>this: PeekMut&lt;<span class="lifetime">&#39;a</span>, T&gt;) -&gt; T {
+    </span><span class="kw">pub fn </span>pop(<span class="kw-2">mut </span>this: PeekMut&lt;<span class="lifetime">&#39;a</span>, T, A&gt;) -&gt; T {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(original_len) = this.original_len.take() {
             <span class="comment">// SAFETY: This is how many elements were in the Vec at the time of
             // the BinaryHeap::peek_mut call.
@@ -2152,7 +2249,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Clone&gt; Clone <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Clone, A: Allocator + Clone&gt; Clone <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         BinaryHeap { data: <span class="self">self</span>.data.clone() }
     }
@@ -2172,9 +2269,24 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binaryheap_debug&quot;</span>, since = <span class="string">&quot;1.4.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_list().entries(<span class="self">self</span>.iter()).finish()
+    }
+}
+
+<span class="kw">struct </span>RebuildOnDrop&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: Ord,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    heap: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T, A&gt;,
+    rebuild_from: usize,
+}
+
+<span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Drop <span class="kw">for </span>RebuildOnDrop&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
+    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.heap.rebuild_tail(<span class="self">self</span>.rebuild_from);
     }
 }
 
@@ -2216,6 +2328,52 @@
     </span><span class="kw">pub fn </span>with_capacity(capacity: usize) -&gt; BinaryHeap&lt;T&gt; {
         BinaryHeap { data: Vec::with_capacity(capacity) }
     }
+}
+
+<span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; BinaryHeap&lt;T, A&gt; {
+    <span class="doccomment">/// Creates an empty `BinaryHeap` as a max-heap, using `A` as allocator.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// #![feature(allocator_api)]
+    ///
+    /// use std::alloc::System;
+    /// use std::collections::BinaryHeap;
+    /// let mut heap = BinaryHeap::new_in(System);
+    /// heap.push(4);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    #[must_use]
+    </span><span class="kw">pub fn </span>new_in(alloc: A) -&gt; BinaryHeap&lt;T, A&gt; {
+        BinaryHeap { data: Vec::new_in(alloc) }
+    }
+
+    <span class="doccomment">/// Creates an empty `BinaryHeap` with at least the specified capacity, using `A` as allocator.
+    ///
+    /// The binary heap will be able to hold at least `capacity` elements without
+    /// reallocating. This method is allowed to allocate for more elements than
+    /// `capacity`. If `capacity` is 0, the binary heap will not allocate.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// #![feature(allocator_api)]
+    ///
+    /// use std::alloc::System;
+    /// use std::collections::BinaryHeap;
+    /// let mut heap = BinaryHeap::with_capacity_in(10, System);
+    /// heap.push(4);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    #[must_use]
+    </span><span class="kw">pub fn </span>with_capacity_in(capacity: usize, alloc: A) -&gt; BinaryHeap&lt;T, A&gt; {
+        BinaryHeap { data: Vec::with_capacity_in(capacity, alloc) }
+    }
 
     <span class="doccomment">/// Returns a mutable reference to the greatest item in the binary heap, or
     /// `None` if it is empty.
@@ -2248,7 +2406,7 @@
     /// If the item is modified then the worst case time complexity is *O*(log(*n*)),
     /// otherwise it&#39;s *O*(1).
     </span><span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_peek_mut&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>peek_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;PeekMut&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>peek_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;PeekMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.is_empty() { <span class="prelude-val">None </span>} <span class="kw">else </span>{ <span class="prelude-val">Some</span>(PeekMut { heap: <span class="self">self</span>, original_len: <span class="prelude-val">None </span>}) }
     }
 
@@ -2343,7 +2501,7 @@
     /// ```
     </span><span class="attr">#[must_use = <span class="string">&quot;`self` will be dropped if the result is not used&quot;</span>]
     #[stable(feature = <span class="string">&quot;binary_heap_extras_15&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>into_sorted_vec(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; Vec&lt;T&gt; {
+    </span><span class="kw">pub fn </span>into_sorted_vec(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; Vec&lt;T, A&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>end = <span class="self">self</span>.len();
         <span class="kw">while </span>end &gt; <span class="number">1 </span>{
             end -= <span class="number">1</span>;
@@ -2601,7 +2759,7 @@
     /// ```
     </span><span class="attr">#[inline]
     #[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_sorted(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; DrainSorted&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>drain_sorted(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; DrainSorted&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         DrainSorted { inner: <span class="self">self </span>}
     }
 
@@ -2615,7 +2773,6 @@
     /// Basic usage:
     ///
     /// ```
-    /// #![feature(binary_heap_retain)]
     /// use std::collections::BinaryHeap;
     ///
     /// let mut heap = BinaryHeap::from([-10, -5, 1, 2, 4, 13]);
@@ -2624,39 +2781,28 @@
     ///
     /// assert_eq!(heap.into_sorted_vec(), [-10, 2, 4])
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_retain&quot;</span>, issue = <span class="string">&quot;71503&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_retain&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
     </span><span class="kw">pub fn </span>retain&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>f: F)
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
     {
-        <span class="kw">struct </span>RebuildOnDrop&lt;<span class="lifetime">&#39;a</span>, T: Ord&gt; {
-            heap: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T&gt;,
-            first_removed: usize,
-        }
-
-        <span class="kw">let </span><span class="kw-2">mut </span>guard = RebuildOnDrop { first_removed: <span class="self">self</span>.len(), heap: <span class="self">self </span>};
-
+        <span class="comment">// rebuild_start will be updated to the first touched element below, and the rebuild will
+        // only be done for the tail.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>guard = RebuildOnDrop { rebuild_from: <span class="self">self</span>.len(), heap: <span class="self">self </span>};
         <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
+
         guard.heap.data.retain(|e| {
             <span class="kw">let </span>keep = f(e);
-            <span class="kw">if </span>!keep &amp;&amp; i &lt; guard.first_removed {
-                guard.first_removed = i;
+            <span class="kw">if </span>!keep &amp;&amp; i &lt; guard.rebuild_from {
+                guard.rebuild_from = i;
             }
             i += <span class="number">1</span>;
             keep
         });
-
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord&gt; Drop <span class="kw">for </span>RebuildOnDrop&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-            <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-                <span class="comment">// data[..first_removed] is untouched, so we only need to
-                // rebuild the tail:
-                </span><span class="self">self</span>.heap.rebuild_tail(<span class="self">self</span>.first_removed);
-            }
-        }
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; BinaryHeap&lt;T&gt; {
+<span class="kw">impl</span>&lt;T, A: Allocator&gt; BinaryHeap&lt;T, A&gt; {
     <span class="doccomment">/// Returns an iterator visiting all values in the underlying vector, in
     /// arbitrary order.
     ///
@@ -2693,7 +2839,7 @@
     /// assert_eq!(heap.into_iter_sorted().take(2).collect::&lt;Vec&lt;_&gt;&gt;(), [5, 4]);
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_into_iter_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-    </span><span class="kw">pub fn </span>into_iter_sorted(<span class="self">self</span>) -&gt; IntoIterSorted&lt;T&gt; {
+    </span><span class="kw">pub fn </span>into_iter_sorted(<span class="self">self</span>) -&gt; IntoIterSorted&lt;T, A&gt; {
         IntoIterSorted { inner: <span class="self">self </span>}
     }
 
@@ -2960,8 +3106,15 @@
     /// ```
     </span><span class="attr">#[must_use = <span class="string">&quot;`self` will be dropped if the result is not used&quot;</span>]
     #[stable(feature = <span class="string">&quot;binary_heap_extras_15&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>into_vec(<span class="self">self</span>) -&gt; Vec&lt;T&gt; {
+    </span><span class="kw">pub fn </span>into_vec(<span class="self">self</span>) -&gt; Vec&lt;T, A&gt; {
         <span class="self">self</span>.into()
+    }
+
+    <span class="doccomment">/// Returns a reference to the underlying allocator.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>allocator(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>A {
+        <span class="self">self</span>.data.allocator()
     }
 
     <span class="doccomment">/// Returns the length of the binary heap.
@@ -3031,7 +3184,7 @@
     /// ```
     </span><span class="attr">#[inline]
     #[stable(feature = <span class="string">&quot;drain&quot;</span>, since = <span class="string">&quot;1.6.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         Drain { iter: <span class="self">self</span>.data.drain(..) }
     }
 
@@ -3199,22 +3352,32 @@
 /// (provided by the [`IntoIterator`] trait). See its documentation for more.
 ///
 /// [`into_iter`]: BinaryHeap::into_iter
-/// [`IntoIterator`]: core::iter::IntoIterator
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[derive(Clone)]
-</span><span class="kw">pub struct </span>IntoIter&lt;T&gt; {
-    iter: vec::IntoIter&lt;T&gt;,
+</span><span class="kw">pub struct </span>IntoIter&lt;
+    T,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    iter: vec::IntoIter&lt;T, A&gt;,
+}
+
+<span class="kw">impl</span>&lt;T, A: Allocator&gt; IntoIter&lt;T, A&gt; {
+    <span class="doccomment">/// Returns a reference to the underlying allocator.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    </span><span class="kw">pub fn </span>allocator(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>A {
+        <span class="self">self</span>.iter.allocator()
+    }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;collection_debug&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_tuple(<span class="string">&quot;IntoIter&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.iter.as_slice()).finish()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; Iterator <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; Iterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">type </span>Item = T;
 
     <span class="attr">#[inline]
@@ -3229,7 +3392,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; DoubleEndedIterator <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; DoubleEndedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="self">self</span>.iter.next_back()
@@ -3237,21 +3400,35 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; ExactSizeIterator <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; ExactSizeIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.iter.is_empty()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>IntoIter&lt;T&gt; {
+    <span class="doccomment">/// Creates an empty `binary_heap::IntoIter`.
+    ///
+    /// ```
+    /// # use std::collections::binary_heap;
+    /// let iter: binary_heap::IntoIter&lt;u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IntoIter { iter: Default::default() }
+    }
+}
 
 <span class="comment">// In addition to the SAFETY invariants of the following three unsafe traits
 // also refer to the vec::in_place_collect module documentation to get an overview
 </span><span class="attr">#[unstable(issue = <span class="string">&quot;none&quot;</span>, feature = <span class="string">&quot;inplace_iteration&quot;</span>)]
 #[doc(hidden)]
-</span><span class="kw">unsafe impl</span>&lt;T&gt; SourceIter <span class="kw">for </span>IntoIter&lt;T&gt; {
-    <span class="kw">type </span>Source = IntoIter&lt;T&gt;;
+</span><span class="kw">unsafe impl</span>&lt;T, A: Allocator&gt; SourceIter <span class="kw">for </span>IntoIter&lt;T, A&gt; {
+    <span class="kw">type </span>Source = IntoIter&lt;T, A&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>as_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Source {
@@ -3261,7 +3438,7 @@
 
 <span class="attr">#[unstable(issue = <span class="string">&quot;none&quot;</span>, feature = <span class="string">&quot;inplace_iteration&quot;</span>)]
 #[doc(hidden)]
-</span><span class="kw">unsafe impl</span>&lt;I&gt; InPlaceIterable <span class="kw">for </span>IntoIter&lt;I&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;I, A: Allocator&gt; InPlaceIterable <span class="kw">for </span>IntoIter&lt;I, A&gt; {}
 
 <span class="kw">unsafe impl</span>&lt;I&gt; AsVecIntoIter <span class="kw">for </span>IntoIter&lt;I&gt; {
     <span class="kw">type </span>Item = I;
@@ -3274,12 +3451,23 @@
 <span class="attr">#[must_use = <span class="string">&quot;iterators are lazy and do nothing unless consumed&quot;</span>]
 #[unstable(feature = <span class="string">&quot;binary_heap_into_iter_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
 #[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>IntoIterSorted&lt;T&gt; {
-    inner: BinaryHeap&lt;T&gt;,
+</span><span class="kw">pub struct </span>IntoIterSorted&lt;
+    T,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    inner: BinaryHeap&lt;T, A&gt;,
+}
+
+<span class="kw">impl</span>&lt;T, A: Allocator&gt; IntoIterSorted&lt;T, A&gt; {
+    <span class="doccomment">/// Returns a reference to the underlying allocator.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    </span><span class="kw">pub fn </span>allocator(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>A {
+        <span class="self">self</span>.inner.allocator()
+    }
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_into_iter_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Iterator <span class="kw">for </span>IntoIterSorted&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Iterator <span class="kw">for </span>IntoIterSorted&lt;T, A&gt; {
     <span class="kw">type </span>Item = T;
 
     <span class="attr">#[inline]
@@ -3295,13 +3483,13 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_into_iter_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; ExactSizeIterator <span class="kw">for </span>IntoIterSorted&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; ExactSizeIterator <span class="kw">for </span>IntoIterSorted&lt;T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_into_iter_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; FusedIterator <span class="kw">for </span>IntoIterSorted&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; FusedIterator <span class="kw">for </span>IntoIterSorted&lt;T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;trusted_len&quot;</span>, issue = <span class="string">&quot;37572&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Ord&gt; TrustedLen <span class="kw">for </span>IntoIterSorted&lt;T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Ord, A: Allocator&gt; TrustedLen <span class="kw">for </span>IntoIterSorted&lt;T, A&gt; {}
 
 <span class="doccomment">/// A draining iterator over the elements of a `BinaryHeap`.
 ///
@@ -3311,12 +3499,24 @@
 /// [`drain`]: BinaryHeap::drain
 </span><span class="attr">#[stable(feature = <span class="string">&quot;drain&quot;</span>, since = <span class="string">&quot;1.6.0&quot;</span>)]
 #[derive(Debug)]
-</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a</span>&gt; {
-    iter: vec::Drain&lt;<span class="lifetime">&#39;a</span>, T&gt;,
+</span><span class="kw">pub struct </span>Drain&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: <span class="lifetime">&#39;a</span>,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    iter: vec::Drain&lt;<span class="lifetime">&#39;a</span>, T, A&gt;,
+}
+
+<span class="kw">impl</span>&lt;T, A: Allocator&gt; Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
+    <span class="doccomment">/// Returns a reference to the underlying allocator.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    </span><span class="kw">pub fn </span>allocator(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>A {
+        <span class="self">self</span>.iter.allocator()
+    }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;drain&quot;</span>, since = <span class="string">&quot;1.6.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">type </span>Item = T;
 
     <span class="attr">#[inline]
@@ -3331,7 +3531,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;drain&quot;</span>, since = <span class="string">&quot;1.6.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; DoubleEndedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; DoubleEndedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="self">self</span>.iter.next_back()
@@ -3339,14 +3539,14 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;drain&quot;</span>, since = <span class="string">&quot;1.6.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; ExactSizeIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; ExactSizeIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.iter.is_empty()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; FusedIterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="doccomment">/// A draining iterator over the elements of a `BinaryHeap`.
 ///
@@ -3356,17 +3556,29 @@
 /// [`drain_sorted`]: BinaryHeap::drain_sorted
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
 #[derive(Debug)]
-</span><span class="kw">pub struct </span>DrainSorted&lt;<span class="lifetime">&#39;a</span>, T: Ord&gt; {
-    inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T&gt;,
+</span><span class="kw">pub struct </span>DrainSorted&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: Ord,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BinaryHeap&lt;T, A&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord, A: Allocator&gt; DrainSorted&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
+    <span class="doccomment">/// Returns a reference to the underlying allocator.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    </span><span class="kw">pub fn </span>allocator(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>A {
+        <span class="self">self</span>.inner.allocator()
+    }
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord&gt; Drop <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Ord, A: Allocator&gt; Drop <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
     <span class="doccomment">/// Removes heap elements in heap order.
     </span><span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">struct </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T: Ord&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span><span class="kw-2">mut </span>DrainSorted&lt;<span class="lifetime">&#39;a</span>, T&gt;);
+        <span class="kw">struct </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T: Ord, A: Allocator&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span><span class="kw-2">mut </span>DrainSorted&lt;<span class="lifetime">&#39;a</span>, T, A&gt;);
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T: Ord&gt; Drop <span class="kw">for </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T&gt; {
+        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T: Ord, A: Allocator&gt; Drop <span class="kw">for </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T, A&gt; {
             <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
                 <span class="kw">while </span><span class="self">self</span>.<span class="number">0</span>.inner.pop().is_some() {}
             }
@@ -3381,7 +3593,7 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Iterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Iterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">type </span>Item = T;
 
     <span class="attr">#[inline]
@@ -3397,20 +3609,20 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; ExactSizeIterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; ExactSizeIterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;binary_heap_drain_sorted&quot;</span>, issue = <span class="string">&quot;59278&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; FusedIterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; FusedIterator <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;trusted_len&quot;</span>, issue = <span class="string">&quot;37572&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Ord&gt; TrustedLen <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Ord, A: Allocator&gt; TrustedLen <span class="kw">for </span>DrainSorted&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_extras_15&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; From&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; From&lt;Vec&lt;T, A&gt;&gt; <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="doccomment">/// Converts a `Vec&lt;T&gt;` into a `BinaryHeap&lt;T&gt;`.
     ///
     /// This conversion happens in-place, and has *O*(*n*) time complexity.
-    </span><span class="kw">fn </span>from(vec: Vec&lt;T&gt;) -&gt; BinaryHeap&lt;T&gt; {
+    </span><span class="kw">fn </span>from(vec: Vec&lt;T, A&gt;) -&gt; BinaryHeap&lt;T, A&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>heap = BinaryHeap { data: vec };
         heap.rebuild();
         heap
@@ -3434,12 +3646,12 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;binary_heap_extras_15&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; From&lt;BinaryHeap&lt;T&gt;&gt; <span class="kw">for </span>Vec&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; From&lt;BinaryHeap&lt;T, A&gt;&gt; <span class="kw">for </span>Vec&lt;T, A&gt; {
     <span class="doccomment">/// Converts a `BinaryHeap&lt;T&gt;` into a `Vec&lt;T&gt;`.
     ///
     /// This conversion requires no data movement or allocation, and has
     /// constant time complexity.
-    </span><span class="kw">fn </span>from(heap: BinaryHeap&lt;T&gt;) -&gt; Vec&lt;T&gt; {
+    </span><span class="kw">fn </span>from(heap: BinaryHeap&lt;T, A&gt;) -&gt; Vec&lt;T, A&gt; {
         heap.data
     }
 }
@@ -3452,9 +3664,9 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; IntoIterator <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; IntoIterator <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="kw">type </span>Item = T;
-    <span class="kw">type </span>IntoIter = IntoIter&lt;T&gt;;
+    <span class="kw">type </span>IntoIter = IntoIter&lt;T, A&gt;;
 
     <span class="doccomment">/// Creates a consuming iterator, that is, one that moves each value out of
     /// the binary heap in arbitrary order. The binary heap cannot be used
@@ -3474,13 +3686,13 @@
     ///     println!(&quot;{x}&quot;);
     /// }
     /// ```
-    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; IntoIter&lt;T&gt; {
+    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; IntoIter&lt;T, A&gt; {
         IntoIter { iter: <span class="self">self</span>.data.into_iter() }
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>BinaryHeap&lt;T, A&gt; {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
     <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">&#39;a</span>, T&gt;;
 
@@ -3490,10 +3702,11 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Extend&lt;T&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Extend&lt;T&gt; <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
-        &lt;<span class="self">Self </span><span class="kw">as </span>SpecExtend&lt;I&gt;&gt;::spec_extend(<span class="self">self</span>, iter);
+        <span class="kw">let </span>guard = RebuildOnDrop { rebuild_from: <span class="self">self</span>.len(), heap: <span class="self">self </span>};
+        guard.heap.data.extend(iter);
     }
 
     <span class="attr">#[inline]
@@ -3507,39 +3720,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: Ord, I: IntoIterator&lt;Item = T&gt;&gt; SpecExtend&lt;I&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
-    default <span class="kw">fn </span>spec_extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
-        <span class="self">self</span>.extend_desugared(iter.into_iter());
-    }
-}
-
-<span class="kw">impl</span>&lt;T: Ord&gt; SpecExtend&lt;Vec&lt;T&gt;&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
-    <span class="kw">fn </span>spec_extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">ref mut </span>other: Vec&lt;T&gt;) {
-        <span class="kw">let </span>start = <span class="self">self</span>.data.len();
-        <span class="self">self</span>.data.append(other);
-        <span class="self">self</span>.rebuild_tail(start);
-    }
-}
-
-<span class="kw">impl</span>&lt;T: Ord&gt; SpecExtend&lt;BinaryHeap&lt;T&gt;&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
-    <span class="kw">fn </span>spec_extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">ref mut </span>other: BinaryHeap&lt;T&gt;) {
-        <span class="self">self</span>.append(other);
-    }
-}
-
-<span class="kw">impl</span>&lt;T: Ord&gt; BinaryHeap&lt;T&gt; {
-    <span class="kw">fn </span>extend_desugared&lt;I: IntoIterator&lt;Item = T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
-        <span class="kw">let </span>iterator = iter.into_iter();
-        <span class="kw">let </span>(lower, <span class="kw">_</span>) = iterator.size_hint();
-
-        <span class="self">self</span>.reserve(lower);
-
-        iterator.for_each(<span class="kw">move </span>|elem| <span class="self">self</span>.push(elem));
-    }
-}
-
 <span class="attr">#[stable(feature = <span class="string">&quot;extend_ref&quot;</span>, since = <span class="string">&quot;1.2.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a </span>+ Ord + Copy&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>BinaryHeap&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a </span>+ Ord + Copy, A: Allocator&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>BinaryHeap&lt;T, A&gt; {
     <span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
         <span class="self">self</span>.extend(iter.into_iter().cloned());
     }
@@ -3554,5 +3736,4 @@
         <span class="self">self</span>.reserve(additional);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

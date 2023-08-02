@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/str/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/str/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2626,38 +2626,7 @@
 <a href="#2626" id="2626">2626</a>
 <a href="#2627" id="2627">2627</a>
 <a href="#2628" id="2628">2628</a>
-<a href="#2629" id="2629">2629</a>
-<a href="#2630" id="2630">2630</a>
-<a href="#2631" id="2631">2631</a>
-<a href="#2632" id="2632">2632</a>
-<a href="#2633" id="2633">2633</a>
-<a href="#2634" id="2634">2634</a>
-<a href="#2635" id="2635">2635</a>
-<a href="#2636" id="2636">2636</a>
-<a href="#2637" id="2637">2637</a>
-<a href="#2638" id="2638">2638</a>
-<a href="#2639" id="2639">2639</a>
-<a href="#2640" id="2640">2640</a>
-<a href="#2641" id="2641">2641</a>
-<a href="#2642" id="2642">2642</a>
-<a href="#2643" id="2643">2643</a>
-<a href="#2644" id="2644">2644</a>
-<a href="#2645" id="2645">2645</a>
-<a href="#2646" id="2646">2646</a>
-<a href="#2647" id="2647">2647</a>
-<a href="#2648" id="2648">2648</a>
-<a href="#2649" id="2649">2649</a>
-<a href="#2650" id="2650">2650</a>
-<a href="#2651" id="2651">2651</a>
-<a href="#2652" id="2652">2652</a>
-<a href="#2653" id="2653">2653</a>
-<a href="#2654" id="2654">2654</a>
-<a href="#2655" id="2655">2655</a>
-<a href="#2656" id="2656">2656</a>
-<a href="#2657" id="2657">2657</a>
-<a href="#2658" id="2658">2658</a>
-<a href="#2659" id="2659">2659</a>
-</pre><pre class="rust"><code><span class="doccomment">//! String manipulation.
+</pre></div><pre class="rust"><code><span class="doccomment">//! String manipulation.
 //!
 //! For more details, see the [`std::str`] module.
 //!
@@ -2675,6 +2644,7 @@
 <span class="kw">use </span><span class="self">self</span>::pattern::Pattern;
 <span class="kw">use </span><span class="self">self</span>::pattern::{DoubleEndedSearcher, ReverseSearcher, Searcher};
 
+<span class="kw">use </span><span class="kw">crate</span>::ascii;
 <span class="kw">use </span><span class="kw">crate</span>::char::{<span class="self">self</span>, EscapeDebugExtArgs};
 <span class="kw">use </span><span class="kw">crate</span>::mem;
 <span class="kw">use </span><span class="kw">crate</span>::slice::{<span class="self">self</span>, SliceIndex};
@@ -2802,8 +2772,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let len = &quot;foo&quot;.len();
     /// assert_eq!(3, len);
@@ -2822,8 +2790,6 @@
     <span class="doccomment">/// Returns `true` if `self` has a length of zero bytes.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s = &quot;&quot;;
@@ -2865,9 +2831,8 @@
     /// ```
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;is_char_boundary&quot;</span>, since = <span class="string">&quot;1.9.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_is_char_boundary&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>is_char_boundary(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; bool {
+    </span><span class="kw">pub fn </span>is_char_boundary(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; bool {
         <span class="comment">// 0 is always ok.
         // Test for 0 explicitly so that it can optimize out the check
         // easily and skip reading string data for that case.
@@ -2970,8 +2935,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let bytes = &quot;bors&quot;.as_bytes();
     /// assert_eq!(b&quot;bors&quot;, bytes);
@@ -3046,8 +3009,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = &quot;Hello&quot;;
     /// let ptr = s.as_ptr();
@@ -3095,9 +3056,8 @@
     /// assert!(v.get(..42).is_none());
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;str_checked_slicing&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>get&lt;I: ~<span class="kw">const </span>SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, i: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>I::Output&gt; {
+    </span><span class="kw">pub fn </span>get&lt;I: SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, i: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>I::Output&gt; {
         i.get(<span class="self">self</span>)
     }
 
@@ -3128,9 +3088,8 @@
     /// assert_eq!(&quot;HEllo&quot;, v);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;str_checked_slicing&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>get_mut&lt;I: ~<span class="kw">const </span>SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>I::Output&gt; {
+    </span><span class="kw">pub fn </span>get_mut&lt;I: SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>I::Output&gt; {
         i.get_mut(<span class="self">self</span>)
     }
 
@@ -3161,9 +3120,8 @@
     /// }
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;str_checked_slicing&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked&lt;I: ~<span class="kw">const </span>SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, i: I) -&gt; <span class="kw-2">&amp;</span>I::Output {
+    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;I: SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, i: I) -&gt; <span class="kw-2">&amp;</span>I::Output {
         <span class="comment">// SAFETY: the caller must uphold the safety contract for `get_unchecked`;
         // the slice is dereferenceable because `self` is a safe reference.
         // The returned pointer is safe because impls of `SliceIndex` have to guarantee that it is.
@@ -3197,12 +3155,8 @@
     /// }
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;str_checked_slicing&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked_mut&lt;I: ~<span class="kw">const </span>SliceIndex&lt;str&gt;&gt;(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        i: I,
-    ) -&gt; <span class="kw-2">&amp;mut </span>I::Output {
+    </span><span class="kw">pub unsafe fn </span>get_unchecked_mut&lt;I: SliceIndex&lt;str&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: I) -&gt; <span class="kw-2">&amp;mut </span>I::Output {
         <span class="comment">// SAFETY: the caller must uphold the safety contract for `get_unchecked_mut`;
         // the slice is dereferenceable because `self` is a safe reference.
         // The returned pointer is safe because impls of `SliceIndex` have to guarantee that it is.
@@ -3235,8 +3189,6 @@
     /// * `begin` and `end` must lie on UTF-8 sequence boundaries.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s = &quot;Löwe 老虎 Léopard&quot;;
@@ -3315,8 +3267,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = &quot;Per Martin-Löf&quot;;
     ///
@@ -3356,8 +3306,6 @@
     /// past the end of the last code point of the string slice.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = &quot;Per Martin-Löf&quot;.to_string();
@@ -3506,8 +3454,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut bytes = &quot;bors&quot;.bytes();
     ///
@@ -3634,6 +3580,10 @@
     ///
     /// Line terminators are not included in the lines returned by the iterator.
     ///
+    /// Note that any carriage return (`\r`) not immediately followed by a
+    /// line feed (`\n`) does not split a line. These carriage returns are
+    /// thereby included in the produced lines.
+    ///
     /// The final line ending is optional. A string that ends with a final line
     /// ending will return the same lines as an otherwise identical string
     /// without a final line ending.
@@ -3643,18 +3593,19 @@
     /// Basic usage:
     ///
     /// ```
-    /// let text = &quot;foo\r\nbar\n\nbaz\n&quot;;
+    /// let text = &quot;foo\r\nbar\n\nbaz\r&quot;;
     /// let mut lines = text.lines();
     ///
     /// assert_eq!(Some(&quot;foo&quot;), lines.next());
     /// assert_eq!(Some(&quot;bar&quot;), lines.next());
     /// assert_eq!(Some(&quot;&quot;), lines.next());
-    /// assert_eq!(Some(&quot;baz&quot;), lines.next());
+    /// // Trailing carriage return is included in the last line
+    /// assert_eq!(Some(&quot;baz\r&quot;), lines.next());
     ///
     /// assert_eq!(None, lines.next());
     /// ```
     ///
-    /// The final line ending isn&#39;t required:
+    /// The final line does not require any ending:
     ///
     /// ```
     /// let text = &quot;foo\nbar\n\r\nbaz&quot;;
@@ -3670,7 +3621,7 @@
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>lines(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Lines&lt;<span class="lifetime">&#39;_</span>&gt; {
-        Lines(<span class="self">self</span>.split_terminator(<span class="string">&#39;\n&#39;</span>).map(LinesAnyMap))
+        Lines(<span class="self">self</span>.split_inclusive(<span class="string">&#39;\n&#39;</span>).map(LinesMap))
     }
 
     <span class="doccomment">/// An iterator over the lines of a string.
@@ -3685,8 +3636,6 @@
     <span class="doccomment">/// Returns an iterator of `u16` over the string encoded as UTF-16.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let text = &quot;Zażółć gęślą jaźń&quot;;
@@ -3716,8 +3665,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let bananas = &quot;bananas&quot;;
     ///
@@ -3743,8 +3690,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let bananas = &quot;bananas&quot;;
     ///
@@ -3768,8 +3713,6 @@
     /// [pattern]: self::pattern
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let bananas = &quot;bananas&quot;;
@@ -4129,8 +4072,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let v: Vec&lt;&amp;str&gt; = &quot;A.B.&quot;.split_terminator(&#39;.&#39;).collect();
     /// assert_eq!(v, [&quot;A&quot;, &quot;B&quot;]);
@@ -4358,11 +4299,9 @@
     /// If the pattern allows a reverse search but its results might differ
     /// from a forward search, the [`rmatches`] method can be used.
     ///
-    /// [`rmatches`]: str::matches
+    /// [`rmatches`]: str::rmatches
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let v: Vec&lt;&amp;str&gt; = &quot;abcXXXabcYYYabc&quot;.matches(&quot;abc&quot;).collect();
@@ -4397,8 +4336,6 @@
     /// [`matches`]: str::matches
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let v: Vec&lt;&amp;str&gt; = &quot;abcXXXabcYYYabc&quot;.rmatches(&quot;abc&quot;).collect();
@@ -4441,8 +4378,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let v: Vec&lt;_&gt; = &quot;abcXXXabcYYYabc&quot;.match_indices(&quot;abc&quot;).collect();
     /// assert_eq!(v, [(0, &quot;abc&quot;), (6, &quot;abc&quot;), (12, &quot;abc&quot;)]);
@@ -4483,8 +4418,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let v: Vec&lt;_&gt; = &quot;abcXXXabcYYYabc&quot;.rmatch_indices(&quot;abc&quot;).collect();
     /// assert_eq!(v, [(12, &quot;abc&quot;), (6, &quot;abc&quot;), (0, &quot;abc&quot;)]);
@@ -4510,8 +4443,6 @@
     /// Core Property `White_Space`, which includes newlines.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s = &quot;\n Hello\tworld\t\n&quot;;
@@ -4751,8 +4682,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// assert_eq!(&quot;11foo1bar11&quot;.trim_start_matches(&#39;1&#39;), &quot;foo1bar11&quot;);
     /// assert_eq!(&quot;123foo1bar123&quot;.trim_start_matches(char::is_numeric), &quot;foo1bar123&quot;);
@@ -4898,8 +4827,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// assert_eq!(&quot;11foo1bar11&quot;.trim_left_matches(&#39;1&#39;), &quot;foo1bar11&quot;);
     /// assert_eq!(&quot;123foo1bar123&quot;.trim_left_matches(char::is_numeric), &quot;foo1bar123&quot;);
@@ -5024,13 +4951,24 @@
     /// assert!(!non_ascii.is_ascii());
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;ascii_methods_on_intrinsics&quot;</span>, since = <span class="string">&quot;1.23.0&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_is_ascii&quot;</span>, issue = <span class="string">&quot;111090&quot;</span>)]
     #[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>is_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    </span><span class="kw">pub const fn </span>is_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="comment">// We can treat each byte as character here: all multibyte characters
         // start with a byte that is not in the ASCII range, so we will stop
         // there already.
         </span><span class="self">self</span>.as_bytes().is_ascii()
+    }
+
+    <span class="doccomment">/// If this string slice [`is_ascii`](Self::is_ascii), returns it as a slice
+    /// of [ASCII characters](`ascii::Char`), otherwise returns `None`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;ascii_char&quot;</span>, issue = <span class="string">&quot;110998&quot;</span>)]
+    #[must_use]
+    #[inline]
+    </span><span class="kw">pub const fn </span>as_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[ascii::Char]&gt; {
+        <span class="comment">// Like in `is_ascii`, we can work on the bytes directly.
+        </span><span class="self">self</span>.as_bytes().as_ascii()
     }
 
     <span class="doccomment">/// Checks that two strings are an ASCII case-insensitive match.
@@ -5241,8 +5179,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl const </span>Default <span class="kw">for </span><span class="kw-2">&amp;</span>str {
+</span><span class="kw">impl </span>Default <span class="kw">for </span><span class="kw-2">&amp;</span>str {
     <span class="doccomment">/// Creates an empty str
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
@@ -5263,10 +5200,10 @@
 <span class="macro">impl_fn_for_zst! </span>{
     <span class="doccomment">/// A nameable, cloneable fn type
     </span><span class="attr">#[derive(Clone)]
-    </span><span class="kw">struct </span>LinesAnyMap <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Fn = |line: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str| -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
-        <span class="kw">let </span>l = line.len();
-        <span class="kw">if </span>l &gt; <span class="number">0 </span>&amp;&amp; line.as_bytes()[l - <span class="number">1</span>] == <span class="string">b&#39;\r&#39; </span>{ <span class="kw-2">&amp;</span>line[<span class="number">0 </span>.. l - <span class="number">1</span>] }
-        <span class="kw">else </span>{ line }
+    </span><span class="kw">struct </span>LinesMap <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Fn = |line: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str| -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(line) = line.strip_suffix(<span class="string">&#39;\n&#39;</span>) <span class="kw">else </span>{ <span class="kw">return </span>line };
+        <span class="kw">let </span><span class="prelude-val">Some</span>(line) = line.strip_suffix(<span class="string">&#39;\r&#39;</span>) <span class="kw">else </span>{ <span class="kw">return </span>line };
+        line
     };
 
     <span class="attr">#[derive(Clone)]
@@ -5314,7 +5251,7 @@
     };
 }
 
-<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+<span class="comment">// This is required to make `impl From&lt;&amp;str&gt; for Box&lt;dyn Error&gt;` and `impl&lt;E&gt; From&lt;E&gt; for Box&lt;dyn Error&gt;` not overlap.
+</span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl </span>!<span class="kw">crate</span>::error::Error <span class="kw">for </span><span class="kw-2">&amp;</span>str {}
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

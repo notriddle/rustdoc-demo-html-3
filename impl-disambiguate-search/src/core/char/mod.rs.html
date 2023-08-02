@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/char/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/char/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -560,35 +560,7 @@
 <a href="#560" id="560">560</a>
 <a href="#561" id="561">561</a>
 <a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
-<a href="#571" id="571">571</a>
-<a href="#572" id="572">572</a>
-<a href="#573" id="573">573</a>
-<a href="#574" id="574">574</a>
-<a href="#575" id="575">575</a>
-<a href="#576" id="576">576</a>
-<a href="#577" id="577">577</a>
-<a href="#578" id="578">578</a>
-<a href="#579" id="579">579</a>
-<a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Utilities for the `char` primitive type.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Utilities for the `char` primitive type.
 //!
 //! *[See also the `char` primitive type](primitive@char).*
 //!
@@ -628,9 +600,12 @@
 <span class="attr">#[unstable(feature = <span class="string">&quot;char_internals&quot;</span>, reason = <span class="string">&quot;exposed only for libstd&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
 </span><span class="kw">pub use </span><span class="self">self</span>::methods::encode_utf8_raw;
 
+<span class="kw">use </span><span class="kw">crate</span>::ascii;
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::escape;
 <span class="kw">use </span><span class="kw">crate</span>::fmt::{<span class="self">self</span>, Write};
 <span class="kw">use </span><span class="kw">crate</span>::iter::FusedIterator;
+<span class="kw">use </span><span class="kw">crate</span>::num::NonZeroUsize;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span><span class="self">self</span>::methods::EscapeDebugExtArgs;
 
@@ -736,86 +711,44 @@
 /// [`escape_unicode`]: char::escape_unicode
 </span><span class="attr">#[derive(Clone, Debug)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">pub struct </span>EscapeUnicode {
-    c: char,
-    state: EscapeUnicodeState,
+</span><span class="kw">pub struct </span>EscapeUnicode(escape::EscapeIterInner&lt;<span class="number">10</span>&gt;);
 
-    <span class="comment">// The index of the next hex digit to be printed (0 if none),
-    // i.e., the number of remaining hex digits to be printed;
-    // increasing from the least significant digit: 0x543210
-    </span>hex_digit_idx: usize,
-}
-
-<span class="comment">// The enum values are ordered so that their representation is the
-// same as the remaining length (besides the hexadecimal digits). This
-// likely makes `len()` a single load from memory) and inline-worth.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">enum </span>EscapeUnicodeState {
-    Done,
-    RightBrace,
-    Value,
-    LeftBrace,
-    Type,
-    Backslash,
+<span class="kw">impl </span>EscapeUnicode {
+    <span class="kw">fn </span>new(chr: char) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>data = [ascii::Char::Null; <span class="number">10</span>];
+        <span class="kw">let </span>range = escape::escape_unicode_into(<span class="kw-2">&amp;mut </span>data, chr);
+        <span class="self">Self</span>(escape::EscapeIterInner::new(data, range))
+    }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl </span>Iterator <span class="kw">for </span>EscapeUnicode {
     <span class="kw">type </span>Item = char;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeUnicodeState::Backslash =&gt; {
-                <span class="self">self</span>.state = EscapeUnicodeState::Type;
-                <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>)
-            }
-            EscapeUnicodeState::Type =&gt; {
-                <span class="self">self</span>.state = EscapeUnicodeState::LeftBrace;
-                <span class="prelude-val">Some</span>(<span class="string">&#39;u&#39;</span>)
-            }
-            EscapeUnicodeState::LeftBrace =&gt; {
-                <span class="self">self</span>.state = EscapeUnicodeState::Value;
-                <span class="prelude-val">Some</span>(<span class="string">&#39;{&#39;</span>)
-            }
-            EscapeUnicodeState::Value =&gt; {
-                <span class="kw">let </span>hex_digit = ((<span class="self">self</span>.c <span class="kw">as </span>u32) &gt;&gt; (<span class="self">self</span>.hex_digit_idx * <span class="number">4</span>)) &amp; <span class="number">0xf</span>;
-                <span class="kw">let </span>c = char::from_digit(hex_digit, <span class="number">16</span>).unwrap();
-                <span class="kw">if </span><span class="self">self</span>.hex_digit_idx == <span class="number">0 </span>{
-                    <span class="self">self</span>.state = EscapeUnicodeState::RightBrace;
-                } <span class="kw">else </span>{
-                    <span class="self">self</span>.hex_digit_idx -= <span class="number">1</span>;
-                }
-                <span class="prelude-val">Some</span>(c)
-            }
-            EscapeUnicodeState::RightBrace =&gt; {
-                <span class="self">self</span>.state = EscapeUnicodeState::Done;
-                <span class="prelude-val">Some</span>(<span class="string">&#39;}&#39;</span>)
-            }
-            EscapeUnicodeState::Done =&gt; <span class="prelude-val">None</span>,
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.next().map(char::from)
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
-        <span class="kw">let </span>n = <span class="self">self</span>.len();
+        <span class="kw">let </span>n = <span class="self">self</span>.<span class="number">0</span>.len();
         (n, <span class="prelude-val">Some</span>(n))
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>count(<span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.len()
+        <span class="self">self</span>.<span class="number">0</span>.len()
     }
 
-    <span class="kw">fn </span>last(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeUnicodeState::Done =&gt; <span class="prelude-val">None</span>,
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>last(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.next_back().map(char::from)
+    }
 
-            EscapeUnicodeState::RightBrace
-            | EscapeUnicodeState::Value
-            | EscapeUnicodeState::LeftBrace
-            | EscapeUnicodeState::Type
-            | EscapeUnicodeState::Backslash =&gt; <span class="prelude-val">Some</span>(<span class="string">&#39;}&#39;</span>),
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>advance_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), NonZeroUsize&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.advance_by(n)
     }
 }
 
@@ -823,16 +756,7 @@
 </span><span class="kw">impl </span>ExactSizeIterator <span class="kw">for </span>EscapeUnicode {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="comment">// The match is a single memory access with no branching
-        </span><span class="self">self</span>.hex_digit_idx
-            + <span class="kw">match </span><span class="self">self</span>.state {
-                EscapeUnicodeState::Done =&gt; <span class="number">0</span>,
-                EscapeUnicodeState::RightBrace =&gt; <span class="number">1</span>,
-                EscapeUnicodeState::Value =&gt; <span class="number">2</span>,
-                EscapeUnicodeState::LeftBrace =&gt; <span class="number">3</span>,
-                EscapeUnicodeState::Type =&gt; <span class="number">4</span>,
-                EscapeUnicodeState::Backslash =&gt; <span class="number">5</span>,
-            }
+        <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
@@ -842,10 +766,7 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;char_struct_display&quot;</span>, since = <span class="string">&quot;1.16.0&quot;</span>)]
 </span><span class="kw">impl </span>fmt::Display <span class="kw">for </span>EscapeUnicode {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="kw">for </span>c <span class="kw">in </span><span class="self">self</span>.clone() {
-            f.write_char(c)<span class="question-mark">?</span>;
-        }
-        <span class="prelude-val">Ok</span>(())
+        f.write_str(<span class="self">self</span>.<span class="number">0</span>.as_str())
     }
 }
 
@@ -857,90 +778,60 @@
 /// [`escape_default`]: char::escape_default
 </span><span class="attr">#[derive(Clone, Debug)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">pub struct </span>EscapeDefault {
-    state: EscapeDefaultState,
-}
+</span><span class="kw">pub struct </span>EscapeDefault(escape::EscapeIterInner&lt;<span class="number">10</span>&gt;);
 
-<span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">enum </span>EscapeDefaultState {
-    Done,
-    Char(char),
-    Backslash(char),
-    Unicode(EscapeUnicode),
+<span class="kw">impl </span>EscapeDefault {
+    <span class="kw">fn </span>printable(chr: ascii::Char) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>data = [chr];
+        <span class="self">Self</span>(escape::EscapeIterInner::from_array(data))
+    }
+
+    <span class="kw">fn </span>backslash(chr: ascii::Char) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>data = [ascii::Char::ReverseSolidus, chr];
+        <span class="self">Self</span>(escape::EscapeIterInner::from_array(data))
+    }
+
+    <span class="kw">fn </span>from_unicode(esc: EscapeUnicode) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(esc.<span class="number">0</span>)
+    }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl </span>Iterator <span class="kw">for </span>EscapeDefault {
     <span class="kw">type </span>Item = char;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeDefaultState::Backslash(c) =&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Char(c);
-                <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>)
-            }
-            EscapeDefaultState::Char(c) =&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Done;
-                <span class="prelude-val">Some</span>(c)
-            }
-            EscapeDefaultState::Done =&gt; <span class="prelude-val">None</span>,
-            EscapeDefaultState::Unicode(<span class="kw-2">ref mut </span>iter) =&gt; iter.next(),
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.next().map(char::from)
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
-        <span class="kw">let </span>n = <span class="self">self</span>.len();
+        <span class="kw">let </span>n = <span class="self">self</span>.<span class="number">0</span>.len();
         (n, <span class="prelude-val">Some</span>(n))
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>count(<span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.len()
+        <span class="self">self</span>.<span class="number">0</span>.len()
     }
 
-    <span class="kw">fn </span>nth(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeDefaultState::Backslash(c) <span class="kw">if </span>n == <span class="number">0 </span>=&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Char(c);
-                <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>)
-            }
-            EscapeDefaultState::Backslash(c) <span class="kw">if </span>n == <span class="number">1 </span>=&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Done;
-                <span class="prelude-val">Some</span>(c)
-            }
-            EscapeDefaultState::Backslash(<span class="kw">_</span>) =&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Done;
-                <span class="prelude-val">None
-            </span>}
-            EscapeDefaultState::Char(c) =&gt; {
-                <span class="self">self</span>.state = EscapeDefaultState::Done;
-
-                <span class="kw">if </span>n == <span class="number">0 </span>{ <span class="prelude-val">Some</span>(c) } <span class="kw">else </span>{ <span class="prelude-val">None </span>}
-            }
-            EscapeDefaultState::Done =&gt; <span class="prelude-val">None</span>,
-            EscapeDefaultState::Unicode(<span class="kw-2">ref mut </span>i) =&gt; i.nth(n),
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>last(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.next_back().map(char::from)
     }
 
-    <span class="kw">fn </span>last(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeDefaultState::Unicode(iter) =&gt; iter.last(),
-            EscapeDefaultState::Done =&gt; <span class="prelude-val">None</span>,
-            EscapeDefaultState::Backslash(c) | EscapeDefaultState::Char(c) =&gt; <span class="prelude-val">Some</span>(c),
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>advance_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), NonZeroUsize&gt; {
+        <span class="self">self</span>.<span class="number">0</span>.advance_by(n)
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;exact_size_escape&quot;</span>, since = <span class="string">&quot;1.11.0&quot;</span>)]
 </span><span class="kw">impl </span>ExactSizeIterator <span class="kw">for </span>EscapeDefault {
-    <span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="kw">match </span><span class="self">self</span>.state {
-            EscapeDefaultState::Done =&gt; <span class="number">0</span>,
-            EscapeDefaultState::Char(<span class="kw">_</span>) =&gt; <span class="number">1</span>,
-            EscapeDefaultState::Backslash(<span class="kw">_</span>) =&gt; <span class="number">2</span>,
-            EscapeDefaultState::Unicode(<span class="kw-2">ref </span>iter) =&gt; iter.len(),
-        }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.<span class="number">0</span>.len()
     }
 }
 
@@ -950,10 +841,7 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;char_struct_display&quot;</span>, since = <span class="string">&quot;1.16.0&quot;</span>)]
 </span><span class="kw">impl </span>fmt::Display <span class="kw">for </span>EscapeDefault {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="kw">for </span>c <span class="kw">in </span><span class="self">self</span>.clone() {
-            f.write_char(c)<span class="question-mark">?</span>;
-        }
-        <span class="prelude-val">Ok</span>(())
+        f.write_str(<span class="self">self</span>.<span class="number">0</span>.as_str())
     }
 }
 
@@ -965,21 +853,74 @@
 /// [`escape_debug`]: char::escape_debug
 </span><span class="attr">#[stable(feature = <span class="string">&quot;char_escape_debug&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
 #[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>EscapeDebug(EscapeDefault);
+</span><span class="kw">pub struct </span>EscapeDebug(EscapeDebugInner);
 
-<span class="attr">#[stable(feature = <span class="string">&quot;char_escape_debug&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-</span><span class="kw">impl </span>Iterator <span class="kw">for </span>EscapeDebug {
-    <span class="kw">type </span>Item = char;
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
-        <span class="self">self</span>.<span class="number">0</span>.next()
+<span class="attr">#[derive(Clone, Debug)]
+</span><span class="comment">// Note: It’s possible to manually encode the EscapeDebugInner inside of
+// EscapeIterInner (e.g. with alive=254..255 indicating that data[0..4] holds
+// a char) which would likely result in a more optimised code.  For now we use
+// the option easier to implement.
+</span><span class="kw">enum </span>EscapeDebugInner {
+    Bytes(escape::EscapeIterInner&lt;<span class="number">10</span>&gt;),
+    Char(char),
+}
+
+<span class="kw">impl </span>EscapeDebug {
+    <span class="kw">fn </span>printable(chr: char) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(EscapeDebugInner::Char(chr))
     }
-    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
-        <span class="self">self</span>.<span class="number">0</span>.size_hint()
+
+    <span class="kw">fn </span>backslash(chr: ascii::Char) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>data = [ascii::Char::ReverseSolidus, chr];
+        <span class="kw">let </span>iter = escape::EscapeIterInner::from_array(data);
+        <span class="self">Self</span>(EscapeDebugInner::Bytes(iter))
+    }
+
+    <span class="kw">fn </span>from_unicode(esc: EscapeUnicode) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(EscapeDebugInner::Bytes(esc.<span class="number">0</span>))
+    }
+
+    <span class="kw">fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>bytes = escape::EscapeIterInner::from_array([]);
+        <span class="self">self</span>.<span class="number">0 </span>= EscapeDebugInner::Bytes(bytes);
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;char_escape_debug&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
-</span><span class="kw">impl </span>ExactSizeIterator <span class="kw">for </span>EscapeDebug {}
+</span><span class="kw">impl </span>Iterator <span class="kw">for </span>EscapeDebug {
+    <span class="kw">type </span>Item = char;
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0 </span>{
+            EscapeDebugInner::Bytes(<span class="kw-2">ref mut </span>bytes) =&gt; bytes.next().map(char::from),
+            EscapeDebugInner::Char(chr) =&gt; {
+                <span class="self">self</span>.clear();
+                <span class="prelude-val">Some</span>(chr)
+            }
+        }
+    }
+
+    <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
+        <span class="kw">let </span>n = <span class="self">self</span>.len();
+        (n, <span class="prelude-val">Some</span>(n))
+    }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>count(<span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.len()
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;char_escape_debug&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
+</span><span class="kw">impl </span>ExactSizeIterator <span class="kw">for </span>EscapeDebug {
+    <span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            EscapeDebugInner::Bytes(bytes) =&gt; bytes.len(),
+            EscapeDebugInner::Char(<span class="kw">_</span>) =&gt; <span class="number">1</span>,
+        }
+    }
+}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">impl </span>FusedIterator <span class="kw">for </span>EscapeDebug {}
@@ -987,7 +928,10 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;char_escape_debug&quot;</span>, since = <span class="string">&quot;1.20.0&quot;</span>)]
 </span><span class="kw">impl </span>fmt::Display <span class="kw">for </span>EscapeDebug {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        fmt::Display::fmt(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, f)
+        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            EscapeDebugInner::Bytes(bytes) =&gt; f.write_str(bytes.as_str()),
+            EscapeDebugInner::Char(chr) =&gt; f.write_char(<span class="kw-2">*</span>chr),
+        }
     }
 }
 
@@ -1178,5 +1122,4 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;u8_from_char&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">impl </span>Error <span class="kw">for </span>TryFromCharError {}
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

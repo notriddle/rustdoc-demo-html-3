@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86_64/avx512f.rs`."><title>avx512f.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86_64/avx512f.rs`."><title>avx512f.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -12344,7 +12344,21 @@
 <a href="#12344" id="12344">12344</a>
 <a href="#12345" id="12345">12345</a>
 <a href="#12346" id="12346">12346</a>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{
+<a href="#12347" id="12347">12347</a>
+<a href="#12348" id="12348">12348</a>
+<a href="#12349" id="12349">12349</a>
+<a href="#12350" id="12350">12350</a>
+<a href="#12351" id="12351">12351</a>
+<a href="#12352" id="12352">12352</a>
+<a href="#12353" id="12353">12353</a>
+<a href="#12354" id="12354">12354</a>
+<a href="#12355" id="12355">12355</a>
+<a href="#12356" id="12356">12356</a>
+<a href="#12357" id="12357">12357</a>
+<a href="#12358" id="12358">12358</a>
+<a href="#12359" id="12359">12359</a>
+<a href="#12360" id="12360">12360</a>
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     core_arch::{simd::<span class="kw-2">*</span>, simd_llvm::<span class="kw-2">*</span>, x86::<span class="kw-2">*</span>, x86_64::<span class="kw-2">*</span>},
     mem::transmute,
 };
@@ -12354,7 +12368,7 @@
 
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to a 64-bit integer, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsd_i64&amp;expand=1792)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsd_i64&amp;expand=1792)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si))]
@@ -12364,7 +12378,7 @@
 
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to a 64-bit integer, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtss_i64&amp;expand=1894)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtss_i64&amp;expand=1894)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si))]
@@ -12374,7 +12388,7 @@
 
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to an unsigned 64-bit integer, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtss_u64&amp;expand=1902)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtss_u64&amp;expand=1902)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2usi))]
@@ -12384,7 +12398,7 @@
 
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to an unsigned 64-bit integer, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsd_u64&amp;expand=1800)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsd_u64&amp;expand=1800)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2usi))]
@@ -12394,7 +12408,7 @@
 
 <span class="doccomment">/// Convert the signed 64-bit integer b to a single-precision (32-bit) floating-point element, store the result in the lower element of dst, and copy the upper 3 packed elements from a to the upper elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=mm_cvti32_ss&amp;expand=1643)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=mm_cvti32_ss&amp;expand=1643)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2ss))]
@@ -12406,7 +12420,7 @@
 
 <span class="doccomment">/// Convert the signed 64-bit integer b to a double-precision (64-bit) floating-point element, store the result in the lower element of dst, and copy the upper element from a to the upper element of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvti64_sd&amp;expand=1644)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvti64_sd&amp;expand=1644)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2sd))]
@@ -12418,7 +12432,7 @@
 
 <span class="doccomment">/// Convert the unsigned 64-bit integer b to a single-precision (32-bit) floating-point element, store the result in the lower element of dst, and copy the upper 3 packed elements from a to the upper elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtu64_ss&amp;expand=2035)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtu64_ss&amp;expand=2035)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtusi2ss))]
@@ -12430,7 +12444,7 @@
 
 <span class="doccomment">/// Convert the unsigned 64-bit integer b to a double-precision (64-bit) floating-point element, store the result in the lower element of dst, and copy the upper element from a to the upper element of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtu64_sd&amp;expand=2034)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtu64_sd&amp;expand=2034)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtusi2sd))]
@@ -12442,7 +12456,7 @@
 
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttsd_i64&amp;expand=2016)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttsd_i64&amp;expand=2016)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si))]
@@ -12452,7 +12466,7 @@
 
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to an unsigned 64-bit integer with truncation, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttsd_u64&amp;expand=2021)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttsd_u64&amp;expand=2021)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2usi))]
@@ -12462,7 +12476,7 @@
 
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=#text=_mm_cvttss_i64&amp;expand=2023)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=#text=_mm_cvttss_i64&amp;expand=2023)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si))]
@@ -12472,7 +12486,7 @@
 
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to an unsigned 64-bit integer with truncation, and store the result in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttss_u64&amp;expand=2027)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttss_u64&amp;expand=2027)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2usi))]
@@ -12488,7 +12502,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundi64_sd&amp;expand=1313)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundi64_sd&amp;expand=1313)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2sd, ROUNDING = <span class="number">8</span>))]
@@ -12508,7 +12522,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundsi64_sd&amp;expand=1367)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundsi64_sd&amp;expand=1367)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2sd, ROUNDING = <span class="number">8</span>))]
@@ -12528,7 +12542,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundi64_ss&amp;expand=1314)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundi64_ss&amp;expand=1314)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2ss, ROUNDING = <span class="number">8</span>))]
@@ -12548,7 +12562,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundu64_sd&amp;expand=1379)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundu64_sd&amp;expand=1379)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtusi2sd, ROUNDING = <span class="number">8</span>))]
@@ -12568,7 +12582,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundsi64_ss&amp;expand=1368)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundsi64_ss&amp;expand=1368)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsi2ss, ROUNDING = <span class="number">8</span>))]
@@ -12588,7 +12602,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundu64_ss&amp;expand=1380)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundu64_ss&amp;expand=1380)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtusi2ss, ROUNDING = <span class="number">8</span>))]
@@ -12608,7 +12622,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundsd_si64&amp;expand=1360)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundsd_si64&amp;expand=1360)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si, ROUNDING = <span class="number">8</span>))]
@@ -12628,7 +12642,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundsd_i64&amp;expand=1358)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundsd_i64&amp;expand=1358)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si, ROUNDING = <span class="number">8</span>))]
@@ -12648,7 +12662,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundsd_u64&amp;expand=1365)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundsd_u64&amp;expand=1365)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2usi, ROUNDING = <span class="number">8</span>))]
@@ -12668,7 +12682,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundss_si64&amp;expand=1375)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundss_si64&amp;expand=1375)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si, ROUNDING = <span class="number">8</span>))]
@@ -12688,7 +12702,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundss_i64&amp;expand=1370)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundss_i64&amp;expand=1370)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si, ROUNDING = <span class="number">8</span>))]
@@ -12708,7 +12722,7 @@
 ///    (_MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC)        // truncate, and suppress exceptions\
 ///    _MM_FROUND_CUR_DIRECTION // use MXCSR.RC; see _MM_SET_ROUNDING_MODE
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvt_roundss_u64&amp;expand=1377)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvt_roundss_u64&amp;expand=1377)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2usi, ROUNDING = <span class="number">8</span>))]
@@ -12723,7 +12737,7 @@
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundsd_si64&amp;expand=1931)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundsd_si64&amp;expand=1931)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si, SAE = <span class="number">8</span>))]
@@ -12738,7 +12752,7 @@
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundsd_i64&amp;expand=1929)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundsd_i64&amp;expand=1929)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2si, SAE = <span class="number">8</span>))]
@@ -12753,7 +12767,7 @@
 <span class="doccomment">/// Convert the lower double-precision (64-bit) floating-point element in a to an unsigned 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundsd_u64&amp;expand=1933)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundsd_u64&amp;expand=1933)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtsd2usi, SAE = <span class="number">8</span>))]
@@ -12768,7 +12782,7 @@
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundss_i64&amp;expand=1935)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundss_i64&amp;expand=1935)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si, SAE = <span class="number">8</span>))]
@@ -12783,7 +12797,7 @@
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to a 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundss_si64&amp;expand=1937)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundss_si64&amp;expand=1937)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2si, SAE = <span class="number">8</span>))]
@@ -12798,7 +12812,7 @@
 <span class="doccomment">/// Convert the lower single-precision (32-bit) floating-point element in a to an unsigned 64-bit integer with truncation, and store the result in dst.\
 /// Exceptions can be suppressed by passing _MM_FROUND_NO_EXC in the sae parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtt_roundss_u64&amp;expand=1939)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtt_roundss_u64&amp;expand=1939)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f&quot;</span>)]
 #[cfg_attr(test, assert_instr(vcvtss2usi, SAE = <span class="number">8</span>))]
@@ -19897,6 +19911,20 @@
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>arr[..], <span class="kw-2">&amp;</span>expected[..],);
     }
 
+    <span class="attr">#[simd_test(enable = <span class="string">&quot;avx512f,avx512vl&quot;</span>)]
+    </span><span class="kw">unsafe fn </span>test_mm256_i32scatter_epi64() {
+        <span class="kw">let </span><span class="kw-2">mut </span>arr = [<span class="number">0i64</span>; <span class="number">64</span>];
+        <span class="kw">let </span>index = _mm_setr_epi32(<span class="number">0</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">48</span>);
+        <span class="kw">let </span>src = _mm256_setr_epi64x(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>);
+        <span class="comment">// A multiplier of 8 is word-addressing
+        </span>_mm256_i32scatter_epi64::&lt;<span class="number">8</span>&gt;(arr.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>u8, index, src);
+        <span class="kw">let </span><span class="kw-2">mut </span>expected = [<span class="number">0i64</span>; <span class="number">64</span>];
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">4 </span>{
+            expected[i * <span class="number">16</span>] = (i + <span class="number">1</span>) <span class="kw">as </span>i64;
+        }
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>arr[..], <span class="kw-2">&amp;</span>expected[..],);
+    }
+
     <span class="attr">#[simd_test(enable = <span class="string">&quot;avx512f&quot;</span>)]
     </span><span class="kw">unsafe fn </span>test_mm512_i64scatter_epi64() {
         <span class="kw">let </span><span class="kw-2">mut </span>arr = [<span class="number">0i64</span>; <span class="number">128</span>];
@@ -24690,5 +24718,4 @@
         assert_eq_m128d(r, e);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

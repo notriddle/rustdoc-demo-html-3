@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ptr/const_ptr.rs`."><title>const_ptr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ptr/const_ptr.rs`."><title>const_ptr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1764,7 +1764,8 @@
 <a href="#1764" id="1764">1764</a>
 <a href="#1765" id="1765">1765</a>
 <a href="#1766" id="1766">1766</a>
-</pre><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
+<a href="#1767" id="1767">1767</a>
+</pre></div><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::cmp::Ordering::{<span class="self">self</span>, Equal, Greater, Less};
 <span class="kw">use </span><span class="kw">crate</span>::intrinsics::{<span class="self">self</span>, const_eval_select};
 <span class="kw">use </span><span class="kw">crate</span>::mem;
@@ -1796,6 +1797,7 @@
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_is_null&quot;</span>, issue = <span class="string">&quot;74939&quot;</span>)]
+    #[rustc_diagnostic_item = <span class="string">&quot;ptr_const_is_null&quot;</span>]
     #[inline]
     </span><span class="kw">pub const fn </span>is_null(<span class="self">self</span>) -&gt; bool {
         <span class="attr">#[inline]
@@ -1870,6 +1872,7 @@
     /// refactored.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;ptr_const_cast&quot;</span>, since = <span class="string">&quot;1.65.0&quot;</span>)]
     #[rustc_const_stable(feature = <span class="string">&quot;ptr_const_cast&quot;</span>, since = <span class="string">&quot;1.65.0&quot;</span>)]
+    #[rustc_diagnostic_item = <span class="string">&quot;ptr_cast_mut&quot;</span>]
     #[inline(always)]
     </span><span class="kw">pub const fn </span>cast_mut(<span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>T {
         <span class="self">self </span><span class="kw">as _
@@ -1898,8 +1901,8 @@
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;ptr_to_from_bits&quot;</span>, issue = <span class="string">&quot;91126&quot;</span>)]
     #[deprecated(
-        since = <span class="string">&quot;1.67&quot;</span>,
-        note = <span class="string">&quot;replaced by the `exposed_addr` method, or update your code \
+        since = <span class="string">&quot;1.67.0&quot;</span>,
+        note = <span class="string">&quot;replaced by the `expose_addr` method, or update your code \
             to follow the strict provenance rules using its APIs&quot;
     </span>)]
     #[inline(always)]
@@ -1927,7 +1930,7 @@
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;ptr_to_from_bits&quot;</span>, issue = <span class="string">&quot;91126&quot;</span>)]
     #[deprecated(
-        since = <span class="string">&quot;1.67&quot;</span>,
+        since = <span class="string">&quot;1.67.0&quot;</span>,
         note = <span class="string">&quot;replaced by the `ptr::from_exposed_addr` function, or update \
             your code to follow the strict provenance rules using its APIs&quot;
     </span>)]
@@ -2030,7 +2033,7 @@
         <span class="kw">let </span>dest_addr = addr <span class="kw">as </span>isize;
         <span class="kw">let </span>offset = dest_addr.wrapping_sub(self_addr);
 
-        <span class="comment">// This is the canonical desugarring of this operation
+        <span class="comment">// This is the canonical desugaring of this operation
         </span><span class="self">self</span>.wrapping_byte_offset(offset)
     }
 
@@ -2683,7 +2686,7 @@
         </span>T: Sized,
     {
         <span class="comment">// SAFETY: the caller must uphold the safety contract for `offset`.
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.offset(count <span class="kw">as </span>isize) }
+        </span><span class="kw">unsafe </span>{ intrinsics::offset(<span class="self">self</span>, count) }
     }
 
     <span class="doccomment">/// Calculates the offset from a pointer in bytes (convenience for `.byte_offset(count as isize)`).
@@ -2953,7 +2956,7 @@
     ///
     /// [`ptr::read`]: crate::ptr::read()
     </span><span class="attr">#[stable(feature = <span class="string">&quot;pointer_methods&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, issue = <span class="string">&quot;80377&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
     #[inline]
     #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
     </span><span class="kw">pub const unsafe fn </span>read(<span class="self">self</span>) -&gt; T
@@ -2994,7 +2997,7 @@
     ///
     /// [`ptr::read_unaligned`]: crate::ptr::read_unaligned()
     </span><span class="attr">#[stable(feature = <span class="string">&quot;pointer_methods&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, issue = <span class="string">&quot;80377&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
     #[inline]
     #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
     </span><span class="kw">pub const unsafe fn </span>read_unaligned(<span class="self">self</span>) -&gt; T
@@ -3416,11 +3419,10 @@
     /// }
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_ptr_get&quot;</span>, issue = <span class="string">&quot;74265&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked&lt;I&gt;(<span class="self">self</span>, index: I) -&gt; <span class="kw-2">*const </span>I::Output
+    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;I&gt;(<span class="self">self</span>, index: I) -&gt; <span class="kw-2">*const </span>I::Output
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;[T]&gt;,
+        </span>I: SliceIndex&lt;[T]&gt;,
     {
         <span class="comment">// SAFETY: the caller ensures that `self` is dereferenceable and `index` in-bounds.
         </span><span class="kw">unsafe </span>{ index.get_unchecked(<span class="self">self</span>) }
@@ -3530,5 +3532,4 @@
         <span class="kw-2">*</span><span class="self">self </span>&gt;= <span class="kw-2">*</span>other
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

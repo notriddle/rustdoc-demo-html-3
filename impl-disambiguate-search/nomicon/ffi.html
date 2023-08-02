@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -349,7 +374,7 @@ This is fairly easy, but requires a few things.</p>
 <h3 id="rust-side"><a class="header" href="#rust-side">Rust side</a></h3>
 <p>First, we assume you have a lib crate named as <code>rust_from_c</code>.
 <code>lib.rs</code> should have Rust code as following:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">#[no_mangle]
+<pre><pre class="playground"><code class="language-rust edition2021">#[no_mangle]
 pub extern &quot;C&quot; fn hello_from_rust() {
     println!(&quot;Hello from Rust!&quot;);
 }
@@ -393,7 +418,7 @@ with the correct calling convention to make it callable from C code.</p>
 to the C library and afterwards be invoked from there.</p>
 <p>A basic example is:</p>
 <p>Rust code:</p>
-<pre><pre class="playground"><code class="language-rust no_run edition2018">extern fn callback(a: i32) {
+<pre><pre class="playground"><code class="language-rust no_run edition2021">extern fn callback(a: i32) {
     println!(&quot;I'm called from C with value {0}&quot;, a);
 }
 
@@ -434,7 +459,7 @@ C library. The C library can then include the pointer to the Rust object in
 the notification. This will allow the callback to unsafely access the
 referenced Rust object.</p>
 <p>Rust code:</p>
-<pre><pre class="playground"><code class="language-rust no_run edition2018">struct RustObject {
+<pre><pre class="playground"><code class="language-rust no_run edition2021">struct RustObject {
     a: i32,
     // Other members...
 }
@@ -549,7 +574,7 @@ unsafe are only allowed inside unsafe blocks. Unsafe blocks isolate unsafety and
 the compiler that the unsafety does not leak out of the block.</p>
 <p>Unsafe functions, on the other hand, advertise it to the world. An unsafe function is written like
 this:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>unsafe fn kaboom(ptr: *const i32) -&gt; i32 { *ptr }
 <span class="boring">}</span></code></pre></pre>
@@ -661,7 +686,7 @@ fn main() {
 }
 </code></pre>
 <p>Normal Rust functions can <em>not</em> be variadic:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust compile_fail edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// This will not compile
 
@@ -796,7 +821,7 @@ exception thrown by <code>may_throw</code>.</p>
 <p>If <code>may_throw</code> does throw an exception, <code>b</code> will be dropped. Otherwise, <code>5</code>
 will be printed.</p>
 <h3 id="panic-can-be-stopped-at-an-abi-boundary"><a class="header" href="#panic-can-be-stopped-at-an-abi-boundary"><code>panic</code> can be stopped at an ABI boundary</a></h3>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[no_mangle]
 extern &quot;C&quot; fn assert_nonzero(input: u32) {
@@ -808,7 +833,7 @@ to (safely) abort the process, whether or not compiled with <code>panic=abort</c
 <h3 id="catching-panic-preemptively"><a class="header" href="#catching-panic-preemptively">Catching <code>panic</code> preemptively</a></h3>
 <p>If you are writing Rust code that may panic, and you don't wish to abort the
 process if it panics, you must use <a href="../std/panic/fn.catch_unwind.html"><code>catch_unwind</code></a>:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">use std::panic::catch_unwind;
+<pre><pre class="playground"><code class="language-rust edition2021">use std::panic::catch_unwind;
 
 #[no_mangle]
 pub extern &quot;C&quot; fn oh_no() -&gt; i32 {
@@ -848,7 +873,7 @@ void foo(struct Foo *arg);
 void bar(struct Bar *arg);
 </code></pre>
 <p>To do this in Rust, let’s create our own opaque types:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">#[repr(C)]
+<pre><pre class="playground"><code class="language-rust edition2021">#[repr(C)]
 pub struct Foo {
     _data: [u8; 0],
     _marker:
@@ -932,5 +957,6 @@ But it's currently (as of June 2021) unstable and has some unresolved questions,
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

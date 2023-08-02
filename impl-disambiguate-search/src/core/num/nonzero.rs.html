@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/nonzero.rs`."><title>nonzero.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/nonzero.rs`."><title>nonzero.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1266,10 +1266,82 @@
 <a href="#1266" id="1266">1266</a>
 <a href="#1267" id="1267">1267</a>
 <a href="#1268" id="1268">1268</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Definitions of integer that is known not to equal zero.
+<a href="#1269" id="1269">1269</a>
+<a href="#1270" id="1270">1270</a>
+<a href="#1271" id="1271">1271</a>
+<a href="#1272" id="1272">1272</a>
+<a href="#1273" id="1273">1273</a>
+<a href="#1274" id="1274">1274</a>
+<a href="#1275" id="1275">1275</a>
+<a href="#1276" id="1276">1276</a>
+<a href="#1277" id="1277">1277</a>
+<a href="#1278" id="1278">1278</a>
+<a href="#1279" id="1279">1279</a>
+<a href="#1280" id="1280">1280</a>
+<a href="#1281" id="1281">1281</a>
+<a href="#1282" id="1282">1282</a>
+<a href="#1283" id="1283">1283</a>
+<a href="#1284" id="1284">1284</a>
+<a href="#1285" id="1285">1285</a>
+<a href="#1286" id="1286">1286</a>
+<a href="#1287" id="1287">1287</a>
+<a href="#1288" id="1288">1288</a>
+<a href="#1289" id="1289">1289</a>
+<a href="#1290" id="1290">1290</a>
+<a href="#1291" id="1291">1291</a>
+<a href="#1292" id="1292">1292</a>
+<a href="#1293" id="1293">1293</a>
+<a href="#1294" id="1294">1294</a>
+<a href="#1295" id="1295">1295</a>
+<a href="#1296" id="1296">1296</a>
+<a href="#1297" id="1297">1297</a>
+<a href="#1298" id="1298">1298</a>
+<a href="#1299" id="1299">1299</a>
+<a href="#1300" id="1300">1300</a>
+<a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
+<a href="#1312" id="1312">1312</a>
+<a href="#1313" id="1313">1313</a>
+<a href="#1314" id="1314">1314</a>
+<a href="#1315" id="1315">1315</a>
+<a href="#1316" id="1316">1316</a>
+<a href="#1317" id="1317">1317</a>
+<a href="#1318" id="1318">1318</a>
+<a href="#1319" id="1319">1319</a>
+<a href="#1320" id="1320">1320</a>
+<a href="#1321" id="1321">1321</a>
+<a href="#1322" id="1322">1322</a>
+<a href="#1323" id="1323">1323</a>
+<a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
+<a href="#1332" id="1332">1332</a>
+<a href="#1333" id="1333">1333</a>
+<a href="#1334" id="1334">1334</a>
+<a href="#1335" id="1335">1335</a>
+<a href="#1336" id="1336">1336</a>
+<a href="#1337" id="1337">1337</a>
+<a href="#1338" id="1338">1338</a>
+<a href="#1339" id="1339">1339</a>
+<a href="#1340" id="1340">1340</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Definitions of integer that is known not to equal zero.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::fmt;
-<span class="kw">use </span><span class="kw">crate</span>::ops::{BitOr, BitOrAssign, Div, Rem};
+<span class="kw">use </span><span class="kw">crate</span>::ops::{BitOr, BitOrAssign, Div, Neg, Rem};
 <span class="kw">use </span><span class="kw">crate</span>::str::FromStr;
 
 <span class="kw">use </span><span class="kw">super</span>::from_str_radix;
@@ -1302,6 +1374,13 @@
             /// use std::mem::size_of;
             </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(size_of::&lt;Option&lt;core::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;&gt;&gt;(), size_of::&lt;&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;&gt;());&quot;</span>)]
             </span><span class="doccomment">/// ```
+            ///
+            /// # Layout
+            ///
+            </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;` is guaranteed to have the same layout and bit validity as `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;`&quot;</span>)]
+            </span><span class="doccomment">/// with the exception that `0` is not a valid instance.
+            </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;`Option&lt;&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;&gt;` is guaranteed to be compatible with `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;`,&quot;</span>)]
+            </span><span class="doccomment">/// including in FFI.
             </span><span class="attr">#[<span class="macro-nonterminal">$stability</span>]
             #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
             #[repr(transparent)]
@@ -1357,8 +1436,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;from_nonzero&quot;</span>, since = <span class="string">&quot;1.31.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_num_from_num&quot;</span>, issue = <span class="string">&quot;87852&quot;</span>)]
-            </span><span class="kw">impl const </span>From&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
+            </span><span class="kw">impl </span>From&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
                 <span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Converts a `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;` into an `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;`&quot;</span>)]
                 #[inline]
                 </span><span class="kw">fn </span>from(nonzero: <span class="macro-nonterminal">$Ty</span>) -&gt; <span class="self">Self </span>{
@@ -1367,8 +1445,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_bitor&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>BitOr <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
+            </span><span class="kw">impl </span>BitOr <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
                 <span class="kw">type </span>Output = <span class="self">Self</span>;
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>bitor(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1379,8 +1456,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_bitor&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>BitOr&lt;<span class="macro-nonterminal">$Int</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
+            </span><span class="kw">impl </span>BitOr&lt;<span class="macro-nonterminal">$Int</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
                 <span class="kw">type </span>Output = <span class="self">Self</span>;
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>bitor(<span class="self">self</span>, rhs: <span class="macro-nonterminal">$Int</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1392,8 +1468,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_bitor&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>BitOr&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
+            </span><span class="kw">impl </span>BitOr&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
                 <span class="kw">type </span>Output = <span class="macro-nonterminal">$Ty</span>;
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>bitor(<span class="self">self</span>, rhs: <span class="macro-nonterminal">$Ty</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1405,8 +1480,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_bitor&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>BitOrAssign <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
+            </span><span class="kw">impl </span>BitOrAssign <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>bitor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
                     <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>| rhs;
@@ -1414,8 +1488,7 @@
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_bitor&quot;</span>, since = <span class="string">&quot;1.45.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>BitOrAssign&lt;<span class="macro-nonterminal">$Int</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
+            </span><span class="kw">impl </span>BitOrAssign&lt;<span class="macro-nonterminal">$Int</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>bitor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="macro-nonterminal">$Int</span>) {
                     <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>| rhs;
@@ -1537,8 +1610,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
     ( $( <span class="macro-nonterminal">$Ty</span>: ident(<span class="macro-nonterminal">$Int</span>: ty); )+ ) =&gt; {
         $(
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_div&quot;</span>, since = <span class="string">&quot;1.51.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>Div&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
+            </span><span class="kw">impl </span>Div&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
                 <span class="kw">type </span>Output = <span class="macro-nonterminal">$Int</span>;
                 <span class="doccomment">/// This operation rounds towards zero,
                 /// truncating any fractional part of the exact result, and cannot panic.
@@ -1551,8 +1623,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;nonzero_div&quot;</span>, since = <span class="string">&quot;1.51.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-            </span><span class="kw">impl const </span>Rem&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
+            </span><span class="kw">impl </span>Rem&lt;<span class="macro-nonterminal">$Ty</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$Int </span>{
                 <span class="kw">type </span>Output = <span class="macro-nonterminal">$Int</span>;
                 <span class="doccomment">/// This operation satisfies `n % d == n - (n / d) * d`, and cannot panic.
                 </span><span class="attr">#[inline]
@@ -1617,7 +1688,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 }
 
                 <span class="doccomment">/// Adds an unsigned integer to a non-zero value.
-                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)]
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)]
                 </span><span class="doccomment">///
                 /// # Examples
                 ///
@@ -1762,6 +1833,43 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="kw">pub const fn </span>ilog10(<span class="self">self</span>) -&gt; u32 {
                     <span class="kw">super</span>::int_log10::<span class="macro-nonterminal">$Int</span>(<span class="self">self</span>.<span class="number">0</span>)
                 }
+
+                <span class="doccomment">/// Calculates the middle point of `self` and `rhs`.
+                ///
+                /// `midpoint(a, b)` is `(a + b) &gt;&gt; 1` as if it were performed in a
+                /// sufficiently-large signed integral type. This implies that the result is
+                /// always rounded towards negative infinity and that no overflow will ever occur.
+                ///
+                /// # Examples
+                ///
+                /// ```
+                /// #![feature(num_midpoint)]
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
+                </span><span class="doccomment">///
+                /// # fn main() { test().unwrap(); }
+                /// # fn test() -&gt; Option&lt;()&gt; {
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;let one = &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::new(1)?;&quot;</span>)]
+                #[doc = <span class="macro">concat!</span>(<span class="string">&quot;let two = &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::new(2)?;&quot;</span>)]
+                #[doc = <span class="macro">concat!</span>(<span class="string">&quot;let four = &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::new(4)?;&quot;</span>)]
+                </span><span class="doccomment">///
+                /// assert_eq!(one.midpoint(four), two);
+                /// assert_eq!(four.midpoint(one), two);
+                /// # Some(())
+                /// # }
+                /// ```
+                </span><span class="attr">#[unstable(feature = <span class="string">&quot;num_midpoint&quot;</span>, issue = <span class="string">&quot;110840&quot;</span>)]
+                #[rustc_const_unstable(feature = <span class="string">&quot;const_num_midpoint&quot;</span>, issue = <span class="string">&quot;110840&quot;</span>)]
+                #[rustc_allow_const_fn_unstable(const_num_midpoint)]
+                #[must_use = <span class="string">&quot;this returns the result of the operation, \
+                              without modifying the original&quot;</span>]
+                #[inline]
+                </span><span class="kw">pub const fn </span>midpoint(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+                    <span class="comment">// SAFETY: The only way to get `0` with midpoint is to have two opposite or
+                    // near opposite numbers: (-5, 5), (0, 1), (0, 0) which is impossible because
+                    // of the unsignedness of this number and also because $Ty is guaranteed to
+                    // never being 0.
+                    </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$Ty::new_unchecked</span>(<span class="self">self</span>.get().midpoint(rhs.get())) }
+                }
             }
         )+
     }
@@ -1811,7 +1919,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
 
                 <span class="doccomment">/// Checked absolute value.
                 /// Checks for overflow and returns [`None`] if
-                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;`self == &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MIN`.&quot;</span>)]
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;`self == &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN`.&quot;</span>)]
                 </span><span class="doccomment">/// The result cannot be zero.
                 ///
                 /// # Example
@@ -1933,8 +2041,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// assert_eq!(pos, pos.wrapping_abs());
                 /// assert_eq!(pos, neg.wrapping_abs());
                 /// assert_eq!(min, min.wrapping_abs());
-                /// # // FIXME: add once Neg is implemented?
-                /// # // assert_eq!(max, (-max).wrapping_abs());
+                /// assert_eq!(max, (-max).wrapping_abs());
                 /// # Some(())
                 /// # }
                 /// ```
@@ -1983,14 +2090,37 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                     </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$Uty::new_unchecked</span>(<span class="self">self</span>.get().unsigned_abs()) }
                 }
 
+                <span class="doccomment">/// Returns `true` if `self` is positive and `false` if the
+                /// number is negative.
+                ///
+                /// # Example
+                ///
+                /// ```
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
+                </span><span class="doccomment">/// # fn main() { test().unwrap(); }
+                /// # fn test() -&gt; Option&lt;()&gt; {
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;let pos_five = &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::new(5)?;&quot;</span>)]
+                #[doc = <span class="macro">concat!</span>(<span class="string">&quot;let neg_five = &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::new(-5)?;&quot;</span>)]
+                </span><span class="doccomment">///
+                /// assert!(pos_five.is_positive());
+                /// assert!(!neg_five.is_positive());
+                /// # Some(())
+                /// # }
+                /// ```
+                </span><span class="attr">#[must_use]
+                #[inline]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                </span><span class="kw">pub const fn </span>is_positive(<span class="self">self</span>) -&gt; bool {
+                    <span class="self">self</span>.get().is_positive()
+                }
+
                 <span class="doccomment">/// Returns `true` if `self` is negative and `false` if the
                 /// number is positive.
                 ///
                 /// # Example
                 ///
                 /// ```
-                /// #![feature(nonzero_negation_ops)]
-                ///
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 </span><span class="doccomment">/// # fn main() { test().unwrap(); }
                 /// # fn test() -&gt; Option&lt;()&gt; {
@@ -2004,18 +2134,18 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// ```
                 </span><span class="attr">#[must_use]
                 #[inline]
-                #[unstable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, issue = <span class="string">&quot;102443&quot;</span>)]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
                 </span><span class="kw">pub const fn </span>is_negative(<span class="self">self</span>) -&gt; bool {
                     <span class="self">self</span>.get().is_negative()
                 }
 
-                <span class="doccomment">/// Checked negation. Computes `-self`, returning `None` if `self == i32::MIN`.
-                ///
+                <span class="doccomment">/// Checked negation. Computes `-self`,
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;returning `None` if `self == &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN`.&quot;</span>)]
+                </span><span class="doccomment">///
                 /// # Example
                 ///
                 /// ```
-                /// #![feature(nonzero_negation_ops)]
-                ///
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 </span><span class="doccomment">/// # fn main() { test().unwrap(); }
                 /// # fn test() -&gt; Option&lt;()&gt; {
@@ -2030,7 +2160,8 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # }
                 /// ```
                 </span><span class="attr">#[inline]
-                #[unstable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, issue = <span class="string">&quot;102443&quot;</span>)]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
                 </span><span class="kw">pub const fn </span>checked_neg(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$Ty</span>&gt; {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(result) = <span class="self">self</span>.get().checked_neg() {
                         <span class="comment">// SAFETY: negation of nonzero cannot yield zero values.
@@ -2047,8 +2178,6 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # Example
                 ///
                 /// ```
-                /// #![feature(nonzero_negation_ops)]
-                ///
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 </span><span class="doccomment">/// # fn main() { test().unwrap(); }
                 /// # fn test() -&gt; Option&lt;()&gt; {
@@ -2063,21 +2192,22 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # }
                 /// ```
                 </span><span class="attr">#[inline]
-                #[unstable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, issue = <span class="string">&quot;102443&quot;</span>)]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
                 </span><span class="kw">pub const fn </span>overflowing_neg(<span class="self">self</span>) -&gt; (<span class="macro-nonterminal">$Ty</span>, bool) {
                     <span class="kw">let </span>(result, overflow) = <span class="self">self</span>.get().overflowing_neg();
                     <span class="comment">// SAFETY: negation of nonzero cannot yield zero values.
                     </span>((<span class="kw">unsafe </span>{ <span class="macro-nonterminal">$Ty::new_unchecked</span>(result) }), overflow)
                 }
 
-                <span class="doccomment">/// Saturating negation. Computes `-self`, returning `MAX` if
-                /// `self == i32::MIN` instead of overflowing.
+                <span class="doccomment">/// Saturating negation. Computes `-self`,
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;returning [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX`]&quot;</span>)]
+                #[doc = <span class="macro">concat!</span>(<span class="string">&quot;if `self == &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN`&quot;</span>)]
+                </span><span class="doccomment">/// instead of overflowing.
                 ///
                 /// # Example
                 ///
                 /// ```
-                /// #![feature(nonzero_negation_ops)]
-                ///
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 </span><span class="doccomment">/// # fn main() { test().unwrap(); }
                 /// # fn test() -&gt; Option&lt;()&gt; {
@@ -2097,7 +2227,8 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # }
                 /// ```
                 </span><span class="attr">#[inline]
-                #[unstable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, issue = <span class="string">&quot;102443&quot;</span>)]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
                 </span><span class="kw">pub const fn </span>saturating_neg(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$Ty </span>{
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(result) = <span class="self">self</span>.checked_neg() {
                         <span class="kw">return </span>result;
@@ -2114,8 +2245,6 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # Example
                 ///
                 /// ```
-                /// #![feature(nonzero_negation_ops)]
-                ///
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 </span><span class="doccomment">/// # fn main() { test().unwrap(); }
                 /// # fn test() -&gt; Option&lt;()&gt; {
@@ -2130,13 +2259,28 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 /// # }
                 /// ```
                 </span><span class="attr">#[inline]
-                #[unstable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, issue = <span class="string">&quot;102443&quot;</span>)]
+                #[stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+                #[rustc_const_stable(feature = <span class="string">&quot;nonzero_negation_ops&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
                 </span><span class="kw">pub const fn </span>wrapping_neg(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$Ty </span>{
                     <span class="kw">let </span>result = <span class="self">self</span>.get().wrapping_neg();
                     <span class="comment">// SAFETY: negation of nonzero cannot yield zero values.
                     </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$Ty::new_unchecked</span>(result) }
                 }
             }
+
+            <span class="attr">#[stable(feature = <span class="string">&quot;signed_nonzero_neg&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+            </span><span class="kw">impl </span>Neg <span class="kw">for </span><span class="macro-nonterminal">$Ty </span>{
+                <span class="kw">type </span>Output = <span class="macro-nonterminal">$Ty</span>;
+
+                <span class="attr">#[inline]
+                </span><span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$Ty </span>{
+                    <span class="comment">// SAFETY: negation of nonzero cannot yield zero values.
+                    </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$Ty::new_unchecked</span>(<span class="self">self</span>.get().neg()) }
+                }
+            }
+
+            <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl </span>Neg, neg <span class="kw">for </span><span class="macro-nonterminal">$Ty</span>,
+                <span class="attr">#[stable(feature = <span class="string">&quot;signed_nonzero_neg&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)] </span>}
         )+
     }
 }
@@ -2192,7 +2336,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 }
 
                 <span class="doccomment">/// Multiplies two non-zero integers together.
-                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)]
+                </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)]
                 </span><span class="doccomment">///
                 /// # Examples
                 ///
@@ -2301,11 +2445,11 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="attr">#[doc = <span class="macro">sign_dependent_expr!</span>{
                     <span class="macro-nonterminal">$signedness </span><span class="question-mark">?
                     </span><span class="kw">if </span>signed {
-                        <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MIN`] &quot;</span>,
-                                    <span class="string">&quot;or [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)
+                        <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN`] &quot;</span>,
+                                    <span class="string">&quot;or [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)
                     }
                     <span class="kw">if </span>unsigned {
-                        <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)
+                        <span class="macro">concat!</span>(<span class="string">&quot;Return [`&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX`] on overflow.&quot;</span>)
                     }
                 }]
                 </span><span class="doccomment">///
@@ -2418,7 +2562,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN.get(), 1&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;);&quot;</span>)]
                 </span><span class="doccomment">/// ```
-                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
                 </span><span class="kw">pub const </span>MIN: <span class="self">Self </span>= <span class="self">Self</span>::new(<span class="number">1</span>).unwrap();
 
                 <span class="doccomment">/// The largest value that can be represented by this non-zero
@@ -2431,7 +2575,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX.get(), &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX);&quot;</span>)]
                 </span><span class="doccomment">/// ```
-                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
                 </span><span class="kw">pub const </span>MAX: <span class="self">Self </span>= <span class="self">Self</span>::new(&lt;<span class="macro-nonterminal">$Int</span>&gt;::MAX).unwrap();
             }
         )+
@@ -2456,7 +2600,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MIN.get(), &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MIN);&quot;</span>)]
                 </span><span class="doccomment">/// ```
-                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
                 </span><span class="kw">pub const </span>MIN: <span class="self">Self </span>= <span class="self">Self</span>::new(&lt;<span class="macro-nonterminal">$Int</span>&gt;::MIN).unwrap();
 
                 <span class="doccomment">/// The largest value that can be represented by this non-zero
@@ -2473,7 +2617,7 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
                 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use std::num::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;;&quot;</span>)]
                 #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Ty</span>), <span class="string">&quot;::MAX.get(), &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$Int</span>), <span class="string">&quot;::MAX);&quot;</span>)]
                 </span><span class="doccomment">/// ```
-                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+                </span><span class="attr">#[stable(feature = <span class="string">&quot;nonzero_min_max&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
                 </span><span class="kw">pub const </span>MAX: <span class="self">Self </span>= <span class="self">Self</span>::new(&lt;<span class="macro-nonterminal">$Int</span>&gt;::MAX).unwrap();
             }
         )+
@@ -2534,5 +2678,4 @@ NonZeroI8 NonZeroI16 NonZeroI32 NonZeroI64 NonZeroI128 NonZeroIsize }
     NonZeroUsize(usize);
     NonZeroIsize(isize);
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ffi/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ffi/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -624,7 +624,23 @@
 <a href="#624" id="624">624</a>
 <a href="#625" id="625">625</a>
 <a href="#626" id="626">626</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Platform-specific types, as defined by C.
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Platform-specific types, as defined by C.
 //!
 //! Code that interacts via FFI will almost certainly be using the
 //! base types provided by C, which aren&#39;t nearly as nicely defined
@@ -678,12 +694,7 @@
 }
 
 <span class="macro">type_alias! </span>{ <span class="string">&quot;c_char.md&quot;</span>, c_char = c_char_definition::c_char, NonZero_c_char = c_char_definition::NonZero_c_char;
-<span class="comment">// Make this type alias appear cfg-dependent so that Clippy does not suggest
-// replacing `0 as c_char` with `0_i8`/`0_u8`. This #[cfg(all())] can be removed
-// after the false positive in https://github.com/rust-lang/rust-clippy/issues/8093
-// is fixed.
-</span><span class="attr">#[cfg(all())]
-#[doc(cfg(all()))] </span>}
+<span class="attr">#[doc(cfg(all()))] </span>}
 
 <span class="macro">type_alias! </span>{ <span class="string">&quot;c_schar.md&quot;</span>, c_schar = i8, NonZero_c_schar = NonZeroI8; }
 <span class="macro">type_alias! </span>{ <span class="string">&quot;c_uchar.md&quot;</span>, c_uchar = u8, NonZero_c_uchar = NonZeroU8; }
@@ -758,7 +769,12 @@
             ),
             all(
                 target_os = <span class="string">&quot;netbsd&quot;</span>,
-                any(target_arch = <span class="string">&quot;aarch64&quot;</span>, target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;powerpc&quot;</span>)
+                any(
+                    target_arch = <span class="string">&quot;aarch64&quot;</span>,
+                    target_arch = <span class="string">&quot;arm&quot;</span>,
+                    target_arch = <span class="string">&quot;powerpc&quot;</span>,
+                    target_arch = <span class="string">&quot;riscv64&quot;
+                </span>)
             ),
             all(
                 target_os = <span class="string">&quot;vxworks&quot;</span>,
@@ -769,7 +785,10 @@
                     target_arch = <span class="string">&quot;powerpc&quot;
                 </span>)
             ),
-            all(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_arch = <span class="string">&quot;aarch64&quot;</span>),
+            all(
+                target_os = <span class="string">&quot;fuchsia&quot;</span>,
+                any(target_arch = <span class="string">&quot;aarch64&quot;</span>, target_arch = <span class="string">&quot;riscv64&quot;</span>)
+            ),
             all(target_os = <span class="string">&quot;nto&quot;</span>, target_arch = <span class="string">&quot;aarch64&quot;</span>),
             target_os = <span class="string">&quot;horizon&quot;
         </span>))] </span>{
@@ -825,8 +844,9 @@
 //     would be uninhabited and at least dereferencing such pointers would
 //     be UB.
 </span><span class="attr">#[doc = <span class="macro">include_str!</span>(<span class="string">&quot;c_void.md&quot;</span>)]
-#[repr(u8)]
-#[stable(feature = <span class="string">&quot;core_c_void&quot;</span>, since = <span class="string">&quot;1.30.0&quot;</span>)]
+#[lang = <span class="string">&quot;c_void&quot;</span>]
+#[cfg_attr(not(doc), repr(u8))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/90435
+</span><span class="attr">#[stable(feature = <span class="string">&quot;core_c_void&quot;</span>, since = <span class="string">&quot;1.30.0&quot;</span>)]
 </span><span class="kw">pub enum </span>c_void {
     <span class="attr">#[unstable(
         feature = <span class="string">&quot;c_void_variant&quot;</span>,
@@ -860,14 +880,14 @@
         not(target_arch = <span class="string">&quot;s390x&quot;</span>),
         not(target_arch = <span class="string">&quot;x86_64&quot;</span>)
     ),
-    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)),
+    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>)),
     target_family = <span class="string">&quot;wasm&quot;</span>,
     target_arch = <span class="string">&quot;asmjs&quot;</span>,
     target_os = <span class="string">&quot;uefi&quot;</span>,
     windows,
 ))]
-#[repr(transparent)]
-#[unstable(
+#[cfg_attr(not(doc), repr(transparent))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/90435
+</span><span class="attr">#[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
               all supported platforms&quot;</span>,
@@ -889,7 +909,7 @@
         not(target_arch = <span class="string">&quot;s390x&quot;</span>),
         not(target_arch = <span class="string">&quot;x86_64&quot;</span>)
     ),
-    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)),
+    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>)),
     target_family = <span class="string">&quot;wasm&quot;</span>,
     target_arch = <span class="string">&quot;asmjs&quot;</span>,
     target_os = <span class="string">&quot;uefi&quot;</span>,
@@ -914,12 +934,12 @@
 /// http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
 </span><span class="attr">#[cfg(all(
     target_arch = <span class="string">&quot;aarch64&quot;</span>,
-    not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)),
+    not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>)),
     not(target_os = <span class="string">&quot;uefi&quot;</span>),
     not(windows),
 ))]
-#[repr(C)]
-#[derive(Debug)]
+#[cfg_attr(not(doc), repr(C))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/66401
+</span><span class="attr">#[derive(Debug)]
 #[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
@@ -938,8 +958,8 @@
 
 <span class="doccomment">/// PowerPC ABI implementation of a `va_list`.
 </span><span class="attr">#[cfg(all(target_arch = <span class="string">&quot;powerpc&quot;</span>, not(target_os = <span class="string">&quot;uefi&quot;</span>), not(windows)))]
-#[repr(C)]
-#[derive(Debug)]
+#[cfg_attr(not(doc), repr(C))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/66401
+</span><span class="attr">#[derive(Debug)]
 #[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
@@ -958,8 +978,8 @@
 
 <span class="doccomment">/// s390x ABI implementation of a `va_list`.
 </span><span class="attr">#[cfg(target_arch = <span class="string">&quot;s390x&quot;</span>)]
-#[repr(C)]
-#[derive(Debug)]
+#[cfg_attr(not(doc), repr(C))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/66401
+</span><span class="attr">#[derive(Debug)]
 #[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
@@ -977,8 +997,8 @@
 
 <span class="doccomment">/// x86_64 ABI implementation of a `va_list`.
 </span><span class="attr">#[cfg(all(target_arch = <span class="string">&quot;x86_64&quot;</span>, not(target_os = <span class="string">&quot;uefi&quot;</span>), not(windows)))]
-#[repr(C)]
-#[derive(Debug)]
+#[cfg_attr(not(doc), repr(C))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/66401
+</span><span class="attr">#[derive(Debug)]
 #[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
@@ -995,8 +1015,8 @@
 }
 
 <span class="doccomment">/// A wrapper for a `va_list`
-</span><span class="attr">#[repr(transparent)]
-#[derive(Debug)]
+</span><span class="attr">#[cfg_attr(not(doc), repr(transparent))] </span><span class="comment">// work around https://github.com/rust-lang/rust/issues/90435
+</span><span class="attr">#[derive(Debug)]
 #[unstable(
     feature = <span class="string">&quot;c_variadic&quot;</span>,
     reason = <span class="string">&quot;the `c_variadic` feature has not been properly tested on \
@@ -1011,7 +1031,10 @@
             not(target_arch = <span class="string">&quot;s390x&quot;</span>),
             not(target_arch = <span class="string">&quot;x86_64&quot;</span>)
         ),
-        all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)),
+        all(
+            target_arch = <span class="string">&quot;aarch64&quot;</span>,
+            any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>)
+        ),
         target_family = <span class="string">&quot;wasm&quot;</span>,
         target_arch = <span class="string">&quot;asmjs&quot;</span>,
         target_os = <span class="string">&quot;uefi&quot;</span>,
@@ -1026,7 +1049,10 @@
             target_arch = <span class="string">&quot;s390x&quot;</span>,
             target_arch = <span class="string">&quot;x86_64&quot;
         </span>),
-        any(not(target_arch = <span class="string">&quot;aarch64&quot;</span>), not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>))),
+        any(
+            not(target_arch = <span class="string">&quot;aarch64&quot;</span>),
+            not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>))
+        ),
         not(target_family = <span class="string">&quot;wasm&quot;</span>),
         not(target_arch = <span class="string">&quot;asmjs&quot;</span>),
         not(target_os = <span class="string">&quot;uefi&quot;</span>),
@@ -1044,7 +1070,7 @@
         not(target_arch = <span class="string">&quot;s390x&quot;</span>),
         not(target_arch = <span class="string">&quot;x86_64&quot;</span>)
     ),
-    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>)),
+    all(target_arch = <span class="string">&quot;aarch64&quot;</span>, any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>)),
     target_family = <span class="string">&quot;wasm&quot;</span>,
     target_arch = <span class="string">&quot;asmjs&quot;</span>,
     target_os = <span class="string">&quot;uefi&quot;</span>,
@@ -1071,7 +1097,10 @@
         target_arch = <span class="string">&quot;s390x&quot;</span>,
         target_arch = <span class="string">&quot;x86_64&quot;
     </span>),
-    any(not(target_arch = <span class="string">&quot;aarch64&quot;</span>), not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>))),
+    any(
+        not(target_arch = <span class="string">&quot;aarch64&quot;</span>),
+        not(any(target_os = <span class="string">&quot;macos&quot;</span>, target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>))
+    ),
     not(target_family = <span class="string">&quot;wasm&quot;</span>),
     not(target_arch = <span class="string">&quot;asmjs&quot;</span>),
     not(target_os = <span class="string">&quot;uefi&quot;</span>),
@@ -1241,14 +1270,16 @@
 <span class="kw">extern </span><span class="string">&quot;rust-intrinsic&quot; </span>{
     <span class="doccomment">/// Destroy the arglist `ap` after initialization with `va_start` or
     /// `va_copy`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">fn </span>va_end(ap: <span class="kw-2">&amp;mut </span>VaListImpl&lt;<span class="lifetime">&#39;_</span>&gt;);
 
     <span class="doccomment">/// Copies the current location of arglist `src` to the arglist `dst`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">fn </span>va_copy&lt;<span class="lifetime">&#39;f</span>&gt;(dest: <span class="kw-2">*mut </span>VaListImpl&lt;<span class="lifetime">&#39;f</span>&gt;, src: <span class="kw-2">&amp;</span>VaListImpl&lt;<span class="lifetime">&#39;f</span>&gt;);
 
     <span class="doccomment">/// Loads an argument of type `T` from the `va_list` `ap` and increment the
     /// argument `ap` points to.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">fn </span>va_arg&lt;T: sealed_trait::VaArgSafe&gt;(ap: <span class="kw-2">&amp;mut </span>VaListImpl&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; T;
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

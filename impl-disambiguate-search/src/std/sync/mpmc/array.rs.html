@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sync/mpmc/array.rs`."><title>array.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sync/mpmc/array.rs`."><title>array.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -503,7 +503,66 @@
 <a href="#503" id="503">503</a>
 <a href="#504" id="504">504</a>
 <a href="#505" id="505">505</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Bounded channel based on a preallocated array.
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Bounded channel based on a preallocated array.
 //!
 //! This flavor has a fixed, positive capacity.
 //!
@@ -530,7 +589,8 @@
     <span class="doccomment">/// The current stamp.
     </span>stamp: AtomicUsize,
 
-    <span class="doccomment">/// The message in this slot.
+    <span class="doccomment">/// The message in this slot. Either read out in `read` or dropped through
+    /// `discard_all_messages`.
     </span>msg: UnsafeCell&lt;MaybeUninit&lt;T&gt;&gt;,
 }
 
@@ -944,19 +1004,97 @@
         <span class="prelude-val">Some</span>(<span class="self">self</span>.cap)
     }
 
-    <span class="doccomment">/// Disconnects the channel and wakes up all blocked senders and receivers.
+    <span class="doccomment">/// Disconnects senders and wakes up all blocked receivers.
     ///
     /// Returns `true` if this call disconnected the channel.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>disconnect(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>disconnect_senders(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">let </span>tail = <span class="self">self</span>.tail.fetch_or(<span class="self">self</span>.mark_bit, Ordering::SeqCst);
 
         <span class="kw">if </span>tail &amp; <span class="self">self</span>.mark_bit == <span class="number">0 </span>{
-            <span class="self">self</span>.senders.disconnect();
             <span class="self">self</span>.receivers.disconnect();
             <span class="bool-val">true
         </span>} <span class="kw">else </span>{
             <span class="bool-val">false
         </span>}
+    }
+
+    <span class="doccomment">/// Disconnects receivers and wakes up all blocked senders.
+    ///
+    /// Returns `true` if this call disconnected the channel.
+    ///
+    /// # Safety
+    /// May only be called once upon dropping the last receiver. The
+    /// destruction of all other receivers must have been observed with acquire
+    /// ordering or stronger.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>disconnect_receivers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">let </span>tail = <span class="self">self</span>.tail.fetch_or(<span class="self">self</span>.mark_bit, Ordering::SeqCst);
+        <span class="kw">let </span>disconnected = <span class="kw">if </span>tail &amp; <span class="self">self</span>.mark_bit == <span class="number">0 </span>{
+            <span class="self">self</span>.senders.disconnect();
+            <span class="bool-val">true
+        </span>} <span class="kw">else </span>{
+            <span class="bool-val">false
+        </span>};
+
+        <span class="self">self</span>.discard_all_messages(tail);
+        disconnected
+    }
+
+    <span class="doccomment">/// Discards all messages.
+    ///
+    /// `tail` should be the current (and therefore last) value of `tail`.
+    ///
+    /// # Panicking
+    /// If a destructor panics, the remaining messages are leaked, matching the
+    /// behaviour of the unbounded channel.
+    ///
+    /// # Safety
+    /// This method must only be called when dropping the last receiver. The
+    /// destruction of all other receivers must have been observed with acquire
+    /// ordering or stronger.
+    </span><span class="kw">unsafe fn </span>discard_all_messages(<span class="kw-2">&amp;</span><span class="self">self</span>, tail: usize) {
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_disconnected());
+
+        <span class="comment">// Only receivers modify `head`, so since we are the last one,
+        // this value will not change and will not be observed (since
+        // no new messages can be sent after disconnection).
+        </span><span class="kw">let </span><span class="kw-2">mut </span>head = <span class="self">self</span>.head.load(Ordering::Relaxed);
+        <span class="kw">let </span>tail = tail &amp; !<span class="self">self</span>.mark_bit;
+
+        <span class="kw">let </span>backoff = Backoff::new();
+        <span class="kw">loop </span>{
+            <span class="comment">// Deconstruct the head.
+            </span><span class="kw">let </span>index = head &amp; (<span class="self">self</span>.mark_bit - <span class="number">1</span>);
+            <span class="kw">let </span>lap = head &amp; !(<span class="self">self</span>.one_lap - <span class="number">1</span>);
+
+            <span class="comment">// Inspect the corresponding slot.
+            </span><span class="macro">debug_assert!</span>(index &lt; <span class="self">self</span>.buffer.len());
+            <span class="kw">let </span>slot = <span class="kw">unsafe </span>{ <span class="self">self</span>.buffer.get_unchecked(index) };
+            <span class="kw">let </span>stamp = slot.stamp.load(Ordering::Acquire);
+
+            <span class="comment">// If the stamp is ahead of the head by 1, we may drop the message.
+            </span><span class="kw">if </span>head + <span class="number">1 </span>== stamp {
+                head = <span class="kw">if </span>index + <span class="number">1 </span>&lt; <span class="self">self</span>.cap {
+                    <span class="comment">// Same lap, incremented index.
+                    // Set to `{ lap: lap, mark: 0, index: index + 1 }`.
+                    </span>head + <span class="number">1
+                </span>} <span class="kw">else </span>{
+                    <span class="comment">// One lap forward, index wraps around to zero.
+                    // Set to `{ lap: lap.wrapping_add(1), mark: 0, index: 0 }`.
+                    </span>lap.wrapping_add(<span class="self">self</span>.one_lap)
+                };
+
+                <span class="kw">unsafe </span>{
+                    (<span class="kw-2">*</span>slot.msg.get()).assume_init_drop();
+                }
+            <span class="comment">// If the tail equals the head, that means the channel is empty.
+            </span>} <span class="kw">else if </span>tail == head {
+                <span class="kw">return</span>;
+            <span class="comment">// Otherwise, a sender is about to write into the slot, so we need
+            // to wait for it to update the stamp.
+            </span>} <span class="kw">else </span>{
+                backoff.spin_heavy();
+            }
+        }
     }
 
     <span class="doccomment">/// Returns `true` if the channel is disconnected.
@@ -988,25 +1126,4 @@
         </span>head.wrapping_add(<span class="self">self</span>.one_lap) == tail &amp; !<span class="self">self</span>.mark_bit
     }
 }
-
-<span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>Channel&lt;T&gt; {
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="comment">// Get the index of the head.
-        </span><span class="kw">let </span>hix = <span class="self">self</span>.head.load(Ordering::Relaxed) &amp; (<span class="self">self</span>.mark_bit - <span class="number">1</span>);
-
-        <span class="comment">// Loop over all slots that hold a message and drop them.
-        </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.len() {
-            <span class="comment">// Compute the index of the next slot holding a message.
-            </span><span class="kw">let </span>index = <span class="kw">if </span>hix + i &lt; <span class="self">self</span>.cap { hix + i } <span class="kw">else </span>{ hix + i - <span class="self">self</span>.cap };
-
-            <span class="kw">unsafe </span>{
-                <span class="macro">debug_assert!</span>(index &lt; <span class="self">self</span>.buffer.len());
-                <span class="kw">let </span>slot = <span class="self">self</span>.buffer.get_unchecked_mut(index);
-                <span class="kw">let </span>msg = <span class="kw-2">&amp;mut *</span>slot.msg.get();
-                msg.as_mut_ptr().drop_in_place();
-            }
-        }
-    }
-}
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

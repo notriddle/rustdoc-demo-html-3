@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -150,7 +175,7 @@
 types or lifetimes are logically associated with a struct, but not actually
 part of a field. This most commonly occurs with lifetimes. For instance, the
 <code>Iter</code> for <code>&amp;'a [T]</code> is (approximately) defined as follows:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust compile_fail edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Iter&lt;'a, T: 'a&gt; {
     ptr: *const T,
@@ -166,10 +191,10 @@ Correctly doing this is necessary to have correct variance and drop checking.</p
 consumes no space, but simulates a field of the given type for the purpose of
 static analysis. This was deemed to be less error-prone than explicitly telling
 the type-system the kind of variance that you want, while also providing other
-useful things such as the information needed by drop check.</p>
+useful things such as auto traits and the information needed by drop check.</p>
 <p>Iter logically contains a bunch of <code>&amp;'a T</code>s, so this is exactly what we tell
 the <code>PhantomData</code> to simulate:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use std::marker;
 
@@ -186,7 +211,7 @@ over <code>'a</code> and <code>T</code>. Everything Just Works.</p>
 <p>This very documentation used to say:</p>
 <blockquote>
 <p>Another important example is Vec, which is (approximately) defined as follows:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Vec&lt;T&gt; {
     data: *const T, // *const for variance!
@@ -206,7 +231,7 @@ Vec's destructor.</p>
 <p>In order to tell the drop checker that we <em>do</em> own values of type T, and
 therefore may drop some T's when <em>we</em> drop, we must add an extra <code>PhantomData</code>
 saying exactly that:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use std::marker;
 
@@ -221,7 +246,7 @@ struct Vec&lt;T&gt; {
 <p>But ever since <a href="https://rust-lang.github.io/rfcs/1238-nonparametric-dropck.html">RFC 1238</a>,
 <strong>this is no longer true nor necessary</strong>.</p>
 <p>If you were to write:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Vec&lt;T&gt; {
     data: *const T, // `*const` for variance!
@@ -248,7 +273,7 @@ curious about what the standard library does with the actual <code>Vec</code> de
 that it still needs to use a <code>_owns_T: PhantomData&lt;T&gt;</code> field for soundness.</p>
 <details><summary>Click here to see why</summary>
 <p>Consider the following example:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">fn main() {
+<pre><pre class="playground"><code class="language-rust edition2021">fn main() {
     let mut v: Vec&lt;&amp;str&gt; = Vec::new();
     let s: String = &quot;Short-lived&quot;.into();
     v.push(&amp;s);
@@ -289,7 +314,7 @@ exception&quot; is a pervasive situation whenever <strong>we own a <code>T</code
 smart enough to know of this opt-out, and will thus be disabled <em>when the generic parameter is held
 in an owned fashion</em> by the fields of the struct.</p>
 <p>Hence why the standard library ends up with:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">#[cfg(any())]
 </span>// we pinky-swear not to use `T` when dropping a `Vec`…
@@ -329,16 +354,16 @@ standard library made a utility for itself called <code>Unique&lt;T&gt;</code> w
 </ul>
 <h2 id="table-of-phantomdata-patterns"><a class="header" href="#table-of-phantomdata-patterns">Table of <code>PhantomData</code> patterns</a></h2>
 <p>Here’s a table of all the wonderful ways <code>PhantomData</code> could be used:</p>
-<div class="table-wrapper"><table><thead><tr><th>Phantom type</th><th><code>'a</code></th><th><code>T</code></th></tr></thead><tbody>
-<tr><td><code>PhantomData&lt;T&gt;</code></td><td>-</td><td>covariant (with drop check)</td></tr>
-<tr><td><code>PhantomData&lt;&amp;'a T&gt;</code></td><td>covariant</td><td>covariant</td></tr>
-<tr><td><code>PhantomData&lt;&amp;'a mut T&gt;</code></td><td>covariant</td><td>invariant</td></tr>
-<tr><td><code>PhantomData&lt;*const T&gt;</code></td><td>-</td><td>covariant</td></tr>
-<tr><td><code>PhantomData&lt;*mut T&gt;</code></td><td>-</td><td>invariant</td></tr>
-<tr><td><code>PhantomData&lt;fn(T)&gt;</code></td><td>-</td><td>contravariant</td></tr>
-<tr><td><code>PhantomData&lt;fn() -&gt; T&gt;</code></td><td>-</td><td>covariant</td></tr>
-<tr><td><code>PhantomData&lt;fn(T) -&gt; T&gt;</code></td><td>-</td><td>invariant</td></tr>
-<tr><td><code>PhantomData&lt;Cell&lt;&amp;'a ()&gt;&gt;</code></td><td>invariant</td><td>-</td></tr>
+<div class="table-wrapper"><table><thead><tr><th>Phantom type</th><th><code>'a</code></th><th><code>T</code></th><th><code>Send</code></th><th><code>Sync</code></th></tr></thead><tbody>
+<tr><td><code>PhantomData&lt;T&gt;</code></td><td>-</td><td>covariant (with drop check)</td><td><code>T: Send</code></td><td><code>T: Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;&amp;'a T&gt;</code></td><td>covariant</td><td>covariant</td><td><code>T: Sync</code></td><td><code>T: Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;&amp;'a mut T&gt;</code></td><td>covariant</td><td>invariant</td><td><code>T: Send</code></td><td><code>T: Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;*const T&gt;</code></td><td>-</td><td>covariant</td><td>-</td><td>-</td></tr>
+<tr><td><code>PhantomData&lt;*mut T&gt;</code></td><td>-</td><td>invariant</td><td>-</td><td>-</td></tr>
+<tr><td><code>PhantomData&lt;fn(T)&gt;</code></td><td>-</td><td>contravariant</td><td><code>Send</code></td><td><code>Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;fn() -&gt; T&gt;</code></td><td>-</td><td>covariant</td><td><code>Send</code></td><td><code>Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;fn(T) -&gt; T&gt;</code></td><td>-</td><td>invariant</td><td><code>Send</code></td><td><code>Sync</code></td></tr>
+<tr><td><code>PhantomData&lt;Cell&lt;&amp;'a ()&gt;&gt;</code></td><td>invariant</td><td>-</td><td><code>Send</code></td><td>-</td></tr>
 </tbody></table>
 </div>
                     </main>
@@ -389,5 +414,6 @@ standard library made a utility for itself called <code>Unique&lt;T&gt;</code> w
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

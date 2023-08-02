@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -85,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -182,18 +207,17 @@ correctness at compile time.</p>
     println!(&quot;Base 16 (hexadecimal): {:x}&quot;, 69420); // 10f2c
     println!(&quot;Base 16 (hexadecimal): {:X}&quot;, 69420); // 10F2C
 
-
     // You can right-justify text with a specified width. This will
     // output &quot;    1&quot;. (Four white spaces and a &quot;1&quot;, for a total width of 5.)
     println!(&quot;{number:&gt;5}&quot;, number=1);
 
     // You can pad numbers with extra zeroes,
+    println!(&quot;{number:0&gt;5}&quot;, number=1); // 00001
     // and left-adjust by flipping the sign. This will output &quot;10000&quot;.
-    println!(&quot;{number:0&lt;5}&quot;, number=1);
+    println!(&quot;{number:0&lt;5}&quot;, number=1); // 10000
 
     // You can use named arguments in the format specifier by appending a `$`.
     println!(&quot;{number:0&gt;width$}&quot;, number=1, width=5);
-
 
     // Rust even checks to make sure the correct number of arguments are used.
     println!(&quot;My name is {0}, {1} {0}&quot;, &quot;Bond&quot;);
@@ -207,7 +231,7 @@ correctness at compile time.</p>
 
     // This will not compile because `Structure` does not implement
     // fmt::Display.
-    //println!(&quot;This struct `{}` won't print...&quot;, Structure(3));
+    // println!(&quot;This struct `{}` won't print...&quot;, Structure(3));
     // TODO ^ Try uncommenting this line
 
     // For Rust 1.58 and above, you can directly capture the argument from a
@@ -228,7 +252,7 @@ friendly fashion.</li>
 for these types. To print text for custom types, more steps are required.</p>
 <p>Implementing the <code>fmt::Display</code> trait automatically implements the
 <a href="https://doc.rust-lang.org/std/string/trait.ToString.html"><code>ToString</code></a> trait which allows us to <a href="../conversion/string.html">convert</a> the type to <a href="../std/str.html"><code>String</code></a>.</p>
-<p>In <em>line 46</em>, <code>#[allow(dead_code)]</code> is an <a href="../attribute.html">attribute</a> which only apply to the module after it.</p>
+<p>In <em>line 43</em>, <code>#[allow(dead_code)]</code> is an <a href="../attribute.html">attribute</a> which only apply to the module after it.</p>
 <h3 id="activities"><a class="header" href="#activities">Activities</a></h3>
 <ul>
 <li>Fix the issue in the above code (see FIXME) so that it runs without
@@ -299,5 +323,6 @@ the number of decimal places shown. For the purposes of this exercise, use
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

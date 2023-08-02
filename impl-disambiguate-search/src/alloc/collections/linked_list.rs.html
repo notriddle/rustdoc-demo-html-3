@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/linked_list.rs`."><title>linked_list.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../alloc/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/linked_list.rs`."><title>linked_list.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../alloc/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2010,7 +2010,108 @@
 <a href="#2010" id="2010">2010</a>
 <a href="#2011" id="2011">2011</a>
 <a href="#2012" id="2012">2012</a>
-</pre><pre class="rust"><code><span class="doccomment">//! A doubly-linked list with owned nodes.
+<a href="#2013" id="2013">2013</a>
+<a href="#2014" id="2014">2014</a>
+<a href="#2015" id="2015">2015</a>
+<a href="#2016" id="2016">2016</a>
+<a href="#2017" id="2017">2017</a>
+<a href="#2018" id="2018">2018</a>
+<a href="#2019" id="2019">2019</a>
+<a href="#2020" id="2020">2020</a>
+<a href="#2021" id="2021">2021</a>
+<a href="#2022" id="2022">2022</a>
+<a href="#2023" id="2023">2023</a>
+<a href="#2024" id="2024">2024</a>
+<a href="#2025" id="2025">2025</a>
+<a href="#2026" id="2026">2026</a>
+<a href="#2027" id="2027">2027</a>
+<a href="#2028" id="2028">2028</a>
+<a href="#2029" id="2029">2029</a>
+<a href="#2030" id="2030">2030</a>
+<a href="#2031" id="2031">2031</a>
+<a href="#2032" id="2032">2032</a>
+<a href="#2033" id="2033">2033</a>
+<a href="#2034" id="2034">2034</a>
+<a href="#2035" id="2035">2035</a>
+<a href="#2036" id="2036">2036</a>
+<a href="#2037" id="2037">2037</a>
+<a href="#2038" id="2038">2038</a>
+<a href="#2039" id="2039">2039</a>
+<a href="#2040" id="2040">2040</a>
+<a href="#2041" id="2041">2041</a>
+<a href="#2042" id="2042">2042</a>
+<a href="#2043" id="2043">2043</a>
+<a href="#2044" id="2044">2044</a>
+<a href="#2045" id="2045">2045</a>
+<a href="#2046" id="2046">2046</a>
+<a href="#2047" id="2047">2047</a>
+<a href="#2048" id="2048">2048</a>
+<a href="#2049" id="2049">2049</a>
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
+<a href="#2053" id="2053">2053</a>
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a>
+<a href="#2064" id="2064">2064</a>
+<a href="#2065" id="2065">2065</a>
+<a href="#2066" id="2066">2066</a>
+<a href="#2067" id="2067">2067</a>
+<a href="#2068" id="2068">2068</a>
+<a href="#2069" id="2069">2069</a>
+<a href="#2070" id="2070">2070</a>
+<a href="#2071" id="2071">2071</a>
+<a href="#2072" id="2072">2072</a>
+<a href="#2073" id="2073">2073</a>
+<a href="#2074" id="2074">2074</a>
+<a href="#2075" id="2075">2075</a>
+<a href="#2076" id="2076">2076</a>
+<a href="#2077" id="2077">2077</a>
+<a href="#2078" id="2078">2078</a>
+<a href="#2079" id="2079">2079</a>
+<a href="#2080" id="2080">2080</a>
+<a href="#2081" id="2081">2081</a>
+<a href="#2082" id="2082">2082</a>
+<a href="#2083" id="2083">2083</a>
+<a href="#2084" id="2084">2084</a>
+<a href="#2085" id="2085">2085</a>
+<a href="#2086" id="2086">2086</a>
+<a href="#2087" id="2087">2087</a>
+<a href="#2088" id="2088">2088</a>
+<a href="#2089" id="2089">2089</a>
+<a href="#2090" id="2090">2090</a>
+<a href="#2091" id="2091">2091</a>
+<a href="#2092" id="2092">2092</a>
+<a href="#2093" id="2093">2093</a>
+<a href="#2094" id="2094">2094</a>
+<a href="#2095" id="2095">2095</a>
+<a href="#2096" id="2096">2096</a>
+<a href="#2097" id="2097">2097</a>
+<a href="#2098" id="2098">2098</a>
+<a href="#2099" id="2099">2099</a>
+<a href="#2100" id="2100">2100</a>
+<a href="#2101" id="2101">2101</a>
+<a href="#2102" id="2102">2102</a>
+<a href="#2103" id="2103">2103</a>
+<a href="#2104" id="2104">2104</a>
+<a href="#2105" id="2105">2105</a>
+<a href="#2106" id="2106">2106</a>
+<a href="#2107" id="2107">2107</a>
+<a href="#2108" id="2108">2108</a>
+<a href="#2109" id="2109">2109</a>
+<a href="#2110" id="2110">2110</a>
+<a href="#2111" id="2111">2111</a>
+<a href="#2112" id="2112">2112</a>
+<a href="#2113" id="2113">2113</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! A doubly-linked list with owned nodes.
 //!
 //! The `LinkedList` allows pushing and popping elements at either end
 //! in constant time.
@@ -2027,12 +2128,13 @@
 </span><span class="kw">use </span>core::cmp::Ordering;
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::hash::{Hash, Hasher};
-<span class="kw">use </span>core::iter::{FromIterator, FusedIterator};
+<span class="kw">use </span>core::iter::FusedIterator;
 <span class="kw">use </span>core::marker::PhantomData;
 <span class="kw">use </span>core::mem;
-<span class="kw">use </span>core::ptr::NonNull;
+<span class="kw">use </span>core::ptr::{NonNull, Unique};
 
 <span class="kw">use </span><span class="kw">super</span>::SpecExtend;
+<span class="kw">use </span><span class="kw">crate</span>::alloc::{Allocator, Global};
 <span class="kw">use </span><span class="kw">crate</span>::boxed::Box;
 
 <span class="attr">#[cfg(test)]
@@ -2059,11 +2161,15 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;LinkedList&quot;</span>)]
 #[rustc_insignificant_dtor]
-</span><span class="kw">pub struct </span>LinkedList&lt;T&gt; {
+</span><span class="kw">pub struct </span>LinkedList&lt;
+    T,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
     head: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
     tail: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
     len: usize,
-    marker: PhantomData&lt;Box&lt;Node&lt;T&gt;&gt;&gt;,
+    alloc: A,
+    marker: PhantomData&lt;Box&lt;Node&lt;T&gt;, A&gt;&gt;,
 }
 
 <span class="kw">struct </span>Node&lt;T&gt; {
@@ -2093,6 +2199,7 @@
                 head: <span class="self">self</span>.head,
                 tail: <span class="self">self</span>.tail,
                 len: <span class="self">self</span>.len,
+                alloc: Global,
                 marker: PhantomData,
             }))
             .field(<span class="kw-2">&amp;</span><span class="self">self</span>.len)
@@ -2129,6 +2236,7 @@
                 head: <span class="self">self</span>.head,
                 tail: <span class="self">self</span>.tail,
                 len: <span class="self">self</span>.len,
+                alloc: Global,
                 marker: PhantomData,
             }))
             .field(<span class="kw-2">&amp;</span><span class="self">self</span>.len)
@@ -2142,15 +2250,17 @@
 /// (provided by the [`IntoIterator`] trait). See its documentation for more.
 ///
 /// [`into_iter`]: LinkedList::into_iter
-/// [`IntoIterator`]: core::iter::IntoIterator
 </span><span class="attr">#[derive(Clone)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">pub struct </span>IntoIter&lt;T&gt; {
-    list: LinkedList&lt;T&gt;,
+</span><span class="kw">pub struct </span>IntoIter&lt;
+    T,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
+    list: LinkedList&lt;T, A&gt;,
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;collection_debug&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_tuple(<span class="string">&quot;IntoIter&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.list).finish()
     }
@@ -2161,22 +2271,25 @@
         Node { next: <span class="prelude-val">None</span>, prev: <span class="prelude-val">None</span>, element }
     }
 
-    <span class="kw">fn </span>into_element(<span class="self">self</span>: Box&lt;<span class="self">Self</span>&gt;) -&gt; T {
+    <span class="kw">fn </span>into_element&lt;A: Allocator&gt;(<span class="self">self</span>: Box&lt;<span class="self">Self</span>, A&gt;) -&gt; T {
         <span class="self">self</span>.element
     }
 }
 
 <span class="comment">// private methods
-</span><span class="kw">impl</span>&lt;T&gt; LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; LinkedList&lt;T, A&gt; {
     <span class="doccomment">/// Adds the given node to the front of the list.
+    ///
+    /// # Safety
+    /// `node` must point to a valid node that was boxed using the list&#39;s allocator.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>push_front_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>node: Box&lt;Node&lt;T&gt;&gt;) {
+    </span><span class="kw">unsafe fn </span>push_front_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, node: Unique&lt;Node&lt;T&gt;&gt;) {
         <span class="comment">// This method takes care not to create mutable references to whole nodes,
         // to maintain validity of aliasing pointers into `element`.
         </span><span class="kw">unsafe </span>{
-            node.next = <span class="self">self</span>.head;
-            node.prev = <span class="prelude-val">None</span>;
-            <span class="kw">let </span>node = <span class="prelude-val">Some</span>(Box::leak(node).into());
+            (<span class="kw-2">*</span>node.as_ptr()).next = <span class="self">self</span>.head;
+            (<span class="kw-2">*</span>node.as_ptr()).prev = <span class="prelude-val">None</span>;
+            <span class="kw">let </span>node = <span class="prelude-val">Some</span>(NonNull::from(node));
 
             <span class="kw">match </span><span class="self">self</span>.head {
                 <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.tail = node,
@@ -2191,11 +2304,11 @@
 
     <span class="doccomment">/// Removes and returns the node at the front of the list.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>pop_front_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;Node&lt;T&gt;&gt;&gt; {
+    </span><span class="kw">fn </span>pop_front_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;Node&lt;T&gt;, <span class="kw-2">&amp;</span>A&gt;&gt; {
         <span class="comment">// This method takes care not to create mutable references to whole nodes,
         // to maintain validity of aliasing pointers into `element`.
         </span><span class="self">self</span>.head.map(|node| <span class="kw">unsafe </span>{
-            <span class="kw">let </span>node = Box::from_raw(node.as_ptr());
+            <span class="kw">let </span>node = Box::from_raw_in(node.as_ptr(), <span class="kw-2">&amp;</span><span class="self">self</span>.alloc);
             <span class="self">self</span>.head = node.next;
 
             <span class="kw">match </span><span class="self">self</span>.head {
@@ -2210,14 +2323,17 @@
     }
 
     <span class="doccomment">/// Adds the given node to the back of the list.
+    ///
+    /// # Safety
+    /// `node` must point to a valid node that was boxed using the list&#39;s allocator.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>push_back_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>node: Box&lt;Node&lt;T&gt;&gt;) {
+    </span><span class="kw">unsafe fn </span>push_back_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>, node: Unique&lt;Node&lt;T&gt;&gt;) {
         <span class="comment">// This method takes care not to create mutable references to whole nodes,
         // to maintain validity of aliasing pointers into `element`.
         </span><span class="kw">unsafe </span>{
-            node.next = <span class="prelude-val">None</span>;
-            node.prev = <span class="self">self</span>.tail;
-            <span class="kw">let </span>node = <span class="prelude-val">Some</span>(Box::leak(node).into());
+            (<span class="kw-2">*</span>node.as_ptr()).next = <span class="prelude-val">None</span>;
+            (<span class="kw-2">*</span>node.as_ptr()).prev = <span class="self">self</span>.tail;
+            <span class="kw">let </span>node = <span class="prelude-val">Some</span>(NonNull::from(node));
 
             <span class="kw">match </span><span class="self">self</span>.tail {
                 <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.head = node,
@@ -2232,11 +2348,11 @@
 
     <span class="doccomment">/// Removes and returns the node at the back of the list.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>pop_back_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;Node&lt;T&gt;&gt;&gt; {
+    </span><span class="kw">fn </span>pop_back_node(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;Node&lt;T&gt;, <span class="kw-2">&amp;</span>A&gt;&gt; {
         <span class="comment">// This method takes care not to create mutable references to whole nodes,
         // to maintain validity of aliasing pointers into `element`.
         </span><span class="self">self</span>.tail.map(|node| <span class="kw">unsafe </span>{
-            <span class="kw">let </span>node = Box::from_raw(node.as_ptr());
+            <span class="kw">let </span>node = Box::from_raw_in(node.as_ptr(), <span class="kw-2">&amp;</span><span class="self">self</span>.alloc);
             <span class="self">self</span>.tail = node.prev;
 
             <span class="kw">match </span><span class="self">self</span>.tail {
@@ -2334,7 +2450,10 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         split_node: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
         at: usize,
-    ) -&gt; <span class="self">Self </span>{
+    ) -&gt; <span class="self">Self
+    </span><span class="kw">where
+        </span>A: Clone,
+    {
         <span class="comment">// The split node is the new head node of the second part
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>split_node) = split_node {
             <span class="kw">let </span>first_part_head;
@@ -2355,6 +2474,7 @@
                 head: first_part_head,
                 tail: first_part_tail,
                 len: at,
+                alloc: <span class="self">self</span>.alloc.clone(),
                 marker: PhantomData,
             };
 
@@ -2364,7 +2484,7 @@
 
             first_part
         } <span class="kw">else </span>{
-            mem::replace(<span class="self">self</span>, LinkedList::new())
+            mem::replace(<span class="self">self</span>, LinkedList::new_in(<span class="self">self</span>.alloc.clone()))
         }
     }
 
@@ -2373,7 +2493,10 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         split_node: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
         at: usize,
-    ) -&gt; <span class="self">Self </span>{
+    ) -&gt; <span class="self">Self
+    </span><span class="kw">where
+        </span>A: Clone,
+    {
         <span class="comment">// The split node is the new tail node of the first part and owns
         // the head of the second part.
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>split_node) = split_node {
@@ -2395,6 +2518,7 @@
                 head: second_part_head,
                 tail: second_part_tail,
                 len: <span class="self">self</span>.len - at,
+                alloc: <span class="self">self</span>.alloc.clone(),
                 marker: PhantomData,
             };
 
@@ -2404,7 +2528,7 @@
 
             second_part
         } <span class="kw">else </span>{
-            mem::replace(<span class="self">self</span>, LinkedList::new())
+            mem::replace(<span class="self">self</span>, LinkedList::new_in(<span class="self">self</span>.alloc.clone()))
         }
     }
 }
@@ -2433,7 +2557,7 @@
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[must_use]
     </span><span class="kw">pub const fn </span>new() -&gt; <span class="self">Self </span>{
-        LinkedList { head: <span class="prelude-val">None</span>, tail: <span class="prelude-val">None</span>, len: <span class="number">0</span>, marker: PhantomData }
+        LinkedList { head: <span class="prelude-val">None</span>, tail: <span class="prelude-val">None</span>, len: <span class="number">0</span>, alloc: Global, marker: PhantomData }
     }
 
     <span class="doccomment">/// Moves all elements from `other` to the end of the list.
@@ -2484,7 +2608,26 @@
             }
         }
     }
+}
 
+<span class="kw">impl</span>&lt;T, A: Allocator&gt; LinkedList&lt;T, A&gt; {
+    <span class="doccomment">/// Constructs an empty `LinkedList&lt;T, A&gt;`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(allocator_api)]
+    ///
+    /// use std::alloc::System;
+    /// use std::collections::LinkedList;
+    ///
+    /// let list: LinkedList&lt;u32, _&gt; = LinkedList::new_in(System);
+    /// ```
+    </span><span class="attr">#[inline]
+    #[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)]
+    </span><span class="kw">pub const fn </span>new_in(alloc: A) -&gt; <span class="self">Self </span>{
+        LinkedList { head: <span class="prelude-val">None</span>, tail: <span class="prelude-val">None</span>, len: <span class="number">0</span>, alloc, marker: PhantomData }
+    }
     <span class="doccomment">/// Provides a forward iterator.
     ///
     /// # Examples
@@ -2545,7 +2688,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     #[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>cursor_front(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>cursor_front(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         Cursor { index: <span class="number">0</span>, current: <span class="self">self</span>.head, list: <span class="self">self </span>}
     }
 
@@ -2555,7 +2698,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     #[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>cursor_front_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CursorMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>cursor_front_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CursorMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         CursorMut { index: <span class="number">0</span>, current: <span class="self">self</span>.head, list: <span class="self">self </span>}
     }
 
@@ -2565,7 +2708,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     #[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>cursor_back(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>cursor_back(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         Cursor { index: <span class="self">self</span>.len.checked_sub(<span class="number">1</span>).unwrap_or(<span class="number">0</span>), current: <span class="self">self</span>.tail, list: <span class="self">self </span>}
     }
 
@@ -2575,7 +2718,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     #[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>cursor_back_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CursorMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>cursor_back_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; CursorMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         CursorMut { index: <span class="self">self</span>.len.checked_sub(<span class="number">1</span>).unwrap_or(<span class="number">0</span>), current: <span class="self">self</span>.tail, list: <span class="self">self </span>}
     }
 
@@ -2651,7 +2794,15 @@
     </span><span class="attr">#[inline]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= <span class="self">Self</span>::new();
+        <span class="comment">// We need to drop the nodes while keeping self.alloc
+        // We can do this by moving (head, tail, len) into a new list that borrows self.alloc
+        </span>drop(LinkedList {
+            head: <span class="self">self</span>.head.take(),
+            tail: <span class="self">self</span>.tail.take(),
+            len: mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.len),
+            alloc: <span class="kw-2">&amp;</span><span class="self">self</span>.alloc,
+            marker: PhantomData,
+        });
     }
 
     <span class="doccomment">/// Returns `true` if the `LinkedList` contains an element equal to the
@@ -2803,7 +2954,12 @@
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">pub fn </span>push_front(<span class="kw-2">&amp;mut </span><span class="self">self</span>, elt: T) {
-        <span class="self">self</span>.push_front_node(Box::new(Node::new(elt)));
+        <span class="kw">let </span>node = Box::new_in(Node::new(elt), <span class="kw-2">&amp;</span><span class="self">self</span>.alloc);
+        <span class="kw">let </span>node_ptr = Unique::from(Box::leak(node));
+        <span class="comment">// SAFETY: node_ptr is a unique pointer to a node we boxed with self.alloc
+        </span><span class="kw">unsafe </span>{
+            <span class="self">self</span>.push_front_node(node_ptr);
+        }
     }
 
     <span class="doccomment">/// Removes the first element and returns it, or `None` if the list is
@@ -2846,7 +3002,12 @@
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">pub fn </span>push_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>, elt: T) {
-        <span class="self">self</span>.push_back_node(Box::new(Node::new(elt)));
+        <span class="kw">let </span>node = Box::new_in(Node::new(elt), <span class="kw-2">&amp;</span><span class="self">self</span>.alloc);
+        <span class="kw">let </span>node_ptr = Unique::from(Box::leak(node));
+        <span class="comment">// SAFETY: node_ptr is a unique pointer to a node we boxed with self.alloc
+        </span><span class="kw">unsafe </span>{
+            <span class="self">self</span>.push_back_node(node_ptr);
+        }
     }
 
     <span class="doccomment">/// Removes the last element from a list and returns it, or `None` if
@@ -2896,13 +3057,16 @@
     /// assert_eq!(split.pop_front(), None);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>split_off(<span class="kw-2">&amp;mut </span><span class="self">self</span>, at: usize) -&gt; LinkedList&lt;T&gt; {
+    </span><span class="kw">pub fn </span>split_off(<span class="kw-2">&amp;mut </span><span class="self">self</span>, at: usize) -&gt; LinkedList&lt;T, A&gt;
+    <span class="kw">where
+        </span>A: Clone,
+    {
         <span class="kw">let </span>len = <span class="self">self</span>.len();
         <span class="macro">assert!</span>(at &lt;= len, <span class="string">&quot;Cannot split off at a nonexistent index&quot;</span>);
         <span class="kw">if </span>at == <span class="number">0 </span>{
-            <span class="kw">return </span>mem::take(<span class="self">self</span>);
+            <span class="kw">return </span>mem::replace(<span class="self">self</span>, <span class="self">Self</span>::new_in(<span class="self">self</span>.alloc.clone()));
         } <span class="kw">else if </span>at == len {
-            <span class="kw">return </span><span class="self">Self</span>::new();
+            <span class="kw">return </span><span class="self">Self</span>::new_in(<span class="self">self</span>.alloc.clone());
         }
 
         <span class="comment">// Below, we iterate towards the `i-1`th node, either from the start or the end,
@@ -2979,7 +3143,11 @@
     /// If the closure returns false, the element will remain in the list and will not be yielded
     /// by the iterator.
     ///
-    /// Note that `drain_filter` lets you mutate every element in the filter closure, regardless of
+    /// If the returned `ExtractIf` is not exhausted, e.g. because it is dropped without iterating
+    /// or the iteration short-circuits, then the remaining elements will be retained.
+    /// Use `extract_if().for_each(drop)` if you do not need the returned iterator.
+    ///
+    /// Note that `extract_if` lets you mutate every element in the filter closure, regardless of
     /// whether you choose to keep or remove it.
     ///
     /// # Examples
@@ -2987,20 +3155,20 @@
     /// Splitting a list into evens and odds, reusing the original list:
     ///
     /// ```
-    /// #![feature(drain_filter)]
+    /// #![feature(extract_if)]
     /// use std::collections::LinkedList;
     ///
     /// let mut numbers: LinkedList&lt;u32&gt; = LinkedList::new();
     /// numbers.extend(&amp;[1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14, 15]);
     ///
-    /// let evens = numbers.drain_filter(|x| *x % 2 == 0).collect::&lt;LinkedList&lt;_&gt;&gt;();
+    /// let evens = numbers.extract_if(|x| *x % 2 == 0).collect::&lt;LinkedList&lt;_&gt;&gt;();
     /// let odds = numbers;
     ///
     /// assert_eq!(evens.into_iter().collect::&lt;Vec&lt;_&gt;&gt;(), vec![2, 4, 6, 8, 14]);
     /// assert_eq!(odds.into_iter().collect::&lt;Vec&lt;_&gt;&gt;(), vec![1, 3, 5, 9, 11, 13, 15]);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_filter&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: F) -&gt; DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F&gt;
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+    </span><span class="kw">pub fn </span>extract_if&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: F) -&gt; ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
     {
@@ -3008,16 +3176,16 @@
         </span><span class="kw">let </span>it = <span class="self">self</span>.head;
         <span class="kw">let </span>old_len = <span class="self">self</span>.len;
 
-        DrainFilter { list: <span class="self">self</span>, it, pred: filter, idx: <span class="number">0</span>, old_len }
+        ExtractIf { list: <span class="self">self</span>, it, pred: filter, idx: <span class="number">0</span>, old_len }
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;<span class="attr">#[may_dangle] </span>T&gt; Drop <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">unsafe impl</span>&lt;<span class="attr">#[may_dangle] </span>T, A: Allocator&gt; Drop <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">struct </span>DropGuard&lt;<span class="lifetime">&#39;a</span>, T&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T&gt;);
+        <span class="kw">struct </span>DropGuard&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T, A&gt;);
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Drop <span class="kw">for </span>DropGuard&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; Drop <span class="kw">for </span>DropGuard&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
             <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
                 <span class="comment">// Continue the same loop we do below. This only runs when a destructor has
                 // panicked. If another one panics this will abort.
@@ -3025,11 +3193,10 @@
             }
         }
 
-        <span class="kw">while let </span><span class="prelude-val">Some</span>(node) = <span class="self">self</span>.pop_front_node() {
-            <span class="kw">let </span>guard = DropGuard(<span class="self">self</span>);
-            drop(node);
-            mem::forget(guard);
-        }
+        <span class="comment">// Wrap self so that if a destructor panics, we can try to keep looping
+        </span><span class="kw">let </span>guard = DropGuard(<span class="self">self</span>);
+        <span class="kw">while </span>guard.<span class="number">0</span>.pop_front_node().is_some() {}
+        mem::forget(guard);
     }
 }
 
@@ -3087,6 +3254,20 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
 
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="doccomment">/// Creates an empty `linked_list::Iter`.
+    ///
+    /// ```
+    /// # use std::collections::linked_list;
+    /// let iter: linked_list::Iter&lt;&#39;_, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Iter { head: <span class="prelude-val">None</span>, tail: <span class="prelude-val">None</span>, len: <span class="number">0</span>, marker: Default::default() }
+    }
+}
+
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Iterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T;
@@ -3141,6 +3322,13 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
 
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IterMut { head: <span class="prelude-val">None</span>, tail: <span class="prelude-val">None</span>, len: <span class="number">0</span>, marker: Default::default() }
+    }
+}
+
 <span class="doccomment">/// A cursor over a `LinkedList`.
 ///
 /// A `Cursor` is like an iterator, except that it can freely seek back-and-forth.
@@ -3151,14 +3339,18 @@
 ///
 /// When created, cursors start at the front of the list, or the &quot;ghost&quot; non-element if the list is empty.
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">pub struct </span>Cursor&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>Cursor&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: <span class="lifetime">&#39;a</span>,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
     index: usize,
     current: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
-    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>LinkedList&lt;T&gt;,
+    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>LinkedList&lt;T, A&gt;,
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; Clone <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; Clone <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>Cursor { index, current, list } = <span class="kw-2">*</span><span class="self">self</span>;
         Cursor { index, current, list }
@@ -3166,7 +3358,7 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_tuple(<span class="string">&quot;Cursor&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.list).field(<span class="kw-2">&amp;</span><span class="self">self</span>.index()).finish()
     }
@@ -3183,20 +3375,24 @@
 /// To accommodate this, there is a &quot;ghost&quot; non-element that yields `None` between the head and
 /// tail of the list.
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">pub struct </span>CursorMut&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>CursorMut&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: <span class="lifetime">&#39;a</span>,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; {
     index: usize,
     current: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
-    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T&gt;,
+    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T, A&gt;,
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_tuple(<span class="string">&quot;CursorMut&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.list).field(<span class="kw-2">&amp;</span><span class="self">self</span>.index()).finish()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; Cursor&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; Cursor&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
     <span class="doccomment">/// Returns the cursor position index within the `LinkedList`.
     ///
     /// This returns `None` if the cursor is currently pointing to the
@@ -3313,7 +3509,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; CursorMut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; CursorMut&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
     <span class="doccomment">/// Returns the cursor position index within the `LinkedList`.
     ///
     /// This returns `None` if the cursor is currently pointing to the
@@ -3418,7 +3614,7 @@
     /// `CursorMut` is frozen for the lifetime of the `Cursor`.
     </span><span class="attr">#[must_use]
     #[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>as_cursor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    </span><span class="kw">pub fn </span>as_cursor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
         Cursor { list: <span class="self">self</span>.list, current: <span class="self">self</span>.current, index: <span class="self">self</span>.index }
     }
 }
@@ -3426,86 +3622,6 @@
 <span class="comment">// Now the list editing operations
 
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; CursorMut&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    <span class="doccomment">/// Inserts a new element into the `LinkedList` after the current one.
-    ///
-    /// If the cursor is pointing at the &quot;ghost&quot; non-element then the new element is
-    /// inserted at the front of the `LinkedList`.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>insert_after(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) {
-        <span class="kw">unsafe </span>{
-            <span class="kw">let </span>spliced_node = Box::leak(Box::new(Node::new(item))).into();
-            <span class="kw">let </span>node_next = <span class="kw">match </span><span class="self">self</span>.current {
-                <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.list.head,
-                <span class="prelude-val">Some</span>(node) =&gt; node.as_ref().next,
-            };
-            <span class="self">self</span>.list.splice_nodes(<span class="self">self</span>.current, node_next, spliced_node, spliced_node, <span class="number">1</span>);
-            <span class="kw">if </span><span class="self">self</span>.current.is_none() {
-                <span class="comment">// The &quot;ghost&quot; non-element&#39;s index has changed.
-                </span><span class="self">self</span>.index = <span class="self">self</span>.list.len;
-            }
-        }
-    }
-
-    <span class="doccomment">/// Inserts a new element into the `LinkedList` before the current one.
-    ///
-    /// If the cursor is pointing at the &quot;ghost&quot; non-element then the new element is
-    /// inserted at the end of the `LinkedList`.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>insert_before(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) {
-        <span class="kw">unsafe </span>{
-            <span class="kw">let </span>spliced_node = Box::leak(Box::new(Node::new(item))).into();
-            <span class="kw">let </span>node_prev = <span class="kw">match </span><span class="self">self</span>.current {
-                <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.list.tail,
-                <span class="prelude-val">Some</span>(node) =&gt; node.as_ref().prev,
-            };
-            <span class="self">self</span>.list.splice_nodes(node_prev, <span class="self">self</span>.current, spliced_node, spliced_node, <span class="number">1</span>);
-            <span class="self">self</span>.index += <span class="number">1</span>;
-        }
-    }
-
-    <span class="doccomment">/// Removes the current element from the `LinkedList`.
-    ///
-    /// The element that was removed is returned, and the cursor is
-    /// moved to point to the next element in the `LinkedList`.
-    ///
-    /// If the cursor is currently pointing to the &quot;ghost&quot; non-element then no element
-    /// is removed and `None` is returned.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>remove_current(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
-        <span class="kw">let </span>unlinked_node = <span class="self">self</span>.current<span class="question-mark">?</span>;
-        <span class="kw">unsafe </span>{
-            <span class="self">self</span>.current = unlinked_node.as_ref().next;
-            <span class="self">self</span>.list.unlink_node(unlinked_node);
-            <span class="kw">let </span>unlinked_node = Box::from_raw(unlinked_node.as_ptr());
-            <span class="prelude-val">Some</span>(unlinked_node.element)
-        }
-    }
-
-    <span class="doccomment">/// Removes the current element from the `LinkedList` without deallocating the list node.
-    ///
-    /// The node that was removed is returned as a new `LinkedList` containing only this node.
-    /// The cursor is moved to point to the next element in the current `LinkedList`.
-    ///
-    /// If the cursor is currently pointing to the &quot;ghost&quot; non-element then no element
-    /// is removed and `None` is returned.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>remove_current_as_list(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;LinkedList&lt;T&gt;&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>unlinked_node = <span class="self">self</span>.current<span class="question-mark">?</span>;
-        <span class="kw">unsafe </span>{
-            <span class="self">self</span>.current = unlinked_node.as_ref().next;
-            <span class="self">self</span>.list.unlink_node(unlinked_node);
-
-            unlinked_node.as_mut().prev = <span class="prelude-val">None</span>;
-            unlinked_node.as_mut().next = <span class="prelude-val">None</span>;
-            <span class="prelude-val">Some</span>(LinkedList {
-                head: <span class="prelude-val">Some</span>(unlinked_node),
-                tail: <span class="prelude-val">Some</span>(unlinked_node),
-                len: <span class="number">1</span>,
-                marker: PhantomData,
-            })
-        }
-    }
-
     <span class="doccomment">/// Inserts the elements from the given `LinkedList` after the current one.
     ///
     /// If the cursor is pointing at the &quot;ghost&quot; non-element then the new elements are
@@ -3548,6 +3664,92 @@
             <span class="self">self</span>.index += splice_len;
         }
     }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; CursorMut&lt;<span class="lifetime">&#39;a</span>, T, A&gt; {
+    <span class="doccomment">/// Inserts a new element into the `LinkedList` after the current one.
+    ///
+    /// If the cursor is pointing at the &quot;ghost&quot; non-element then the new element is
+    /// inserted at the front of the `LinkedList`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
+    </span><span class="kw">pub fn </span>insert_after(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) {
+        <span class="kw">unsafe </span>{
+            <span class="kw">let </span>spliced_node = Box::leak(Box::new_in(Node::new(item), <span class="kw-2">&amp;</span><span class="self">self</span>.list.alloc)).into();
+            <span class="kw">let </span>node_next = <span class="kw">match </span><span class="self">self</span>.current {
+                <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.list.head,
+                <span class="prelude-val">Some</span>(node) =&gt; node.as_ref().next,
+            };
+            <span class="self">self</span>.list.splice_nodes(<span class="self">self</span>.current, node_next, spliced_node, spliced_node, <span class="number">1</span>);
+            <span class="kw">if </span><span class="self">self</span>.current.is_none() {
+                <span class="comment">// The &quot;ghost&quot; non-element&#39;s index has changed.
+                </span><span class="self">self</span>.index = <span class="self">self</span>.list.len;
+            }
+        }
+    }
+
+    <span class="doccomment">/// Inserts a new element into the `LinkedList` before the current one.
+    ///
+    /// If the cursor is pointing at the &quot;ghost&quot; non-element then the new element is
+    /// inserted at the end of the `LinkedList`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
+    </span><span class="kw">pub fn </span>insert_before(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) {
+        <span class="kw">unsafe </span>{
+            <span class="kw">let </span>spliced_node = Box::leak(Box::new_in(Node::new(item), <span class="kw-2">&amp;</span><span class="self">self</span>.list.alloc)).into();
+            <span class="kw">let </span>node_prev = <span class="kw">match </span><span class="self">self</span>.current {
+                <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.list.tail,
+                <span class="prelude-val">Some</span>(node) =&gt; node.as_ref().prev,
+            };
+            <span class="self">self</span>.list.splice_nodes(node_prev, <span class="self">self</span>.current, spliced_node, spliced_node, <span class="number">1</span>);
+            <span class="self">self</span>.index += <span class="number">1</span>;
+        }
+    }
+
+    <span class="doccomment">/// Removes the current element from the `LinkedList`.
+    ///
+    /// The element that was removed is returned, and the cursor is
+    /// moved to point to the next element in the `LinkedList`.
+    ///
+    /// If the cursor is currently pointing to the &quot;ghost&quot; non-element then no element
+    /// is removed and `None` is returned.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
+    </span><span class="kw">pub fn </span>remove_current(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
+        <span class="kw">let </span>unlinked_node = <span class="self">self</span>.current<span class="question-mark">?</span>;
+        <span class="kw">unsafe </span>{
+            <span class="self">self</span>.current = unlinked_node.as_ref().next;
+            <span class="self">self</span>.list.unlink_node(unlinked_node);
+            <span class="kw">let </span>unlinked_node = Box::from_raw(unlinked_node.as_ptr());
+            <span class="prelude-val">Some</span>(unlinked_node.element)
+        }
+    }
+
+    <span class="doccomment">/// Removes the current element from the `LinkedList` without deallocating the list node.
+    ///
+    /// The node that was removed is returned as a new `LinkedList` containing only this node.
+    /// The cursor is moved to point to the next element in the current `LinkedList`.
+    ///
+    /// If the cursor is currently pointing to the &quot;ghost&quot; non-element then no element
+    /// is removed and `None` is returned.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
+    </span><span class="kw">pub fn </span>remove_current_as_list(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;LinkedList&lt;T, A&gt;&gt;
+    <span class="kw">where
+        </span>A: Clone,
+    {
+        <span class="kw">let </span><span class="kw-2">mut </span>unlinked_node = <span class="self">self</span>.current<span class="question-mark">?</span>;
+        <span class="kw">unsafe </span>{
+            <span class="self">self</span>.current = unlinked_node.as_ref().next;
+            <span class="self">self</span>.list.unlink_node(unlinked_node);
+
+            unlinked_node.as_mut().prev = <span class="prelude-val">None</span>;
+            unlinked_node.as_mut().next = <span class="prelude-val">None</span>;
+            <span class="prelude-val">Some</span>(LinkedList {
+                head: <span class="prelude-val">Some</span>(unlinked_node),
+                tail: <span class="prelude-val">Some</span>(unlinked_node),
+                len: <span class="number">1</span>,
+                alloc: <span class="self">self</span>.list.alloc.clone(),
+                marker: PhantomData,
+            })
+        }
+    }
 
     <span class="doccomment">/// Splits the list into two after the current element. This will return a
     /// new list consisting of everything after the cursor, with the original
@@ -3556,7 +3758,10 @@
     /// If the cursor is pointing at the &quot;ghost&quot; non-element then the entire contents
     /// of the `LinkedList` are moved.
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>split_after(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; LinkedList&lt;T&gt; {
+    </span><span class="kw">pub fn </span>split_after(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; LinkedList&lt;T, A&gt;
+    <span class="kw">where
+        </span>A: Clone,
+    {
         <span class="kw">let </span>split_off_idx = <span class="kw">if </span><span class="self">self</span>.index == <span class="self">self</span>.list.len { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="self">self</span>.index + <span class="number">1 </span>};
         <span class="kw">if </span><span class="self">self</span>.index == <span class="self">self</span>.list.len {
             <span class="comment">// The &quot;ghost&quot; non-element&#39;s index has changed to 0.
@@ -3572,7 +3777,10 @@
     /// If the cursor is pointing at the &quot;ghost&quot; non-element then the entire contents
     /// of the `LinkedList` are moved.
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-    </span><span class="kw">pub fn </span>split_before(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; LinkedList&lt;T&gt; {
+    </span><span class="kw">pub fn </span>split_before(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; LinkedList&lt;T, A&gt;
+    <span class="kw">where
+        </span>A: Clone,
+    {
         <span class="kw">let </span>split_off_idx = <span class="self">self</span>.index;
         <span class="self">self</span>.index = <span class="number">0</span>;
         <span class="kw">unsafe </span>{ <span class="self">self</span>.list.split_off_before_node(<span class="self">self</span>.current, split_off_idx) }
@@ -3712,21 +3920,26 @@
     }
 }
 
-<span class="doccomment">/// An iterator produced by calling `drain_filter` on LinkedList.
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-</span><span class="kw">pub struct </span>DrainFilter&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a</span>&gt;
-<span class="kw">where
+<span class="doccomment">/// An iterator produced by calling `extract_if` on LinkedList.
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+#[must_use = <span class="string">&quot;iterators are lazy and do nothing unless consumed&quot;</span>]
+</span><span class="kw">pub struct </span>ExtractIf&lt;
+    <span class="lifetime">&#39;a</span>,
+    T: <span class="lifetime">&#39;a</span>,
+    F: <span class="lifetime">&#39;a</span>,
+    <span class="attr">#[unstable(feature = <span class="string">&quot;allocator_api&quot;</span>, issue = <span class="string">&quot;32838&quot;</span>)] </span>A: Allocator = Global,
+&gt; <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
 {
-    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T&gt;,
+    list: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T, A&gt;,
     it: <span class="prelude-ty">Option</span>&lt;NonNull&lt;Node&lt;T&gt;&gt;&gt;,
     pred: F,
     idx: usize,
     old_len: usize,
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, F&gt; Iterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T, F, A: Allocator&gt; Iterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
 {
@@ -3754,45 +3967,18 @@
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, F&gt; Drop <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F&gt;
-<span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
-{
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">struct </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T, F&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span><span class="kw-2">mut </span>DrainFilter&lt;<span class="lifetime">&#39;a</span>, T, F&gt;)
-        <span class="kw">where
-            </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool;
-
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T, F&gt; Drop <span class="kw">for </span>DropGuard&lt;<span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;a</span>, T, F&gt;
-        <span class="kw">where
-            </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
-        {
-            <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-                <span class="self">self</span>.<span class="number">0</span>.for_each(drop);
-            }
-        }
-
-        <span class="kw">while let </span><span class="prelude-val">Some</span>(item) = <span class="self">self</span>.next() {
-            <span class="kw">let </span>guard = DropGuard(<span class="self">self</span>);
-            drop(item);
-            mem::forget(guard);
-        }
-    }
-}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug, F&gt; fmt::Debug <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, F&gt; fmt::Debug <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
 {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_tuple(<span class="string">&quot;DrainFilter&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.list).finish()
+        f.debug_tuple(<span class="string">&quot;ExtractIf&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.list).finish()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; Iterator <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; Iterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">type </span>Item = T;
 
     <span class="attr">#[inline]
@@ -3807,7 +3993,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; DoubleEndedIterator <span class="kw">for </span>IntoIter&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; DoubleEndedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="self">self</span>.list.pop_back()
@@ -3815,10 +4001,24 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; ExactSizeIterator <span class="kw">for </span>IntoIter&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; ExactSizeIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>IntoIter&lt;T&gt; {
+    <span class="doccomment">/// Creates an empty `linked_list::IntoIter`.
+    ///
+    /// ```
+    /// # use std::collections::linked_list;
+    /// let iter: linked_list::IntoIter&lt;u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        LinkedList::new().into_iter()
+    }
+}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T&gt; FromIterator&lt;T&gt; <span class="kw">for </span>LinkedList&lt;T&gt; {
@@ -3830,19 +4030,19 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; IntoIterator <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; IntoIterator <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">type </span>Item = T;
-    <span class="kw">type </span>IntoIter = IntoIter&lt;T&gt;;
+    <span class="kw">type </span>IntoIter = IntoIter&lt;T, A&gt;;
 
     <span class="doccomment">/// Consumes the list into an iterator yielding elements by value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; IntoIter&lt;T&gt; {
+    </span><span class="kw">fn </span>into_iter(<span class="self">self</span>) -&gt; IntoIter&lt;T, A&gt; {
         IntoIter { list: <span class="self">self </span>}
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>LinkedList&lt;T, A&gt; {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T;
     <span class="kw">type </span>IntoIter = Iter&lt;<span class="lifetime">&#39;a</span>, T&gt;;
 
@@ -3852,7 +4052,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, A: Allocator&gt; IntoIterator <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>LinkedList&lt;T, A&gt; {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>T;
     <span class="kw">type </span>IntoIter = IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt;;
 
@@ -3862,7 +4062,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; Extend&lt;T&gt; <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T, A: Allocator&gt; Extend&lt;T&gt; <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
         &lt;<span class="self">Self </span><span class="kw">as </span>SpecExtend&lt;I&gt;&gt;::spec_extend(<span class="self">self</span>, iter);
     }
@@ -3873,7 +4073,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;I: IntoIterator&gt; SpecExtend&lt;I&gt; <span class="kw">for </span>LinkedList&lt;I::Item&gt; {
+<span class="kw">impl</span>&lt;I: IntoIterator, A: Allocator&gt; SpecExtend&lt;I&gt; <span class="kw">for </span>LinkedList&lt;I::Item, A&gt; {
     default <span class="kw">fn </span>spec_extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
         iter.into_iter().for_each(<span class="kw">move </span>|elt| <span class="self">self</span>.push_back(elt));
     }
@@ -3886,7 +4086,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;extend_ref&quot;</span>, since = <span class="string">&quot;1.2.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a </span>+ Copy&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: <span class="lifetime">&#39;a </span>+ Copy, A: Allocator&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
         <span class="self">self</span>.extend(iter.into_iter().cloned());
     }
@@ -3898,7 +4098,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: PartialEq&gt; PartialEq <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: PartialEq, A: Allocator&gt; PartialEq <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
         <span class="self">self</span>.len() == other.len() &amp;&amp; <span class="self">self</span>.iter().eq(other)
     }
@@ -3909,17 +4109,17 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Eq&gt; Eq <span class="kw">for </span>LinkedList&lt;T&gt; {}
+</span><span class="kw">impl</span>&lt;T: Eq, A: Allocator&gt; Eq <span class="kw">for </span>LinkedList&lt;T, A&gt; {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: PartialOrd&gt; PartialOrd <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: PartialOrd, A: Allocator&gt; PartialOrd <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
         <span class="self">self</span>.iter().partial_cmp(other)
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Ord&gt; Ord <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Ord <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
         <span class="self">self</span>.iter().cmp(other)
@@ -3927,9 +4127,11 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Clone&gt; Clone <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Clone, A: Allocator + Clone&gt; Clone <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.iter().cloned().collect()
+        <span class="kw">let </span><span class="kw-2">mut </span>list = <span class="self">Self</span>::new_in(<span class="self">self</span>.alloc.clone());
+        list.extend(<span class="self">self</span>.iter().cloned());
+        list
     }
 
     <span class="kw">fn </span>clone_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
@@ -3947,14 +4149,14 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: fmt::Debug, A: Allocator&gt; fmt::Debug <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_list().entries(<span class="self">self</span>).finish()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: Hash&gt; Hash <span class="kw">for </span>LinkedList&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: Hash, A: Allocator&gt; Hash <span class="kw">for </span>LinkedList&lt;T, A&gt; {
     <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
         state.write_length_prefix(<span class="self">self</span>.len());
         <span class="kw">for </span>elt <span class="kw">in </span><span class="self">self </span>{
@@ -3994,10 +4196,10 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Send&gt; Send <span class="kw">for </span>LinkedList&lt;T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Send, A: Allocator + Send&gt; Send <span class="kw">for </span>LinkedList&lt;T, A&gt; {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>LinkedList&lt;T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Sync, A: Allocator + Sync&gt; Sync <span class="kw">for </span>LinkedList&lt;T, A&gt; {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Send <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
@@ -4012,15 +4214,14 @@
 </span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Send <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Sync, A: Allocator + Sync&gt; Send <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Sync, A: Allocator + Sync&gt; Sync <span class="kw">for </span>Cursor&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Send&gt; Send <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+</span><span class="kw">unsafe impl</span>&lt;T: Send, A: Allocator + Send&gt; Send <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;linked_list_cursors&quot;</span>, issue = <span class="string">&quot;58533&quot;</span>)]
-</span><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
-</code></pre></div>
-</section></main></body></html>
+</span><span class="kw">unsafe impl</span>&lt;T: Sync, A: Allocator + Sync&gt; Sync <span class="kw">for </span>CursorMut&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {}
+</code></pre></div></section></main></body></html>

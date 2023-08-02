@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -346,18 +371,17 @@ correctness at compile time.</p>
     println!(&quot;Base 16 (hexadecimal): {:x}&quot;, 69420); // 10f2c
     println!(&quot;Base 16 (hexadecimal): {:X}&quot;, 69420); // 10F2C
 
-
     // You can right-justify text with a specified width. This will
     // output &quot;    1&quot;. (Four white spaces and a &quot;1&quot;, for a total width of 5.)
     println!(&quot;{number:&gt;5}&quot;, number=1);
 
     // You can pad numbers with extra zeroes,
+    println!(&quot;{number:0&gt;5}&quot;, number=1); // 00001
     // and left-adjust by flipping the sign. This will output &quot;10000&quot;.
-    println!(&quot;{number:0&lt;5}&quot;, number=1);
+    println!(&quot;{number:0&lt;5}&quot;, number=1); // 10000
 
     // You can use named arguments in the format specifier by appending a `$`.
     println!(&quot;{number:0&gt;width$}&quot;, number=1, width=5);
-
 
     // Rust even checks to make sure the correct number of arguments are used.
     println!(&quot;My name is {0}, {1} {0}&quot;, &quot;Bond&quot;);
@@ -371,7 +395,7 @@ correctness at compile time.</p>
 
     // This will not compile because `Structure` does not implement
     // fmt::Display.
-    //println!(&quot;This struct `{}` won't print...&quot;, Structure(3));
+    // println!(&quot;This struct `{}` won't print...&quot;, Structure(3));
     // TODO ^ Try uncommenting this line
 
     // For Rust 1.58 and above, you can directly capture the argument from a
@@ -392,7 +416,7 @@ friendly fashion.</li>
 for these types. To print text for custom types, more steps are required.</p>
 <p>Implementing the <code>fmt::Display</code> trait automatically implements the
 <a href="https://doc.rust-lang.org/std/string/trait.ToString.html"><code>ToString</code></a> trait which allows us to <a href="hello/../conversion/string.html">convert</a> the type to <a href="hello/../std/str.html"><code>String</code></a>.</p>
-<p>In <em>line 46</em>, <code>#[allow(dead_code)]</code> is an <a href="hello/../attribute.html">attribute</a> which only apply to the module after it.</p>
+<p>In <em>line 43</em>, <code>#[allow(dead_code)]</code> is an <a href="hello/../attribute.html">attribute</a> which only apply to the module after it.</p>
 <h3 id="activities"><a class="header" href="#activities">Activities</a></h3>
 <ul>
 <li>Fix the issue in the above code (see FIXME) so that it runs without
@@ -675,17 +699,17 @@ fn main() {
         City { name: &quot;Dublin&quot;, lat: 53.347778, lon: -6.259722 },
         City { name: &quot;Oslo&quot;, lat: 59.95, lon: 10.75 },
         City { name: &quot;Vancouver&quot;, lat: 49.25, lon: -123.1 },
-    ].iter() {
-        println!(&quot;{}&quot;, *city);
+    ] {
+        println!(&quot;{}&quot;, city);
     }
     for color in [
         Color { red: 128, green: 255, blue: 90 },
         Color { red: 0, green: 3, blue: 254 },
         Color { red: 0, green: 0, blue: 0 },
-    ].iter() {
+    ] {
         // Switch this to use {} once you've added an implementation
         // for fmt::Display.
-        println!(&quot;{:?}&quot;, *color);
+        println!(&quot;{:?}&quot;, color);
     }
 }</code></pre></pre>
 <p>You can view a <a href="https://doc.rust-lang.org/std/fmt/#formatting-traits">full list of formatting traits</a> and their argument
@@ -697,8 +721,11 @@ so that the output displays as:</p>
 RGB (0, 3, 254) 0x0003FE
 RGB (0, 0, 0) 0x000000
 </code></pre>
-<p>Two hints if you get stuck:</p>
+<p>Three hints if you get stuck:</p>
 <ul>
+<li>The formula for calculating a color in the RGB color space is:
+<code>RGB = (R*65536)+(G*256)+B , (when R is RED, G is GREEN and B is BLUE)</code>.
+For more see <a href="https://www.rapidtables.com/web/color/RGB_Color.html#rgb-format">RGB color format &amp; calculation</a>.</li>
 <li>You <a href="https://doc.rust-lang.org/std/fmt/#named-parameters">may need to list each color more than once</a>.</li>
 <li>You can <a href="https://doc.rust-lang.org/std/fmt/#width">pad with zeros to a width of 2</a> with <code>:0&gt;2</code>.</li>
 </ul>
@@ -940,8 +967,10 @@ fn main() {
         }
     }
 
-    // Out of bound indexing causes runtime error.
+    // Out of bound indexing on array causes compile time error.
     //println!(&quot;{}&quot;, xs[5]);
+    // Out of bound indexing on slice causes runtime error.
+    //println!(&quot;{}&quot;, xs[..][5]);
 }</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="custom-types"><a class="header" href="#custom-types">Custom Types</a></h1>
 <p>Rust custom data types are formed mainly through the two keywords:</p>
@@ -1345,9 +1374,8 @@ the <code>mut</code> modifier.</p>
 
     println!(&quot;After mutation: {}&quot;, mutable_binding);
 
-    // Error!
+    // Error! Cannot assign a new value to an immutable variable
     _immutable_binding += 1;
-    // FIXME ^ Comment out this line
 }</code></pre></pre>
 <p>The compiler will throw a detailed diagnostic about mutability errors.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="scope-and-shadowing"><a class="header" href="#scope-and-shadowing">Scope and Shadowing</a></h1>
@@ -1499,7 +1527,7 @@ fn main() {
     // Unless it already fits, of course.
     println!(&quot; 128 as a i16 is: {}&quot;, 128 as i16);
 
-    // 128 as u8 -&gt; 128, whose value in 8-bit two's complement representation is:
+    // In boundary case 128 value in 8-bit two's complement representation is -128
     println!(&quot; 128 as a i8 is : {}&quot;, 128 as i8);
 
     // repeating the example above
@@ -1659,16 +1687,16 @@ necessary.</p>
 <p>Using the <code>Into</code> trait will typically require specification of the type to
 convert into as the compiler is unable to determine this most of the time.
 However this is a small trade-off considering we get the functionality for free.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::From;
+<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::Into;
 
 #[derive(Debug)]
 struct Number {
     value: i32,
 }
 
-impl From&lt;i32&gt; for Number {
-    fn from(item: i32) -&gt; Self {
-        Number { value: item }
+impl Into&lt;Number&gt; for i32 {
+    fn into(self) -&gt; Number {
+        Number { value: self }
     }
 }
 
@@ -1737,7 +1765,7 @@ fn main() {
     println!(&quot;{}&quot;, circle.to_string());
 }</code></pre></pre>
 <h2 id="parsing-a-string"><a class="header" href="#parsing-a-string">Parsing a String</a></h2>
-<p>One of the more common types to convert a string into is a number. The idiomatic
+<p>One of the more common types to convert a string into a number. The idiomatic
 approach to this is to use the <a href="https://doc.rust-lang.org/std/primitive.str.html#method.parse"><code>parse</code></a> function and either to arrange for
 type inference or to specify the type to parse using the 'turbofish' syntax.
 Both alternatives are shown in the following example.</p>
@@ -1865,7 +1893,7 @@ new one.</p>
 <p>It's possible to <code>break</code> or <code>continue</code> outer loops when dealing with nested
 loops. In these cases, the loops must be annotated with some <code>'label</code>, and the
 label must be passed to the <code>break</code>/<code>continue</code> statement.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(unreachable_code)]
+<pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(unreachable_code, unused_labels)]
 
 fn main() {
     'outer: loop {
@@ -2260,12 +2288,19 @@ differently from languages like C/C++.</p>
         // this will give an error: pattern does not mention field `x`
         //Foo { y } =&gt; println!(&quot;y = {}&quot;, y),
     }
+
+    let faa = Foo { x: (1, 2), y: 3 };
+
+    // You do not need a match block to destructure structs:
+    let Foo { x : x0, y: y0 } = faa;
+    println!(&quot;Outside: x0 = {x0:?}, y0 = {y0}&quot;);
 }</code></pre></pre>
 <h3 id="see-also-19"><a class="header" href="#see-also-19">See also:</a></h3>
 <p><a href="flow_control/match/destructuring/../../../custom_types/structs.html">Structs</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="guards"><a class="header" href="#guards">Guards</a></h1>
 <p>A <code>match</code> <em>guard</em> can be added to filter the arm.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">enum Temperature {
+<pre><pre class="playground"><code class="language-rust editable edition2021">#[allow(dead_code)]
+enum Temperature {
     Celsius(i32),
     Fahrenheit(i32),
 }
@@ -2450,13 +2485,13 @@ fn main() {
 <div style="break-before: page; page-break-before: always;"></div><h1 id="let-else"><a class="header" href="#let-else">let-else</a></h1>
 <blockquote>
 <p>🛈 stable since: rust 1.65</p>
+<p>🛈 you can target specific edition by compiling like this
+<code>rustc --edition=2021 main.rs</code></p>
 </blockquote>
 <p>With <code>let</code>-<code>else</code>, a refutable pattern can match and bind variables
 in the surrounding scope like a normal <code>let</code>, or else diverge (e.g. <code>break</code>,
 <code>return</code>, <code>panic!</code>) when the pattern doesn't match.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use std::str::FromStr;
+<pre><pre class="playground"><code class="language-rust edition2021">use std::str::FromStr;
 
 fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     let mut it = s.split(' ');
@@ -2469,8 +2504,9 @@ fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     (count, item)
 }
 
-assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
-<span class="boring">}</span></code></pre></pre>
+fn main() {
+    assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
+}</code></pre></pre>
 <p>The scope of name bindings is the main thing that makes this different from
 <code>match</code> or <code>if let</code>-<code>else</code> expressions. You could previously approximate these
 patterns with an unfortunate bit of repetition and an outer <code>let</code>:</p>
@@ -3121,9 +3157,9 @@ condition, it returns <code>None</code>. Its signature:</p>
     let array1 = [1, 2, 3];
     let array2 = [4, 5, 6];
 
-    // `iter()` for arrays yields `&amp;i32`
+    // `iter()` for arrays yields `&amp;&amp;i32`
     println!(&quot;Find 2 in array1: {:?}&quot;, array1.iter()     .find(|&amp;&amp;x| x == 2));
-    // `into_iter()` for arrays yields `i32`
+    // `into_iter()` for arrays yields `&amp;i32`
     println!(&quot;Find 2 in array2: {:?}&quot;, array2.into_iter().find(|&amp;x| x == 2));
 }</code></pre></pre>
 <p><code>Iterator::find</code> gives you a reference to the item. But if you want the <em>index</em> of the
@@ -3604,6 +3640,7 @@ will produce a binary from a crate. This behavior can be overridden by passing
 the <code>--crate-type</code> flag to <code>lib</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="creating-a-library"><a class="header" href="#creating-a-library">Creating a Library</a></h1>
 <p>Let's create a library, and then see how to link it to another crate.</p>
+<p>In <code>rary.rs</code>:</p>
 <pre><code class="language-rust ignore">pub fn public_function() {
     println!(&quot;called rary's `public_function()`&quot;);
 }
@@ -4716,6 +4753,8 @@ fn main() {
     // `_box2` is destroyed here, and memory gets freed
 }</code></pre></pre>
 <p>Of course, we can double check for memory errors using <a href="http://valgrind.org/info/"><code>valgrind</code></a>:</p>
+<!-- REUSE-IgnoreStart -->
+<!-- Prevent REUSE from parsing the copyright statement in the sample code -->
 <pre><code class="language-shell">$ rustc raii.rs &amp;&amp; valgrind ./raii
 ==26873== Memcheck, a memory error detector
 ==26873== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
@@ -4732,6 +4771,7 @@ fn main() {
 ==26873== For counts of detected and suppressed errors, rerun with: -v
 ==26873== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
 </code></pre>
+<!-- REUSE-IgnoreEnd -->
 <p>No leaks here!</p>
 <h2 id="destructor"><a class="header" href="#destructor">Destructor</a></h2>
 <p>The notion of a destructor in Rust is provided through the <a href="https://doc.rust-lang.org/std/ops/trait.Drop.html"><code>Drop</code></a> trait. The
@@ -5071,7 +5111,7 @@ fn main() {
     println!(&quot;tuple is {:?}&quot;, mutable_tuple);
 }</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="lifetimes"><a class="header" href="#lifetimes">Lifetimes</a></h1>
-<p>A <em>lifetime</em> is a construct the compiler (or more specifically, its <em>borrow
+<p>A <em>lifetime</em> is a construct of the compiler (or more specifically, its <em>borrow
 checker</em>) uses to ensure all borrows are valid. Specifically, a variable's
 lifetime begins when it is created and ends when it is destroyed. While
 lifetimes and scopes are often referred to together, they are not the same.</p>
@@ -6097,12 +6137,12 @@ macro_rules! say_hello {
     // `()` indicates that the macro takes no argument.
     () =&gt; {
         // The macro will expand into the contents of this block.
-        println!(&quot;Hello!&quot;);
+        println!(&quot;Hello!&quot;)
     };
 }
 
 fn main() {
-    // This call will expand into `println!(&quot;Hello&quot;);`
+    // This call will expand into `println!(&quot;Hello&quot;)`
     say_hello!()
 }</code></pre></pre>
 <p>So why are macros useful?</p>
@@ -6413,7 +6453,9 @@ Here, we explicitly call <code>panic</code> on our error condition:</p>
 fn main() {
     drink(&quot;water&quot;);
     drink(&quot;lemonade&quot;);
+    drink(&quot;still water&quot;);
 }</code></pre></pre>
+<p>The first call to <code>drink</code> works. The second panics and thus the third is never called.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="abort-and-unwind"><a class="header" href="#abort-and-unwind"><code>abort</code> and <code>unwind</code></a></h1>
 <p>The previous section illustrates the error handling mechanism <code>panic</code>.  Different code paths can be conditionally compiled based on the panic setting. The current values available are <code>unwind</code> and <code>abort</code>. </p>
 <p>Building on the prior lemonade example, we explicitly use the panic strategy to exercise different lines of code.</p>
@@ -6637,7 +6679,7 @@ in the nested <code>Option&lt;Option&lt;T&gt;&gt;</code>. Chaining multiple call
 then become confusing. That's where another combinator called <code>and_then()</code>, 
 known in some languages as flatmap, comes in.</p>
 <p><code>and_then()</code> calls its function input with the wrapped value and returns the result. If the <code>Option</code> is <code>None</code>, then it returns <code>None</code> instead.</p>
-<p>In the following example, <code>cookable_v2()</code> results in an <code>Option&lt;Food&gt;</code>. 
+<p>In the following example, <code>cookable_v3()</code> results in an <code>Option&lt;Food&gt;</code>. 
 Using <code>map()</code> instead of <code>and_then()</code> would have given an 
 <code>Option&lt;Option&lt;Food&gt;&gt;</code>, which is an invalid type for <code>eat()</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(dead_code)]
@@ -6671,12 +6713,18 @@ fn cookable_v1(food: Food) -&gt; Option&lt;Food&gt; {
 }
 
 // This can conveniently be rewritten more compactly with `and_then()`:
-fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+fn cookable_v3(food: Food) -&gt; Option&lt;Food&gt; {
     have_recipe(food).and_then(have_ingredients)
 }
 
+// Otherwise we'd need to `flatten()` an `Option&lt;Option&lt;Food&gt;&gt;`
+// to get an `Option&lt;Food&gt;`:
+fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+    have_recipe(food).map(have_ingredients).flatten()
+}
+
 fn eat(food: Food, day: Day) {
-    match cookable_v2(food) {
+    match cookable_v3(food) {
         Some(food) =&gt; println!(&quot;Yay! On {:?} we get to eat {:?}.&quot;, day, food),
         None       =&gt; println!(&quot;Oh no. We don't get to eat on {:?}?&quot;, day),
     }
@@ -6690,7 +6738,7 @@ fn main() {
     eat(sushi, Day::Wednesday);
 }</code></pre></pre>
 <h3 id="see-also-63"><a class="header" href="#see-also-63">See also:</a></h3>
-<p><a href="error/option_unwrap/../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a></p>
+<p><a href="error/option_unwrap/../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.flatten"><code>Option::flatten()</code></a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unpacking-options-and-defaults"><a class="header" href="#unpacking-options-and-defaults">Unpacking options and defaults</a></h1>
 <p>There is more than one way to unpack an <code>Option</code> and fall back on a default if it is <code>None</code>. To choose the one that meets our needs, we need to consider the following:</p>
 <ul>
@@ -7254,7 +7302,7 @@ fn main() {
 <p>Notice in the previous example that our immediate reaction to calling
 <code>parse</code> is to <code>map</code> the error from a library error into a boxed
 error:</p>
-<pre><code class="language-rust ignore">.and_then(|s| s.parse::&lt;i32&gt;()
+<pre><code class="language-rust ignore">.and_then(|s| s.parse::&lt;i32&gt;())
     .map_err(|e| e.into())</code></pre>
 <p>Since this is a simple and common operation, it would be convenient if it
 could be elided. Alas, because <code>and_then</code> is not sufficiently flexible, it
@@ -7971,6 +8019,8 @@ fn main() {
     // `_x` should get destroyed at this point
 }</code></pre></pre>
 <p>Let's check that <code>panic!</code> doesn't leak memory.</p>
+<!-- REUSE-IgnoreStart -->
+<!-- Prevent REUSE from parsing the copyright statement in the sample code -->
 <pre><code class="language-shell">$ rustc panic.rs &amp;&amp; valgrind ./panic
 ==4401== Memcheck, a memory error detector
 ==4401== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
@@ -7988,6 +8038,7 @@ thread '&lt;main&gt;' panicked at 'division by zero', panic.rs:5
 ==4401== For counts of detected and suppressed errors, rerun with: -v
 ==4401== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 </code></pre>
+<!-- REUSE-IgnoreEnd -->
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hashmap"><a class="header" href="#hashmap">HashMap</a></h1>
 <p>Where vectors store values by an integer index, <code>HashMap</code>s store values by key. 
 <code>HashMap</code> keys can be booleans, integers, strings, 
@@ -8614,45 +8665,53 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 failure conditions.)</p>
 <p>The <a href="https://doc.rust-lang.org/std/fs/struct.OpenOptions.html"><code>OpenOptions</code></a> struct can be used to configure how a file is opened.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="read_lines"><a class="header" href="#read_lines"><code>read_lines</code></a></h1>
-<h2 id="beginner-friendly-method"><a class="header" href="#beginner-friendly-method">Beginner friendly method</a></h2>
-<p>This method is NOT efficient. It's here for beginners
-who can't understand the efficient method yet.</p>
-<pre><pre class="playground"><code class="language-rust no_run edition2021">use std::fs::File;
-use std::io::{ self, BufRead, BufReader };
+<h2 id="a-naive-approach"><a class="header" href="#a-naive-approach">A naive approach</a></h2>
+<p>This might be a reasonable first attempt for a beginner's first
+implementation for reading lines from a file.</p>
+<pre><pre class="playground"><code class="language-rust norun edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::fs::read_to_string;
 
-fn read_lines(filename: String) -&gt; io::Lines&lt;BufReader&lt;File&gt;&gt; {
-    // Open the file in read-only mode.
-    let file = File::open(filename).unwrap(); 
-    // Read the file line by line, and return an iterator of the lines of the file.
-    return io::BufReader::new(file).lines(); 
-}
+fn read_lines(filename: &amp;str) -&gt; Vec&lt;String&gt; {
+    let mut result = Vec::new();
 
-fn main() {
-    // Stores the iterator of lines of the file in lines variable.
-    let lines = read_lines(&quot;./hosts&quot;.to_string());
-    // Iterate over the lines of the file, and in this case print them.
-    for line in lines {
-        println!(&quot;{}&quot;, line.unwrap());
+    for line in read_to_string(filename).unwrap().lines() {
+        result.push(line.to_string())
     }
-}</code></pre></pre>
-<p>Running this program simply prints the lines individually.</p>
-<pre><code class="language-shell">$ echo -e &quot;127.0.0.1\n192.168.0.1\n&quot; &gt; hosts
-$ rustc read_lines.rs &amp;&amp; ./read_lines
-127.0.0.1
-192.168.0.1
-</code></pre>
-<h2 id="efficient-method"><a class="header" href="#efficient-method">Efficient method</a></h2>
-<p>The method <code>lines()</code> returns an iterator over the lines
-of a file.</p>
-<p><code>File::open</code> expects a generic, <code>AsRef&lt;Path&gt;</code>.  That's what
-<code>read_lines()</code> expects as input.</p>
+
+    result
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Since the method <code>lines()</code> returns an iterator over the lines in the file,
+we can also perform a map inline and collect the results, yielding a more
+concise and fluent expression.</p>
+<pre><pre class="playground"><code class="language-rust norun edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::fs::read_to_string;
+
+fn read_lines(filename: &amp;str) -&gt; Vec&lt;String&gt; {
+    read_to_string(filename) 
+        .unwrap()  // panic on possible file-reading errors
+        .lines()  // split the string into an iterator of string slices
+        .map(String::from)  // make each slice into a string
+        .collect()  // gather them together into a vector
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Note that in both examples above, we must convert the <code>&amp;str</code> reference
+returned from <code>lines()</code> to the owned type <code>String</code>, using <code>.to_string()</code>
+and <code>String::from</code> respectively.</p>
+<h2 id="a-more-efficient-approach"><a class="header" href="#a-more-efficient-approach">A more efficient approach</a></h2>
+<p>Here we pass ownership of the open <code>File</code> to a <code>BufReader</code> struct. <code>BufReader</code> uses an internal
+buffer to reduce intermediate allocations.</p>
+<p>We also update <code>read_lines</code> to return an iterator instead of allocating new
+<code>String</code> objects in memory for each line.</p>
 <pre><pre class="playground"><code class="language-rust no_run edition2021">use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
 fn main() {
-    // File hosts must exist in current path before this produces output
-    if let Ok(lines) = read_lines(&quot;./hosts&quot;) {
+    // File hosts.txt must exist in the current path
+    if let Ok(lines) = read_lines(&quot;./hosts.txt&quot;) {
         // Consumes the iterator, returns an (Optional) String
         for line in lines {
             if let Ok(ip) = line {
@@ -8670,13 +8729,15 @@ where P: AsRef&lt;Path&gt;, {
     Ok(io::BufReader::new(file).lines())
 }</code></pre></pre>
 <p>Running this program simply prints the lines individually.</p>
-<pre><code class="language-shell">$ echo -e &quot;127.0.0.1\n192.168.0.1\n&quot; &gt; hosts
+<pre><code class="language-shell">$ echo -e &quot;127.0.0.1\n192.168.0.1\n&quot; &gt; hosts.txt
 $ rustc read_lines.rs &amp;&amp; ./read_lines
 127.0.0.1
 192.168.0.1
 </code></pre>
-<p>This process is more efficient than creating a <code>String</code> in memory
-especially working with larger files.</p>
+<p>(Note that since <code>File::open</code> expects a generic <code>AsRef&lt;Path&gt;</code> as argument, we define our
+generic <code>read_lines()</code> method with the same generic constraint, using the <code>where</code> keyword.)</p>
+<p>This process is more efficient than creating a <code>String</code> in memory with all of the file's
+contents. This can especially cause performance issues when working with larger files.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="child-processes"><a class="header" href="#child-processes">Child processes</a></h1>
 <p>The <code>process::Output</code> struct represents the output of a finished child process,
 and the <code>process::Command</code> struct is a process builder.</p>
@@ -9540,12 +9601,14 @@ cannot be otherwise achieved. Accessing low level hardware primitives, e.g. in k
 <p>Let us start with the simplest possible example:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 unsafe {
     asm!(&quot;nop&quot;);
 }
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>This will insert a NOP (no operation) instruction into the assembly generated by the compiler.
 Note that all <code>asm!</code> invocations have to be inside an <code>unsafe</code> block, as they could insert
 arbitrary instructions and break various invariants. The instructions to be inserted are listed
@@ -9555,6 +9618,7 @@ in the first argument of the <code>asm!</code> macro as a string literal.</p>
 actually acts on data:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let x: u64;
@@ -9562,7 +9626,8 @@ unsafe {
     asm!(&quot;mov {}, 5&quot;, out(reg) x);
 }
 assert_eq!(x, 5);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>This will write the value <code>5</code> into the <code>u64</code> variable <code>x</code>.
 You can see that the string literal we use to specify instructions is actually a template string.
 It is governed by the same rules as Rust <a href="https://doc.rust-lang.org/std/fmt/#syntax">format strings</a>.
@@ -9576,6 +9641,7 @@ the template and will read the variable from there after the inline assembly fin
 <p>Let us see another example that also uses an input:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let i: u64 = 3;
@@ -9589,7 +9655,8 @@ unsafe {
     );
 }
 assert_eq!(o, 8);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>This will add <code>5</code> to the input in variable <code>i</code> and write the result to variable <code>o</code>.
 The particular way this assembly does this is first copying the value from <code>i</code> to the output,
 and then adding <code>5</code> to it.</p>
@@ -9606,6 +9673,7 @@ readability, and allows reordering instructions without changing the argument or
 <p>We can further refine the above example to avoid the <code>mov</code> instruction:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut x: u64 = 3;
@@ -9613,12 +9681,14 @@ unsafe {
     asm!(&quot;add {0}, 5&quot;, inout(reg) x);
 }
 assert_eq!(x, 8);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>We can see that <code>inout</code> is used to specify an argument that is both input and output.
 This is different from specifying an input and output separately in that it is guaranteed to assign both to the same register.</p>
 <p>It is also possible to specify different variables for the input and output parts of an <code>inout</code> operand:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let x: u64 = 3;
@@ -9627,7 +9697,8 @@ unsafe {
     asm!(&quot;add {0}, 5&quot;, inout(reg) x =&gt; y);
 }
 assert_eq!(y, 8);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="late-output-operands"><a class="header" href="#late-output-operands">Late output operands</a></h2>
 <p>The Rust compiler is conservative with its allocation of operands. It is assumed that an <code>out</code>
 can be written at any time, and can therefore not share its location with any other argument.
@@ -9639,6 +9710,7 @@ There is also a <code>inlateout</code> variant of this specifier.</p>
 <p>Here is an example where <code>inlateout</code> <em>cannot</em> be used in <code>release</code> mode or other optimized cases:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut a: u64 = 4;
@@ -9654,12 +9726,14 @@ unsafe {
     );
 }
 assert_eq!(a, 12);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>The above could work well in unoptimized cases (<code>Debug</code> mode), but if you want optimized performance (<code>release</code> mode or other optimized cases), it could not work.</p>
 <p>That is because in optimized cases, the compiler is free to allocate the same register for inputs <code>b</code> and <code>c</code> since it knows they have the same value. However it must allocate a separate register for <code>a</code> since it uses <code>inout</code> and not <code>inlateout</code>. If <code>inlateout</code> was used, then <code>a</code> and <code>c</code> could be allocated to the same register, in which case the first instruction to overwrite the value of <code>c</code> and cause the assembly code to produce the wrong result.</p>
 <p>However the following example can use <code>inlateout</code> since the output is only modified after all input registers have been read:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut a: u64 = 4;
@@ -9668,7 +9742,8 @@ unsafe {
     asm!(&quot;add {0}, {1}&quot;, inlateout(reg) a, in(reg) b);
 }
 assert_eq!(a, 8);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>As you can see, this assembly fragment will still work correctly if <code>a</code> and <code>b</code> are assigned to the same register.</p>
 <h2 id="explicit-register-operands"><a class="header" href="#explicit-register-operands">Explicit register operands</a></h2>
 <p>Some instructions require that the operands be in a specific register.
@@ -9676,13 +9751,15 @@ Therefore, Rust inline assembly provides some more specific constraint specifier
 While <code>reg</code> is generally available on any architecture, explicit registers are highly architecture specific. E.g. for x86 the general purpose registers <code>eax</code>, <code>ebx</code>, <code>ecx</code>, <code>edx</code>, <code>ebp</code>, <code>esi</code>, and <code>edi</code> among others can be addressed by their name.</p>
 <pre><pre class="playground"><code class="language-rust no_run edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let cmd = 0xd1;
 unsafe {
     asm!(&quot;out 0x64, eax&quot;, in(&quot;eax&quot;) cmd);
 }
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>In this example we call the <code>out</code> instruction to output the content of the <code>cmd</code> variable to port <code>0x64</code>. Since the <code>out</code> instruction only accepts <code>eax</code> (and its sub registers) as operand we had to use the <code>eax</code> constraint specifier.</p>
 <blockquote>
 <p><strong>Note</strong>: unlike other operand types, explicit register operands cannot be used in the template string: you can't use <code>{}</code> and should write the register name directly instead. Also, they must appear at the end of the operand list after all other operand types.</p>
@@ -9690,6 +9767,7 @@ unsafe {
 <p>Consider this example which uses the x86 <code>mul</code> instruction:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 fn mul(a: u64, b: u64) -&gt; u128 {
@@ -9709,7 +9787,8 @@ fn mul(a: u64, b: u64) -&gt; u128 {
 
     ((hi as u128) &lt;&lt; 64) + lo as u128
 }
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>This uses the <code>mul</code> instruction to multiply two 64-bit inputs with a 128-bit result.
 The only explicit operand is a register, that we fill from the variable <code>a</code>.
 The second operand is implicit, and must be the <code>rax</code> register, which we fill from the variable <code>b</code>.
@@ -9722,13 +9801,15 @@ This state is generally referred to as being &quot;clobbered&quot;.
 We need to tell the compiler about this since it may need to save and restore this state around the inline assembly block.</p>
 <pre><pre class="playground"><code class="language-rust edition2021">use std::arch::asm;
 
-fn main() {
+<span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)]
+</span>fn main() {
     // three entries of four bytes each
     let mut name_buf = [0_u8; 12];
     // String is stored as ascii in ebx, edx, ecx in order
     // Because ebx is reserved, the asm needs to preserve the value of it.
     // So we push and pop it around the main asm.
-    // (in 64 bit mode for 64 bit processors, 32 bit processors would use ebx)
+    // 64 bit mode on 64 bit processors does not allow pushing/popping of
+    // 32 bit registers (like ebx), so we have to use the extended rbx register instead.
 
     unsafe {
         asm!(
@@ -9754,15 +9835,19 @@ fn main() {
 
     let name = core::str::from_utf8(&amp;name_buf).unwrap();
     println!(&quot;CPU Manufacturer ID: {}&quot;, name);
-}</code></pre></pre>
+}
+
+<span class="boring">#[cfg(not(target_arch = &quot;x86_64&quot;))]
+</span><span class="boring">fn main() {}</span></code></pre></pre>
 <p>In the example above we use the <code>cpuid</code> instruction to read the CPU manufacturer ID.
 This instruction writes to <code>eax</code> with the maximum supported <code>cpuid</code> argument and <code>ebx</code>, <code>edx</code>, and <code>ecx</code> with the CPU manufacturer ID as ASCII bytes in that order.</p>
 <p>Even though <code>eax</code> is never read we still need to tell the compiler that the register has been modified so that the compiler can save any values that were in these registers before the asm. This is done by declaring it as an output but with <code>_</code> instead of a variable name, which indicates that the output value is to be discarded.</p>
-<p>This code also works around the limitation that <code>ebx</code> is a reserved register by LLVM. That means that LLVM assumes that it has full control over the register and it must be restored to its original state before exiting the asm block, so it cannot be used as an input or output <strong>except</strong> if the compiler uses it to fulfill a general register class (e.g. <code>in(reg)</code>). This makes <code>reg</code> operands dangerous when using reserved registers as we could unknowingly corrupt out input or output because they share the same register.</p>
-<p>To work around this we use <code>rdi</code> to store the pointer to the output array, save <code>ebx</code> via <code>push</code>, read from <code>ebx</code> inside the asm block into the array and then restoring <code>ebx</code> to its original state via <code>pop</code>. The <code>push</code> and <code>pop</code> use the full 64-bit <code>rbx</code> version of the register to ensure that the entire register is saved. On 32 bit targets the code would instead use <code>ebx</code> in the <code>push</code>/<code>pop</code>.</p>
+<p>This code also works around the limitation that <code>ebx</code> is a reserved register by LLVM. That means that LLVM assumes that it has full control over the register and it must be restored to its original state before exiting the asm block, so it cannot be used as an input or output <strong>except</strong> if the compiler uses it to fulfill a general register class (e.g. <code>in(reg)</code>). This makes <code>reg</code> operands dangerous when using reserved registers as we could unknowingly corrupt our input or output because they share the same register.</p>
+<p>To work around this we use <code>rdi</code> to store the pointer to the output array, save <code>ebx</code> via <code>push</code>, read from <code>ebx</code> inside the asm block into the array and then restore <code>ebx</code> to its original state via <code>pop</code>. The <code>push</code> and <code>pop</code> use the full 64-bit <code>rbx</code> version of the register to ensure that the entire register is saved. On 32 bit targets the code would instead use <code>ebx</code> in the <code>push</code>/<code>pop</code>.</p>
 <p>This can also be used with a general register class to obtain a scratch register for use inside the asm code:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 // Multiply x by 6 using shifts and adds
@@ -9778,11 +9863,13 @@ unsafe {
     );
 }
 assert_eq!(x, 4 * 6);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="symbol-operands-and-abi-clobbers"><a class="header" href="#symbol-operands-and-abi-clobbers">Symbol operands and ABI clobbers</a></h2>
 <p>By default, <code>asm!</code> assumes that any register not specified as an output will have its contents preserved by the assembly code. The <a href="unsafe/../../reference/inline-assembly.html#abi-clobbers"><code>clobber_abi</code></a> argument to <code>asm!</code> tells the compiler to automatically insert the necessary clobber operands according to the given calling convention ABI: any register which is not fully preserved in that ABI will be treated as clobbered.  Multiple <code>clobber_abi</code> arguments may be provided and all clobbers from all specified ABIs will be inserted.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 extern &quot;C&quot; fn foo(arg: i32) -&gt; i32 {
@@ -9808,13 +9895,15 @@ fn call_foo(arg: i32) -&gt; i32 {
         result
     }
 }
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="register-template-modifiers"><a class="header" href="#register-template-modifiers">Register template modifiers</a></h2>
 <p>In some cases, fine control is needed over the way a register name is formatted when inserted into the template string. This is needed when an architecture's assembly language has several names for the same register, each typically being a &quot;view&quot; over a subset of the register (e.g. the low 32 bits of a 64-bit register).</p>
 <p>By default the compiler will always choose the name that refers to the full register size (e.g. <code>rax</code> on x86-64, <code>eax</code> on x86, etc).</p>
 <p>This default can be overridden by using modifiers on the template string operands, just like you would with format strings:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut x: u16 = 0xab;
@@ -9824,7 +9913,8 @@ unsafe {
 }
 
 assert_eq!(x, 0xabab);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>In this example, we use the <code>reg_abcd</code> register class to restrict the register allocator to the 4 legacy x86 registers (<code>ax</code>, <code>bx</code>, <code>cx</code>, <code>dx</code>) of which the first two bytes can be addressed independently.</p>
 <p>Let us assume that the register allocator has chosen to allocate <code>x</code> in the <code>ax</code> register.
 The <code>h</code> modifier will emit the register name for the high byte of that register and the <code>l</code> modifier will emit the register name for the low byte. The asm code will therefore be expanded as <code>mov ah, al</code> which copies the low byte of the value into the high byte.</p>
@@ -9835,6 +9925,7 @@ You have to manually use the memory address syntax specified by the target archi
 For example, on x86/x86_64 using Intel assembly syntax, you should wrap inputs/outputs in <code>[]</code> to indicate they are memory operands:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 fn load_fpu_control_word(control: u16) {
@@ -9842,7 +9933,8 @@ fn load_fpu_control_word(control: u16) {
         asm!(&quot;fldcw [{}]&quot;, in(reg) &amp;control, options(nostack));
     }
 }
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="labels"><a class="header" href="#labels">Labels</a></h2>
 <p>Any reuse of a named label, local or otherwise, can result in an assembler or linker error or may cause other strange behavior. Reuse of a named label can happen in a variety of ways including:</p>
 <ul>
@@ -9854,6 +9946,7 @@ fn load_fpu_control_word(control: u16) {
 <p>Moreover, on x86 when using the default Intel syntax, due to <a href="https://bugs.llvm.org/show_bug.cgi?id=36144">an LLVM bug</a>, you shouldn't use labels exclusively made of <code>0</code> and <code>1</code> digits, e.g. <code>0</code>, <code>11</code> or <code>101010</code>, as they may end up being interpreted as binary values. Using <code>options(att_syntax)</code> will avoid any ambiguity, but that affects the syntax of the <em>entire</em> <code>asm!</code> block. (See <a href="unsafe/asm.html#options">Options</a>, below, for more on <code>options</code>.)</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut a = 0;
@@ -9871,7 +9964,8 @@ unsafe {
     );
 }
 assert_eq!(a, 5);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>This will decrement the <code>{0}</code> register value from 10 to 3, then add 2 and store it in <code>a</code>.</p>
 <p>This example shows a few things:</p>
 <ul>
@@ -9883,6 +9977,7 @@ assert_eq!(a, 5);
 <p>Let's take our previous example of an <code>add</code> instruction:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 let mut a: u64 = 4;
@@ -9895,7 +9990,8 @@ unsafe {
     );
 }
 assert_eq!(a, 8);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <p>Options can be provided as an optional final argument to the <code>asm!</code> macro. We specified three options here:</p>
 <ul>
 <li><code>pure</code> means that the asm code has no observable side effects and that its output depends only on its inputs. This allows the compiler optimizer to call the inline asm fewer times or even eliminate it entirely.</li>
@@ -9903,7 +9999,7 @@ assert_eq!(a, 8);
 <li><code>nostack</code> means that the asm code does not push any data onto the stack. This allows the compiler to use optimizations such as the stack red zone on x86-64 to avoid stack pointer adjustments.</li>
 </ul>
 <p>These allow the compiler to better optimize code using <code>asm!</code>, for example by eliminating pure <code>asm!</code> blocks whose outputs are not needed.</p>
-<p>See the <a href="unsafe/../../reference/inline-assembly.html">reference</a> for the full list of available options and their effects.</p>
+<p>See the <a href="https://doc.rust-lang.org/stable/reference/inline-assembly.html">reference</a> for the full list of available options and their effects.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h1>
 <p>The Rust language is fastly evolving, and because of this certain compatibility
 issues can arise, despite efforts to ensure forwards-compatibility wherever
@@ -10112,5 +10208,6 @@ pub use self::async_await::*;</code></pre>
         });
         </script>
 
+    </div>
     </body>
 </html>

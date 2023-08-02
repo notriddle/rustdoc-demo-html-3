@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/sse2.rs`."><title>sse2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/sse2.rs`."><title>sse2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4884,7 +4884,9 @@
 <a href="#4884" id="4884">4884</a>
 <a href="#4885" id="4885">4885</a>
 <a href="#4886" id="4886">4886</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Streaming SIMD Extensions 2 (SSE2)
+<a href="#4887" id="4887">4887</a>
+<a href="#4888" id="4888">4888</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Streaming SIMD Extensions 2 (SSE2)
 
 </span><span class="attr">#[cfg(test)]
 </span><span class="kw">use </span>stdarch_test::assert_instr;
@@ -4901,7 +4903,7 @@
 /// This can help improve the performance and power consumption of spin-wait
 /// loops.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_pause)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_pause)
 </span><span class="attr">#[inline]
 #[cfg_attr(all(test, target_feature = <span class="string">&quot;sse2&quot;</span>), assert_instr(pause))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -4914,7 +4916,7 @@
 <span class="doccomment">/// Invalidates and flushes the cache line that contains `p` from all levels of
 /// the cache hierarchy.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_clflush)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_clflush)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(clflush))]
@@ -4930,7 +4932,7 @@
 /// globally visible before any load instruction which follows the fence in
 /// program order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_lfence)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_lfence)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(lfence))]
@@ -4946,7 +4948,7 @@
 /// memory fence instruction is globally visible before any memory instruction
 /// which follows the fence in program order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mfence)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mfence)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(mfence))]
@@ -4957,7 +4959,7 @@
 
 <span class="doccomment">/// Adds packed 8-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddb))]
@@ -4968,7 +4970,7 @@
 
 <span class="doccomment">/// Adds packed 16-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddw))]
@@ -4979,7 +4981,7 @@
 
 <span class="doccomment">/// Adds packed 32-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddd))]
@@ -4990,7 +4992,7 @@
 
 <span class="doccomment">/// Adds packed 64-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddq))]
@@ -5001,7 +5003,7 @@
 
 <span class="doccomment">/// Adds packed 8-bit integers in `a` and `b` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_adds_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_adds_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddsb))]
@@ -5012,7 +5014,7 @@
 
 <span class="doccomment">/// Adds packed 16-bit integers in `a` and `b` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_adds_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_adds_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddsw))]
@@ -5023,7 +5025,7 @@
 
 <span class="doccomment">/// Adds packed unsigned 8-bit integers in `a` and `b` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_adds_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_adds_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddusb))]
@@ -5034,7 +5036,7 @@
 
 <span class="doccomment">/// Adds packed unsigned 16-bit integers in `a` and `b` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_adds_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_adds_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(paddusw))]
@@ -5045,7 +5047,7 @@
 
 <span class="doccomment">/// Averages packed unsigned 8-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_avg_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_avg_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pavgb))]
@@ -5056,7 +5058,7 @@
 
 <span class="doccomment">/// Averages packed unsigned 16-bit integers in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_avg_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_avg_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pavgw))]
@@ -5071,7 +5073,7 @@
 /// intermediate signed 32-bit integers. Horizontally add adjacent pairs of
 /// intermediate 32-bit integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_madd_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_madd_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaddwd))]
@@ -5083,7 +5085,7 @@
 <span class="doccomment">/// Compares packed 16-bit integers in `a` and `b`, and returns the packed
 /// maximum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxsw))]
@@ -5097,7 +5099,7 @@
 <span class="doccomment">/// Compares packed unsigned 8-bit integers in `a` and `b`, and returns the
 /// packed maximum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxub))]
@@ -5111,7 +5113,7 @@
 <span class="doccomment">/// Compares packed 16-bit integers in `a` and `b`, and returns the packed
 /// minimum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminsw))]
@@ -5125,7 +5127,7 @@
 <span class="doccomment">/// Compares packed unsigned 8-bit integers in `a` and `b`, and returns the
 /// packed minimum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminub))]
@@ -5141,7 +5143,7 @@
 /// The multiplication produces intermediate 32-bit integers, and returns the
 /// high 16 bits of the intermediate integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mulhi_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mulhi_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmulhw))]
@@ -5155,7 +5157,7 @@
 /// The multiplication produces intermediate 32-bit integers, and returns the
 /// high 16 bits of the intermediate integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mulhi_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mulhi_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmulhuw))]
@@ -5169,7 +5171,7 @@
 /// The multiplication produces intermediate 32-bit integers, and returns the
 /// low 16 bits of the intermediate integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mullo_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mullo_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmullw))]
@@ -5183,7 +5185,7 @@
 ///
 /// Returns the unsigned 64-bit results.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mul_epu32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mul_epu32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmuludq))]
@@ -5199,7 +5201,7 @@
 /// two unsigned 16-bit integers, and pack these unsigned 16-bit integers in
 /// the low 16 bits of 64-bit elements returned.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sad_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sad_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psadbw))]
@@ -5210,7 +5212,7 @@
 
 <span class="doccomment">/// Subtracts packed 8-bit integers in `b` from packed 8-bit integers in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubb))]
@@ -5221,7 +5223,7 @@
 
 <span class="doccomment">/// Subtracts packed 16-bit integers in `b` from packed 16-bit integers in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubw))]
@@ -5232,7 +5234,7 @@
 
 <span class="doccomment">/// Subtract packed 32-bit integers in `b` from packed 32-bit integers in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubd))]
@@ -5243,7 +5245,7 @@
 
 <span class="doccomment">/// Subtract packed 64-bit integers in `b` from packed 64-bit integers in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubq))]
@@ -5255,7 +5257,7 @@
 <span class="doccomment">/// Subtract packed 8-bit integers in `b` from packed 8-bit integers in `a`
 /// using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_subs_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_subs_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubsb))]
@@ -5267,7 +5269,7 @@
 <span class="doccomment">/// Subtract packed 16-bit integers in `b` from packed 16-bit integers in `a`
 /// using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_subs_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_subs_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubsw))]
@@ -5279,7 +5281,7 @@
 <span class="doccomment">/// Subtract packed unsigned 8-bit integers in `b` from packed unsigned 8-bit
 /// integers in `a` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_subs_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_subs_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubusb))]
@@ -5291,7 +5293,7 @@
 <span class="doccomment">/// Subtract packed unsigned 16-bit integers in `b` from packed unsigned 16-bit
 /// integers in `a` using saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_subs_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_subs_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psubusw))]
@@ -5302,14 +5304,14 @@
 
 <span class="doccomment">/// Shifts `a` left by `IMM8` bytes while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_slli_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_slli_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pslldq, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_slli_si128&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     _mm_slli_si128_impl::&lt;IMM8&gt;(a)
 }
 
@@ -5327,10 +5329,10 @@
         }
     }
     <span class="kw">let </span>zero = _mm_set1_epi8(<span class="number">0</span>).as_i8x16();
-    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle16!</span>(
+    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(
         zero,
         a.as_i8x16(),
-        &lt;<span class="kw">const </span>IMM8: i32&gt; [
+        [
             mask(IMM8, <span class="number">0</span>),
             mask(IMM8, <span class="number">1</span>),
             mask(IMM8, <span class="number">2</span>),
@@ -5353,47 +5355,47 @@
 
 <span class="doccomment">/// Shifts `a` left by `IMM8` bytes while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_bslli_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_bslli_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pslldq, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_bslli_si128&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     _mm_slli_si128_impl::&lt;IMM8&gt;(a)
 }
 
 <span class="doccomment">/// Shifts `a` right by `IMM8` bytes while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_bsrli_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_bsrli_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrldq, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_bsrli_si128&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     _mm_srli_si128_impl::&lt;IMM8&gt;(a)
 }
 
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` left by `IMM8` while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_slli_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_slli_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psllw, IMM8 = <span class="number">7</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_slli_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(pslliw(a.as_i16x8(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` left by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sll_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sll_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psllw))]
@@ -5404,21 +5406,21 @@
 
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` left by `IMM8` while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_slli_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_slli_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pslld, IMM8 = <span class="number">7</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_slli_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psllid(a.as_i32x4(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` left by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sll_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sll_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pslld))]
@@ -5429,21 +5431,21 @@
 
 <span class="doccomment">/// Shifts packed 64-bit integers in `a` left by `IMM8` while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_slli_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_slli_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psllq, IMM8 = <span class="number">7</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_slli_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(pslliq(a.as_i64x2(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 64-bit integers in `a` left by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sll_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sll_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psllq))]
@@ -5455,21 +5457,21 @@
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` right by `IMM8` while shifting in sign
 /// bits.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srai_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srai_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psraw, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srai_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psraiw(a.as_i16x8(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` right by `count` while shifting in sign
 /// bits.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sra_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sra_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psraw))]
@@ -5481,21 +5483,21 @@
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` right by `IMM8` while shifting in sign
 /// bits.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srai_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srai_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrad, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srai_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psraid(a.as_i32x4(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` right by `count` while shifting in sign
 /// bits.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sra_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sra_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrad))]
@@ -5506,14 +5508,14 @@
 
 <span class="doccomment">/// Shifts `a` right by `IMM8` bytes while shifting in zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srli_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srli_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrldq, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srli_si128&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     _mm_srli_si128_impl::&lt;IMM8&gt;(a)
 }
 
@@ -5530,10 +5532,10 @@
         }
     }
     <span class="kw">let </span>zero = _mm_set1_epi8(<span class="number">0</span>).as_i8x16();
-    <span class="kw">let </span>x: i8x16 = <span class="macro">simd_shuffle16!</span>(
+    <span class="kw">let </span>x: i8x16 = <span class="macro">simd_shuffle!</span>(
         a.as_i8x16(),
         zero,
-        &lt;<span class="kw">const </span>IMM8: i32&gt; [
+        [
             mask(IMM8, <span class="number">0</span>),
             mask(IMM8, <span class="number">1</span>),
             mask(IMM8, <span class="number">2</span>),
@@ -5558,21 +5560,21 @@
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` right by `IMM8` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srli_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srli_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrlw, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srli_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psrliw(a.as_i16x8(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 16-bit integers in `a` right by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srl_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srl_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrlw))]
@@ -5584,21 +5586,21 @@
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` right by `IMM8` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srli_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srli_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrld, IMM8 = <span class="number">8</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srli_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psrlid(a.as_i32x4(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 32-bit integers in `a` right by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srl_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srl_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrld))]
@@ -5610,21 +5612,21 @@
 <span class="doccomment">/// Shifts packed 64-bit integers in `a` right by `IMM8` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srli_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srli_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrlq, IMM8 = <span class="number">1</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_srli_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(psrliq(a.as_i64x2(), IMM8))
 }
 
 <span class="doccomment">/// Shifts packed 64-bit integers in `a` right by `count` while shifting in
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_srl_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_srl_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(psrlq))]
@@ -5636,7 +5638,7 @@
 <span class="doccomment">/// Computes the bitwise AND of 128 bits (representing integer data) in `a` and
 /// `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_and_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_and_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(andps))]
@@ -5648,7 +5650,7 @@
 <span class="doccomment">/// Computes the bitwise NOT of 128 bits (representing integer data) in `a` and
 /// then AND with `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_andnot_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_andnot_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(andnps))]
@@ -5660,7 +5662,7 @@
 <span class="doccomment">/// Computes the bitwise OR of 128 bits (representing integer data) in `a` and
 /// `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_or_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_or_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(orps))]
@@ -5672,7 +5674,7 @@
 <span class="doccomment">/// Computes the bitwise XOR of 128 bits (representing integer data) in `a` and
 /// `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_xor_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_xor_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(xorps))]
@@ -5683,7 +5685,7 @@
 
 <span class="doccomment">/// Compares packed 8-bit integers in `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpeqb))]
@@ -5694,7 +5696,7 @@
 
 <span class="doccomment">/// Compares packed 16-bit integers in `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpeqw))]
@@ -5705,7 +5707,7 @@
 
 <span class="doccomment">/// Compares packed 32-bit integers in `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpeqd))]
@@ -5716,7 +5718,7 @@
 
 <span class="doccomment">/// Compares packed 8-bit integers in `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpgt_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpgt_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtb))]
@@ -5727,7 +5729,7 @@
 
 <span class="doccomment">/// Compares packed 16-bit integers in `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpgt_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpgt_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtw))]
@@ -5738,7 +5740,7 @@
 
 <span class="doccomment">/// Compares packed 32-bit integers in `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpgt_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpgt_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtd))]
@@ -5749,7 +5751,7 @@
 
 <span class="doccomment">/// Compares packed 8-bit integers in `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmplt_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmplt_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtb))]
@@ -5760,7 +5762,7 @@
 
 <span class="doccomment">/// Compares packed 16-bit integers in `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmplt_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmplt_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtw))]
@@ -5771,7 +5773,7 @@
 
 <span class="doccomment">/// Compares packed 32-bit integers in `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmplt_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmplt_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpgtd))]
@@ -5783,20 +5785,20 @@
 <span class="doccomment">/// Converts the lower two packed 32-bit integers in `a` to packed
 /// double-precision (64-bit) floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi32_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi32_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtdq2pd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi32_pd(a: __m128i) -&gt; __m128d {
     <span class="kw">let </span>a = a.as_i32x4();
-    simd_cast::&lt;i32x2, __m128d&gt;(<span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]))
+    simd_cast::&lt;i32x2, __m128d&gt;(<span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]))
 }
 
 <span class="doccomment">/// Returns `a` with its lower element replaced by `b` after converting it to
 /// an `f64`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsi32_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsi32_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtsi2sd))]
@@ -5808,7 +5810,7 @@
 <span class="doccomment">/// Converts packed 32-bit integers in `a` to packed single-precision (32-bit)
 /// floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi32_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi32_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtdq2ps))]
@@ -5820,7 +5822,7 @@
 <span class="doccomment">/// Converts packed single-precision (32-bit) floating-point elements in `a`
 /// to packed 32-bit integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtps_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtps_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtps2dq))]
@@ -5832,10 +5834,9 @@
 <span class="doccomment">/// Returns a vector whose lowest element is `a` and all higher elements are
 /// `0`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsi32_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsi32_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
-#[cfg_attr(all(test, target_arch = <span class="string">&quot;x86_64&quot;</span>), assert_instr(movd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtsi32_si128(a: i32) -&gt; __m128i {
     transmute(i32x4::new(a, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))
@@ -5843,10 +5844,9 @@
 
 <span class="doccomment">/// Returns the lowest element of `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsi128_si32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsi128_si32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
-#[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtsi128_si32(a: __m128i) -&gt; i32 {
     simd_extract(a.as_i32x4(), <span class="number">0</span>)
@@ -5855,7 +5855,7 @@
 <span class="doccomment">/// Sets packed 64-bit integers with the supplied values, from highest to
 /// lowest.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_epi64x)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi64x)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5866,7 +5866,7 @@
 
 <span class="doccomment">/// Sets packed 32-bit integers with the supplied values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5877,7 +5877,7 @@
 
 <span class="doccomment">/// Sets packed 16-bit integers with the supplied values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5897,7 +5897,7 @@
 
 <span class="doccomment">/// Sets packed 8-bit integers with the supplied values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5928,7 +5928,7 @@
 
 <span class="doccomment">/// Broadcasts 64-bit integer `a` to all elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set1_epi64x)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi64x)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5939,7 +5939,7 @@
 
 <span class="doccomment">/// Broadcasts 32-bit integer `a` to all elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set1_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5950,7 +5950,7 @@
 
 <span class="doccomment">/// Broadcasts 16-bit integer `a` to all elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set1_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5961,7 +5961,7 @@
 
 <span class="doccomment">/// Broadcasts 8-bit integer `a` to all elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set1_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5972,7 +5972,7 @@
 
 <span class="doccomment">/// Sets packed 32-bit integers with the supplied values in reverse order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setr_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -5983,7 +5983,7 @@
 
 <span class="doccomment">/// Sets packed 16-bit integers with the supplied values in reverse order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setr_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -6003,7 +6003,7 @@
 
 <span class="doccomment">/// Sets packed 8-bit integers with the supplied values in reverse order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setr_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// no particular instruction to test
@@ -6034,7 +6034,7 @@
 
 <span class="doccomment">/// Returns a vector with all elements set to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setzero_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setzero_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(xorps))]
@@ -6045,7 +6045,7 @@
 
 <span class="doccomment">/// Loads 64-bit integer from memory into first element of returned vector.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadl_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadl_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// FIXME movsd on windows
@@ -6067,7 +6067,7 @@
 ///
 /// `mem_addr` must be aligned on a 16-byte boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movaps))]
@@ -6080,7 +6080,7 @@
 ///
 /// `mem_addr` does not need to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadu_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movups))]
@@ -6104,7 +6104,7 @@
 /// `mem_addr` should correspond to a 128-bit memory location and does not need
 /// to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskmoveu_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskmoveu_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(maskmovdqu))]
@@ -6117,7 +6117,7 @@
 ///
 /// `mem_addr` must be aligned on a 16-byte boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_store_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movaps))]
@@ -6130,7 +6130,7 @@
 ///
 /// `mem_addr` does not need to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storeu_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storeu_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movups))] </span><span class="comment">// FIXME movdqu expected
@@ -6143,7 +6143,7 @@
 ///
 /// `mem_addr` does not need to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storel_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storel_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// FIXME mov on windows, movlps on i686
@@ -6165,7 +6165,7 @@
 /// To minimize caching, the data is flagged as non-temporal (unlikely to be
 /// used again soon).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_stream_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_stream_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movntps))] </span><span class="comment">// FIXME movntdq
@@ -6178,7 +6178,7 @@
 /// To minimize caching, the data is flagged as non-temporal (unlikely to be
 /// used again soon).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_stream_si32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_stream_si32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movnti))]
@@ -6190,7 +6190,7 @@
 <span class="doccomment">/// Returns a vector where the low element is extracted from `a` and its upper
 /// element is zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_move_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_move_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// FIXME movd on windows, movd on i686
@@ -6198,14 +6198,14 @@
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_move_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>zero = _mm_setzero_si128();
-    <span class="kw">let </span>r: i64x2 = <span class="macro">simd_shuffle2!</span>(a.as_i64x2(), zero.as_i64x2(), [<span class="number">0</span>, <span class="number">2</span>]);
+    <span class="kw">let </span>r: i64x2 = <span class="macro">simd_shuffle!</span>(a.as_i64x2(), zero.as_i64x2(), [<span class="number">0</span>, <span class="number">2</span>]);
     transmute(r)
 }
 
 <span class="doccomment">/// Converts packed 16-bit integers from `a` and `b` to packed 8-bit integers
 /// using signed saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_packs_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_packs_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(packsswb))]
@@ -6217,7 +6217,7 @@
 <span class="doccomment">/// Converts packed 32-bit integers from `a` and `b` to packed 16-bit integers
 /// using signed saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_packs_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_packs_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(packssdw))]
@@ -6229,7 +6229,7 @@
 <span class="doccomment">/// Converts packed 16-bit integers from `a` and `b` to packed 8-bit integers
 /// using unsigned saturation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_packus_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_packus_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(packuswb))]
@@ -6240,33 +6240,33 @@
 
 <span class="doccomment">/// Returns the `imm8` element of `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_extract_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pextrw, IMM8 = <span class="number">7</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_extract_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; i32 {
-    <span class="macro">static_assert_imm3!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">3</span>);
     simd_extract::&lt;<span class="kw">_</span>, u16&gt;(a.as_u16x8(), IMM8 <span class="kw">as </span>u32) <span class="kw">as </span>i32
 }
 
 <span class="doccomment">/// Returns a new vector where the `imm8` element of `a` is replaced with `i`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_insert_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_insert_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pinsrw, IMM8 = <span class="number">7</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_insert_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, i: i32) -&gt; __m128i {
-    <span class="macro">static_assert_imm3!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">3</span>);
     transmute(simd_insert(a.as_i16x8(), IMM8 <span class="kw">as </span>u32, i <span class="kw">as </span>i16))
 }
 
 <span class="doccomment">/// Returns a mask of the most significant bit of each element in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_movemask_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_movemask_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovmskb))]
@@ -6279,19 +6279,19 @@
 
 <span class="doccomment">/// Shuffles 32-bit integers in `a` using the control in `IMM8`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shuffle_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shuffle_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pshufd, IMM8 = <span class="number">9</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shuffle_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>a = a.as_i32x4();
-    <span class="kw">let </span>x: i32x4 = <span class="macro">simd_shuffle4!</span>(
+    <span class="kw">let </span>x: i32x4 = <span class="macro">simd_shuffle!</span>(
         a,
         a,
-        &lt;<span class="kw">const </span>IMM8: i32&gt; [
+        [
             IMM8 <span class="kw">as </span>u32 &amp; <span class="number">0b11</span>,
             (IMM8 <span class="kw">as </span>u32 &gt;&gt; <span class="number">2</span>) &amp; <span class="number">0b11</span>,
             (IMM8 <span class="kw">as </span>u32 &gt;&gt; <span class="number">4</span>) &amp; <span class="number">0b11</span>,
@@ -6307,19 +6307,19 @@
 /// Put the results in the high 64 bits of the returned vector, with the low 64
 /// bits being copied from `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shufflehi_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shufflehi_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pshufhw, IMM8 = <span class="number">9</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shufflehi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>a = a.as_i16x8();
-    <span class="kw">let </span>x: i16x8 = <span class="macro">simd_shuffle8!</span>(
+    <span class="kw">let </span>x: i16x8 = <span class="macro">simd_shuffle!</span>(
         a,
         a,
-        &lt;<span class="kw">const </span>IMM8: i32&gt; [
+        [
             <span class="number">0</span>,
             <span class="number">1</span>,
             <span class="number">2</span>,
@@ -6339,19 +6339,19 @@
 /// Put the results in the low 64 bits of the returned vector, with the high 64
 /// bits being copied from `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shufflelo_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shufflelo_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(pshuflw, IMM8 = <span class="number">9</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shufflelo_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>a = a.as_i16x8();
-    <span class="kw">let </span>x: i16x8 = <span class="macro">simd_shuffle8!</span>(
+    <span class="kw">let </span>x: i16x8 = <span class="macro">simd_shuffle!</span>(
         a,
         a,
-        &lt;<span class="kw">const </span>IMM8: i32&gt; [
+        [
             IMM8 <span class="kw">as </span>u32 &amp; <span class="number">0b11</span>,
             (IMM8 <span class="kw">as </span>u32 &gt;&gt; <span class="number">2</span>) &amp; <span class="number">0b11</span>,
             (IMM8 <span class="kw">as </span>u32 &gt;&gt; <span class="number">4</span>) &amp; <span class="number">0b11</span>,
@@ -6367,13 +6367,13 @@
 
 <span class="doccomment">/// Unpacks and interleave 8-bit integers from the high half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpackhi_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpackhi_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(punpckhbw))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpackhi_epi8(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle16!</span>(
+    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(
         a.as_i8x16(),
         b.as_i8x16(),
         [<span class="number">8</span>, <span class="number">24</span>, <span class="number">9</span>, <span class="number">25</span>, <span class="number">10</span>, <span class="number">26</span>, <span class="number">11</span>, <span class="number">27</span>, <span class="number">12</span>, <span class="number">28</span>, <span class="number">13</span>, <span class="number">29</span>, <span class="number">14</span>, <span class="number">30</span>, <span class="number">15</span>, <span class="number">31</span>],
@@ -6382,47 +6382,47 @@
 
 <span class="doccomment">/// Unpacks and interleave 16-bit integers from the high half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpackhi_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpackhi_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(punpckhwd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpackhi_epi16(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="kw">let </span>x = <span class="macro">simd_shuffle8!</span>(a.as_i16x8(), b.as_i16x8(), [<span class="number">4</span>, <span class="number">12</span>, <span class="number">5</span>, <span class="number">13</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">7</span>, <span class="number">15</span>]);
+    <span class="kw">let </span>x = <span class="macro">simd_shuffle!</span>(a.as_i16x8(), b.as_i16x8(), [<span class="number">4</span>, <span class="number">12</span>, <span class="number">5</span>, <span class="number">13</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">7</span>, <span class="number">15</span>]);
     transmute::&lt;i16x8, <span class="kw">_</span>&gt;(x)
 }
 
 <span class="doccomment">/// Unpacks and interleave 32-bit integers from the high half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpackhi_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpackhi_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(unpckhps))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpackhi_epi32(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i32x4, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle4!</span>(a.as_i32x4(), b.as_i32x4(), [<span class="number">2</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">7</span>]))
+    transmute::&lt;i32x4, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(a.as_i32x4(), b.as_i32x4(), [<span class="number">2</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">7</span>]))
 }
 
 <span class="doccomment">/// Unpacks and interleave 64-bit integers from the high half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpackhi_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpackhi_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(unpckhpd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpackhi_epi64(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i64x2, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle2!</span>(a.as_i64x2(), b.as_i64x2(), [<span class="number">1</span>, <span class="number">3</span>]))
+    transmute::&lt;i64x2, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(a.as_i64x2(), b.as_i64x2(), [<span class="number">1</span>, <span class="number">3</span>]))
 }
 
 <span class="doccomment">/// Unpacks and interleave 8-bit integers from the low half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpacklo_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpacklo_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(punpcklbw))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpacklo_epi8(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle16!</span>(
+    transmute::&lt;i8x16, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(
         a.as_i8x16(),
         b.as_i8x16(),
         [<span class="number">0</span>, <span class="number">16</span>, <span class="number">1</span>, <span class="number">17</span>, <span class="number">2</span>, <span class="number">18</span>, <span class="number">3</span>, <span class="number">19</span>, <span class="number">4</span>, <span class="number">20</span>, <span class="number">5</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">23</span>],
@@ -6431,42 +6431,42 @@
 
 <span class="doccomment">/// Unpacks and interleave 16-bit integers from the low half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpacklo_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpacklo_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(punpcklwd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpacklo_epi16(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="kw">let </span>x = <span class="macro">simd_shuffle8!</span>(a.as_i16x8(), b.as_i16x8(), [<span class="number">0</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">10</span>, <span class="number">3</span>, <span class="number">11</span>]);
+    <span class="kw">let </span>x = <span class="macro">simd_shuffle!</span>(a.as_i16x8(), b.as_i16x8(), [<span class="number">0</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">10</span>, <span class="number">3</span>, <span class="number">11</span>]);
     transmute::&lt;i16x8, <span class="kw">_</span>&gt;(x)
 }
 
 <span class="doccomment">/// Unpacks and interleave 32-bit integers from the low half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpacklo_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpacklo_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(unpcklps))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpacklo_epi32(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i32x4, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle4!</span>(a.as_i32x4(), b.as_i32x4(), [<span class="number">0</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>]))
+    transmute::&lt;i32x4, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(a.as_i32x4(), b.as_i32x4(), [<span class="number">0</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>]))
 }
 
 <span class="doccomment">/// Unpacks and interleave 64-bit integers from the low half of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpacklo_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpacklo_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movlhps))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpacklo_epi64(a: __m128i, b: __m128i) -&gt; __m128i {
-    transmute::&lt;i64x2, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle2!</span>(a.as_i64x2(), b.as_i64x2(), [<span class="number">0</span>, <span class="number">2</span>]))
+    transmute::&lt;i64x2, <span class="kw">_</span>&gt;(<span class="macro">simd_shuffle!</span>(a.as_i64x2(), b.as_i64x2(), [<span class="number">0</span>, <span class="number">2</span>]))
 }
 
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the sum of the
 /// low elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(addsd))]
@@ -6478,7 +6478,7 @@
 <span class="doccomment">/// Adds packed double-precision (64-bit) floating-point elements in `a` and
 /// `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(addpd))]
@@ -6490,7 +6490,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the result of
 /// diving the lower element of `a` by the lower element of `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_div_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_div_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(divsd))]
@@ -6502,7 +6502,7 @@
 <span class="doccomment">/// Divide packed double-precision (64-bit) floating-point elements in `a` by
 /// packed elements in `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_div_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_div_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(divpd))]
@@ -6514,7 +6514,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the maximum
 /// of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(maxsd))]
@@ -6526,7 +6526,7 @@
 <span class="doccomment">/// Returns a new vector with the maximum values from corresponding elements in
 /// `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(maxpd))]
@@ -6538,7 +6538,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the minimum
 /// of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(minsd))]
@@ -6550,7 +6550,7 @@
 <span class="doccomment">/// Returns a new vector with the minimum values from corresponding elements in
 /// `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(minpd))]
@@ -6562,7 +6562,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by multiplying the
 /// low elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mul_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mul_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(mulsd))]
@@ -6574,7 +6574,7 @@
 <span class="doccomment">/// Multiplies packed double-precision (64-bit) floating-point elements in `a`
 /// and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mul_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mul_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(mulpd))]
@@ -6586,7 +6586,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the square
 /// root of the lower element `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sqrt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sqrt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(sqrtsd))]
@@ -6597,7 +6597,7 @@
 
 <span class="doccomment">/// Returns a new vector with the square root of each of the values in `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sqrt_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sqrt_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(sqrtpd))]
@@ -6609,7 +6609,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by subtracting the
 /// low element by `b` from the low element of `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(subsd))]
@@ -6621,7 +6621,7 @@
 <span class="doccomment">/// Subtract packed double-precision (64-bit) floating-point elements in `b`
 /// from `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(subpd))]
@@ -6633,7 +6633,7 @@
 <span class="doccomment">/// Computes the bitwise AND of packed double-precision (64-bit) floating-point
 /// elements in `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_and_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_and_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(andps))]
@@ -6646,7 +6646,7 @@
 
 <span class="doccomment">/// Computes the bitwise NOT of `a` and then AND with `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_andnot_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_andnot_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(andnps))]
@@ -6659,7 +6659,7 @@
 
 <span class="doccomment">/// Computes the bitwise OR of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_or_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_or_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(orps))]
@@ -6672,7 +6672,7 @@
 
 <span class="doccomment">/// Computes the bitwise XOR of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_xor_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_xor_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(xorps))]
@@ -6686,7 +6686,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the equality
 /// comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpeqsd))]
@@ -6698,7 +6698,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the less-than
 /// comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmplt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmplt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpltsd))]
@@ -6710,7 +6710,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// less-than-or-equal comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmple_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmple_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmplesd))]
@@ -6722,7 +6722,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// greater-than comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpgt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpgt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpltsd))]
@@ -6734,7 +6734,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// greater-than-or-equal comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpge_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpge_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmplesd))]
@@ -6748,7 +6748,7 @@
 /// neither are equal to `NaN` then `0xFFFFFFFFFFFFFFFF` is used and `0`
 /// otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpord_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpord_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpordsd))]
@@ -6761,7 +6761,7 @@
 /// comparing both of the lower elements of `a` and `b` to `NaN`. If either is
 /// equal to `NaN` then `0xFFFFFFFFFFFFFFFF` is used and `0` otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpunord_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpunord_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpunordsd))]
@@ -6773,7 +6773,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the not-equal
 /// comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpneq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpneq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpneqsd))]
@@ -6785,7 +6785,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// not-less-than comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnlt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnlt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnltsd))]
@@ -6797,7 +6797,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// not-less-than-or-equal comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnle_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnle_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnlesd))]
@@ -6809,7 +6809,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// not-greater-than comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpngt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpngt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnltsd))]
@@ -6821,7 +6821,7 @@
 <span class="doccomment">/// Returns a new vector with the low element of `a` replaced by the
 /// not-greater-than-or-equal comparison of the lower elements of `a` and `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnge_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnge_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnlesd))]
@@ -6832,7 +6832,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpeqpd))]
@@ -6843,7 +6843,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmplt_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmplt_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpltpd))]
@@ -6854,7 +6854,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for less-than-or-equal
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmple_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmple_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmplepd))]
@@ -6865,7 +6865,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpgt_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpgt_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpltpd))]
@@ -6876,7 +6876,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for greater-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpge_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpge_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmplepd))]
@@ -6887,7 +6887,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` to see if neither is `NaN`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpord_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpord_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpordpd))]
@@ -6898,7 +6898,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` to see if either is `NaN`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpunord_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpunord_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpunordpd))]
@@ -6909,7 +6909,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for not-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpneq_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpneq_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpneqpd))]
@@ -6920,7 +6920,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for not-less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnlt_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnlt_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnltpd))]
@@ -6931,7 +6931,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for not-less-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnle_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnle_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnlepd))]
@@ -6942,7 +6942,7 @@
 
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for not-greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpngt_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpngt_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnltpd))]
@@ -6954,7 +6954,7 @@
 <span class="doccomment">/// Compares corresponding elements in `a` and `b` for
 /// not-greater-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpnge_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpnge_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cmpnlepd))]
@@ -6965,7 +6965,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comieq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comieq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -6976,7 +6976,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comilt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comilt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -6987,7 +6987,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for less-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comile_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comile_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -6998,7 +6998,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comigt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comigt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -7009,7 +7009,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for greater-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comige_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comige_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -7020,7 +7020,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for not-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_comineq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_comineq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(comisd))]
@@ -7031,7 +7031,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for equality.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomieq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomieq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7042,7 +7042,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for less-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomilt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomilt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7053,7 +7053,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for less-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomile_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomile_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7064,7 +7064,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for greater-than.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomigt_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomigt_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7075,7 +7075,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for greater-than-or-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomige_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomige_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7086,7 +7086,7 @@
 
 <span class="doccomment">/// Compares the lower element of `a` and `b` for not-equal.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ucomineq_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ucomineq_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(ucomisd))]
@@ -7098,7 +7098,7 @@
 <span class="doccomment">/// Converts packed double-precision (64-bit) floating-point elements in `a` to
 /// packed single-precision (32-bit) floating-point elements
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtpd_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtpd_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtpd2ps))]
@@ -7111,7 +7111,7 @@
 /// packed
 /// double-precision (64-bit) floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtps_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtps_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtps2pd))]
@@ -7123,7 +7123,7 @@
 <span class="doccomment">/// Converts packed double-precision (64-bit) floating-point elements in `a` to
 /// packed 32-bit integers.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtpd_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtpd_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtpd2dq))]
@@ -7135,7 +7135,7 @@
 <span class="doccomment">/// Converts the lower double-precision (64-bit) floating-point element in a to
 /// a 32-bit integer.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsd_si32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsd_si32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtsd2si))]
@@ -7149,7 +7149,7 @@
 /// the lower element of the return value, and copies the upper element from `a`
 /// to the upper element the return value.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsd_ss)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsd_ss)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtsd2ss))]
@@ -7160,7 +7160,7 @@
 
 <span class="doccomment">/// Returns the lower double-precision (64-bit) floating-point element of `a`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtsd_f64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtsd_f64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7173,7 +7173,7 @@
 /// the lower element of the return value, and copies the upper element from `a`
 /// to the upper element the return value.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtss_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtss_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvtss2sd))]
@@ -7185,7 +7185,7 @@
 <span class="doccomment">/// Converts packed double-precision (64-bit) floating-point elements in `a` to
 /// packed 32-bit integers with truncation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttpd_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttpd_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvttpd2dq))]
@@ -7197,7 +7197,7 @@
 <span class="doccomment">/// Converts the lower double-precision (64-bit) floating-point element in `a`
 /// to a 32-bit integer with truncation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttsd_si32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttsd_si32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvttsd2si))]
@@ -7209,7 +7209,7 @@
 <span class="doccomment">/// Converts packed single-precision (32-bit) floating-point elements in `a` to
 /// packed 32-bit integers with truncation.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvttps_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvttps_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(cvttps2dq))]
@@ -7221,7 +7221,7 @@
 <span class="doccomment">/// Copies double-precision (64-bit) floating-point element `a` to the lower
 /// element of the packed 64-bit return value.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7232,7 +7232,7 @@
 <span class="doccomment">/// Broadcasts double-precision (64-bit) floating-point value a to all elements
 /// of the return value.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set1_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7243,7 +7243,7 @@
 <span class="doccomment">/// Broadcasts double-precision (64-bit) floating-point value a to all elements
 /// of the return value.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_pd1)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_pd1)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7254,7 +7254,7 @@
 <span class="doccomment">/// Sets packed double-precision (64-bit) floating-point elements in the return
 /// value with the supplied values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7265,7 +7265,7 @@
 <span class="doccomment">/// Sets packed double-precision (64-bit) floating-point elements in the return
 /// value with the supplied values in reverse order.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setr_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7276,7 +7276,7 @@
 <span class="doccomment">/// Returns packed double-precision (64-bit) floating-point elements with all
 /// zeros.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_setzero_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setzero_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(xorps))] </span><span class="comment">// FIXME xorpd expected
@@ -7290,7 +7290,7 @@
 /// The mask is stored in the 2 least significant bits of the return value.
 /// All other bits are set to `0`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_movemask_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_movemask_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movmskpd))]
@@ -7304,7 +7304,7 @@
 /// `mem_addr` must be aligned on a 16-byte boundary or a general-protection
 /// exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movaps))]
@@ -7317,7 +7317,7 @@
 <span class="doccomment">/// Loads a 64-bit double-precision value to the low element of a
 /// 128-bit integer vector and clears the upper element.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movsd))]
@@ -7330,7 +7330,7 @@
 /// vector of `[2 x double]`. The low-order bits are copied from the low-order
 /// bits of the first operand.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadh_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadh_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movhps))]
@@ -7343,7 +7343,7 @@
 /// vector of `[2 x double]`. The high-order bits are copied from the
 /// high-order bits of the first operand.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadl_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadl_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movlps))]
@@ -7357,7 +7357,7 @@
 /// To minimize caching, the data is flagged as non-temporal (unlikely to be
 /// used again soon).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_stream_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_stream_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movntps))] </span><span class="comment">// FIXME movntpd
@@ -7370,7 +7370,7 @@
 <span class="doccomment">/// Stores the lower 64 bits of a 128-bit vector of `[2 x double]` to a
 /// memory location.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_store_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movlps))]
@@ -7383,7 +7383,7 @@
 /// floating-point elements) from `a` into memory. `mem_addr` must be aligned
 /// on a 16-byte boundary or a general-protection exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_store_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movaps))]
@@ -7397,7 +7397,7 @@
 /// floating-point elements) from `a` into memory.
 /// `mem_addr` does not need to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storeu_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storeu_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movups))] </span><span class="comment">// FIXME movupd expected
@@ -7410,13 +7410,13 @@
 /// into 2 contiguous elements in memory. `mem_addr` must be aligned on a
 /// 16-byte boundary or a general-protection exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_store1_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store1_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 #[allow(clippy::cast_ptr_alignment)]
 </span><span class="kw">pub unsafe fn </span>_mm_store1_pd(mem_addr: <span class="kw-2">*mut </span>f64, a: __m128d) {
-    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">0</span>]);
+    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">0</span>]);
     <span class="kw-2">*</span>(mem_addr <span class="kw">as </span><span class="kw-2">*mut </span>__m128d) = b;
 }
 
@@ -7424,13 +7424,13 @@
 /// into 2 contiguous elements in memory. `mem_addr` must be aligned on a
 /// 16-byte boundary or a general-protection exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_store_pd1)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store_pd1)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 #[allow(clippy::cast_ptr_alignment)]
 </span><span class="kw">pub unsafe fn </span>_mm_store_pd1(mem_addr: <span class="kw-2">*mut </span>f64, a: __m128d) {
-    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">0</span>]);
+    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">0</span>]);
     <span class="kw-2">*</span>(mem_addr <span class="kw">as </span><span class="kw-2">*mut </span>__m128d) = b;
 }
 
@@ -7439,20 +7439,20 @@
 /// `mem_addr` must be aligned on a 16-byte boundary or a general-protection
 /// exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storer_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storer_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 #[allow(clippy::cast_ptr_alignment)]
 </span><span class="kw">pub unsafe fn </span>_mm_storer_pd(mem_addr: <span class="kw-2">*mut </span>f64, a: __m128d) {
-    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">1</span>, <span class="number">0</span>]);
+    <span class="kw">let </span>b: __m128d = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">1</span>, <span class="number">0</span>]);
     <span class="kw-2">*</span>(mem_addr <span class="kw">as </span><span class="kw-2">*mut </span>__m128d) = b;
 }
 
 <span class="doccomment">/// Stores the upper 64 bits of a 128-bit vector of `[2 x double]` to a
 /// memory location.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storeh_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storeh_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movhps))]
@@ -7464,7 +7464,7 @@
 <span class="doccomment">/// Stores the lower 64 bits of a 128-bit vector of `[2 x double]` to a
 /// memory location.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_storel_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_storel_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movlps))]
@@ -7476,7 +7476,7 @@
 <span class="doccomment">/// Loads a double-precision (64-bit) floating-point element from memory
 /// into both elements of returned vector.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load1_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load1_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// #[cfg_attr(test, assert_instr(movapd))] // FIXME LLVM uses different codegen
@@ -7489,7 +7489,7 @@
 <span class="doccomment">/// Loads a double-precision (64-bit) floating-point element from memory
 /// into both elements of returned vector.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load_pd1)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_pd1)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 </span><span class="comment">// #[cfg_attr(test, assert_instr(movapd))] // FIXME same as _mm_load1_pd
@@ -7502,21 +7502,21 @@
 /// the returned vector in reverse order. `mem_addr` must be aligned on a
 /// 16-byte boundary or a general-protection exception may be generated.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadr_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadr_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movaps))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_loadr_pd(mem_addr: <span class="kw-2">*const </span>f64) -&gt; __m128d {
     <span class="kw">let </span>a = _mm_load_pd(mem_addr);
-    <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">1</span>, <span class="number">0</span>])
+    <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">1</span>, <span class="number">0</span>])
 }
 
 <span class="doccomment">/// Loads 128-bits (composed of 2 packed double-precision (64-bit)
 /// floating-point elements) from memory into the returned vector.
 /// `mem_addr` does not need to be aligned on any particular boundary.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_loadu_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movups))]
@@ -7535,22 +7535,22 @@
 /// 128-bit vector parameters of `[2 x double]`, using the immediate-value
 /// parameter as a specifier.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shuffle_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shuffle_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(shufps, MASK = <span class="number">2</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shuffle_pd&lt;<span class="kw">const </span>MASK: i32&gt;(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">static_assert_imm8!</span>(MASK);
-    <span class="macro">simd_shuffle2!</span>(a, b, &lt;<span class="kw">const </span>MASK: i32&gt; [MASK <span class="kw">as </span>u32 &amp; <span class="number">0b1</span>, ((MASK <span class="kw">as </span>u32 &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0b1</span>) + <span class="number">2</span>])
+    <span class="macro">static_assert_uimm_bits!</span>(MASK, <span class="number">8</span>);
+    <span class="macro">simd_shuffle!</span>(a, b, [MASK <span class="kw">as </span>u32 &amp; <span class="number">0b1</span>, ((MASK <span class="kw">as </span>u32 &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0b1</span>) + <span class="number">2</span>])
 }
 
 <span class="doccomment">/// Constructs a 128-bit floating-point vector of `[2 x double]`. The lower
 /// 64 bits are set to the lower 64 bits of the second parameter. The upper
 /// 64 bits are set to the upper 64 bits of the first parameter.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_move_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_move_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(movsd))]
@@ -7562,7 +7562,7 @@
 <span class="doccomment">/// Casts a 128-bit floating-point vector of `[2 x double]` into a 128-bit
 /// floating-point vector of `[4 x float]`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castpd_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castpd_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7573,7 +7573,7 @@
 <span class="doccomment">/// Casts a 128-bit floating-point vector of `[2 x double]` into a 128-bit
 /// integer vector.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castpd_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castpd_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7584,7 +7584,7 @@
 <span class="doccomment">/// Casts a 128-bit floating-point vector of `[4 x float]` into a 128-bit
 /// floating-point vector of `[2 x double]`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castps_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castps_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7595,7 +7595,7 @@
 <span class="doccomment">/// Casts a 128-bit floating-point vector of `[4 x float]` into a 128-bit
 /// integer vector.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castps_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castps_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7606,7 +7606,7 @@
 <span class="doccomment">/// Casts a 128-bit integer vector into a 128-bit floating-point vector
 /// of `[2 x double]`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castsi128_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castsi128_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7617,7 +7617,7 @@
 <span class="doccomment">/// Casts a 128-bit integer vector into a 128-bit floating-point vector
 /// of `[4 x float]`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_castsi128_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_castsi128_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7625,9 +7625,11 @@
     transmute(a)
 }
 
-<span class="doccomment">/// Returns vector of type __m128d with undefined elements.
+<span class="doccomment">/// Returns vector of type __m128d with indeterminate elements.
+/// Despite being &quot;undefined&quot;, this is some valid value and not equivalent to [`mem::MaybeUninit`].
+/// In practice, this is equivalent to [`mem::zeroed`].
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_undefined_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_undefined_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7635,9 +7637,11 @@
     __m128d(<span class="number">0.0</span>, <span class="number">0.0</span>)
 }
 
-<span class="doccomment">/// Returns vector of type __m128i with undefined elements.
+<span class="doccomment">/// Returns vector of type __m128i with indeterminate elements.
+/// Despite being &quot;undefined&quot;, this is some valid value and not equivalent to [`mem::MaybeUninit`].
+/// In practice, this is equivalent to [`mem::zeroed`].
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_undefined_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_undefined_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
@@ -7652,13 +7656,13 @@
 /// input * The `[63:0]` bits are copied from the `[127:64]` bits of the first
 /// input
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpackhi_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpackhi_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(test, assert_instr(unpckhpd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpackhi_pd(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">simd_shuffle2!</span>(a, b, [<span class="number">1</span>, <span class="number">3</span>])
+    <span class="macro">simd_shuffle!</span>(a, b, [<span class="number">1</span>, <span class="number">3</span>])
 }
 
 <span class="doccomment">/// The resulting `__m128d` element is composed by the high-order values of
@@ -7667,13 +7671,13 @@
 /// * The `[127:64]` bits are copied from the `[63:0]` bits of the second input
 /// * The `[63:0]` bits are copied from the `[63:0]` bits of the first input
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_unpacklo_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_unpacklo_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse2&quot;</span>)]
 #[cfg_attr(all(test, not(target_os = <span class="string">&quot;windows&quot;</span>)), assert_instr(movlhps))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_unpacklo_pd(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">simd_shuffle2!</span>(a, b, [<span class="number">0</span>, <span class="number">2</span>])
+    <span class="macro">simd_shuffle!</span>(a, b, [<span class="number">0</span>, <span class="number">2</span>])
 }
 
 <span class="attr">#[allow(improper_ctypes)]
@@ -9770,5 +9774,4 @@
         assert_eq_m128(r, expected);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

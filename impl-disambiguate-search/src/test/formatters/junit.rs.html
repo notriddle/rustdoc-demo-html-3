@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/test/src/formatters/junit.rs`."><title>junit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="test" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../test/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/test/src/formatters/junit.rs`."><title>junit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="test" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../test/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -190,7 +190,37 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, prelude::Write};
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, prelude::Write};
 <span class="kw">use </span>std::time::Duration;
 
 <span class="kw">use </span><span class="kw">super</span>::OutputFormatter;
@@ -203,7 +233,7 @@
 
 <span class="kw">pub struct </span>JunitFormatter&lt;T&gt; {
     out: OutputLocation&lt;T&gt;,
-    results: Vec&lt;(TestDesc, TestResult, Duration)&gt;,
+    results: Vec&lt;(TestDesc, TestResult, Duration, Vec&lt;u8&gt;)&gt;,
 }
 
 <span class="kw">impl</span>&lt;T: Write&gt; JunitFormatter&lt;T&gt; {
@@ -216,6 +246,18 @@
 
         <span class="self">self</span>.out.write_all(s.as_ref())
     }
+}
+
+<span class="kw">fn </span>str_to_cdata(s: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="comment">// Drop the stdout in a cdata. Unfortunately, you can&#39;t put either of `]]&gt;` or
+    // `&lt;?&#39;` in a CDATA block, so the escaping gets a little weird.
+    </span><span class="kw">let </span>escaped_output = s.replace(<span class="string">&quot;]]&gt;&quot;</span>, <span class="string">&quot;]]]]&gt;&lt;![CDATA[&gt;&quot;</span>);
+    <span class="kw">let </span>escaped_output = escaped_output.replace(<span class="string">&quot;&lt;?&quot;</span>, <span class="string">&quot;&lt;]]&gt;&lt;![CDATA[?&quot;</span>);
+    <span class="comment">// We also smuggle newlines as &amp;#xa so as to keep all the output on one line
+    </span><span class="kw">let </span>escaped_output = escaped_output.replace(<span class="string">&#39;\n&#39;</span>, <span class="string">&quot;]]&gt;&amp;#xA;&lt;![CDATA[&quot;</span>);
+    <span class="comment">// Prune empty CDATA blocks resulting from any escaping
+    </span><span class="kw">let </span>escaped_output = escaped_output.replace(<span class="string">&quot;&lt;![CDATA[]]&gt;&quot;</span>, <span class="string">&quot;&quot;</span>);
+    <span class="macro">format!</span>(<span class="string">&quot;&lt;![CDATA[{}]]&gt;&quot;</span>, escaped_output)
 }
 
 <span class="kw">impl</span>&lt;T: Write&gt; OutputFormatter <span class="kw">for </span>JunitFormatter&lt;T&gt; {
@@ -255,14 +297,14 @@
         desc: <span class="kw-2">&amp;</span>TestDesc,
         result: <span class="kw-2">&amp;</span>TestResult,
         exec_time: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>time::TestExecTime&gt;,
-        _stdout: <span class="kw-2">&amp;</span>[u8],
+        stdout: <span class="kw-2">&amp;</span>[u8],
         _state: <span class="kw-2">&amp;</span>ConsoleTestState,
     ) -&gt; io::Result&lt;()&gt; {
         <span class="comment">// Because the testsuite node holds some of the information as attributes, we can&#39;t write it
         // until all of the tests have finished. Instead of writing every result as they come in, we add
         // them to a Vec and write them all at once when run is complete.
         </span><span class="kw">let </span>duration = exec_time.map(|t| t.<span class="number">0</span>).unwrap_or_default();
-        <span class="self">self</span>.results.push((desc.clone(), result.clone(), duration));
+        <span class="self">self</span>.results.push((desc.clone(), result.clone(), duration, stdout.to_vec()));
         <span class="prelude-val">Ok</span>(())
     }
     <span class="kw">fn </span>write_run_finish(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;</span>ConsoleTestState) -&gt; io::Result&lt;bool&gt; {
@@ -277,7 +319,7 @@
              &gt;&quot;</span>,
             state.failed, state.total, state.ignored
         ))<span class="question-mark">?</span>;
-        <span class="kw">for </span>(desc, result, duration) <span class="kw">in </span>std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.results) {
+        <span class="kw">for </span>(desc, result, duration, stdout) <span class="kw">in </span>std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.results) {
             <span class="kw">let </span>(class_name, test_name) = parse_class_name(<span class="kw-2">&amp;</span>desc);
             <span class="kw">match </span>result {
                 TestResult::TrIgnored =&gt; { <span class="comment">/* no-op */ </span>}
@@ -290,6 +332,11 @@
                         duration.as_secs_f64()
                     ))<span class="question-mark">?</span>;
                     <span class="self">self</span>.write_message(<span class="string">&quot;&lt;failure type=\&quot;assert\&quot;/&gt;&quot;</span>)<span class="question-mark">?</span>;
+                    <span class="kw">if </span>!stdout.is_empty() {
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span>str_to_cdata(<span class="kw-2">&amp;</span>String::from_utf8_lossy(<span class="kw-2">&amp;</span>stdout)))<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                    }
                     <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/testcase&gt;&quot;</span>)<span class="question-mark">?</span>;
                 }
 
@@ -302,6 +349,11 @@
                         duration.as_secs_f64()
                     ))<span class="question-mark">?</span>;
                     <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;failure message=\&quot;{m}\&quot; type=\&quot;assert\&quot;/&gt;&quot;</span>))<span class="question-mark">?</span>;
+                    <span class="kw">if </span>!stdout.is_empty() {
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span>str_to_cdata(<span class="kw-2">&amp;</span>String::from_utf8_lossy(<span class="kw-2">&amp;</span>stdout)))<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                    }
                     <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/testcase&gt;&quot;</span>)<span class="question-mark">?</span>;
                 }
 
@@ -328,11 +380,19 @@
                 TestResult::TrOk =&gt; {
                     <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
                         <span class="string">&quot;&lt;testcase classname=\&quot;{}\&quot; \
-                         name=\&quot;{}\&quot; time=\&quot;{}\&quot;/&gt;&quot;</span>,
+                         name=\&quot;{}\&quot; time=\&quot;{}\&quot;&quot;</span>,
                         class_name,
                         test_name,
                         duration.as_secs_f64()
                     ))<span class="question-mark">?</span>;
+                    <span class="kw">if </span>stdout.is_empty() || !state.options.display_output {
+                        <span class="self">self</span>.write_message(<span class="string">&quot;/&gt;&quot;</span>)<span class="question-mark">?</span>;
+                    } <span class="kw">else </span>{
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&gt;&lt;system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span>str_to_cdata(<span class="kw-2">&amp;</span>String::from_utf8_lossy(<span class="kw-2">&amp;</span>stdout)))<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/system-out&gt;&quot;</span>)<span class="question-mark">?</span>;
+                        <span class="self">self</span>.write_message(<span class="string">&quot;&lt;/testcase&gt;&quot;</span>)<span class="question-mark">?</span>;
+                    }
                 }
             }
         }
@@ -382,5 +442,4 @@
 <span class="kw">fn </span>parse_class_name_integration(desc: <span class="kw-2">&amp;</span>TestDesc) -&gt; (String, String) {
     (String::from(<span class="string">&quot;integration&quot;</span>), String::from(desc.name.as_slice()))
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

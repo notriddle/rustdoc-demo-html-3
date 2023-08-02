@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -146,7 +171,9 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="error-code-e0449"><a class="header" href="#error-code-e0449">Error code E0449</a></h1>
-<p>A visibility qualifier was used when it was unnecessary.</p>
+<p>A visibility qualifier was used where one is not permitted. Visibility
+qualifiers are not permitted on enum variants, trait items, impl blocks, and
+extern blocks, as they already share the visibility of the parent item.</p>
 <p>Erroneous code examples:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0449"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -156,14 +183,17 @@ trait Foo {
     fn foo();
 }
 
-pub impl Bar {} // error: unnecessary visibility qualifier
+enum Baz {
+    pub Qux, // error: visibility qualifiers are not permitted here
+}
 
-pub impl Foo for Bar { // error: unnecessary visibility qualifier
-    pub fn foo() {} // error: unnecessary visibility qualifier
+pub impl Bar {} // error: visibility qualifiers are not permitted here
+
+pub impl Foo for Bar { // error: visibility qualifiers are not permitted here
+    pub fn foo() {} // error: visibility qualifiers are not permitted here
 }
 <span class="boring">}</span></code></pre></pre>
-<p>To fix this error, please remove the visibility qualifier when it is not
-required. Example:</p>
+<p>To fix this error, simply remove the visibility qualifier. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Bar;
@@ -172,12 +202,18 @@ trait Foo {
     fn foo();
 }
 
+enum Baz {
+    // Enum variants share the visibility of the enum they are in, so
+    // `pub` is not allowed here
+    Qux,
+}
+
 // Directly implemented methods share the visibility of the type itself,
-// so `pub` is unnecessary here
+// so `pub` is not allowed here
 impl Bar {}
 
-// Trait methods share the visibility of the trait, so `pub` is
-// unnecessary in either case
+// Trait methods share the visibility of the trait, so `pub` is not
+// allowed in either case
 impl Foo for Bar {
     fn foo() {}
 }
@@ -232,5 +268,6 @@ impl Foo for Bar {
         <script src="error-index.js"></script>
 
 
+    </div>
     </body>
 </html>

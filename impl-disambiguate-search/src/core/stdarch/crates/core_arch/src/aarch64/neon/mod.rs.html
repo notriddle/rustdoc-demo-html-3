@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/aarch64/neon/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../../" data-static-root-path="../../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/aarch64/neon/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../../" data-static-root-path="../../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -5314,7 +5314,7 @@
 <a href="#5314" id="5314">5314</a>
 <a href="#5315" id="5315">5315</a>
 <a href="#5316" id="5316">5316</a>
-</pre><pre class="rust"><code><span class="doccomment">//! ARMv8 ASIMD intrinsics
+</pre></div><pre class="rust"><code><span class="doccomment">//! ARMv8 ASIMD intrinsics
 
 </span><span class="attr">#![allow(non_camel_case_types)]
 
@@ -5689,8 +5689,8 @@
     _a: int64x1_t,
     b: int64x1_t,
 ) -&gt; int64x1_t {
-    <span class="macro">static_assert!</span>(N1 : i32 <span class="kw">where </span>N1 == <span class="number">0</span>);
-    <span class="macro">static_assert!</span>(N2 : i32 <span class="kw">where </span>N2 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N1 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N2 == <span class="number">0</span>);
     b
 }
 
@@ -5704,8 +5704,8 @@
     _a: uint64x1_t,
     b: uint64x1_t,
 ) -&gt; uint64x1_t {
-    <span class="macro">static_assert!</span>(N1 : i32 <span class="kw">where </span>N1 == <span class="number">0</span>);
-    <span class="macro">static_assert!</span>(N2 : i32 <span class="kw">where </span>N2 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N1 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N2 == <span class="number">0</span>);
     b
 }
 
@@ -5719,8 +5719,8 @@
     _a: poly64x1_t,
     b: poly64x1_t,
 ) -&gt; poly64x1_t {
-    <span class="macro">static_assert!</span>(N1 : i32 <span class="kw">where </span>N1 == <span class="number">0</span>);
-    <span class="macro">static_assert!</span>(N2 : i32 <span class="kw">where </span>N2 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N1 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N2 == <span class="number">0</span>);
     b
 }
 
@@ -5734,8 +5734,8 @@
     _a: float64x1_t,
     b: float64x1_t,
 ) -&gt; float64x1_t {
-    <span class="macro">static_assert!</span>(N1 : i32 <span class="kw">where </span>N1 == <span class="number">0</span>);
-    <span class="macro">static_assert!</span>(N2 : i32 <span class="kw">where </span>N2 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N1 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N2 == <span class="number">0</span>);
     b
 }
 
@@ -5749,8 +5749,8 @@
     _a: int64x1_t,
     b: int64x2_t,
 ) -&gt; int64x1_t {
-    <span class="macro">static_assert!</span>(LANE1 : i32 <span class="kw">where </span>LANE1 == <span class="number">0</span>);
-    <span class="macro">static_assert_imm1!</span>(LANE2);
+    <span class="macro">static_assert!</span>(LANE1 == <span class="number">0</span>);
+    <span class="macro">static_assert_uimm_bits!</span>(LANE2, <span class="number">1</span>);
     transmute::&lt;i64, <span class="kw">_</span>&gt;(simd_extract(b, LANE2 <span class="kw">as </span>u32))
 }
 
@@ -5764,8 +5764,8 @@
     _a: uint64x1_t,
     b: uint64x2_t,
 ) -&gt; uint64x1_t {
-    <span class="macro">static_assert!</span>(LANE1 : i32 <span class="kw">where </span>LANE1 == <span class="number">0</span>);
-    <span class="macro">static_assert_imm1!</span>(LANE2);
+    <span class="macro">static_assert!</span>(LANE1 == <span class="number">0</span>);
+    <span class="macro">static_assert_uimm_bits!</span>(LANE2, <span class="number">1</span>);
     transmute::&lt;u64, <span class="kw">_</span>&gt;(simd_extract(b, LANE2 <span class="kw">as </span>u32))
 }
 
@@ -5779,8 +5779,8 @@
     _a: poly64x1_t,
     b: poly64x2_t,
 ) -&gt; poly64x1_t {
-    <span class="macro">static_assert!</span>(LANE1 : i32 <span class="kw">where </span>LANE1 == <span class="number">0</span>);
-    <span class="macro">static_assert_imm1!</span>(LANE2);
+    <span class="macro">static_assert!</span>(LANE1 == <span class="number">0</span>);
+    <span class="macro">static_assert_uimm_bits!</span>(LANE2, <span class="number">1</span>);
     transmute::&lt;u64, <span class="kw">_</span>&gt;(simd_extract(b, LANE2 <span class="kw">as </span>u32))
 }
 
@@ -5794,8 +5794,8 @@
     _a: float64x1_t,
     b: float64x2_t,
 ) -&gt; float64x1_t {
-    <span class="macro">static_assert!</span>(LANE1 : i32 <span class="kw">where </span>LANE1 == <span class="number">0</span>);
-    <span class="macro">static_assert_imm1!</span>(LANE2);
+    <span class="macro">static_assert!</span>(LANE1 == <span class="number">0</span>);
+    <span class="macro">static_assert_uimm_bits!</span>(LANE2, <span class="number">1</span>);
     transmute::&lt;f64, <span class="kw">_</span>&gt;(simd_extract(b, LANE2 <span class="kw">as </span>u32))
 }
 
@@ -6053,7 +6053,7 @@
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vld1q_dup_f64(ptr: <span class="kw-2">*const </span>f64) -&gt; float64x2_t {
     <span class="kw">let </span>x = vld1q_lane_f64::&lt;<span class="number">0</span>&gt;(ptr, transmute(f64x2::splat(<span class="number">0.</span>)));
-    <span class="macro">simd_shuffle2!</span>(x, x, [<span class="number">0</span>, <span class="number">0</span>])
+    <span class="macro">simd_shuffle!</span>(x, x, [<span class="number">0</span>, <span class="number">0</span>])
 }
 
 <span class="doccomment">/// Load one single-element structure to one lane of one register.
@@ -6063,7 +6063,7 @@
 #[cfg_attr(test, assert_instr(ldr, LANE = <span class="number">0</span>))]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vld1_lane_f64&lt;<span class="kw">const </span>LANE: i32&gt;(ptr: <span class="kw-2">*const </span>f64, src: float64x1_t) -&gt; float64x1_t {
-    <span class="macro">static_assert!</span>(LANE : i32 <span class="kw">where </span>LANE == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(LANE == <span class="number">0</span>);
     simd_insert(src, LANE <span class="kw">as </span>u32, <span class="kw-2">*</span>ptr)
 }
 
@@ -6074,7 +6074,7 @@
 #[cfg_attr(test, assert_instr(ld1, LANE = <span class="number">1</span>))]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vld1q_lane_f64&lt;<span class="kw">const </span>LANE: i32&gt;(ptr: <span class="kw-2">*const </span>f64, src: float64x2_t) -&gt; float64x2_t {
-    <span class="macro">static_assert_imm1!</span>(LANE);
+    <span class="macro">static_assert_uimm_bits!</span>(LANE, <span class="number">1</span>);
     simd_insert(src, LANE <span class="kw">as </span>u32, <span class="kw-2">*</span>ptr)
 }
 
@@ -7266,7 +7266,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vext_p64&lt;<span class="kw">const </span>N: i32&gt;(a: poly64x1_t, _b: poly64x1_t) -&gt; poly64x1_t {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N == <span class="number">0</span>);
     a
 }
 
@@ -7277,7 +7277,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vext_f64&lt;<span class="kw">const </span>N: i32&gt;(a: float64x1_t, _b: float64x1_t) -&gt; float64x1_t {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(N == <span class="number">0</span>);
     a
 }
 
@@ -7396,7 +7396,7 @@
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 #[cfg_attr(all(test, target_arch = <span class="string">&quot;aarch64&quot;</span>), assert_instr(nop, IMM5 = <span class="number">0</span>))]
 </span><span class="kw">pub unsafe fn </span>vget_lane_f64&lt;<span class="kw">const </span>IMM5: i32&gt;(v: float64x1_t) -&gt; f64 {
-    <span class="macro">static_assert!</span>(IMM5 : i32 <span class="kw">where </span>IMM5 == <span class="number">0</span>);
+    <span class="macro">static_assert!</span>(IMM5 == <span class="number">0</span>);
     simd_extract(v, IMM5 <span class="kw">as </span>u32)
 }
 
@@ -7407,7 +7407,7 @@
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 #[cfg_attr(all(test, target_arch = <span class="string">&quot;aarch64&quot;</span>), assert_instr(nop, IMM5 = <span class="number">0</span>))]
 </span><span class="kw">pub unsafe fn </span>vgetq_lane_f64&lt;<span class="kw">const </span>IMM5: i32&gt;(v: float64x2_t) -&gt; f64 {
-    <span class="macro">static_assert_imm1!</span>(IMM5);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM5, <span class="number">1</span>);
     simd_extract(v, IMM5 <span class="kw">as </span>u32)
 }
 
@@ -7417,7 +7417,7 @@
 #[cfg_attr(test, assert_instr(mov))]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vcombine_f64(low: float64x1_t, high: float64x1_t) -&gt; float64x2_t {
-    <span class="macro">simd_shuffle2!</span>(low, high, [<span class="number">0</span>, <span class="number">1</span>])
+    <span class="macro">simd_shuffle!</span>(low, high, [<span class="number">0</span>, <span class="number">1</span>])
 }
 
 <span class="doccomment">/// Table look-up
@@ -8317,7 +8317,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vshld_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: i64) -&gt; i64 {
-    <span class="macro">static_assert_imm6!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">6</span>);
     a &lt;&lt; N
 }
 
@@ -8328,7 +8328,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vshld_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: u64) -&gt; u64 {
-    <span class="macro">static_assert_imm6!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">6</span>);
     a &lt;&lt; N
 }
 
@@ -8339,7 +8339,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vshrd_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: i64) -&gt; i64 {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     <span class="kw">let </span>n: i32 = <span class="kw">if </span>N == <span class="number">64 </span>{ <span class="number">63 </span>} <span class="kw">else </span>{ N };
     a &gt;&gt; n
 }
@@ -8351,7 +8351,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vshrd_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: u64) -&gt; u64 {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     <span class="kw">let </span>n: i32 = <span class="kw">if </span>N == <span class="number">64 </span>{
         <span class="kw">return </span><span class="number">0</span>;
     } <span class="kw">else </span>{
@@ -8367,7 +8367,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsrad_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: i64, b: i64) -&gt; i64 {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     a.wrapping_add(vshrd_n_s64::&lt;N&gt;(b))
 }
 
@@ -8378,7 +8378,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsrad_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: u64, b: u64) -&gt; u64 {
-    <span class="macro">static_assert!</span>(N : i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     a.wrapping_add(vshrd_n_u64::&lt;N&gt;(b))
 }
 
@@ -8389,7 +8389,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_s8&lt;<span class="kw">const </span>N: i32&gt;(a: int8x8_t, b: int8x8_t) -&gt; int8x8_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     vsli_n_s8_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8399,7 +8399,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_s8&lt;<span class="kw">const </span>N: i32&gt;(a: int8x16_t, b: int8x16_t) -&gt; int8x16_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     vsliq_n_s8_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8409,7 +8409,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_s16&lt;<span class="kw">const </span>N: i32&gt;(a: int16x4_t, b: int16x4_t) -&gt; int16x4_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     vsli_n_s16_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8419,7 +8419,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_s16&lt;<span class="kw">const </span>N: i32&gt;(a: int16x8_t, b: int16x8_t) -&gt; int16x8_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     vsliq_n_s16_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8429,7 +8429,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_s32&lt;<span class="kw">const </span>N: i32&gt;(a: int32x2_t, b: int32x2_t) -&gt; int32x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
     vsli_n_s32_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8439,7 +8439,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_s32&lt;<span class="kw">const </span>N: i32&gt;(a: int32x4_t, b: int32x4_t) -&gt; int32x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
     vsliq_n_s32_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8449,7 +8449,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: int64x1_t, b: int64x1_t) -&gt; int64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     vsli_n_s64_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8459,7 +8459,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: int64x2_t, b: int64x2_t) -&gt; int64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     vsliq_n_s64_(a, b, N)
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8469,7 +8469,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_u8&lt;<span class="kw">const </span>N: i32&gt;(a: uint8x8_t, b: uint8x8_t) -&gt; uint8x8_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     transmute(vsli_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8479,7 +8479,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_u8&lt;<span class="kw">const </span>N: i32&gt;(a: uint8x16_t, b: uint8x16_t) -&gt; uint8x16_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     transmute(vsliq_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8489,7 +8489,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_u16&lt;<span class="kw">const </span>N: i32&gt;(a: uint16x4_t, b: uint16x4_t) -&gt; uint16x4_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     transmute(vsli_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8499,7 +8499,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_u16&lt;<span class="kw">const </span>N: i32&gt;(a: uint16x8_t, b: uint16x8_t) -&gt; uint16x8_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     transmute(vsliq_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8509,7 +8509,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_u32&lt;<span class="kw">const </span>N: i32&gt;(a: uint32x2_t, b: uint32x2_t) -&gt; uint32x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
     transmute(vsli_n_s32_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8519,7 +8519,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_u32&lt;<span class="kw">const </span>N: i32&gt;(a: uint32x4_t, b: uint32x4_t) -&gt; uint32x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">31</span>);
     transmute(vsliq_n_s32_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8529,7 +8529,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: uint64x1_t, b: uint64x1_t) -&gt; uint64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     transmute(vsli_n_s64_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8539,7 +8539,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: uint64x2_t, b: uint64x2_t) -&gt; uint64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     transmute(vsliq_n_s64_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8549,7 +8549,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_p8&lt;<span class="kw">const </span>N: i32&gt;(a: poly8x8_t, b: poly8x8_t) -&gt; poly8x8_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     transmute(vsli_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8559,7 +8559,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_p8&lt;<span class="kw">const </span>N: i32&gt;(a: poly8x16_t, b: poly8x16_t) -&gt; poly8x16_t {
-    <span class="macro">static_assert_imm3!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">3</span>);
     transmute(vsliq_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8569,7 +8569,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_p16&lt;<span class="kw">const </span>N: i32&gt;(a: poly16x4_t, b: poly16x4_t) -&gt; poly16x4_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     transmute(vsli_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Left and Insert (immediate)
@@ -8579,7 +8579,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_p16&lt;<span class="kw">const </span>N: i32&gt;(a: poly16x8_t, b: poly16x8_t) -&gt; poly16x8_t {
-    <span class="macro">static_assert_imm4!</span>(N);
+    <span class="macro">static_assert_uimm_bits!</span>(N, <span class="number">4</span>);
     transmute(vsliq_n_s16_(transmute(a), transmute(b), N))
 }
 
@@ -8592,7 +8592,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsli_n_p64&lt;<span class="kw">const </span>N: i32&gt;(a: poly64x1_t, b: poly64x1_t) -&gt; poly64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     transmute(vsli_n_s64_(transmute(a), transmute(b), N))
 }
 
@@ -8605,7 +8605,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsliq_n_p64&lt;<span class="kw">const </span>N: i32&gt;(a: poly64x2_t, b: poly64x2_t) -&gt; poly64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">0 </span>&amp;&amp; N &lt;= <span class="number">63</span>);
     transmute(vsliq_n_s64_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8615,7 +8615,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_s8&lt;<span class="kw">const </span>N: i32&gt;(a: int8x8_t, b: int8x8_t) -&gt; int8x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     vsri_n_s8_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8625,7 +8625,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_s8&lt;<span class="kw">const </span>N: i32&gt;(a: int8x16_t, b: int8x16_t) -&gt; int8x16_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     vsriq_n_s8_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8635,7 +8635,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_s16&lt;<span class="kw">const </span>N: i32&gt;(a: int16x4_t, b: int16x4_t) -&gt; int16x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     vsri_n_s16_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8645,7 +8645,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_s16&lt;<span class="kw">const </span>N: i32&gt;(a: int16x8_t, b: int16x8_t) -&gt; int16x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     vsriq_n_s16_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8655,7 +8655,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_s32&lt;<span class="kw">const </span>N: i32&gt;(a: int32x2_t, b: int32x2_t) -&gt; int32x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
     vsri_n_s32_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8665,7 +8665,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_s32&lt;<span class="kw">const </span>N: i32&gt;(a: int32x4_t, b: int32x4_t) -&gt; int32x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
     vsriq_n_s32_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8675,7 +8675,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: int64x1_t, b: int64x1_t) -&gt; int64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     vsri_n_s64_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8685,7 +8685,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_s64&lt;<span class="kw">const </span>N: i32&gt;(a: int64x2_t, b: int64x2_t) -&gt; int64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     vsriq_n_s64_(a, b, N)
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8695,7 +8695,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_u8&lt;<span class="kw">const </span>N: i32&gt;(a: uint8x8_t, b: uint8x8_t) -&gt; uint8x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     transmute(vsri_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8705,7 +8705,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_u8&lt;<span class="kw">const </span>N: i32&gt;(a: uint8x16_t, b: uint8x16_t) -&gt; uint8x16_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     transmute(vsriq_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8715,7 +8715,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_u16&lt;<span class="kw">const </span>N: i32&gt;(a: uint16x4_t, b: uint16x4_t) -&gt; uint16x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     transmute(vsri_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8725,7 +8725,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_u16&lt;<span class="kw">const </span>N: i32&gt;(a: uint16x8_t, b: uint16x8_t) -&gt; uint16x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     transmute(vsriq_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8735,7 +8735,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_u32&lt;<span class="kw">const </span>N: i32&gt;(a: uint32x2_t, b: uint32x2_t) -&gt; uint32x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
     transmute(vsri_n_s32_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8745,7 +8745,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_u32&lt;<span class="kw">const </span>N: i32&gt;(a: uint32x4_t, b: uint32x4_t) -&gt; uint32x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">32</span>);
     transmute(vsriq_n_s32_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8755,7 +8755,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: uint64x1_t, b: uint64x1_t) -&gt; uint64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     transmute(vsri_n_s64_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8765,7 +8765,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_u64&lt;<span class="kw">const </span>N: i32&gt;(a: uint64x2_t, b: uint64x2_t) -&gt; uint64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     transmute(vsriq_n_s64_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8775,7 +8775,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_p8&lt;<span class="kw">const </span>N: i32&gt;(a: poly8x8_t, b: poly8x8_t) -&gt; poly8x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     transmute(vsri_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8785,7 +8785,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_p8&lt;<span class="kw">const </span>N: i32&gt;(a: poly8x16_t, b: poly8x16_t) -&gt; poly8x16_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">8</span>);
     transmute(vsriq_n_s8_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8795,7 +8795,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_p16&lt;<span class="kw">const </span>N: i32&gt;(a: poly16x4_t, b: poly16x4_t) -&gt; poly16x4_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     transmute(vsri_n_s16_(transmute(a), transmute(b), N))
 }
 <span class="doccomment">/// Shift Right and Insert (immediate)
@@ -8805,7 +8805,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_p16&lt;<span class="kw">const </span>N: i32&gt;(a: poly16x8_t, b: poly16x8_t) -&gt; poly16x8_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">16</span>);
     transmute(vsriq_n_s16_(transmute(a), transmute(b), N))
 }
 
@@ -8818,7 +8818,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsri_n_p64&lt;<span class="kw">const </span>N: i32&gt;(a: poly64x1_t, b: poly64x1_t) -&gt; poly64x1_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     transmute(vsri_n_s64_(transmute(a), transmute(b), N))
 }
 
@@ -8831,7 +8831,7 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;neon_intrinsics&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>vsriq_n_p64&lt;<span class="kw">const </span>N: i32&gt;(a: poly64x2_t, b: poly64x2_t) -&gt; poly64x2_t {
-    <span class="macro">static_assert!</span>(N: i32 <span class="kw">where </span>N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
+    <span class="macro">static_assert!</span>(N &gt;= <span class="number">1 </span>&amp;&amp; N &lt;= <span class="number">64</span>);
     transmute(vsriq_n_s64_(transmute(a), transmute(b), N))
 }
 
@@ -8845,7 +8845,7 @@
     b: uint32x4_t,
     c: uint32x4_t,
 ) -&gt; uint32x4_t {
-    <span class="macro">static_assert_imm2!</span>(IMM2);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM2, <span class="number">2</span>);
     <span class="attr">#[allow(improper_ctypes)]
     </span><span class="kw">extern </span><span class="string">&quot;unadjusted&quot; </span>{
         <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;aarch64&quot;</span>, link_name = <span class="string">&quot;llvm.aarch64.crypto.sm3tt1a&quot;</span>)]
@@ -8864,7 +8864,7 @@
     b: uint32x4_t,
     c: uint32x4_t,
 ) -&gt; uint32x4_t {
-    <span class="macro">static_assert_imm2!</span>(IMM2);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM2, <span class="number">2</span>);
     <span class="attr">#[allow(improper_ctypes)]
     </span><span class="kw">extern </span><span class="string">&quot;unadjusted&quot; </span>{
         <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;aarch64&quot;</span>, link_name = <span class="string">&quot;llvm.aarch64.crypto.sm3tt1b&quot;</span>)]
@@ -8883,7 +8883,7 @@
     b: uint32x4_t,
     c: uint32x4_t,
 ) -&gt; uint32x4_t {
-    <span class="macro">static_assert_imm2!</span>(IMM2);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM2, <span class="number">2</span>);
     <span class="attr">#[allow(improper_ctypes)]
     </span><span class="kw">extern </span><span class="string">&quot;unadjusted&quot; </span>{
         <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;aarch64&quot;</span>, link_name = <span class="string">&quot;llvm.aarch64.crypto.sm3tt2a&quot;</span>)]
@@ -8902,7 +8902,7 @@
     b: uint32x4_t,
     c: uint32x4_t,
 ) -&gt; uint32x4_t {
-    <span class="macro">static_assert_imm2!</span>(IMM2);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM2, <span class="number">2</span>);
     <span class="attr">#[allow(improper_ctypes)]
     </span><span class="kw">extern </span><span class="string">&quot;unadjusted&quot; </span>{
         <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;aarch64&quot;</span>, link_name = <span class="string">&quot;llvm.aarch64.crypto.sm3tt2b&quot;</span>)]
@@ -8917,7 +8917,7 @@
 #[cfg_attr(test, assert_instr(xar, IMM6 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>vxarq_u64&lt;<span class="kw">const </span>IMM6: i32&gt;(a: uint64x2_t, b: uint64x2_t) -&gt; uint64x2_t {
-    <span class="macro">static_assert_imm6!</span>(IMM6);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM6, <span class="number">6</span>);
     <span class="attr">#[allow(improper_ctypes)]
     </span><span class="kw">extern </span><span class="string">&quot;unadjusted&quot; </span>{
         <span class="attr">#[cfg_attr(target_arch = <span class="string">&quot;aarch64&quot;</span>, link_name = <span class="string">&quot;llvm.aarch64.crypto.xar&quot;</span>)]
@@ -10630,5 +10630,4 @@
 <span class="attr">#[cfg(test)]
 #[path = <span class="string">&quot;../../arm_shared/neon/store_tests.rs&quot;</span>]
 </span><span class="kw">mod </span>store_tests;
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

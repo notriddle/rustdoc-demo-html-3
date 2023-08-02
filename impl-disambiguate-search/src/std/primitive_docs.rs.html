@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/primitive_docs.rs`."><title>primitive_docs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/primitive_docs.rs`."><title>primitive_docs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1575,10 +1575,26 @@
 <a href="#1575" id="1575">1575</a>
 <a href="#1576" id="1576">1576</a>
 <a href="#1577" id="1577">1577</a>
-</pre><pre class="rust"><code><span class="comment">// `library/{std,core}/src/primitive_docs.rs` should have the same contents.
+<a href="#1578" id="1578">1578</a>
+<a href="#1579" id="1579">1579</a>
+<a href="#1580" id="1580">1580</a>
+<a href="#1581" id="1581">1581</a>
+<a href="#1582" id="1582">1582</a>
+<a href="#1583" id="1583">1583</a>
+<a href="#1584" id="1584">1584</a>
+<a href="#1585" id="1585">1585</a>
+<a href="#1586" id="1586">1586</a>
+<a href="#1587" id="1587">1587</a>
+<a href="#1588" id="1588">1588</a>
+<a href="#1589" id="1589">1589</a>
+<a href="#1590" id="1590">1590</a>
+<a href="#1591" id="1591">1591</a>
+<a href="#1592" id="1592">1592</a>
+<a href="#1593" id="1593">1593</a>
+</pre></div><pre class="rust"><code><span class="comment">// `library/{std,core}/src/primitive_docs.rs` should have the same contents.
 // These are different files so that relative links work properly without
 // having to have `CARGO_PKG_NAME` set, but conceptually they should always be the same.
-</span><span class="attr">#[doc(primitive = <span class="string">&quot;bool&quot;</span>)]
+</span><span class="attr">#[rustc_doc_primitive = <span class="string">&quot;bool&quot;</span>]
 #[doc(alias = <span class="string">&quot;true&quot;</span>)]
 #[doc(alias = <span class="string">&quot;false&quot;</span>)]
 </span><span class="doccomment">/// The boolean type.
@@ -1640,7 +1656,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_bool {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;never&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;never&quot;</span>]
 #[doc(alias = <span class="string">&quot;!&quot;</span>)]
 </span><span class="comment">//
 </span><span class="doccomment">/// The `!` type, also called &quot;never&quot;.
@@ -1851,7 +1867,7 @@
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
 </span><span class="kw">mod </span>prim_never {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;char&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;char&quot;</span>]
 #[allow(rustdoc::invalid_rust_codeblocks)]
 </span><span class="doccomment">/// A character type.
 ///
@@ -1885,7 +1901,7 @@
 ///
 /// ```no_run
 /// // Undefined behaviour
-/// unsafe { char::from_u32_unchecked(0x110000) };
+/// let _ = unsafe { char::from_u32_unchecked(0x110000) };
 /// ```
 ///
 /// USVs are also the exact set of values that may be encoded in UTF-8. Because
@@ -1975,7 +1991,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_char {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;unit&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;unit&quot;</span>]
 #[doc(alias = <span class="string">&quot;(&quot;</span>)]
 #[doc(alias = <span class="string">&quot;)&quot;</span>)]
 #[doc(alias = <span class="string">&quot;()&quot;</span>)]
@@ -2037,7 +2053,7 @@
     <span class="comment">// empty
 </span>}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;pointer&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;pointer&quot;</span>]
 #[doc(alias = <span class="string">&quot;ptr&quot;</span>)]
 #[doc(alias = <span class="string">&quot;*&quot;</span>)]
 #[doc(alias = <span class="string">&quot;*const&quot;</span>)]
@@ -2127,6 +2143,7 @@
 ///
 /// ```
 /// # #![feature(rustc_private)]
+/// #[allow(unused_extern_crates)]
 /// extern crate libc;
 ///
 /// use std::mem;
@@ -2149,12 +2166,11 @@
 /// [`is_null`]: pointer::is_null
 /// [`offset`]: pointer::offset
 </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;[`into_raw`]: &quot;</span>, <span class="macro">include_str!</span>(<span class="string">&quot;../primitive_docs/box_into_raw.md&quot;</span>))]
-</span><span class="doccomment">/// [`drop`]: mem::drop
-/// [`write`]: ptr::write
+</span><span class="doccomment">/// [`write`]: ptr::write
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_pointer {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;array&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;array&quot;</span>]
 #[doc(alias = <span class="string">&quot;[]&quot;</span>)]
 #[doc(alias = <span class="string">&quot;[T;N]&quot;</span>)] </span><span class="comment">// unfortunately, rustdoc doesn&#39;t have fuzzy search for aliases
 </span><span class="attr">#[doc(alias = <span class="string">&quot;[T; N]&quot;</span>)]
@@ -2187,6 +2203,9 @@
 /// Arrays of sizes from 0 to 32 (inclusive) implement the [`Default`] trait
 /// if the element type allows it. As a stopgap, trait implementations are
 /// statically generated up to size 32.
+///
+/// Arrays of sizes from 1 to 12 (inclusive) implement [`From&lt;Tuple&gt;`], where `Tuple`
+/// is a homogenous [prim@tuple] of appropriate length.
 ///
 /// Arrays coerce to [slices (`[T]`)][slice], so a slice method may be called on
 /// an array. Indeed, this provides most of the API for working with arrays.
@@ -2248,6 +2267,13 @@
 /// let [john, roa] = [&quot;John&quot;.to_string(), &quot;Roa&quot;.to_string()];
 /// move_away(john);
 /// move_away(roa);
+/// ```
+///
+/// Arrays can be created from homogenous tuples of appropriate length:
+///
+/// ```
+/// let tuple: (u32, u32, u32) = (1, 2, 3);
+/// let array: [u32; 3] = tuple.into();
 /// ```
 ///
 /// # Editions
@@ -2352,10 +2378,11 @@
 /// [`Borrow`]: borrow::Borrow
 /// [`BorrowMut`]: borrow::BorrowMut
 /// [slice pattern]: ../reference/patterns.html#slice-patterns
+/// [`From&lt;Tuple&gt;`]: convert::From
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_array {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;slice&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;slice&quot;</span>]
 #[doc(alias = <span class="string">&quot;[&quot;</span>)]
 #[doc(alias = <span class="string">&quot;]&quot;</span>)]
 #[doc(alias = <span class="string">&quot;[]&quot;</span>)]
@@ -2447,7 +2474,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_slice {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;str&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;str&quot;</span>]
 </span><span class="doccomment">/// String slices.
 ///
 /// *[See also the `std::str` module](crate::str).*
@@ -2514,7 +2541,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_str {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;tuple&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;tuple&quot;</span>]
 #[doc(alias = <span class="string">&quot;(&quot;</span>)]
 #[doc(alias = <span class="string">&quot;)&quot;</span>)]
 #[doc(alias = <span class="string">&quot;()&quot;</span>)]
@@ -2578,7 +2605,9 @@
 /// * [`Debug`]
 /// * [`Default`]
 /// * [`Hash`]
+/// * [`From&lt;[T; N]&gt;`][from]
 ///
+/// [from]: convert::From
 /// [`Debug`]: fmt::Debug
 /// [`Hash`]: hash::Hash
 ///
@@ -2594,7 +2623,6 @@
 /// * [`UnwindSafe`]
 /// * [`RefUnwindSafe`]
 ///
-/// [`Unpin`]: marker::Unpin
 /// [`UnwindSafe`]: panic::UnwindSafe
 /// [`RefUnwindSafe`]: panic::RefUnwindSafe
 ///
@@ -2630,6 +2658,13 @@
 /// assert_eq!(y, 5);
 /// ```
 ///
+/// Homogenous tuples can be created from arrays of appropriate length:
+///
+/// ```
+/// let array: [u32; 3] = [1, 2, 3];
+/// let tuple: (u32, u32, u32) = array.into();
+/// ```
+///
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_tuple {}
 
@@ -2658,7 +2693,7 @@
     <span class="comment">// empty
 </span>}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;f32&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;f32&quot;</span>]
 </span><span class="doccomment">/// A 32-bit floating point type (specifically, the &quot;binary32&quot; type defined in IEEE 754-2008).
 ///
 /// This type can represent a wide range of decimal numbers, like `3.5`, `27`,
@@ -2724,7 +2759,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_f32 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;f64&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;f64&quot;</span>]
 </span><span class="doccomment">/// A 64-bit floating point type (specifically, the &quot;binary64&quot; type defined in IEEE 754-2008).
 ///
 /// This type is very similar to [`f32`], but has increased
@@ -2739,67 +2774,67 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_f64 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;i8&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;i8&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 8-bit signed integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_i8 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;i16&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;i16&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 16-bit signed integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_i16 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;i32&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;i32&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 32-bit signed integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_i32 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;i64&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;i64&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 64-bit signed integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_i64 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;i128&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;i128&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 128-bit signed integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;i128&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_i128 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;u8&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;u8&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 8-bit unsigned integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_u8 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;u16&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;u16&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 16-bit unsigned integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_u16 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;u32&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;u32&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 32-bit unsigned integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_u32 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;u64&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;u64&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 64-bit unsigned integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_u64 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;u128&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;u128&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The 128-bit unsigned integer type.
 </span><span class="attr">#[stable(feature = <span class="string">&quot;i128&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_u128 {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;isize&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;isize&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The pointer-sized signed integer type.
 ///
@@ -2809,7 +2844,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_isize {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;usize&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;usize&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// The pointer-sized unsigned integer type.
 ///
@@ -2819,7 +2854,7 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_usize {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;reference&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;reference&quot;</span>]
 #[doc(alias = <span class="string">&quot;&amp;&quot;</span>)]
 #[doc(alias = <span class="string">&quot;&amp;mut&quot;</span>)]
 </span><span class="comment">//
@@ -2915,6 +2950,7 @@
 /// * [`Hash`]
 /// * [`ToSocketAddrs`]
 /// * [`Send`] \(`&amp;T` references also require &lt;code&gt;T: [Sync]&lt;/code&gt;)
+/// * [`Sync`]
 ///
 /// [`std::fmt`]: fmt
 /// [`Hash`]: hash::Hash
@@ -2950,15 +2986,11 @@
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">mod </span>prim_ref {}
 
-<span class="attr">#[doc(primitive = <span class="string">&quot;fn&quot;</span>)]
+<span class="attr">#[rustc_doc_primitive = <span class="string">&quot;fn&quot;</span>]
 </span><span class="comment">//
 </span><span class="doccomment">/// Function pointers, like `fn(usize) -&gt; bool`.
 ///
 /// *See also the traits [`Fn`], [`FnMut`], and [`FnOnce`].*
-///
-/// [`Fn`]: ops::Fn
-/// [`FnMut`]: ops::FnMut
-/// [`FnOnce`]: ops::FnOnce
 ///
 /// Function pointers are pointers that point to *code*, not data. They can be called
 /// just like functions. Like references, function pointers are, among other things, assumed to
@@ -3152,5 +3184,4 @@
 </span><span class="kw">impl</span>&lt;Ret, T&gt; Copy <span class="kw">for fn</span>(T) -&gt; Ret {
     <span class="comment">// empty
 </span>}
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

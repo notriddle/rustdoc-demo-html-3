@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -675,7 +675,21 @@
 <a href="#675" id="675">675</a>
 <a href="#676" id="676">676</a>
 <a href="#677" id="677">677</a>
-</pre><pre class="rust"><code><span class="doccomment">//! # The Rust Standard Library
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! # The Rust Standard Library
 //!
 //! The Rust Standard Library is the foundation of portable Rust software, a
 //! set of minimal and battle-tested shared abstractions for the [broader Rust
@@ -865,6 +879,13 @@
 //! [array]: prim@array
 //! [slice]: prim@slice
 
+</span><span class="comment">// To run std tests without x.py without ending up with two copies of std, Miri needs to be
+// able to &quot;empty&quot; this crate. See &lt;https://github.com/rust-lang/miri-test-libstd/issues/4&gt;.
+// rustc itself never sets the feature, so this line has no affect there.
+</span><span class="attr">#![cfg(any(not(feature = <span class="string">&quot;miri-test-libstd&quot;</span>), test, doctest))]
+</span><span class="comment">// miri-test-libstd also prefers to make std use the sysroot versions of the dependencies.
+</span><span class="attr">#![cfg_attr(feature = <span class="string">&quot;miri-test-libstd&quot;</span>, feature(rustc_private))]
+</span><span class="comment">//
 </span><span class="attr">#![cfg_attr(not(feature = <span class="string">&quot;restricted-std&quot;</span>), stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>))]
 #![cfg_attr(feature = <span class="string">&quot;restricted-std&quot;</span>, unstable(feature = <span class="string">&quot;restricted_std&quot;</span>, issue = <span class="string">&quot;none&quot;</span>))]
 #![doc(
@@ -879,12 +900,6 @@
     no_global_oom_handling,
     not(no_global_oom_handling)
 ))]
-</span><span class="comment">// To run std tests without x.py without ending up with two copies of std, Miri needs to be
-// able to &quot;empty&quot; this crate. See &lt;https://github.com/rust-lang/miri-test-libstd/issues/4&gt;.
-// rustc itself never sets the feature, so this line has no affect there.
-</span><span class="attr">#![cfg(any(not(feature = <span class="string">&quot;miri-test-libstd&quot;</span>), test, doctest))]
-</span><span class="comment">// miri-test-libstd also prefers to make std use the sysroot versions of the dependencies.
-</span><span class="attr">#![cfg_attr(feature = <span class="string">&quot;miri-test-libstd&quot;</span>, feature(rustc_private))]
 </span><span class="comment">// Don&#39;t link to std. We are std.
 </span><span class="attr">#![no_std]
 </span><span class="comment">// Tell the compiler to link to either panic_abort or panic_unwind
@@ -912,6 +927,7 @@
 #![cfg_attr(windows, feature(round_char_boundary))]
 </span><span class="comment">//
 // Language features:
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(alloc_error_handler)]
 #![feature(allocator_internals)]
 #![feature(allow_internal_unsafe)]
@@ -931,11 +947,10 @@
 #![feature(exhaustive_patterns)]
 #![feature(if_let_guard)]
 #![feature(intra_doc_pointers)]
-#![feature(is_terminal)]
 #![feature(lang_items)]
 #![feature(let_chains)]
-#![feature(linkage)]
 #![feature(link_cfg)]
+#![feature(linkage)]
 #![feature(min_specialization)]
 #![feature(must_not_suspend)]
 #![feature(needs_panic_runtime)]
@@ -948,9 +963,12 @@
 #![feature(staged_api)]
 #![feature(thread_local)]
 #![feature(try_blocks)]
+#![feature(type_alias_impl_trait)]
 #![feature(utf8_chunks)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Library features (core):
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(char_internals)]
 #![feature(core_intrinsics)]
 #![feature(duration_constants)]
@@ -964,12 +982,12 @@
 #![feature(float_next_up_down)]
 #![feature(hasher_prefixfree_extras)]
 #![feature(hashmap_internals)]
+#![feature(int_roundings)]
 #![feature(ip)]
 #![feature(ip_in_core)]
-#![feature(is_some_and)]
 #![feature(maybe_uninit_slice)]
+#![feature(maybe_uninit_uninit_array)]
 #![feature(maybe_uninit_write_slice)]
-#![feature(nonnull_slice_from_raw_parts)]
 #![feature(panic_can_unwind)]
 #![feature(panic_info_message)]
 #![feature(panic_internals)]
@@ -986,25 +1004,28 @@
 #![feature(std_internals)]
 #![feature(str_internals)]
 #![feature(strict_provenance)]
-#![feature(maybe_uninit_uninit_array)]
-#![feature(const_maybe_uninit_uninit_array)]
-#![feature(const_waker)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Library features (alloc):
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(alloc_layout_extra)]
 #![feature(allocator_api)]
 #![feature(get_mut_unchecked)]
 #![feature(map_try_insert)]
 #![feature(new_uninit)]
+#![feature(slice_concat_trait)]
 #![feature(thin_box)]
 #![feature(try_reserve_kind)]
 #![feature(vec_into_raw_parts)]
-#![feature(slice_concat_trait)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Library features (unwind):
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(panic_unwind)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Only for re-exporting:
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(assert_matches)]
 #![feature(async_iterator)]
 #![feature(c_variadic)]
@@ -1016,25 +1037,30 @@
 #![feature(custom_test_frameworks)]
 #![feature(edition_panic)]
 #![feature(format_args_nl)]
+#![feature(get_many_mut)]
+#![feature(lazy_cell)]
 #![feature(log_syntax)]
-#![feature(once_cell)]
 #![feature(saturating_int_impl)]
 #![feature(stdsimd)]
 #![feature(test)]
 #![feature(trace_macros)]
-#![feature(get_many_mut)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Only used in tests/benchmarks:
 //
 // Only for const-ness:
+// tidy-alphabetical-start
 </span><span class="attr">#![feature(const_collections_with_hasher)]
 #![feature(const_hash)]
 #![feature(const_io_structs)]
 #![feature(const_ip)]
 #![feature(const_ipv4)]
 #![feature(const_ipv6)]
+#![feature(const_maybe_uninit_uninit_array)]
+#![feature(const_waker)]
 #![feature(thread_local_internals)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 </span><span class="attr">#![default_lib_allocator]
 
 </span><span class="comment">// Explicitly import the prelude. The compiler uses this same unstable attribute
@@ -1208,7 +1234,7 @@
 <span class="comment">// Pull in `std_float` crate  into std. The contents of
 // `std_float` are in a different repository: rust-lang/portable-simd.
 </span><span class="attr">#[path = <span class="string">&quot;../../portable-simd/crates/std_float/src/lib.rs&quot;</span>]
-#[allow(missing_debug_implementations, dead_code, unsafe_op_in_unsafe_fn, unused_unsafe)]
+#[allow(missing_debug_implementations, dead_code, unsafe_op_in_unsafe_fn)]
 #[allow(rustdoc::bare_urls)]
 #[unstable(feature = <span class="string">&quot;portable_simd&quot;</span>, issue = <span class="string">&quot;86656&quot;</span>)]
 </span><span class="kw">mod </span>std_float;
@@ -1269,7 +1295,9 @@
 
 <span class="comment">// Private support modules
 </span><span class="kw">mod </span>panicking;
-<span class="kw">mod </span>personality;
+
+<span class="attr">#[unstable(feature = <span class="string">&quot;ice_to_disk&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+</span><span class="kw">pub use </span>panicking::panic_hook_with_disk_dump;
 
 <span class="attr">#[path = <span class="string">&quot;../../backtrace/src/lib.rs&quot;</span>]
 #[allow(dead_code, unused_attributes, fuzzy_provenance_casts)]
@@ -1352,5 +1380,4 @@
         rand::SeedableRng::from_seed(seed)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

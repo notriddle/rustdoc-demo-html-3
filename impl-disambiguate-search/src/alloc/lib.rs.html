@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -276,7 +276,8 @@
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
 <a href="#278" id="278">278</a>
-</pre><pre class="rust"><code><span class="doccomment">//! # The Rust core allocation and collections library
+<a href="#279" id="279">279</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! # The Rust core allocation and collections library
 //!
 //! This library provides smart pointers and collections for managing
 //! heap-allocated values.
@@ -334,6 +335,11 @@
 //! [`Rc`]: rc
 //! [`RefCell`]: core::cell
 
+</span><span class="comment">// To run alloc tests without x.py without ending up with two copies of alloc, Miri needs to be
+// able to &quot;empty&quot; this crate. See &lt;https://github.com/rust-lang/miri-test-libstd/issues/4&gt;.
+// rustc itself never sets the feature, so this line has no affect there.
+</span><span class="attr">#![cfg(any(not(feature = <span class="string">&quot;miri-test-libstd&quot;</span>), test, doctest))]
+</span><span class="comment">//
 </span><span class="attr">#![allow(unused_attributes)]
 #![stable(feature = <span class="string">&quot;alloc&quot;</span>, since = <span class="string">&quot;1.36.0&quot;</span>)]
 #![doc(
@@ -353,12 +359,7 @@
 </span>))]
 #![no_std]
 #![needs_allocator]
-</span><span class="comment">// To run alloc tests without x.py without ending up with two copies of alloc, Miri needs to be
-// able to &quot;empty&quot; this crate. See &lt;https://github.com/rust-lang/miri-test-libstd/issues/4&gt;.
-// rustc itself never sets the feature, so this line has no affect there.
-</span><span class="attr">#![cfg(any(not(feature = <span class="string">&quot;miri-test-libstd&quot;</span>), test, doctest))]
-</span><span class="comment">//
-// Lints:
+</span><span class="comment">// Lints:
 </span><span class="attr">#![deny(unsafe_op_in_unsafe_fn)]
 #![deny(fuzzy_provenance_casts)]
 #![warn(deprecated_in_future)]
@@ -368,32 +369,34 @@
 #![warn(multiple_supertrait_upcastable)]
 </span><span class="comment">//
 // Library features:
-</span><span class="attr">#![feature(alloc_layout_extra)]
+// tidy-alphabetical-start
+</span><span class="attr">#![cfg_attr(not(no_global_oom_handling), feature(const_alloc_error))]
+#![cfg_attr(not(no_global_oom_handling), feature(const_btree_len))]
+#![cfg_attr(test, feature(is_sorted))]
+#![cfg_attr(test, feature(new_uninit))]
+#![feature(alloc_layout_extra)]
 #![feature(allocator_api)]
 #![feature(array_chunks)]
 #![feature(array_into_iter_constructors)]
 #![feature(array_methods)]
 #![feature(array_windows)]
+#![feature(ascii_char)]
 #![feature(assert_matches)]
 #![feature(async_iterator)]
 #![feature(coerce_unsized)]
-#![cfg_attr(not(no_global_oom_handling), feature(const_alloc_error))]
-#![feature(const_box)]
-#![cfg_attr(not(no_global_oom_handling), feature(const_btree_len))]
-#![feature(const_cow_is_borrowed)]
-#![feature(const_convert)]
-#![feature(const_size_of_val)]
 #![feature(const_align_of_val)]
-#![feature(const_ptr_read)]
-#![feature(const_maybe_uninit_zeroed)]
-#![feature(const_maybe_uninit_write)]
+#![feature(const_box)]
+#![feature(const_cow_is_borrowed)]
+#![feature(const_eval_select)]
 #![feature(const_maybe_uninit_as_mut_ptr)]
+#![feature(const_maybe_uninit_write)]
+#![feature(const_maybe_uninit_zeroed)]
+#![feature(const_pin)]
 #![feature(const_refs_to_cell)]
+#![feature(const_size_of_val)]
+#![feature(const_waker)]
 #![feature(core_intrinsics)]
 #![feature(core_panic)]
-#![feature(const_eval_select)]
-#![feature(const_pin)]
-#![feature(const_waker)]
 #![feature(dispatch_from_dyn)]
 #![feature(error_generic_member_access)]
 #![feature(error_in_core)]
@@ -404,7 +407,6 @@
 #![feature(hasher_prefixfree_extras)]
 #![feature(inline_const)]
 #![feature(inplace_iteration)]
-#![cfg_attr(test, feature(is_sorted))]
 #![feature(iter_advance_by)]
 #![feature(iter_next_chunk)]
 #![feature(iter_repeat_n)]
@@ -412,8 +414,6 @@
 #![feature(maybe_uninit_slice)]
 #![feature(maybe_uninit_uninit_array)]
 #![feature(maybe_uninit_uninit_array_transpose)]
-#![cfg_attr(test, feature(new_uninit))]
-#![feature(nonnull_slice_from_raw_parts)]
 #![feature(pattern)]
 #![feature(pointer_byte_offsets)]
 #![feature(provide_any)]
@@ -429,6 +429,7 @@
 #![feature(slice_ptr_get)]
 #![feature(slice_ptr_len)]
 #![feature(slice_range)]
+#![feature(std_internals)]
 #![feature(str_internals)]
 #![feature(strict_provenance)]
 #![feature(trusted_len)]
@@ -439,42 +440,43 @@
 #![feature(unicode_internals)]
 #![feature(unsize)]
 #![feature(utf8_chunks)]
-#![feature(std_internals)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Language features:
-</span><span class="attr">#![feature(allocator_internals)]
+// tidy-alphabetical-start
+</span><span class="attr">#![cfg_attr(not(test), feature(generator_trait))]
+#![cfg_attr(test, feature(panic_update_hook))]
+#![cfg_attr(test, feature(test))]
+#![feature(allocator_internals)]
 #![feature(allow_internal_unstable)]
 #![feature(associated_type_bounds)]
+#![feature(c_unwind)]
 #![feature(cfg_sanitize)]
-#![feature(const_deref)]
 #![feature(const_mut_refs)]
-#![feature(const_ptr_write)]
 #![feature(const_precise_live_drops)]
+#![feature(const_ptr_write)]
 #![feature(const_trait_impl)]
 #![feature(const_try)]
 #![feature(dropck_eyepatch)]
 #![feature(exclusive_range_pattern)]
 #![feature(fundamental)]
-#![cfg_attr(not(test), feature(generator_trait))]
 #![feature(hashmap_internals)]
 #![feature(lang_items)]
 #![feature(min_specialization)]
+#![feature(multiple_supertrait_upcastable)]
 #![feature(negative_impls)]
 #![feature(never_type)]
+#![feature(pointer_is_aligned)]
 #![feature(rustc_allow_const_fn_unstable)]
 #![feature(rustc_attrs)]
-#![feature(pointer_is_aligned)]
 #![feature(slice_internals)]
 #![feature(staged_api)]
 #![feature(stmt_expr_attributes)]
-#![cfg_attr(test, feature(test))]
 #![feature(unboxed_closures)]
 #![feature(unsized_fn_params)]
-#![feature(c_unwind)]
 #![feature(with_negative_coherence)]
-#![cfg_attr(test, feature(panic_update_hook))]
-#![feature(multiple_supertrait_upcastable)]
-</span><span class="comment">//
+</span><span class="comment">// tidy-alphabetical-end
+//
 // Rustdoc features:
 </span><span class="attr">#![feature(doc_cfg)]
 #![feature(doc_cfg_hide)]
@@ -554,5 +556,4 @@
         rand::SeedableRng::from_seed(seed)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

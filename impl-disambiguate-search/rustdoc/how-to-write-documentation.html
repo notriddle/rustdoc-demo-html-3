@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -80,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html" class="active"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.3.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.4.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="read-documentation/in-doc-settings.html"><strong aria-hidden="true">3.1.</strong> In-doc settings</a></li></ol></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html" class="active"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/re-exports.html"><strong aria-hidden="true">4.3.</strong> Re-exports</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.4.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.5.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -282,12 +307,12 @@ interested in taking a look at their website to see what's possible:</p>
 extensions:</p>
 <h3 id="strikethrough"><a class="header" href="#strikethrough">Strikethrough</a></h3>
 <p>Text may be rendered with a horizontal line through the center by wrapping the
-text with two tilde characters on each side:</p>
-<pre><code class="language-text">An example of ~~strikethrough text~~.
+text with one or two tilde characters on each side:</p>
+<pre><code class="language-text">An example of ~~strikethrough text~~. You can also use ~single tildes~.
 </code></pre>
 <p>This example will render as:</p>
 <blockquote>
-<p>An example of <del>strikethrough text</del>.</p>
+<p>An example of <del>strikethrough text</del>. You can also use <del>single tildes</del>.</p>
 </blockquote>
 <p>This follows the <a href="https://github.github.com/gfm/#strikethrough-extension-">GitHub Strikethrough extension</a>.</p>
 <h3 id="footnotes"><a class="header" href="#footnotes">Footnotes</a></h3>
@@ -359,7 +384,7 @@ characters:</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="how-to-read-rustdoc.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="read-documentation/in-doc-settings.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -373,7 +398,7 @@ characters:</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="how-to-read-rustdoc.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="read-documentation/in-doc-settings.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
@@ -403,5 +428,6 @@ characters:</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

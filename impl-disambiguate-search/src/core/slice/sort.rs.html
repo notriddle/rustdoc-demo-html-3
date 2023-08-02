@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/sort.rs`."><title>sort.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/sort.rs`."><title>sort.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1374,154 +1374,7 @@
 <a href="#1374" id="1374">1374</a>
 <a href="#1375" id="1375">1375</a>
 <a href="#1376" id="1376">1376</a>
-<a href="#1377" id="1377">1377</a>
-<a href="#1378" id="1378">1378</a>
-<a href="#1379" id="1379">1379</a>
-<a href="#1380" id="1380">1380</a>
-<a href="#1381" id="1381">1381</a>
-<a href="#1382" id="1382">1382</a>
-<a href="#1383" id="1383">1383</a>
-<a href="#1384" id="1384">1384</a>
-<a href="#1385" id="1385">1385</a>
-<a href="#1386" id="1386">1386</a>
-<a href="#1387" id="1387">1387</a>
-<a href="#1388" id="1388">1388</a>
-<a href="#1389" id="1389">1389</a>
-<a href="#1390" id="1390">1390</a>
-<a href="#1391" id="1391">1391</a>
-<a href="#1392" id="1392">1392</a>
-<a href="#1393" id="1393">1393</a>
-<a href="#1394" id="1394">1394</a>
-<a href="#1395" id="1395">1395</a>
-<a href="#1396" id="1396">1396</a>
-<a href="#1397" id="1397">1397</a>
-<a href="#1398" id="1398">1398</a>
-<a href="#1399" id="1399">1399</a>
-<a href="#1400" id="1400">1400</a>
-<a href="#1401" id="1401">1401</a>
-<a href="#1402" id="1402">1402</a>
-<a href="#1403" id="1403">1403</a>
-<a href="#1404" id="1404">1404</a>
-<a href="#1405" id="1405">1405</a>
-<a href="#1406" id="1406">1406</a>
-<a href="#1407" id="1407">1407</a>
-<a href="#1408" id="1408">1408</a>
-<a href="#1409" id="1409">1409</a>
-<a href="#1410" id="1410">1410</a>
-<a href="#1411" id="1411">1411</a>
-<a href="#1412" id="1412">1412</a>
-<a href="#1413" id="1413">1413</a>
-<a href="#1414" id="1414">1414</a>
-<a href="#1415" id="1415">1415</a>
-<a href="#1416" id="1416">1416</a>
-<a href="#1417" id="1417">1417</a>
-<a href="#1418" id="1418">1418</a>
-<a href="#1419" id="1419">1419</a>
-<a href="#1420" id="1420">1420</a>
-<a href="#1421" id="1421">1421</a>
-<a href="#1422" id="1422">1422</a>
-<a href="#1423" id="1423">1423</a>
-<a href="#1424" id="1424">1424</a>
-<a href="#1425" id="1425">1425</a>
-<a href="#1426" id="1426">1426</a>
-<a href="#1427" id="1427">1427</a>
-<a href="#1428" id="1428">1428</a>
-<a href="#1429" id="1429">1429</a>
-<a href="#1430" id="1430">1430</a>
-<a href="#1431" id="1431">1431</a>
-<a href="#1432" id="1432">1432</a>
-<a href="#1433" id="1433">1433</a>
-<a href="#1434" id="1434">1434</a>
-<a href="#1435" id="1435">1435</a>
-<a href="#1436" id="1436">1436</a>
-<a href="#1437" id="1437">1437</a>
-<a href="#1438" id="1438">1438</a>
-<a href="#1439" id="1439">1439</a>
-<a href="#1440" id="1440">1440</a>
-<a href="#1441" id="1441">1441</a>
-<a href="#1442" id="1442">1442</a>
-<a href="#1443" id="1443">1443</a>
-<a href="#1444" id="1444">1444</a>
-<a href="#1445" id="1445">1445</a>
-<a href="#1446" id="1446">1446</a>
-<a href="#1447" id="1447">1447</a>
-<a href="#1448" id="1448">1448</a>
-<a href="#1449" id="1449">1449</a>
-<a href="#1450" id="1450">1450</a>
-<a href="#1451" id="1451">1451</a>
-<a href="#1452" id="1452">1452</a>
-<a href="#1453" id="1453">1453</a>
-<a href="#1454" id="1454">1454</a>
-<a href="#1455" id="1455">1455</a>
-<a href="#1456" id="1456">1456</a>
-<a href="#1457" id="1457">1457</a>
-<a href="#1458" id="1458">1458</a>
-<a href="#1459" id="1459">1459</a>
-<a href="#1460" id="1460">1460</a>
-<a href="#1461" id="1461">1461</a>
-<a href="#1462" id="1462">1462</a>
-<a href="#1463" id="1463">1463</a>
-<a href="#1464" id="1464">1464</a>
-<a href="#1465" id="1465">1465</a>
-<a href="#1466" id="1466">1466</a>
-<a href="#1467" id="1467">1467</a>
-<a href="#1468" id="1468">1468</a>
-<a href="#1469" id="1469">1469</a>
-<a href="#1470" id="1470">1470</a>
-<a href="#1471" id="1471">1471</a>
-<a href="#1472" id="1472">1472</a>
-<a href="#1473" id="1473">1473</a>
-<a href="#1474" id="1474">1474</a>
-<a href="#1475" id="1475">1475</a>
-<a href="#1476" id="1476">1476</a>
-<a href="#1477" id="1477">1477</a>
-<a href="#1478" id="1478">1478</a>
-<a href="#1479" id="1479">1479</a>
-<a href="#1480" id="1480">1480</a>
-<a href="#1481" id="1481">1481</a>
-<a href="#1482" id="1482">1482</a>
-<a href="#1483" id="1483">1483</a>
-<a href="#1484" id="1484">1484</a>
-<a href="#1485" id="1485">1485</a>
-<a href="#1486" id="1486">1486</a>
-<a href="#1487" id="1487">1487</a>
-<a href="#1488" id="1488">1488</a>
-<a href="#1489" id="1489">1489</a>
-<a href="#1490" id="1490">1490</a>
-<a href="#1491" id="1491">1491</a>
-<a href="#1492" id="1492">1492</a>
-<a href="#1493" id="1493">1493</a>
-<a href="#1494" id="1494">1494</a>
-<a href="#1495" id="1495">1495</a>
-<a href="#1496" id="1496">1496</a>
-<a href="#1497" id="1497">1497</a>
-<a href="#1498" id="1498">1498</a>
-<a href="#1499" id="1499">1499</a>
-<a href="#1500" id="1500">1500</a>
-<a href="#1501" id="1501">1501</a>
-<a href="#1502" id="1502">1502</a>
-<a href="#1503" id="1503">1503</a>
-<a href="#1504" id="1504">1504</a>
-<a href="#1505" id="1505">1505</a>
-<a href="#1506" id="1506">1506</a>
-<a href="#1507" id="1507">1507</a>
-<a href="#1508" id="1508">1508</a>
-<a href="#1509" id="1509">1509</a>
-<a href="#1510" id="1510">1510</a>
-<a href="#1511" id="1511">1511</a>
-<a href="#1512" id="1512">1512</a>
-<a href="#1513" id="1513">1513</a>
-<a href="#1514" id="1514">1514</a>
-<a href="#1515" id="1515">1515</a>
-<a href="#1516" id="1516">1516</a>
-<a href="#1517" id="1517">1517</a>
-<a href="#1518" id="1518">1518</a>
-<a href="#1519" id="1519">1519</a>
-<a href="#1520" id="1520">1520</a>
-<a href="#1521" id="1521">1521</a>
-<a href="#1522" id="1522">1522</a>
-<a href="#1523" id="1523">1523</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Slice sorting
+</pre></div><pre class="rust"><code><span class="doccomment">//! Slice sorting
 //!
 //! This module contains a sorting algorithm based on Orson Peters&#39; pattern-defeating quicksort,
 //! published at: &lt;https://github.com/orlp/pdqsort&gt;
@@ -1668,7 +1521,7 @@
 /// Never inline this function to avoid code bloat. It still optimizes nicely and has practically no
 /// performance impact. Even improving performance in some cases.
 </span><span class="attr">#[inline(never)]
-</span><span class="kw">fn </span>insertion_sort_shift_left&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], offset: usize, is_less: <span class="kw-2">&amp;mut </span>F)
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>insertion_sort_shift_left&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], offset: usize, is_less: <span class="kw-2">&amp;mut </span>F)
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
 {
@@ -2080,7 +1933,7 @@
 ///
 /// 1. Number of elements smaller than `v[pivot]`.
 /// 2. True if `v` was already partitioned.
-</span><span class="kw">fn </span>partition&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], pivot: usize, is_less: <span class="kw-2">&amp;mut </span>F) -&gt; (usize, bool)
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>partition&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], pivot: usize, is_less: <span class="kw-2">&amp;mut </span>F) -&gt; (usize, bool)
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
 {
@@ -2135,7 +1988,7 @@
 ///
 /// Returns the number of elements equal to the pivot. It is assumed that `v` does not contain
 /// elements smaller than the pivot.
-</span><span class="kw">fn </span>partition_equal&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], pivot: usize, is_less: <span class="kw-2">&amp;mut </span>F) -&gt; usize
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>partition_equal&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], pivot: usize, is_less: <span class="kw-2">&amp;mut </span>F) -&gt; usize
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
 {
@@ -2193,7 +2046,7 @@
 <span class="doccomment">/// Scatters some elements around in an attempt to break patterns that might cause imbalanced
 /// partitions in quicksort.
 </span><span class="attr">#[cold]
-</span><span class="kw">fn </span>break_patterns&lt;T&gt;(v: <span class="kw-2">&amp;mut </span>[T]) {
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>break_patterns&lt;T&gt;(v: <span class="kw-2">&amp;mut </span>[T]) {
     <span class="kw">let </span>len = v.len();
     <span class="kw">if </span>len &gt;= <span class="number">8 </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>seed = len;
@@ -2242,7 +2095,7 @@
 <span class="doccomment">/// Chooses a pivot in `v` and returns the index and `true` if the slice is likely already sorted.
 ///
 /// Elements in `v` might be reordered in the process.
-</span><span class="kw">fn </span>choose_pivot&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], is_less: <span class="kw-2">&amp;mut </span>F) -&gt; (usize, bool)
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>choose_pivot&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], is_less: <span class="kw-2">&amp;mut </span>F) -&gt; (usize, bool)
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
 {
@@ -2420,138 +2273,6 @@
     recurse(v, <span class="kw-2">&amp;mut </span>is_less, <span class="prelude-val">None</span>, limit);
 }
 
-<span class="kw">fn </span>partition_at_index_loop&lt;<span class="lifetime">&#39;a</span>, T, F&gt;(
-    <span class="kw-2">mut </span>v: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[T],
-    <span class="kw-2">mut </span>index: usize,
-    is_less: <span class="kw-2">&amp;mut </span>F,
-    <span class="kw-2">mut </span>pred: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;,
-) <span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
-{
-    <span class="comment">// Limit the amount of iterations and fall back to heapsort, similarly to `slice::sort_unstable`.
-    // This lowers the worst case running time from O(n^2) to O(n log n).
-    // FIXME: Investigate whether it would be better to use something like Median of Medians
-    // or Fast Deterministic Selection to guarantee O(n) worst case.
-    </span><span class="kw">let </span><span class="kw-2">mut </span>limit = usize::BITS - v.len().leading_zeros();
-
-    <span class="comment">// True if the last partitioning was reasonably balanced.
-    </span><span class="kw">let </span><span class="kw-2">mut </span>was_balanced = <span class="bool-val">true</span>;
-
-    <span class="kw">loop </span>{
-        <span class="kw">let </span>len = v.len();
-
-        <span class="comment">// For slices of up to this length it&#39;s probably faster to simply sort them.
-        </span><span class="kw">const </span>MAX_INSERTION: usize = <span class="number">10</span>;
-        <span class="kw">if </span>len &lt;= MAX_INSERTION {
-            <span class="kw">if </span>len &gt;= <span class="number">2 </span>{
-                insertion_sort_shift_left(v, <span class="number">1</span>, is_less);
-            }
-            <span class="kw">return</span>;
-        }
-
-        <span class="kw">if </span>limit == <span class="number">0 </span>{
-            heapsort(v, is_less);
-            <span class="kw">return</span>;
-        }
-
-        <span class="comment">// If the last partitioning was imbalanced, try breaking patterns in the slice by shuffling
-        // some elements around. Hopefully we&#39;ll choose a better pivot this time.
-        </span><span class="kw">if </span>!was_balanced {
-            break_patterns(v);
-            limit -= <span class="number">1</span>;
-        }
-
-        <span class="comment">// Choose a pivot
-        </span><span class="kw">let </span>(pivot, <span class="kw">_</span>) = choose_pivot(v, is_less);
-
-        <span class="comment">// If the chosen pivot is equal to the predecessor, then it&#39;s the smallest element in the
-        // slice. Partition the slice into elements equal to and elements greater than the pivot.
-        // This case is usually hit when the slice contains many duplicate elements.
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(p) = pred {
-            <span class="kw">if </span>!is_less(p, <span class="kw-2">&amp;</span>v[pivot]) {
-                <span class="kw">let </span>mid = partition_equal(v, pivot, is_less);
-
-                <span class="comment">// If we&#39;ve passed our index, then we&#39;re good.
-                </span><span class="kw">if </span>mid &gt; index {
-                    <span class="kw">return</span>;
-                }
-
-                <span class="comment">// Otherwise, continue sorting elements greater than the pivot.
-                </span>v = <span class="kw-2">&amp;mut </span>v[mid..];
-                index = index - mid;
-                pred = <span class="prelude-val">None</span>;
-                <span class="kw">continue</span>;
-            }
-        }
-
-        <span class="kw">let </span>(mid, <span class="kw">_</span>) = partition(v, pivot, is_less);
-        was_balanced = cmp::min(mid, len - mid) &gt;= len / <span class="number">8</span>;
-
-        <span class="comment">// Split the slice into `left`, `pivot`, and `right`.
-        </span><span class="kw">let </span>(left, right) = v.split_at_mut(mid);
-        <span class="kw">let </span>(pivot, right) = right.split_at_mut(<span class="number">1</span>);
-        <span class="kw">let </span>pivot = <span class="kw-2">&amp;</span>pivot[<span class="number">0</span>];
-
-        <span class="kw">if </span>mid &lt; index {
-            v = right;
-            index = index - mid - <span class="number">1</span>;
-            pred = <span class="prelude-val">Some</span>(pivot);
-        } <span class="kw">else if </span>mid &gt; index {
-            v = left;
-        } <span class="kw">else </span>{
-            <span class="comment">// If mid == index, then we&#39;re done, since partition() guaranteed that all elements
-            // after mid are greater than or equal to mid.
-            </span><span class="kw">return</span>;
-        }
-    }
-}
-
-<span class="doccomment">/// Reorder the slice such that the element at `index` is at its final sorted position.
-</span><span class="kw">pub fn </span>partition_at_index&lt;T, F&gt;(
-    v: <span class="kw-2">&amp;mut </span>[T],
-    index: usize,
-    <span class="kw-2">mut </span>is_less: F,
-) -&gt; (<span class="kw-2">&amp;mut </span>[T], <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>[T])
-<span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
-{
-    <span class="kw">use </span>cmp::Ordering::Greater;
-    <span class="kw">use </span>cmp::Ordering::Less;
-
-    <span class="kw">if </span>index &gt;= v.len() {
-        <span class="macro">panic!</span>(<span class="string">&quot;partition_at_index index {} greater than length of slice {}&quot;</span>, index, v.len());
-    }
-
-    <span class="kw">if </span>T::IS_ZST {
-        <span class="comment">// Sorting has no meaningful behavior on zero-sized types. Do nothing.
-    </span>} <span class="kw">else if </span>index == v.len() - <span class="number">1 </span>{
-        <span class="comment">// Find max element and place it in the last position of the array. We&#39;re free to use
-        // `unwrap()` here because we know v must not be empty.
-        </span><span class="kw">let </span>(max_index, <span class="kw">_</span>) = v
-            .iter()
-            .enumerate()
-            .max_by(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, x), <span class="kw-2">&amp;</span>(<span class="kw">_</span>, y)| <span class="kw">if </span>is_less(x, y) { Less } <span class="kw">else </span>{ Greater })
-            .unwrap();
-        v.swap(max_index, index);
-    } <span class="kw">else if </span>index == <span class="number">0 </span>{
-        <span class="comment">// Find min element and place it in the first position of the array. We&#39;re free to use
-        // `unwrap()` here because we know v must not be empty.
-        </span><span class="kw">let </span>(min_index, <span class="kw">_</span>) = v
-            .iter()
-            .enumerate()
-            .min_by(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, x), <span class="kw-2">&amp;</span>(<span class="kw">_</span>, y)| <span class="kw">if </span>is_less(x, y) { Less } <span class="kw">else </span>{ Greater })
-            .unwrap();
-        v.swap(min_index, index);
-    } <span class="kw">else </span>{
-        partition_at_index_loop(v, index, <span class="kw-2">&amp;mut </span>is_less, <span class="prelude-val">None</span>);
-    }
-
-    <span class="kw">let </span>(left, right) = v.split_at_mut(index);
-    <span class="kw">let </span>(pivot, right) = right.split_at_mut(<span class="number">1</span>);
-    <span class="kw">let </span>pivot = <span class="kw-2">&amp;mut </span>pivot[<span class="number">0</span>];
-    (left, pivot, right)
-}
-
 <span class="doccomment">/// Merges non-decreasing runs `v[..mid]` and `v[mid..]` using `buf` as temporary storage, and
 /// stores the result into `v[..]`.
 ///
@@ -2608,12 +2329,12 @@
 
             // SAFETY: left and right must be valid and part of v same for out.
             </span><span class="kw">unsafe </span>{
-                <span class="kw">let </span>to_copy = <span class="kw">if </span>is_less(<span class="kw-2">&amp;*</span>right, <span class="kw-2">&amp;**</span>left) {
-                    get_and_increment(<span class="kw-2">&amp;mut </span>right)
-                } <span class="kw">else </span>{
-                    get_and_increment(left)
-                };
-                ptr::copy_nonoverlapping(to_copy, get_and_increment(out), <span class="number">1</span>);
+                <span class="kw">let </span>is_l = is_less(<span class="kw-2">&amp;*</span>right, <span class="kw-2">&amp;**</span>left);
+                <span class="kw">let </span>to_copy = <span class="kw">if </span>is_l { right } <span class="kw">else </span>{ <span class="kw-2">*</span>left };
+                ptr::copy_nonoverlapping(to_copy, <span class="kw-2">*</span>out, <span class="number">1</span>);
+                <span class="kw-2">*</span>out = out.add(<span class="number">1</span>);
+                right = right.add(is_l <span class="kw">as </span>usize);
+                <span class="kw-2">*</span>left = left.add(!is_l <span class="kw">as </span>usize);
             }
         }
     } <span class="kw">else </span>{
@@ -2636,33 +2357,19 @@
 
             // SAFETY: left and right must be valid and part of v same for out.
             </span><span class="kw">unsafe </span>{
-                <span class="kw">let </span>to_copy = <span class="kw">if </span>is_less(<span class="kw-2">&amp;*</span>right.sub(<span class="number">1</span>), <span class="kw-2">&amp;*</span>left.sub(<span class="number">1</span>)) {
-                    decrement_and_get(left)
-                } <span class="kw">else </span>{
-                    decrement_and_get(right)
-                };
-                ptr::copy_nonoverlapping(to_copy, decrement_and_get(<span class="kw-2">&amp;mut </span>out), <span class="number">1</span>);
+                <span class="kw">let </span>is_l = is_less(<span class="kw-2">&amp;*</span>right.sub(<span class="number">1</span>), <span class="kw-2">&amp;*</span>left.sub(<span class="number">1</span>));
+                <span class="kw-2">*</span>left = left.sub(is_l <span class="kw">as </span>usize);
+                <span class="kw-2">*</span>right = right.sub(!is_l <span class="kw">as </span>usize);
+                <span class="kw">let </span>to_copy = <span class="kw">if </span>is_l { <span class="kw-2">*</span>left } <span class="kw">else </span>{ <span class="kw-2">*</span>right };
+                out = out.sub(<span class="number">1</span>);
+                ptr::copy_nonoverlapping(to_copy, out, <span class="number">1</span>);
             }
         }
     }
     <span class="comment">// Finally, `hole` gets dropped. If the shorter run was not fully consumed, whatever remains of
     // it will now be copied into the hole in `v`.
 
-    </span><span class="kw">unsafe fn </span>get_and_increment&lt;T&gt;(ptr: <span class="kw-2">&amp;mut *mut </span>T) -&gt; <span class="kw-2">*mut </span>T {
-        <span class="kw">let </span>old = <span class="kw-2">*</span>ptr;
-
-        <span class="comment">// SAFETY: ptr.add(1) must still be a valid pointer and part of `v`.
-        </span><span class="kw-2">*</span>ptr = <span class="kw">unsafe </span>{ ptr.add(<span class="number">1</span>) };
-        old
-    }
-
-    <span class="kw">unsafe fn </span>decrement_and_get&lt;T&gt;(ptr: <span class="kw-2">&amp;mut *mut </span>T) -&gt; <span class="kw-2">*mut </span>T {
-        <span class="comment">// SAFETY: ptr.sub(1) must still be a valid pointer and part of `v`.
-        </span><span class="kw-2">*</span>ptr = <span class="kw">unsafe </span>{ ptr.sub(<span class="number">1</span>) };
-        <span class="kw-2">*</span>ptr
-    }
-
-    <span class="comment">// When dropped, copies the range `start..end` into `dest..`.
+    // When dropped, copies the range `start..end` into `dest..`.
     </span><span class="kw">struct </span>MergeHole&lt;T&gt; {
         start: <span class="kw-2">*mut </span>T,
         end: <span class="kw-2">*mut </span>T,
@@ -2979,7 +2686,6 @@
 
 <span class="doccomment">/// Takes a range as denoted by start and end, that is already sorted and extends it to the right if
 /// necessary with sorts optimized for smaller ranges such as insertion sort.
-</span><span class="attr">#[cfg(not(no_global_oom_handling))]
 </span><span class="kw">fn </span>provide_sorted_batch&lt;T, F&gt;(v: <span class="kw-2">&amp;mut </span>[T], start: usize, <span class="kw-2">mut </span>end: usize, is_less: <span class="kw-2">&amp;mut </span>F) -&gt; usize
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; bool,
@@ -3009,7 +2715,7 @@
 }
 
 <span class="doccomment">/// Finds a streak of presorted elements starting at the beginning of the slice. Returns the first
-/// value that is not part of said streak, and a bool denoting wether the streak was reversed.
+/// value that is not part of said streak, and a bool denoting whether the streak was reversed.
 /// Streaks can be increasing or decreasing.
 </span><span class="kw">fn </span>find_streak&lt;T, F&gt;(v: <span class="kw-2">&amp;</span>[T], is_less: <span class="kw-2">&amp;mut </span>F) -&gt; (usize, bool)
 <span class="kw">where
@@ -3044,5 +2750,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

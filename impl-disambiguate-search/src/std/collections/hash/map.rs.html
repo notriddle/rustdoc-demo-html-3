@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/collections/hash/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/collections/hash/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3284,10 +3284,7 @@
 <a href="#3284" id="3284">3284</a>
 <a href="#3285" id="3285">3285</a>
 <a href="#3286" id="3286">3286</a>
-<a href="#3287" id="3287">3287</a>
-<a href="#3288" id="3288">3288</a>
-<a href="#3289" id="3289">3289</a>
-</pre><pre class="rust"><code><span class="attr">#[cfg(test)]
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
 
 <span class="kw">use </span><span class="self">self</span>::Entry::<span class="kw-2">*</span>;
@@ -3912,28 +3909,27 @@
     /// If the closure returns false, or panics, the element remains in the map and will not be
     /// yielded.
     ///
-    /// Note that `drain_filter` lets you mutate every value in the filter closure, regardless of
+    /// Note that `extract_if` lets you mutate every value in the filter closure, regardless of
     /// whether you choose to keep or remove it.
     ///
-    /// If the iterator is only partially consumed or not consumed at all, each of the remaining
-    /// elements will still be subjected to the closure and removed and dropped if it returns true.
+    /// If the returned `ExtractIf` is not exhausted, e.g. because it is dropped without iterating
+    /// or the iteration short-circuits, then the remaining elements will be retained.
+    /// Use [`retain`] with a negated predicate if you do not need the returned iterator.
     ///
-    /// It is unspecified how many more elements will be subjected to the closure
-    /// if a panic occurs in the closure, or a panic occurs while dropping an element,
-    /// or if the `DrainFilter` value is leaked.
+    /// [`retain`]: HashMap::retain
     ///
     /// # Examples
     ///
     /// Splitting a map into even and odd keys, reusing the original map:
     ///
     /// ```
-    /// #![feature(hash_drain_filter)]
+    /// #![feature(hash_extract_if)]
     /// use std::collections::HashMap;
     ///
     /// let mut map: HashMap&lt;i32, i32&gt; = (0..8).map(|x| (x, x)).collect();
-    /// let drained: HashMap&lt;i32, i32&gt; = map.drain_filter(|k, _v| k % 2 == 0).collect();
+    /// let extracted: HashMap&lt;i32, i32&gt; = map.extract_if(|k, _v| k % 2 == 0).collect();
     ///
-    /// let mut evens = drained.keys().copied().collect::&lt;Vec&lt;_&gt;&gt;();
+    /// let mut evens = extracted.keys().copied().collect::&lt;Vec&lt;_&gt;&gt;();
     /// let mut odds = map.keys().copied().collect::&lt;Vec&lt;_&gt;&gt;();
     /// evens.sort();
     /// odds.sort();
@@ -3943,12 +3939,12 @@
     /// ```
     </span><span class="attr">#[inline]
     #[rustc_lint_query_instability]
-    #[unstable(feature = <span class="string">&quot;hash_drain_filter&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_filter&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pred: F) -&gt; DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
+    #[unstable(feature = <span class="string">&quot;hash_extract_if&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
+    </span><span class="kw">pub fn </span>extract_if&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pred: F) -&gt; ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
     {
-        DrainFilter { base: <span class="self">self</span>.base.drain_filter(pred) }
+        ExtractIf { base: <span class="self">self</span>.base.extract_if(pred) }
     }
 
     <span class="doccomment">/// Retains only the elements specified by the predicate.
@@ -4735,7 +4731,6 @@
 /// (provided by the [`IntoIterator`] trait). See its documentation for more.
 ///
 /// [`into_iter`]: IntoIterator::into_iter
-/// [`IntoIterator`]: crate::iter::IntoIterator
 ///
 /// # Example
 ///
@@ -4868,28 +4863,29 @@
 
 <span class="doccomment">/// A draining, filtering iterator over the entries of a `HashMap`.
 ///
-/// This `struct` is created by the [`drain_filter`] method on [`HashMap`].
+/// This `struct` is created by the [`extract_if`] method on [`HashMap`].
 ///
-/// [`drain_filter`]: HashMap::drain_filter
+/// [`extract_if`]: HashMap::extract_if
 ///
 /// # Example
 ///
 /// ```
-/// #![feature(hash_drain_filter)]
+/// #![feature(hash_extract_if)]
 ///
 /// use std::collections::HashMap;
 ///
 /// let mut map = HashMap::from([
 ///     (&quot;a&quot;, 1),
 /// ]);
-/// let iter = map.drain_filter(|_k, v| *v % 2 == 0);
+/// let iter = map.extract_if(|_k, v| *v % 2 == 0);
 /// ```
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;hash_drain_filter&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
-</span><span class="kw">pub struct </span>DrainFilter&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;hash_extract_if&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
+#[must_use = <span class="string">&quot;iterators are lazy and do nothing unless consumed&quot;</span>]
+</span><span class="kw">pub struct </span>ExtractIf&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
-    base: base::DrainFilter&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;,
+    base: base::ExtractIf&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;,
 }
 
 <span class="doccomment">/// A mutable iterator over the values of a `HashMap`.
@@ -5769,8 +5765,8 @@
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;hash_drain_filter&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F&gt; Iterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;hash_extract_if&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, F&gt; Iterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
@@ -5786,16 +5782,16 @@
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;hash_drain_filter&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F&gt; FusedIterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt; <span class="kw">where </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool {}
+<span class="attr">#[unstable(feature = <span class="string">&quot;hash_extract_if&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, F&gt; FusedIterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt; <span class="kw">where </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool {}
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;hash_drain_filter&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt; fmt::Debug <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;hash_extract_if&quot;</span>, issue = <span class="string">&quot;59618&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt; fmt::Debug <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;a</span>, K, V, F&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;DrainFilter&quot;</span>).finish_non_exhaustive()
+        f.debug_struct(<span class="string">&quot;ExtractIf&quot;</span>).finish_non_exhaustive()
     }
 }
 
@@ -5833,12 +5829,12 @@
     /// ```
     /// use std::collections::HashMap;
     ///
-    /// let mut map: HashMap&lt;&amp;str, String&gt; = HashMap::new();
-    /// let s = &quot;hoho&quot;.to_string();
+    /// let mut map = HashMap::new();
+    /// let value = &quot;hoho&quot;;
     ///
-    /// map.entry(&quot;poneyland&quot;).or_insert_with(|| s);
+    /// map.entry(&quot;poneyland&quot;).or_insert_with(|| value);
     ///
-    /// assert_eq!(map[&quot;poneyland&quot;], &quot;hoho&quot;.to_string());
+    /// assert_eq!(map[&quot;poneyland&quot;], &quot;hoho&quot;);
     /// ```
     </span><span class="attr">#[inline]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -6458,8 +6454,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;hashmap_default_hasher&quot;</span>, since = <span class="string">&quot;1.13.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_hash&quot;</span>, issue = <span class="string">&quot;104061&quot;</span>)]
-</span><span class="kw">impl const </span>Default <span class="kw">for </span>DefaultHasher {
+</span><span class="kw">impl </span>Default <span class="kw">for </span>DefaultHasher {
     <span class="doccomment">/// Creates a new `DefaultHasher` using [`new`].
     /// See its documentation for more.
     ///
@@ -6471,8 +6466,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;hashmap_default_hasher&quot;</span>, since = <span class="string">&quot;1.13.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_hash&quot;</span>, issue = <span class="string">&quot;104061&quot;</span>)]
-</span><span class="kw">impl const </span>Hasher <span class="kw">for </span>DefaultHasher {
+</span><span class="kw">impl </span>Hasher <span class="kw">for </span>DefaultHasher {
     <span class="comment">// The underlying `SipHasher13` doesn&#39;t override the other
     // `write_*` methods, so it&#39;s ok not to forward them here.
 
@@ -6576,5 +6570,4 @@
         d
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

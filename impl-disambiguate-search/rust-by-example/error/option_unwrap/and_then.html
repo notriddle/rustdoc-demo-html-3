@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../../";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -85,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -151,7 +176,7 @@ in the nested <code>Option&lt;Option&lt;T&gt;&gt;</code>. Chaining multiple call
 then become confusing. That's where another combinator called <code>and_then()</code>, 
 known in some languages as flatmap, comes in.</p>
 <p><code>and_then()</code> calls its function input with the wrapped value and returns the result. If the <code>Option</code> is <code>None</code>, then it returns <code>None</code> instead.</p>
-<p>In the following example, <code>cookable_v2()</code> results in an <code>Option&lt;Food&gt;</code>. 
+<p>In the following example, <code>cookable_v3()</code> results in an <code>Option&lt;Food&gt;</code>. 
 Using <code>map()</code> instead of <code>and_then()</code> would have given an 
 <code>Option&lt;Option&lt;Food&gt;&gt;</code>, which is an invalid type for <code>eat()</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(dead_code)]
@@ -185,12 +210,18 @@ fn cookable_v1(food: Food) -&gt; Option&lt;Food&gt; {
 }
 
 // This can conveniently be rewritten more compactly with `and_then()`:
-fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+fn cookable_v3(food: Food) -&gt; Option&lt;Food&gt; {
     have_recipe(food).and_then(have_ingredients)
 }
 
+// Otherwise we'd need to `flatten()` an `Option&lt;Option&lt;Food&gt;&gt;`
+// to get an `Option&lt;Food&gt;`:
+fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+    have_recipe(food).map(have_ingredients).flatten()
+}
+
 fn eat(food: Food, day: Day) {
-    match cookable_v2(food) {
+    match cookable_v3(food) {
         Some(food) =&gt; println!(&quot;Yay! On {:?} we get to eat {:?}.&quot;, day, food),
         None       =&gt; println!(&quot;Oh no. We don't get to eat on {:?}?&quot;, day),
     }
@@ -204,7 +235,7 @@ fn main() {
     eat(sushi, Day::Wednesday);
 }</code></pre></pre>
 <h3 id="see-also"><a class="header" href="#see-also">See also:</a></h3>
-<p><a href="../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a></p>
+<p><a href="../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.flatten"><code>Option::flatten()</code></a></p>
 
                     </main>
 
@@ -262,5 +293,6 @@ fn main() {
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

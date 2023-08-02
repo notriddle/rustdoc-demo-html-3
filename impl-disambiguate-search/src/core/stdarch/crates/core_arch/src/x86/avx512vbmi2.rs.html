@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512vbmi2.rs`."><title>avx512vbmi2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512vbmi2.rs`."><title>avx512vbmi2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4119,7 +4119,7 @@
 <a href="#4119" id="4119">4119</a>
 <a href="#4120" id="4120">4120</a>
 <a href="#4121" id="4121">4121</a>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     arch::asm,
     core_arch::{simd::<span class="kw-2">*</span>, simd_llvm::<span class="kw-2">*</span>, x86::<span class="kw-2">*</span>},
 };
@@ -4129,7 +4129,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_mask_expandloadu_epi16(
@@ -4150,7 +4150,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_maskz_expandloadu_epi16(k: __mmask32, mem_addr: <span class="kw-2">*const </span>i16) -&gt; __m512i {
@@ -4167,7 +4167,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_mask_expandloadu_epi16(
@@ -4188,7 +4188,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_maskz_expandloadu_epi16(k: __mmask16, mem_addr: <span class="kw-2">*const </span>i16) -&gt; __m256i {
@@ -4205,7 +4205,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx,sse&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_mask_expandloadu_epi16(
@@ -4226,7 +4226,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_expandloadu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_expandloadu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx,sse&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_maskz_expandloadu_epi16(k: __mmask8, mem_addr: <span class="kw-2">*const </span>i16) -&gt; __m128i {
@@ -4243,7 +4243,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_mask_expandloadu_epi8(
@@ -4264,7 +4264,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_maskz_expandloadu_epi8(k: __mmask64, mem_addr: <span class="kw-2">*const </span>i8) -&gt; __m512i {
@@ -4281,7 +4281,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2,avx512vl,avx&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_mask_expandloadu_epi8(
@@ -4302,7 +4302,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512bw,avx512vbmi2,avx512vl,avx&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_maskz_expandloadu_epi8(k: __mmask32, mem_addr: <span class="kw-2">*const </span>i8) -&gt; __m256i {
@@ -4319,7 +4319,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx,sse&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_mask_expandloadu_epi8(
@@ -4340,7 +4340,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from unaligned memory at mem_addr (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_expandloadu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_expandloadu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512f,avx512vbmi2,avx512vl,avx,sse&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_maskz_expandloadu_epi8(k: __mmask16, mem_addr: <span class="kw-2">*const </span>i8) -&gt; __m128i {
@@ -4357,7 +4357,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_compressstoreu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_compressstoreu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4367,7 +4367,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_compressstoreu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_compressstoreu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4377,7 +4377,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_compressstoreu_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_compressstoreu_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4387,7 +4387,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_compressstoreu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_compressstoreu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4397,7 +4397,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_compressstoreu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_compressstoreu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4407,7 +4407,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to unaligned memory at base_addr.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_compressstoreu_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_compressstoreu_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4417,7 +4417,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_compress_epi16&amp;expand=1192)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_compress_epi16&amp;expand=1192)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4427,7 +4427,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_compress_epi16&amp;expand=1193)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_compress_epi16&amp;expand=1193)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4441,7 +4441,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_compress_epi16&amp;expand=1190)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_compress_epi16&amp;expand=1190)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4451,7 +4451,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_compress_epi16&amp;expand=1191)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_compress_epi16&amp;expand=1191)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4465,7 +4465,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_compress_epi16&amp;expand=1188)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_compress_epi16&amp;expand=1188)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4475,7 +4475,7 @@
 
 <span class="doccomment">/// Contiguously store the active 16-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_compress_epi16&amp;expand=1189)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_compress_epi16&amp;expand=1189)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressw))]
@@ -4489,7 +4489,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_compress_epi8&amp;expand=1210)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_compress_epi8&amp;expand=1210)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4499,7 +4499,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_compress_epi8&amp;expand=1211)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_compress_epi8&amp;expand=1211)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4513,7 +4513,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_compress_epi8&amp;expand=1208)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_compress_epi8&amp;expand=1208)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4523,7 +4523,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_compress_epi8&amp;expand=1209)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_compress_epi8&amp;expand=1209)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4537,7 +4537,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in writemask k) to dst, and pass through the remaining elements from src.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_compress_epi8&amp;expand=1206)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_compress_epi8&amp;expand=1206)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4547,7 +4547,7 @@
 
 <span class="doccomment">/// Contiguously store the active 8-bit integers in a (those with their respective bit set in zeromask k) to dst, and set the remaining elements to zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_compress_epi8&amp;expand=1207)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_compress_epi8&amp;expand=1207)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpcompressb))]
@@ -4561,7 +4561,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_expand_epi16&amp;expand=2310)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_expand_epi16&amp;expand=2310)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4571,7 +4571,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_expand_epi16&amp;expand=2311)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_expand_epi16&amp;expand=2311)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4585,7 +4585,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_expand_epi16&amp;expand=2308)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_expand_epi16&amp;expand=2308)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4595,7 +4595,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_expand_epi16&amp;expand=2309)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_expand_epi16&amp;expand=2309)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4609,7 +4609,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_expand_epi16&amp;expand=2306)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_expand_epi16&amp;expand=2306)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4619,7 +4619,7 @@
 
 <span class="doccomment">/// Load contiguous active 16-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_expand_epi16&amp;expand=2307)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_expand_epi16&amp;expand=2307)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandw))]
@@ -4633,7 +4633,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_expand_epi8&amp;expand=2328)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_expand_epi8&amp;expand=2328)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4643,7 +4643,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_expand_epi8&amp;expand=2329)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_expand_epi8&amp;expand=2329)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4657,7 +4657,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_expand_epi8&amp;expand=2326)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_expand_epi8&amp;expand=2326)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4667,7 +4667,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_expand_epi8&amp;expand=2327)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_expand_epi8&amp;expand=2327)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4681,7 +4681,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_expand_epi8&amp;expand=2324)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_expand_epi8&amp;expand=2324)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4691,7 +4691,7 @@
 
 <span class="doccomment">/// Load contiguous active 8-bit integers from a (those with their respective bit set in mask k), and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_expand_epi8&amp;expand=2325)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_expand_epi8&amp;expand=2325)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpexpandb))]
@@ -4705,7 +4705,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldv_epi64&amp;expand=5087)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldv_epi64&amp;expand=5087)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4715,7 +4715,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldv_epi64&amp;expand=5085)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldv_epi64&amp;expand=5085)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4726,7 +4726,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldv_epi64&amp;expand=5086)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldv_epi64&amp;expand=5086)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4738,7 +4738,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldv_epi64&amp;expand=5084)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldv_epi64&amp;expand=5084)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4748,7 +4748,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldv_epi64&amp;expand=5082)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldv_epi64&amp;expand=5082)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4759,7 +4759,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldv_epi64&amp;expand=5083)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldv_epi64&amp;expand=5083)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4771,7 +4771,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldv_epi64&amp;expand=5081)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldv_epi64&amp;expand=5081)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4781,7 +4781,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldv_epi64&amp;expand=5079)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldv_epi64&amp;expand=5079)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4792,7 +4792,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldv_epi64&amp;expand=5080)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldv_epi64&amp;expand=5080)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvq))]
@@ -4804,7 +4804,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldv_epi32&amp;expand=5078)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldv_epi32&amp;expand=5078)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4814,7 +4814,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldv_epi32&amp;expand=5076)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldv_epi32&amp;expand=5076)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4825,7 +4825,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldv_epi32&amp;expand=5077)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldv_epi32&amp;expand=5077)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4842,7 +4842,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldv_epi32&amp;expand=5075)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldv_epi32&amp;expand=5075)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4852,7 +4852,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldv_epi32&amp;expand=5073)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldv_epi32&amp;expand=5073)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4863,7 +4863,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldv_epi32&amp;expand=5074)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldv_epi32&amp;expand=5074)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4875,7 +4875,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldv_epi32&amp;expand=5072)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldv_epi32&amp;expand=5072)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4885,7 +4885,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldv_epi32&amp;expand=5070)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldv_epi32&amp;expand=5070)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4896,7 +4896,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldv_epi32&amp;expand=5071)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldv_epi32&amp;expand=5071)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvd))]
@@ -4908,7 +4908,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldv_epi16&amp;expand=5069)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldv_epi16&amp;expand=5069)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4918,7 +4918,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldv_epi16&amp;expand=5067)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldv_epi16&amp;expand=5067)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4929,7 +4929,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldv_epi16&amp;expand=5068)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldv_epi16&amp;expand=5068)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4946,7 +4946,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldv_epi16&amp;expand=5066)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldv_epi16&amp;expand=5066)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4956,7 +4956,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldv_epi16&amp;expand=5064)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldv_epi16&amp;expand=5064)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4967,7 +4967,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldv_epi16&amp;expand=5065)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldv_epi16&amp;expand=5065)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4984,7 +4984,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldv_epi16&amp;expand=5063)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldv_epi16&amp;expand=5063)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -4994,7 +4994,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldv_epi16&amp;expand=5061)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldv_epi16&amp;expand=5061)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -5005,7 +5005,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by the amount specified in the corresponding element of c, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldv_epi16&amp;expand=5062)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldv_epi16&amp;expand=5062)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldvw))]
@@ -5017,7 +5017,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdv_epi64&amp;expand=5141)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdv_epi64&amp;expand=5141)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5027,7 +5027,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdv_epi64&amp;expand=5139)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdv_epi64&amp;expand=5139)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5038,7 +5038,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdv_epi64&amp;expand=5140)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdv_epi64&amp;expand=5140)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5050,7 +5050,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdv_epi64&amp;expand=5138)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdv_epi64&amp;expand=5138)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5060,7 +5060,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdv_epi64&amp;expand=5136)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdv_epi64&amp;expand=5136)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5071,7 +5071,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdv_epi64&amp;expand=5137)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdv_epi64&amp;expand=5137)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5083,7 +5083,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdv_epi64&amp;expand=5135)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdv_epi64&amp;expand=5135)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5093,7 +5093,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdv_epi64&amp;expand=5133)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdv_epi64&amp;expand=5133)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5104,7 +5104,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdv_epi64&amp;expand=5134)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdv_epi64&amp;expand=5134)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvq))]
@@ -5116,7 +5116,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdv_epi32&amp;expand=5132)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdv_epi32&amp;expand=5132)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5126,7 +5126,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdv_epi32&amp;expand=5130)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdv_epi32&amp;expand=5130)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5137,7 +5137,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdv_epi32&amp;expand=5131)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdv_epi32&amp;expand=5131)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5154,7 +5154,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdv_epi32&amp;expand=5129)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdv_epi32&amp;expand=5129)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5164,7 +5164,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdv_epi32&amp;expand=5127)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdv_epi32&amp;expand=5127)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5175,7 +5175,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdv_epi32&amp;expand=5128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdv_epi32&amp;expand=5128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5187,7 +5187,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdv_epi32&amp;expand=5126)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdv_epi32&amp;expand=5126)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5197,7 +5197,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdv_epi32&amp;expand=5124)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdv_epi32&amp;expand=5124)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5208,7 +5208,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdv_epi32&amp;expand=5125)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdv_epi32&amp;expand=5125)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvd))]
@@ -5220,7 +5220,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdv_epi16&amp;expand=5123)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdv_epi16&amp;expand=5123)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5230,7 +5230,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdv_epi16&amp;expand=5121)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdv_epi16&amp;expand=5121)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5241,7 +5241,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdv_epi16&amp;expand=5122)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdv_epi16&amp;expand=5122)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5258,7 +5258,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdv_epi16&amp;expand=5120)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdv_epi16&amp;expand=5120)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5268,7 +5268,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdv_epi16&amp;expand=5118)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdv_epi16&amp;expand=5118)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5279,7 +5279,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdv_epi16&amp;expand=5119)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdv_epi16&amp;expand=5119)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5296,7 +5296,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdv_epi16&amp;expand=5117)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdv_epi16&amp;expand=5117)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5306,7 +5306,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using writemask k (elements are copied from a when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdv_epi16&amp;expand=5115)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdv_epi16&amp;expand=5115)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5317,7 +5317,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by the amount specified in the corresponding element of c, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdv_epi16&amp;expand=5116)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdv_epi16&amp;expand=5116)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshrdvw))]
@@ -5329,13 +5329,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldi_epi64&amp;expand=5060)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldi_epi64&amp;expand=5060)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shldi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshldvq(
         a.as_i64x8(),
@@ -5346,7 +5346,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldi_epi64&amp;expand=5058)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldi_epi64&amp;expand=5058)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5357,7 +5357,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x8 = vpshldvq(
         a.as_i64x8(),
@@ -5369,7 +5369,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldi_epi64&amp;expand=5059)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldi_epi64&amp;expand=5059)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5379,7 +5379,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x8 = vpshldvq(
         a.as_i64x8(),
@@ -5392,13 +5392,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldi_epi64&amp;expand=5057)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldi_epi64&amp;expand=5057)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shldi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshldvq256(
         a.as_i64x4(),
@@ -5409,7 +5409,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldi_epi64&amp;expand=5055)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldi_epi64&amp;expand=5055)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5420,7 +5420,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x4 = vpshldvq256(
         a.as_i64x4(),
@@ -5432,7 +5432,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldi_epi64&amp;expand=5056)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldi_epi64&amp;expand=5056)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5442,7 +5442,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x4 = vpshldvq256(
         a.as_i64x4(),
@@ -5455,13 +5455,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldi_epi64&amp;expand=5054)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldi_epi64&amp;expand=5054)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shldi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshldvq128(
         a.as_i64x2(),
@@ -5472,7 +5472,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldi_epi64&amp;expand=5052)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldi_epi64&amp;expand=5052)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5483,7 +5483,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x2 = vpshldvq128(a.as_i64x2(), b.as_i64x2(), _mm_set1_epi64x(imm8).as_i64x2());
     transmute(simd_select_bitmask(k, shf, src.as_i64x2()))
@@ -5491,7 +5491,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in a and b producing an intermediate 128-bit result. Shift the result left by imm8 bits, and store the upper 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldi_epi64&amp;expand=5053)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldi_epi64&amp;expand=5053)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))]
@@ -5501,7 +5501,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x2 = vpshldvq128(a.as_i64x2(), b.as_i64x2(), _mm_set1_epi64x(imm8).as_i64x2());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i64x2();
@@ -5510,13 +5510,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldi_epi32&amp;expand=5051)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldi_epi32&amp;expand=5051)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shldi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshldvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -5526,7 +5526,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldi_epi32&amp;expand=5049)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldi_epi32&amp;expand=5049)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5537,7 +5537,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x16 = vpshldvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -5548,7 +5548,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldi_epi32&amp;expand=5050)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldi_epi32&amp;expand=5050)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5558,7 +5558,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x16 = vpshldvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -5570,13 +5570,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldi_epi32&amp;expand=5048)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldi_epi32&amp;expand=5048)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shldi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshldvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -5586,7 +5586,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldi_epi32&amp;expand=5046)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldi_epi32&amp;expand=5046)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5597,7 +5597,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x8 = vpshldvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -5608,7 +5608,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldi_epi32&amp;expand=5047)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldi_epi32&amp;expand=5047)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5618,7 +5618,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x8 = vpshldvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -5630,13 +5630,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldi_epi32&amp;expand=5045)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldi_epi32&amp;expand=5045)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shldi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshldvd128(
         a.as_i32x4(),
         b.as_i32x4(),
@@ -5646,7 +5646,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldi_epi32&amp;expand=5043)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldi_epi32&amp;expand=5043)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5657,14 +5657,14 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x4 = vpshldvd128(a.as_i32x4(), b.as_i32x4(), _mm_set1_epi32(IMM8).as_i32x4());
     transmute(simd_select_bitmask(k, shf, src.as_i32x4()))
 }
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in a and b producing an intermediate 64-bit result. Shift the result left by imm8 bits, and store the upper 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldi_epi32&amp;expand=5044)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldi_epi32&amp;expand=5044)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))]
@@ -5674,7 +5674,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x4 = vpshldvd128(a.as_i32x4(), b.as_i32x4(), _mm_set1_epi32(IMM8).as_i32x4());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i32x4();
     transmute(simd_select_bitmask(k, shf, zero))
@@ -5682,13 +5682,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shldi_epi16&amp;expand=5042)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shldi_epi16&amp;expand=5042)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shldi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     transmute(vpshldvw(
         a.as_i16x32(),
@@ -5699,7 +5699,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shldi_epi16&amp;expand=5040)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shldi_epi16&amp;expand=5040)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5710,7 +5710,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x32 = vpshldvw(
         a.as_i16x32(),
@@ -5722,7 +5722,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shldi_epi16&amp;expand=5041)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shldi_epi16&amp;expand=5041)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5732,7 +5732,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x32 = vpshldvw(
         a.as_i16x32(),
@@ -5745,13 +5745,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shldi_epi16&amp;expand=5039)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shldi_epi16&amp;expand=5039)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shldi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     transmute(vpshldvw256(
         a.as_i16x16(),
@@ -5762,7 +5762,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shldi_epi16&amp;expand=5037)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shldi_epi16&amp;expand=5037)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5773,7 +5773,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x16 = vpshldvw256(
         a.as_i16x16(),
@@ -5785,7 +5785,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shldi_epi16&amp;expand=5038)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shldi_epi16&amp;expand=5038)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5795,7 +5795,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x16 = vpshldvw256(
         a.as_i16x16(),
@@ -5808,13 +5808,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shldi_epi16&amp;expand=5036)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shldi_epi16&amp;expand=5036)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shldi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     transmute(vpshldvw128(
         a.as_i16x8(),
@@ -5825,7 +5825,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shldi_epi16&amp;expand=5034)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shldi_epi16&amp;expand=5034)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5836,7 +5836,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x8 = vpshldvw128(a.as_i16x8(), b.as_i16x8(), _mm_set1_epi16(imm8).as_i16x8());
     transmute(simd_select_bitmask(k, shf, src.as_i16x8()))
@@ -5844,7 +5844,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in a and b producing an intermediate 32-bit result. Shift the result left by imm8 bits, and store the upper 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shldi_epi16&amp;expand=5035)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shldi_epi16&amp;expand=5035)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))]
@@ -5854,7 +5854,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x8 = vpshldvw128(a.as_i16x8(), b.as_i16x8(), _mm_set1_epi16(imm8).as_i16x8());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i16x8();
@@ -5863,13 +5863,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdi_epi64&amp;expand=5114)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdi_epi64&amp;expand=5114)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shrdi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshrdvq(
         a.as_i64x8(),
@@ -5880,7 +5880,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using writemask k (elements are copied from src&quot; when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdi_epi64&amp;expand=5112)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdi_epi64&amp;expand=5112)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
@@ -5891,7 +5891,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x8 = vpshrdvq(
         a.as_i64x8(),
@@ -5903,7 +5903,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdi_epi64&amp;expand=5113)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdi_epi64&amp;expand=5113)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">255</span>))] </span><span class="comment">//should be vpshrdq
@@ -5913,7 +5913,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x8 = vpshrdvq(
         a.as_i64x8(),
@@ -5926,13 +5926,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdi_epi64&amp;expand=5111)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdi_epi64&amp;expand=5111)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shrdi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshrdvq256(
         a.as_i64x4(),
@@ -5943,7 +5943,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using writemask k (elements are copied from src&quot; when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdi_epi64&amp;expand=5109)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdi_epi64&amp;expand=5109)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
@@ -5954,7 +5954,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x4 = vpshrdvq256(
         a.as_i64x4(),
@@ -5966,7 +5966,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdi_epi64&amp;expand=5110)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdi_epi64&amp;expand=5110)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
@@ -5976,7 +5976,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x4 = vpshrdvq256(
         a.as_i64x4(),
@@ -5989,13 +5989,13 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdi_epi64&amp;expand=5108)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdi_epi64&amp;expand=5108)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shrdi_epi64&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     transmute(vpshrdvq128(
         a.as_i64x2(),
@@ -6006,7 +6006,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using writemask k (elements are copied from src&quot; when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdi_epi64&amp;expand=5106)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdi_epi64&amp;expand=5106)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
@@ -6017,7 +6017,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x2 = vpshrdvq128(a.as_i64x2(), b.as_i64x2(), _mm_set1_epi64x(imm8).as_i64x2());
     transmute(simd_select_bitmask(k, shf, src.as_i64x2()))
@@ -6025,7 +6025,7 @@
 
 <span class="doccomment">/// Concatenate packed 64-bit integers in b and a producing an intermediate 128-bit result. Shift the result right by imm8 bits, and store the lower 64-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdi_epi64&amp;expand=5107)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdi_epi64&amp;expand=5107)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldq, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdq
@@ -6035,7 +6035,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i64;
     <span class="kw">let </span>shf: i64x2 = vpshrdvq128(a.as_i64x2(), b.as_i64x2(), _mm_set1_epi64x(imm8).as_i64x2());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i64x2();
@@ -6044,13 +6044,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdi_epi32&amp;expand=5105)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdi_epi32&amp;expand=5105)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shrdi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshrdvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -6060,7 +6060,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdi_epi32&amp;expand=5103)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdi_epi32&amp;expand=5103)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6071,7 +6071,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x16 = vpshrdvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -6082,7 +6082,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdi_epi32&amp;expand=5104)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdi_epi32&amp;expand=5104)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6092,7 +6092,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x16 = vpshrdvd(
         a.as_i32x16(),
         b.as_i32x16(),
@@ -6104,13 +6104,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdi_epi32&amp;expand=5102)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdi_epi32&amp;expand=5102)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shrdi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshrdvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -6120,7 +6120,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdi_epi32&amp;expand=5100)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdi_epi32&amp;expand=5100)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6131,7 +6131,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x8 = vpshrdvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -6142,7 +6142,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdi_epi32&amp;expand=5101)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdi_epi32&amp;expand=5101)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6152,7 +6152,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x8 = vpshrdvd256(
         a.as_i32x8(),
         b.as_i32x8(),
@@ -6164,13 +6164,13 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdi_epi32&amp;expand=5099)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdi_epi32&amp;expand=5099)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shrdi_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(vpshrdvd128(
         a.as_i32x4(),
         b.as_i32x4(),
@@ -6180,7 +6180,7 @@
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdi_epi32&amp;expand=5097)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdi_epi32&amp;expand=5097)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6191,14 +6191,14 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x4 = vpshrdvd128(a.as_i32x4(), b.as_i32x4(), _mm_set1_epi32(IMM8).as_i32x4());
     transmute(simd_select_bitmask(k, shf, src.as_i32x4()))
 }
 
 <span class="doccomment">/// Concatenate packed 32-bit integers in b and a producing an intermediate 64-bit result. Shift the result right by imm8 bits, and store the lower 32-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdi_epi32&amp;expand=5098)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdi_epi32&amp;expand=5098)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldd, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshldd
@@ -6208,7 +6208,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>shf: i32x4 = vpshrdvd128(a.as_i32x4(), b.as_i32x4(), _mm_set1_epi32(IMM8).as_i32x4());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i32x4();
     transmute(simd_select_bitmask(k, shf, zero))
@@ -6216,13 +6216,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_shrdi_epi16&amp;expand=5096)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_shrdi_epi16&amp;expand=5096)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm512_shrdi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m512i, b: __m512i) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="macro">assert!</span>(imm8 &gt;= <span class="number">0 </span>&amp;&amp; imm8 &lt;= <span class="number">255</span>);
     transmute(vpshrdvw(
@@ -6234,7 +6234,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_shrdi_epi16&amp;expand=5094)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_shrdi_epi16&amp;expand=5094)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6245,7 +6245,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="macro">assert!</span>(imm8 &gt;= <span class="number">0 </span>&amp;&amp; imm8 &lt;= <span class="number">255</span>);
     <span class="kw">let </span>shf: i16x32 = vpshrdvw(
@@ -6258,7 +6258,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_shrdi_epi16&amp;expand=5095)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_shrdi_epi16&amp;expand=5095)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6268,7 +6268,7 @@
     a: __m512i,
     b: __m512i,
 ) -&gt; __m512i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="macro">assert!</span>(imm8 &gt;= <span class="number">0 </span>&amp;&amp; imm8 &lt;= <span class="number">255</span>);
     <span class="kw">let </span>shf: i16x32 = vpshrdvw(
@@ -6282,13 +6282,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_shrdi_epi16&amp;expand=5093)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_shrdi_epi16&amp;expand=5093)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm256_shrdi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m256i, b: __m256i) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="macro">assert!</span>(imm8 &gt;= <span class="number">0 </span>&amp;&amp; imm8 &lt;= <span class="number">255</span>);
     transmute(vpshrdvw256(
@@ -6300,7 +6300,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_shrdi_epi16&amp;expand=5091)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_shrdi_epi16&amp;expand=5091)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6311,7 +6311,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="macro">assert!</span>(imm8 &gt;= <span class="number">0 </span>&amp;&amp; imm8 &lt;= <span class="number">255</span>);
     <span class="kw">let </span>shf: i16x16 = vpshrdvw256(
@@ -6324,7 +6324,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_shrdi_epi16&amp;expand=5092)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_shrdi_epi16&amp;expand=5092)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6334,7 +6334,7 @@
     a: __m256i,
     b: __m256i,
 ) -&gt; __m256i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x16 = vpshrdvw256(
         a.as_i16x16(),
@@ -6347,13 +6347,13 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shrdi_epi16&amp;expand=5090)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_shrdi_epi16&amp;expand=5090)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
 </span><span class="attr">#[rustc_legacy_const_generics(<span class="number">2</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_shrdi_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     transmute(vpshrdvw128(
         a.as_i16x8(),
@@ -6364,7 +6364,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_shrdi_epi16&amp;expand=5088)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_shrdi_epi16&amp;expand=5088)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6375,7 +6375,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x8 = vpshrdvw128(a.as_i16x8(), b.as_i16x8(), _mm_set1_epi16(imm8).as_i16x8());
     transmute(simd_select_bitmask(k, shf, src.as_i16x8()))
@@ -6383,7 +6383,7 @@
 
 <span class="doccomment">/// Concatenate packed 16-bit integers in b and a producing an intermediate 32-bit result. Shift the result right by imm8 bits, and store the lower 16-bits in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_shrdi_epi16&amp;expand=5089)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_shrdi_epi16&amp;expand=5089)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vbmi2,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpshldw, IMM8 = <span class="number">5</span>))] </span><span class="comment">//should be vpshrdw
@@ -6393,7 +6393,7 @@
     a: __m128i,
     b: __m128i,
 ) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     <span class="kw">let </span>imm8 = IMM8 <span class="kw">as </span>i16;
     <span class="kw">let </span>shf: i16x8 = vpshrdvw128(a.as_i16x8(), b.as_i16x8(), _mm_set1_epi16(imm8).as_i16x8());
     <span class="kw">let </span>zero = _mm_setzero_si128().as_i16x8();
@@ -8240,5 +8240,4 @@
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>r, <span class="kw-2">&amp;</span>[<span class="number">2</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

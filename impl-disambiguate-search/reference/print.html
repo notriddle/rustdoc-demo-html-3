@@ -34,6 +34,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -71,10 +72,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -82,16 +85,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="notation.html"><strong aria-hidden="true">1.</strong> Notation</a></li><li class="chapter-item expanded "><a href="lexical-structure.html"><strong aria-hidden="true">2.</strong> Lexical structure</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="input-format.html"><strong aria-hidden="true">2.1.</strong> Input format</a></li><li class="chapter-item expanded "><a href="keywords.html"><strong aria-hidden="true">2.2.</strong> Keywords</a></li><li class="chapter-item expanded "><a href="identifiers.html"><strong aria-hidden="true">2.3.</strong> Identifiers</a></li><li class="chapter-item expanded "><a href="comments.html"><strong aria-hidden="true">2.4.</strong> Comments</a></li><li class="chapter-item expanded "><a href="whitespace.html"><strong aria-hidden="true">2.5.</strong> Whitespace</a></li><li class="chapter-item expanded "><a href="tokens.html"><strong aria-hidden="true">2.6.</strong> Tokens</a></li></ol></li><li class="chapter-item expanded "><a href="macros.html"><strong aria-hidden="true">3.</strong> Macros</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macros-by-example.html"><strong aria-hidden="true">3.1.</strong> Macros By Example</a></li><li class="chapter-item expanded "><a href="procedural-macros.html"><strong aria-hidden="true">3.2.</strong> Procedural Macros</a></li></ol></li><li class="chapter-item expanded "><a href="crates-and-source-files.html"><strong aria-hidden="true">4.</strong> Crates and source files</a></li><li class="chapter-item expanded "><a href="conditional-compilation.html"><strong aria-hidden="true">5.</strong> Conditional compilation</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">6.</strong> Items</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="items/modules.html"><strong aria-hidden="true">6.1.</strong> Modules</a></li><li class="chapter-item expanded "><a href="items/extern-crates.html"><strong aria-hidden="true">6.2.</strong> Extern crates</a></li><li class="chapter-item expanded "><a href="items/use-declarations.html"><strong aria-hidden="true">6.3.</strong> Use declarations</a></li><li class="chapter-item expanded "><a href="items/functions.html"><strong aria-hidden="true">6.4.</strong> Functions</a></li><li class="chapter-item expanded "><a href="items/type-aliases.html"><strong aria-hidden="true">6.5.</strong> Type aliases</a></li><li class="chapter-item expanded "><a href="items/structs.html"><strong aria-hidden="true">6.6.</strong> Structs</a></li><li class="chapter-item expanded "><a href="items/enumerations.html"><strong aria-hidden="true">6.7.</strong> Enumerations</a></li><li class="chapter-item expanded "><a href="items/unions.html"><strong aria-hidden="true">6.8.</strong> Unions</a></li><li class="chapter-item expanded "><a href="items/constant-items.html"><strong aria-hidden="true">6.9.</strong> Constant items</a></li><li class="chapter-item expanded "><a href="items/static-items.html"><strong aria-hidden="true">6.10.</strong> Static items</a></li><li class="chapter-item expanded "><a href="items/traits.html"><strong aria-hidden="true">6.11.</strong> Traits</a></li><li class="chapter-item expanded "><a href="items/implementations.html"><strong aria-hidden="true">6.12.</strong> Implementations</a></li><li class="chapter-item expanded "><a href="items/external-blocks.html"><strong aria-hidden="true">6.13.</strong> External blocks</a></li><li class="chapter-item expanded "><a href="items/generics.html"><strong aria-hidden="true">6.14.</strong> Generic parameters</a></li><li class="chapter-item expanded "><a href="items/associated-items.html"><strong aria-hidden="true">6.15.</strong> Associated Items</a></li></ol></li><li class="chapter-item expanded "><a href="attributes.html"><strong aria-hidden="true">7.</strong> Attributes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attributes/testing.html"><strong aria-hidden="true">7.1.</strong> Testing</a></li><li class="chapter-item expanded "><a href="attributes/derive.html"><strong aria-hidden="true">7.2.</strong> Derive</a></li><li class="chapter-item expanded "><a href="attributes/diagnostics.html"><strong aria-hidden="true">7.3.</strong> Diagnostics</a></li><li class="chapter-item expanded "><a href="attributes/codegen.html"><strong aria-hidden="true">7.4.</strong> Code generation</a></li><li class="chapter-item expanded "><a href="attributes/limits.html"><strong aria-hidden="true">7.5.</strong> Limits</a></li><li class="chapter-item expanded "><a href="attributes/type_system.html"><strong aria-hidden="true">7.6.</strong> Type System</a></li></ol></li><li class="chapter-item expanded "><a href="statements-and-expressions.html"><strong aria-hidden="true">8.</strong> Statements and expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">8.1.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">8.2.</strong> Expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="expressions/literal-expr.html"><strong aria-hidden="true">8.2.1.</strong> Literal expressions</a></li><li class="chapter-item expanded "><a href="expressions/path-expr.html"><strong aria-hidden="true">8.2.2.</strong> Path expressions</a></li><li class="chapter-item expanded "><a href="expressions/block-expr.html"><strong aria-hidden="true">8.2.3.</strong> Block expressions</a></li><li class="chapter-item expanded "><a href="expressions/operator-expr.html"><strong aria-hidden="true">8.2.4.</strong> Operator expressions</a></li><li class="chapter-item expanded "><a href="expressions/grouped-expr.html"><strong aria-hidden="true">8.2.5.</strong> Grouped expressions</a></li><li class="chapter-item expanded "><a href="expressions/array-expr.html"><strong aria-hidden="true">8.2.6.</strong> Array and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/tuple-expr.html"><strong aria-hidden="true">8.2.7.</strong> Tuple and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/struct-expr.html"><strong aria-hidden="true">8.2.8.</strong> Struct expressions</a></li><li class="chapter-item expanded "><a href="expressions/call-expr.html"><strong aria-hidden="true">8.2.9.</strong> Call expressions</a></li><li class="chapter-item expanded "><a href="expressions/method-call-expr.html"><strong aria-hidden="true">8.2.10.</strong> Method call expressions</a></li><li class="chapter-item expanded "><a href="expressions/field-expr.html"><strong aria-hidden="true">8.2.11.</strong> Field access expressions</a></li><li class="chapter-item expanded "><a href="expressions/closure-expr.html"><strong aria-hidden="true">8.2.12.</strong> Closure expressions</a></li><li class="chapter-item expanded "><a href="expressions/loop-expr.html"><strong aria-hidden="true">8.2.13.</strong> Loop expressions</a></li><li class="chapter-item expanded "><a href="expressions/range-expr.html"><strong aria-hidden="true">8.2.14.</strong> Range expressions</a></li><li class="chapter-item expanded "><a href="expressions/if-expr.html"><strong aria-hidden="true">8.2.15.</strong> If and if let expressions</a></li><li class="chapter-item expanded "><a href="expressions/match-expr.html"><strong aria-hidden="true">8.2.16.</strong> Match expressions</a></li><li class="chapter-item expanded "><a href="expressions/return-expr.html"><strong aria-hidden="true">8.2.17.</strong> Return expressions</a></li><li class="chapter-item expanded "><a href="expressions/await-expr.html"><strong aria-hidden="true">8.2.18.</strong> Await expressions</a></li><li class="chapter-item expanded "><a href="expressions/underscore-expr.html"><strong aria-hidden="true">8.2.19.</strong> Underscore expressions</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="patterns.html"><strong aria-hidden="true">9.</strong> Patterns</a></li><li class="chapter-item expanded "><a href="type-system.html"><strong aria-hidden="true">10.</strong> Type system</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">10.1.</strong> Types</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types/boolean.html"><strong aria-hidden="true">10.1.1.</strong> Boolean type</a></li><li class="chapter-item expanded "><a href="types/numeric.html"><strong aria-hidden="true">10.1.2.</strong> Numeric types</a></li><li class="chapter-item expanded "><a href="types/textual.html"><strong aria-hidden="true">10.1.3.</strong> Textual types</a></li><li class="chapter-item expanded "><a href="types/never.html"><strong aria-hidden="true">10.1.4.</strong> Never type</a></li><li class="chapter-item expanded "><a href="types/tuple.html"><strong aria-hidden="true">10.1.5.</strong> Tuple types</a></li><li class="chapter-item expanded "><a href="types/array.html"><strong aria-hidden="true">10.1.6.</strong> Array types</a></li><li class="chapter-item expanded "><a href="types/slice.html"><strong aria-hidden="true">10.1.7.</strong> Slice types</a></li><li class="chapter-item expanded "><a href="types/struct.html"><strong aria-hidden="true">10.1.8.</strong> Struct types</a></li><li class="chapter-item expanded "><a href="types/enum.html"><strong aria-hidden="true">10.1.9.</strong> Enumerated types</a></li><li class="chapter-item expanded "><a href="types/union.html"><strong aria-hidden="true">10.1.10.</strong> Union types</a></li><li class="chapter-item expanded "><a href="types/function-item.html"><strong aria-hidden="true">10.1.11.</strong> Function item types</a></li><li class="chapter-item expanded "><a href="types/closure.html"><strong aria-hidden="true">10.1.12.</strong> Closure types</a></li><li class="chapter-item expanded "><a href="types/pointer.html"><strong aria-hidden="true">10.1.13.</strong> Pointer types</a></li><li class="chapter-item expanded "><a href="types/function-pointer.html"><strong aria-hidden="true">10.1.14.</strong> Function pointer types</a></li><li class="chapter-item expanded "><a href="types/trait-object.html"><strong aria-hidden="true">10.1.15.</strong> Trait object types</a></li><li class="chapter-item expanded "><a href="types/impl-trait.html"><strong aria-hidden="true">10.1.16.</strong> Impl trait type</a></li><li class="chapter-item expanded "><a href="types/parameters.html"><strong aria-hidden="true">10.1.17.</strong> Type parameters</a></li><li class="chapter-item expanded "><a href="types/inferred.html"><strong aria-hidden="true">10.1.18.</strong> Inferred type</a></li></ol></li><li class="chapter-item expanded "><a href="dynamically-sized-types.html"><strong aria-hidden="true">10.2.</strong> Dynamically Sized Types</a></li><li class="chapter-item expanded "><a href="type-layout.html"><strong aria-hidden="true">10.3.</strong> Type layout</a></li><li class="chapter-item expanded "><a href="interior-mutability.html"><strong aria-hidden="true">10.4.</strong> Interior mutability</a></li><li class="chapter-item expanded "><a href="subtyping.html"><strong aria-hidden="true">10.5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="trait-bounds.html"><strong aria-hidden="true">10.6.</strong> Trait and lifetime bounds</a></li><li class="chapter-item expanded "><a href="type-coercions.html"><strong aria-hidden="true">10.7.</strong> Type coercions</a></li><li class="chapter-item expanded "><a href="destructors.html"><strong aria-hidden="true">10.8.</strong> Destructors</a></li><li class="chapter-item expanded "><a href="lifetime-elision.html"><strong aria-hidden="true">10.9.</strong> Lifetime elision</a></li></ol></li><li class="chapter-item expanded "><a href="special-types-and-traits.html"><strong aria-hidden="true">11.</strong> Special types and traits</a></li><li class="chapter-item expanded "><a href="names.html"><strong aria-hidden="true">12.</strong> Names</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="names/namespaces.html"><strong aria-hidden="true">12.1.</strong> Namespaces</a></li><li class="chapter-item expanded "><a href="names/scopes.html"><strong aria-hidden="true">12.2.</strong> Scopes</a></li><li class="chapter-item expanded "><a href="names/preludes.html"><strong aria-hidden="true">12.3.</strong> Preludes</a></li><li class="chapter-item expanded "><a href="paths.html"><strong aria-hidden="true">12.4.</strong> Paths</a></li><li class="chapter-item expanded "><a href="names/name-resolution.html"><strong aria-hidden="true">12.5.</strong> Name resolution</a></li><li class="chapter-item expanded "><a href="visibility-and-privacy.html"><strong aria-hidden="true">12.6.</strong> Visibility and privacy</a></li></ol></li><li class="chapter-item expanded "><a href="memory-model.html"><strong aria-hidden="true">13.</strong> Memory model</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="memory-allocation-and-lifetime.html"><strong aria-hidden="true">13.1.</strong> Memory allocation and lifetime</a></li><li class="chapter-item expanded "><a href="variables.html"><strong aria-hidden="true">13.2.</strong> Variables</a></li></ol></li><li class="chapter-item expanded "><a href="linkage.html"><strong aria-hidden="true">14.</strong> Linkage</a></li><li class="chapter-item expanded "><a href="inline-assembly.html"><strong aria-hidden="true">15.</strong> Inline assembly</a></li><li class="chapter-item expanded "><a href="unsafety.html"><strong aria-hidden="true">16.</strong> Unsafety</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="unsafe-keyword.html"><strong aria-hidden="true">16.1.</strong> The unsafe keyword</a></li><li class="chapter-item expanded "><a href="behavior-considered-undefined.html"><strong aria-hidden="true">16.2.</strong> Behavior considered undefined</a></li><li class="chapter-item expanded "><a href="behavior-not-considered-unsafe.html"><strong aria-hidden="true">16.3.</strong> Behavior not considered unsafe</a></li></ol></li><li class="chapter-item expanded "><a href="const_eval.html"><strong aria-hidden="true">17.</strong> Constant Evaluation</a></li><li class="chapter-item expanded "><a href="abi.html"><strong aria-hidden="true">18.</strong> Application Binary Interface</a></li><li class="chapter-item expanded "><a href="runtime.html"><strong aria-hidden="true">19.</strong> The Rust runtime</a></li><li class="chapter-item expanded "><a href="appendices.html"><strong aria-hidden="true">20.</strong> Appendices</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro-ambiguity.html"><strong aria-hidden="true">20.1.</strong> Macro Follow-Set Ambiguity Formal Specification</a></li><li class="chapter-item expanded "><a href="influences.html"><strong aria-hidden="true">20.2.</strong> Influences</a></li><li class="chapter-item expanded "><a href="glossary.html"><strong aria-hidden="true">20.3.</strong> Glossary</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="notation.html"><strong aria-hidden="true">1.</strong> Notation</a></li><li class="chapter-item expanded "><a href="lexical-structure.html"><strong aria-hidden="true">2.</strong> Lexical structure</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="input-format.html"><strong aria-hidden="true">2.1.</strong> Input format</a></li><li class="chapter-item expanded "><a href="keywords.html"><strong aria-hidden="true">2.2.</strong> Keywords</a></li><li class="chapter-item expanded "><a href="identifiers.html"><strong aria-hidden="true">2.3.</strong> Identifiers</a></li><li class="chapter-item expanded "><a href="comments.html"><strong aria-hidden="true">2.4.</strong> Comments</a></li><li class="chapter-item expanded "><a href="whitespace.html"><strong aria-hidden="true">2.5.</strong> Whitespace</a></li><li class="chapter-item expanded "><a href="tokens.html"><strong aria-hidden="true">2.6.</strong> Tokens</a></li></ol></li><li class="chapter-item expanded "><a href="macros.html"><strong aria-hidden="true">3.</strong> Macros</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macros-by-example.html"><strong aria-hidden="true">3.1.</strong> Macros By Example</a></li><li class="chapter-item expanded "><a href="procedural-macros.html"><strong aria-hidden="true">3.2.</strong> Procedural Macros</a></li></ol></li><li class="chapter-item expanded "><a href="crates-and-source-files.html"><strong aria-hidden="true">4.</strong> Crates and source files</a></li><li class="chapter-item expanded "><a href="conditional-compilation.html"><strong aria-hidden="true">5.</strong> Conditional compilation</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">6.</strong> Items</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="items/modules.html"><strong aria-hidden="true">6.1.</strong> Modules</a></li><li class="chapter-item expanded "><a href="items/extern-crates.html"><strong aria-hidden="true">6.2.</strong> Extern crates</a></li><li class="chapter-item expanded "><a href="items/use-declarations.html"><strong aria-hidden="true">6.3.</strong> Use declarations</a></li><li class="chapter-item expanded "><a href="items/functions.html"><strong aria-hidden="true">6.4.</strong> Functions</a></li><li class="chapter-item expanded "><a href="items/type-aliases.html"><strong aria-hidden="true">6.5.</strong> Type aliases</a></li><li class="chapter-item expanded "><a href="items/structs.html"><strong aria-hidden="true">6.6.</strong> Structs</a></li><li class="chapter-item expanded "><a href="items/enumerations.html"><strong aria-hidden="true">6.7.</strong> Enumerations</a></li><li class="chapter-item expanded "><a href="items/unions.html"><strong aria-hidden="true">6.8.</strong> Unions</a></li><li class="chapter-item expanded "><a href="items/constant-items.html"><strong aria-hidden="true">6.9.</strong> Constant items</a></li><li class="chapter-item expanded "><a href="items/static-items.html"><strong aria-hidden="true">6.10.</strong> Static items</a></li><li class="chapter-item expanded "><a href="items/traits.html"><strong aria-hidden="true">6.11.</strong> Traits</a></li><li class="chapter-item expanded "><a href="items/implementations.html"><strong aria-hidden="true">6.12.</strong> Implementations</a></li><li class="chapter-item expanded "><a href="items/external-blocks.html"><strong aria-hidden="true">6.13.</strong> External blocks</a></li><li class="chapter-item expanded "><a href="items/generics.html"><strong aria-hidden="true">6.14.</strong> Generic parameters</a></li><li class="chapter-item expanded "><a href="items/associated-items.html"><strong aria-hidden="true">6.15.</strong> Associated Items</a></li></ol></li><li class="chapter-item expanded "><a href="attributes.html"><strong aria-hidden="true">7.</strong> Attributes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attributes/testing.html"><strong aria-hidden="true">7.1.</strong> Testing</a></li><li class="chapter-item expanded "><a href="attributes/derive.html"><strong aria-hidden="true">7.2.</strong> Derive</a></li><li class="chapter-item expanded "><a href="attributes/diagnostics.html"><strong aria-hidden="true">7.3.</strong> Diagnostics</a></li><li class="chapter-item expanded "><a href="attributes/codegen.html"><strong aria-hidden="true">7.4.</strong> Code generation</a></li><li class="chapter-item expanded "><a href="attributes/limits.html"><strong aria-hidden="true">7.5.</strong> Limits</a></li><li class="chapter-item expanded "><a href="attributes/type_system.html"><strong aria-hidden="true">7.6.</strong> Type System</a></li><li class="chapter-item expanded "><a href="attributes/debugger.html"><strong aria-hidden="true">7.7.</strong> Debugger</a></li></ol></li><li class="chapter-item expanded "><a href="statements-and-expressions.html"><strong aria-hidden="true">8.</strong> Statements and expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">8.1.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">8.2.</strong> Expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="expressions/literal-expr.html"><strong aria-hidden="true">8.2.1.</strong> Literal expressions</a></li><li class="chapter-item expanded "><a href="expressions/path-expr.html"><strong aria-hidden="true">8.2.2.</strong> Path expressions</a></li><li class="chapter-item expanded "><a href="expressions/block-expr.html"><strong aria-hidden="true">8.2.3.</strong> Block expressions</a></li><li class="chapter-item expanded "><a href="expressions/operator-expr.html"><strong aria-hidden="true">8.2.4.</strong> Operator expressions</a></li><li class="chapter-item expanded "><a href="expressions/grouped-expr.html"><strong aria-hidden="true">8.2.5.</strong> Grouped expressions</a></li><li class="chapter-item expanded "><a href="expressions/array-expr.html"><strong aria-hidden="true">8.2.6.</strong> Array and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/tuple-expr.html"><strong aria-hidden="true">8.2.7.</strong> Tuple and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/struct-expr.html"><strong aria-hidden="true">8.2.8.</strong> Struct expressions</a></li><li class="chapter-item expanded "><a href="expressions/call-expr.html"><strong aria-hidden="true">8.2.9.</strong> Call expressions</a></li><li class="chapter-item expanded "><a href="expressions/method-call-expr.html"><strong aria-hidden="true">8.2.10.</strong> Method call expressions</a></li><li class="chapter-item expanded "><a href="expressions/field-expr.html"><strong aria-hidden="true">8.2.11.</strong> Field access expressions</a></li><li class="chapter-item expanded "><a href="expressions/closure-expr.html"><strong aria-hidden="true">8.2.12.</strong> Closure expressions</a></li><li class="chapter-item expanded "><a href="expressions/loop-expr.html"><strong aria-hidden="true">8.2.13.</strong> Loop expressions</a></li><li class="chapter-item expanded "><a href="expressions/range-expr.html"><strong aria-hidden="true">8.2.14.</strong> Range expressions</a></li><li class="chapter-item expanded "><a href="expressions/if-expr.html"><strong aria-hidden="true">8.2.15.</strong> If and if let expressions</a></li><li class="chapter-item expanded "><a href="expressions/match-expr.html"><strong aria-hidden="true">8.2.16.</strong> Match expressions</a></li><li class="chapter-item expanded "><a href="expressions/return-expr.html"><strong aria-hidden="true">8.2.17.</strong> Return expressions</a></li><li class="chapter-item expanded "><a href="expressions/await-expr.html"><strong aria-hidden="true">8.2.18.</strong> Await expressions</a></li><li class="chapter-item expanded "><a href="expressions/underscore-expr.html"><strong aria-hidden="true">8.2.19.</strong> Underscore expressions</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="patterns.html"><strong aria-hidden="true">9.</strong> Patterns</a></li><li class="chapter-item expanded "><a href="type-system.html"><strong aria-hidden="true">10.</strong> Type system</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">10.1.</strong> Types</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types/boolean.html"><strong aria-hidden="true">10.1.1.</strong> Boolean type</a></li><li class="chapter-item expanded "><a href="types/numeric.html"><strong aria-hidden="true">10.1.2.</strong> Numeric types</a></li><li class="chapter-item expanded "><a href="types/textual.html"><strong aria-hidden="true">10.1.3.</strong> Textual types</a></li><li class="chapter-item expanded "><a href="types/never.html"><strong aria-hidden="true">10.1.4.</strong> Never type</a></li><li class="chapter-item expanded "><a href="types/tuple.html"><strong aria-hidden="true">10.1.5.</strong> Tuple types</a></li><li class="chapter-item expanded "><a href="types/array.html"><strong aria-hidden="true">10.1.6.</strong> Array types</a></li><li class="chapter-item expanded "><a href="types/slice.html"><strong aria-hidden="true">10.1.7.</strong> Slice types</a></li><li class="chapter-item expanded "><a href="types/struct.html"><strong aria-hidden="true">10.1.8.</strong> Struct types</a></li><li class="chapter-item expanded "><a href="types/enum.html"><strong aria-hidden="true">10.1.9.</strong> Enumerated types</a></li><li class="chapter-item expanded "><a href="types/union.html"><strong aria-hidden="true">10.1.10.</strong> Union types</a></li><li class="chapter-item expanded "><a href="types/function-item.html"><strong aria-hidden="true">10.1.11.</strong> Function item types</a></li><li class="chapter-item expanded "><a href="types/closure.html"><strong aria-hidden="true">10.1.12.</strong> Closure types</a></li><li class="chapter-item expanded "><a href="types/pointer.html"><strong aria-hidden="true">10.1.13.</strong> Pointer types</a></li><li class="chapter-item expanded "><a href="types/function-pointer.html"><strong aria-hidden="true">10.1.14.</strong> Function pointer types</a></li><li class="chapter-item expanded "><a href="types/trait-object.html"><strong aria-hidden="true">10.1.15.</strong> Trait object types</a></li><li class="chapter-item expanded "><a href="types/impl-trait.html"><strong aria-hidden="true">10.1.16.</strong> Impl trait type</a></li><li class="chapter-item expanded "><a href="types/parameters.html"><strong aria-hidden="true">10.1.17.</strong> Type parameters</a></li><li class="chapter-item expanded "><a href="types/inferred.html"><strong aria-hidden="true">10.1.18.</strong> Inferred type</a></li></ol></li><li class="chapter-item expanded "><a href="dynamically-sized-types.html"><strong aria-hidden="true">10.2.</strong> Dynamically Sized Types</a></li><li class="chapter-item expanded "><a href="type-layout.html"><strong aria-hidden="true">10.3.</strong> Type layout</a></li><li class="chapter-item expanded "><a href="interior-mutability.html"><strong aria-hidden="true">10.4.</strong> Interior mutability</a></li><li class="chapter-item expanded "><a href="subtyping.html"><strong aria-hidden="true">10.5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="trait-bounds.html"><strong aria-hidden="true">10.6.</strong> Trait and lifetime bounds</a></li><li class="chapter-item expanded "><a href="type-coercions.html"><strong aria-hidden="true">10.7.</strong> Type coercions</a></li><li class="chapter-item expanded "><a href="destructors.html"><strong aria-hidden="true">10.8.</strong> Destructors</a></li><li class="chapter-item expanded "><a href="lifetime-elision.html"><strong aria-hidden="true">10.9.</strong> Lifetime elision</a></li></ol></li><li class="chapter-item expanded "><a href="special-types-and-traits.html"><strong aria-hidden="true">11.</strong> Special types and traits</a></li><li class="chapter-item expanded "><a href="names.html"><strong aria-hidden="true">12.</strong> Names</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="names/namespaces.html"><strong aria-hidden="true">12.1.</strong> Namespaces</a></li><li class="chapter-item expanded "><a href="names/scopes.html"><strong aria-hidden="true">12.2.</strong> Scopes</a></li><li class="chapter-item expanded "><a href="names/preludes.html"><strong aria-hidden="true">12.3.</strong> Preludes</a></li><li class="chapter-item expanded "><a href="paths.html"><strong aria-hidden="true">12.4.</strong> Paths</a></li><li class="chapter-item expanded "><a href="names/name-resolution.html"><strong aria-hidden="true">12.5.</strong> Name resolution</a></li><li class="chapter-item expanded "><a href="visibility-and-privacy.html"><strong aria-hidden="true">12.6.</strong> Visibility and privacy</a></li></ol></li><li class="chapter-item expanded "><a href="memory-model.html"><strong aria-hidden="true">13.</strong> Memory model</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="memory-allocation-and-lifetime.html"><strong aria-hidden="true">13.1.</strong> Memory allocation and lifetime</a></li><li class="chapter-item expanded "><a href="variables.html"><strong aria-hidden="true">13.2.</strong> Variables</a></li></ol></li><li class="chapter-item expanded "><a href="linkage.html"><strong aria-hidden="true">14.</strong> Linkage</a></li><li class="chapter-item expanded "><a href="inline-assembly.html"><strong aria-hidden="true">15.</strong> Inline assembly</a></li><li class="chapter-item expanded "><a href="unsafety.html"><strong aria-hidden="true">16.</strong> Unsafety</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="unsafe-keyword.html"><strong aria-hidden="true">16.1.</strong> The unsafe keyword</a></li><li class="chapter-item expanded "><a href="behavior-considered-undefined.html"><strong aria-hidden="true">16.2.</strong> Behavior considered undefined</a></li><li class="chapter-item expanded "><a href="behavior-not-considered-unsafe.html"><strong aria-hidden="true">16.3.</strong> Behavior not considered unsafe</a></li></ol></li><li class="chapter-item expanded "><a href="const_eval.html"><strong aria-hidden="true">17.</strong> Constant Evaluation</a></li><li class="chapter-item expanded "><a href="abi.html"><strong aria-hidden="true">18.</strong> Application Binary Interface</a></li><li class="chapter-item expanded "><a href="runtime.html"><strong aria-hidden="true">19.</strong> The Rust runtime</a></li><li class="chapter-item expanded "><a href="appendices.html"><strong aria-hidden="true">20.</strong> Appendices</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro-ambiguity.html"><strong aria-hidden="true">20.1.</strong> Macro Follow-Set Ambiguity Formal Specification</a></li><li class="chapter-item expanded "><a href="influences.html"><strong aria-hidden="true">20.2.</strong> Influences</a></li><li class="chapter-item expanded "><a href="glossary.html"><strong aria-hidden="true">20.3.</strong> Glossary</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -403,6 +428,7 @@ followed by a path that does not start with <code>::</code>.</p>
 </ul>
 <blockquote>
 <p><strong><sup>Lexer</sup></strong><br />
+KW_MACRO_RULES    : <code>macro_rules</code><br />
 KW_UNION          : <code>union</code><br />
 KW_STATICLIFETIME : <code>'static</code></p>
 <p><strong><sup>Lexer 2015</sup></strong><br />
@@ -489,7 +515,7 @@ block (<code>/* ... */</code>) comment forms. Nested block comments are supporte
 <p>Non-doc comments are interpreted as a form of whitespace.</p>
 <h2 id="doc-comments"><a class="header" href="#doc-comments">Doc comments</a></h2>
 <p>Line doc comments beginning with exactly <em>three</em> slashes (<code>///</code>), and block
-doc comments (<code>/** ... */</code>), both inner doc comments, are interpreted as a
+doc comments (<code>/** ... */</code>), both outer doc comments, are interpreted as a
 special syntax for <a href="../rustdoc/the-doc-attribute.html"><code>doc</code> attributes</a>. That is, they are equivalent to writing
 <code>#[doc=&quot;...&quot;]</code> around the body of the comment, i.e., <code>/// Foo</code> turns into
 <code>#[doc=&quot;Foo&quot;]</code> and <code>/** Bar */</code> turns into <code>#[doc=&quot;Bar&quot;]</code>.</p>
@@ -1406,7 +1432,7 @@ identifiers separated by commas. Nested repetitions are permitted.</p>
 <ul>
 <li><code>*</code> — indicates any number of repetitions.</li>
 <li><code>+</code> — indicates any number but at least one.</li>
-<li><code>?</code> — indicates an optional fragment with zero or one occurrences.</li>
+<li><code>?</code> — indicates an optional fragment with zero or one occurrence.</li>
 </ul>
 <p>Since <code>?</code> represents at most one occurrence, it cannot be used with a
 separator.</p>
@@ -1887,7 +1913,7 @@ use my_macro::show_streams;
 #[show_streams]
 fn invoke1() {}
 // out: attr: &quot;&quot;
-// out: item: &quot;fn invoke1() { }&quot;
+// out: item: &quot;fn invoke1() {}&quot;
 
 // Example: Attribute with input
 #[show_streams(bar)]
@@ -2330,6 +2356,11 @@ on a configuration predicate.</p>
 <p>It is written as <code>cfg</code>, <code>(</code>, a configuration predicate, and finally <code>)</code>.</p>
 <p>If the predicate is true, the thing is rewritten to not have the <code>cfg</code> attribute
 on it. If the predicate is false, the thing is removed from the source code.</p>
+<p>When a crate-level <code>cfg</code> has a false predicate, the behavior is slightly
+different: any crate attributes preceding the <code>cfg</code> are kept, and any crate
+attributes following the <code>cfg</code> are removed. This allows <code>#![no_std]</code> and
+<code>#![no_core]</code> crates to avoid linking <code>std</code>/<code>core</code> even if a <code>#![cfg(...)]</code> has
+removed the entire crate.</p>
 <p>Some examples on functions:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -3751,6 +3782,19 @@ m!(const _: () = (););
 // const _: () = ();
 // const _: () = ();
 <span class="boring">}</span></code></pre></pre>
+<h2 id="evaluation"><a class="header" href="#evaluation">Evaluation</a></h2>
+<p><a href="items/../glossary.html#free-item">Free</a> constants are always <a href="items/../const_eval.html">evaluated</a> at compile-time to surface
+panics. This happens even within an unused function:</p>
+<pre><pre class="playground"><code class="language-rust compile_fail edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Compile-time panic
+const PANIC: () = std::unimplemented!();
+
+fn unused_generic_function&lt;T&gt;() {
+    // A failing compile-time assertion
+    const _: () = assert!(usize::BITS == 0);
+}
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="static-items"><a class="header" href="#static-items">Static items</a></h1>
 <blockquote>
 <p><strong><sup>Syntax</sup></strong><br />
@@ -4580,9 +4624,33 @@ library based on the <code>name</code> key. The linker will then use its normal 
 resolution logic to find that import library. Alternatively, specifying
 <code>kind = &quot;raw-dylib&quot;</code> instructs the compiler to generate an import library
 during compilation and provide that to the linker instead.</p>
-<p><code>raw-dylib</code> is only supported on Windows and not supported on 32-bit x86
-(<code>target_arch=&quot;x86&quot;</code>). Using it when targeting other platforms or
-x86 on Windows will result in a compiler error.</p>
+<p><code>raw-dylib</code> is only supported on Windows. Using it when targeting other
+platforms will result in a compiler error.</p>
+<h4 id="the-import_name_type-key"><a class="header" href="#the-import_name_type-key">The <code>import_name_type</code> key</a></h4>
+<p>On x86 Windows, names of functions are &quot;decorated&quot; (i.e., have a specific prefix
+and/or suffix added) to indicate their calling convention. For example, a
+<code>stdcall</code> calling convention function with the name <code>fn1</code> that has no arguments
+would be decorated as <code>_fn1@0</code>. However, the <a href="https://learn.microsoft.com/windows/win32/debug/pe-format#import-name-type">PE Format</a> does also permit names
+to have no prefix or be undecorated. Additionally, the MSVC and GNU toolchains
+use different decorations for the same calling conventions which means, by
+default, some Win32 functions cannot be called using the <code>raw-dylib</code> link kind
+via the GNU toolchain.</p>
+<p>To allow for these differences, when using the <code>raw-dylib</code> link kind you may
+also specify the <code>import_name_type</code> key with one of the following values to
+change how functions are named in the generated import library:</p>
+<ul>
+<li><code>decorated</code>: The function name will be fully-decorated using the MSVC
+toolchain format.</li>
+<li><code>noprefix</code>: The function name will be decorated using the MSVC toolchain
+format, but skipping the leading <code>?</code>, <code>@</code>, or optionally <code>_</code>.</li>
+<li><code>undecorated</code>: The function name will not be decorated.</li>
+</ul>
+<p>If the <code>import_name_type</code> key is not specified, then the function name will be
+fully-decorated using the target toolchain's format.</p>
+<p>Variables are never decorated and so the <code>import_name_type</code> key has no effect on
+how they are named in the generated import library.</p>
+<p>The <code>import_name_type</code> key is only supported on x86 Windows. Using it when
+targeting other platforms will result in a compiler error.</p>
 <h3 id="the-link_name-attribute"><a class="header" href="#the-link_name-attribute">The <code>link_name</code> attribute</a></h3>
 <p>The <em><code>link_name</code> attribute</em> may be specified on declarations inside an <code>extern</code>
 block to indicate the symbol to import for the given function or static. It
@@ -5591,6 +5659,11 @@ compile-time operations.</li>
 added in future.</li>
 </ul>
 </li>
+<li>Debugger
+<ul>
+<li><a href="attributes/debugger.html#the-debugger_visualizer-attribute"><code>debugger_visualizer</code></a> — Embeds a file that specifies debugger output for a type.</li>
+</ul>
+</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="testing-attributes"><a class="header" href="#testing-attributes">Testing attributes</a></h1>
 <p>The following <a href="attributes/../attributes.html">attributes</a> are used for specifying functions for performing
@@ -5745,7 +5818,7 @@ check on and off:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[warn(missing_docs)]
-pub mod m2{
+pub mod m2 {
     #[allow(missing_docs)]
     pub mod nested {
         // Missing documentation is ignored here
@@ -6049,6 +6122,7 @@ functions</a>.</p>
 <tr><td><code>bmi1</code></td><td></td><td><a href="https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets">BMI1</a> — Bit Manipulation Instruction Sets</td></tr>
 <tr><td><code>bmi2</code></td><td></td><td><a href="https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets#BMI2">BMI2</a> — Bit Manipulation Instruction Sets 2</td></tr>
 <tr><td><code>cmpxchg16b</code></td><td></td><td><a href="https://www.felixcloutier.com/x86/cmpxchg8b:cmpxchg16b"><code>cmpxchg16b</code></a> - Compares and exchange 16 bytes (128 bits) of data atomically</td></tr>
+<tr><td><code>f16c</code></td><td><code>avx</code></td><td><a href="https://en.wikipedia.org/wiki/F16C">F16C</a> — 16-bit floating point conversion instructions</td></tr>
 <tr><td><code>fma</code></td><td><code>avx</code></td><td><a href="https://en.wikipedia.org/wiki/FMA_instruction_set">FMA3</a> — Three-operand fused multiply-add</td></tr>
 <tr><td><code>fxsr</code></td><td></td><td><a href="https://www.felixcloutier.com/x86/fxsave"><code>fxsave</code></a> and <a href="https://www.felixcloutier.com/x86/fxrstor"><code>fxrstor</code></a> — Save and restore x87 FPU, MMX Technology, and SSE State</td></tr>
 <tr><td><code>lzcnt</code></td><td></td><td><a href="https://www.felixcloutier.com/x86/lzcnt"><code>lzcnt</code></a> — Leading zeros count</td></tr>
@@ -6438,6 +6512,115 @@ match message {
 // Cannot cast a non-exhaustive enum outside of its defining crate.
 let _ = NonExhaustiveEnum::default() as u8;</code></pre>
 <p>Non-exhaustive types are always considered inhabited in downstream crates.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="debugger-attributes"><a class="header" href="#debugger-attributes">Debugger attributes</a></h1>
+<p>The following <a href="attributes/../attributes.html">attributes</a> are used for enhancing the debugging experience when using third-party debuggers like GDB or WinDbg.</p>
+<h2 id="the-debugger_visualizer-attribute"><a class="header" href="#the-debugger_visualizer-attribute">The <code>debugger_visualizer</code> attribute</a></h2>
+<p>The <em><code>debugger_visualizer</code> attribute</em> can be used to embed a debugger visualizer file into the debug information.
+This enables an improved debugger experience for displaying values in the debugger.
+It uses the <a href="attributes/../attributes.html#meta-item-attribute-syntax"><em>MetaListNameValueStr</em></a> syntax to specify its inputs, and must be specified as a crate attribute.</p>
+<h3 id="using-debugger_visualizer-with-natvis"><a class="header" href="#using-debugger_visualizer-with-natvis">Using <code>debugger_visualizer</code> with Natvis</a></h3>
+<p>Natvis is an XML-based framework for Microsoft debuggers (such as Visual Studio and WinDbg) that uses declarative rules to customize the display of types.
+For detailed information on the Natvis format, refer to Microsoft's <a href="https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects">Natvis documentation</a>.</p>
+<p>This attribute only supports embedding Natvis files on <code>-windows-msvc</code> targets.</p>
+<p>The path to the Natvis file is specified with the <code>natvis_file</code> key, which is a path relative to the crate source file:</p>
+<!-- ignore: requires external files, and msvc -->
+<pre><code class="language-rust ignore">#![debugger_visualizer(natvis_file = &quot;Rectangle.natvis&quot;)]
+
+struct FancyRect {
+    x: f32,
+    y: f32,
+    dx: f32,
+    dy: f32,
+}
+
+fn main() {
+    let fancy_rect = FancyRect { x: 10.0, y: 10.0, dx: 5.0, dy: 5.0 };
+    println!(&quot;set breakpoint here&quot;);
+}</code></pre>
+<p>and <code>Rectangle.natvis</code> contains:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;AutoVisualizer xmlns=&quot;http://schemas.microsoft.com/vstudio/debugger/natvis/2010&quot;&gt;
+    &lt;Type Name=&quot;foo::FancyRect&quot;&gt;
+      &lt;DisplayString&gt;({x},{y}) + ({dx}, {dy})&lt;/DisplayString&gt;
+      &lt;Expand&gt;
+        &lt;Synthetic Name=&quot;LowerLeft&quot;&gt;
+          &lt;DisplayString&gt;({x}, {y})&lt;/DisplayString&gt;
+        &lt;/Synthetic&gt;
+        &lt;Synthetic Name=&quot;UpperLeft&quot;&gt;
+          &lt;DisplayString&gt;({x}, {y + dy})&lt;/DisplayString&gt;
+        &lt;/Synthetic&gt;
+        &lt;Synthetic Name=&quot;UpperRight&quot;&gt;
+          &lt;DisplayString&gt;({x + dx}, {y + dy})&lt;/DisplayString&gt;
+        &lt;/Synthetic&gt;
+        &lt;Synthetic Name=&quot;LowerRight&quot;&gt;
+          &lt;DisplayString&gt;({x + dx}, {y})&lt;/DisplayString&gt;
+        &lt;/Synthetic&gt;
+      &lt;/Expand&gt;
+    &lt;/Type&gt;
+&lt;/AutoVisualizer&gt;
+</code></pre>
+<p>When viewed under WinDbg, the <code>fancy_rect</code> variable would be shown as follows:</p>
+<pre><code class="language-text">&gt; Variables:
+  &gt; fancy_rect: (10.0, 10.0) + (5.0, 5.0)
+    &gt; LowerLeft: (10.0, 10.0)
+    &gt; UpperLeft: (10.0, 15.0)
+    &gt; UpperRight: (15.0, 15.0)
+    &gt; LowerRight: (15.0, 10.0)
+</code></pre>
+<h3 id="using-debugger_visualizer-with-gdb"><a class="header" href="#using-debugger_visualizer-with-gdb">Using <code>debugger_visualizer</code> with GDB</a></h3>
+<p>GDB supports the use of a structured Python script, called a <em>pretty printer</em>, that describes how a type should be visualized in the debugger view.
+For detailed information on pretty printers, refer to GDB's <a href="https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html">pretty printing documentation</a>.</p>
+<p>Embedded pretty printers are not automatically loaded when debugging a binary under GDB.
+There are two ways to enable auto-loading embedded pretty printers:</p>
+<ol>
+<li>Launch GDB with extra arguments to explicitly add a directory or binary to the auto-load safe path: <code>gdb -iex &quot;add-auto-load-safe-path safe-path path/to/binary&quot; path/to/binary</code>
+For more information, see GDB's <a href="https://sourceware.org/gdb/onlinedocs/gdb/Auto_002dloading-safe-path.html">auto-loading documentation</a>.</li>
+<li>Create a file named <code>gdbinit</code> under <code>$HOME/.config/gdb</code> (you may need to create the directory if it doesn't already exist). Add the following line to that file: <code>add-auto-load-safe-path path/to/binary</code>.</li>
+</ol>
+<p>These scripts are embedded using the <code>gdb_script_file</code> key, which is a path relative to the crate source file.</p>
+<!-- ignore: requires external files -->
+<pre><code class="language-rust ignore">#![debugger_visualizer(gdb_script_file = &quot;printer.py&quot;)]
+
+struct Person {
+    name: String,
+    age: i32,
+}
+
+fn main() {
+    let bob = Person { name: String::from(&quot;Bob&quot;), age: 10 };
+    println!(&quot;set breakpoint here&quot;);
+}</code></pre>
+<p>and <code>printer.py</code> contains:</p>
+<pre><code class="language-python">import gdb
+
+class PersonPrinter:
+    &quot;Print a Person&quot;
+
+    def __init__(self, val):
+        self.val = val
+        self.name = val[&quot;name&quot;]
+        self.age = int(val[&quot;age&quot;])
+
+    def to_string(self):
+        return &quot;{} is {} years old.&quot;.format(self.name, self.age)
+
+def lookup(val):
+    lookup_tag = val.type.tag
+    if lookup_tag is None:
+        return None
+    if &quot;foo::Person&quot; == lookup_tag:
+        return PersonPrinter(val)
+
+    return None
+
+gdb.current_objfile().pretty_printers.append(lookup)
+</code></pre>
+<p>When the crate's debug executable is passed into GDB<sup class="footnote-reference"><a href="#rust-gdb">1</a></sup>, <code>print bob</code> will display:</p>
+<pre><code class="language-text">&quot;Bob&quot; is 10 years old.
+</code></pre>
+<div class="footnote-definition" id="rust-gdb"><sup class="footnote-definition-label">1</sup>
+<p>Note: This assumes you are using the <code>rust-gdb</code> script which configures pretty-printers for standard library types like <code>String</code>.</p>
+</div>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="statements-and-expressions"><a class="header" href="#statements-and-expressions">Statements and expressions</a></h1>
 <p>Rust is <em>primarily</em> an expression language.
 This means that most forms of value-producing or effect-causing evaluation are directed by the uniform syntax category of <em>expressions</em>.
@@ -6705,7 +6888,7 @@ Explicitly, the assignee expressions are:</p>
 <li>Place expressions.</li>
 <li><a href="expressions/underscore-expr.html">Underscores</a>.</li>
 <li><a href="expressions/tuple-expr.html">Tuples</a> of assignee expressions.</li>
-<li><a href="expressions/array-expr.html">Slices</a> of assingee expressions.</li>
+<li><a href="expressions/array-expr.html">Slices</a> of assignee expressions.</li>
 <li><a href="expressions/struct-expr.html">Tuple structs</a> of assignee expressions.</li>
 <li><a href="expressions/struct-expr.html">Structs</a> of assignee expressions (with optionally named
 fields).</li>
@@ -7354,8 +7537,8 @@ The operands of all of these operators are evaluated in <a href="expressions/../
 <tr><td><code>+</code></td><td>Addition</td><td></td><td>Addition</td><td><code>std::ops::Add</code></td><td><code>std::ops::AddAssign</code></td></tr>
 <tr><td><code>-</code></td><td>Subtraction</td><td></td><td>Subtraction</td><td><code>std::ops::Sub</code></td><td><code>std::ops::SubAssign</code></td></tr>
 <tr><td><code>*</code></td><td>Multiplication</td><td></td><td>Multiplication</td><td><code>std::ops::Mul</code></td><td><code>std::ops::MulAssign</code></td></tr>
-<tr><td><code>/</code></td><td>Division*</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
-<tr><td><code>%</code></td><td>Remainder**</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
+<tr><td><code>/</code></td><td>Division*†</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
+<tr><td><code>%</code></td><td>Remainder**†</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
 <tr><td><code>&amp;</code></td><td>Bitwise AND</td><td><a href="expressions/../types/boolean.html#logical-and">Logical AND</a></td><td></td><td><code>std::ops::BitAnd</code></td><td><code>std::ops::BitAndAssign</code></td></tr>
 <tr><td><code>|</code></td><td>Bitwise OR</td><td><a href="expressions/../types/boolean.html#logical-or">Logical OR</a></td><td></td><td><code>std::ops::BitOr</code></td><td><code>std::ops::BitOrAssign</code></td></tr>
 <tr><td><code>^</code></td><td>Bitwise XOR</td><td><a href="expressions/../types/boolean.html#logical-xor">Logical XOR</a></td><td></td><td><code>std::ops::BitXor</code></td><td><code>std::ops::BitXorAssign</code></td></tr>
@@ -7367,6 +7550,7 @@ The operands of all of these operators are evaluated in <a href="expressions/../
 <p>** Rust uses a remainder defined with <a href="https://en.wikipedia.org/wiki/Modulo_operation#Variants_of_the_definition">truncating division</a>. Given <code>remainder = dividend % divisor</code>, the remainder will have the same sign as the dividend.</p>
 <p>*** Arithmetic right shift on signed integer types, logical right shift on
 unsigned integer types.</p>
+<p>† For integer types, division by zero panics.</p>
 <p>Here are examples of these operators being used.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -7925,7 +8109,7 @@ Point3d {y: 0, z: 10, .. base}; // OK, only base.x is accessed
 drop(y_ref);
 <span class="boring">}</span></code></pre></pre>
 <p>Struct expressions with curly braces can't be used directly in a <a href="expressions/loop-expr.html">loop</a> or <a href="expressions/if-expr.html#if-expressions">if</a> expression's head, or in the <a href="expressions/../glossary.html#scrutinee">scrutinee</a> of an <a href="expressions/if-expr.html#if-let-expressions">if let</a> or <a href="expressions/match-expr.html">match</a> expression.
-However, struct expressions can be in used in these situations if they are within another expression, for example inside <a href="expressions/grouped-expr.html">parentheses</a>.</p>
+However, struct expressions can be used in these situations if they are within another expression, for example inside <a href="expressions/grouped-expr.html">parentheses</a>.</p>
 <p>The field names can be decimal integer values to specify indices for constructing tuple structs.
 This can be used with base structs to fill out the remaining indices not specified:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -8011,7 +8195,7 @@ These situations may include:</p>
 }
 
 trait Ugly {
-  fn print(&amp;self);
+    fn print(&amp;self);
 }
 
 struct Foo;
@@ -8425,8 +8609,27 @@ Example:</p>
    <a href="expressions/block-expr.html"><em>BlockExpression</em></a></p>
 </blockquote>
 <p>Labelled block expressions are exactly like block expressions, except that they allow using <code>break</code> expressions within the block.
-Unlike other loops, <code>break</code> expressions within a label expression <em>must</em> have a label (i.e. the label is not optional).
-Unlike other loops, labelled block expressions <em>must</em> begin with a label.</p>
+Unlike loops, <code>break</code> expressions within a labelled block expression <em>must</em> have a label (i.e. the label is not optional).
+Similarly, labelled block expressions <em>must</em> begin with a label.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">fn do_thing() {}
+</span><span class="boring">fn condition_not_met() -&gt; bool { true }
+</span><span class="boring">fn do_next_thing() {}
+</span><span class="boring">fn do_last_thing() {}
+</span>let result = 'block: {
+    do_thing();
+    if condition_not_met() {
+        break 'block 1;
+    }
+    do_next_thing();
+    if condition_not_met() {
+        break 'block 2;
+    }
+    do_last_thing();
+    3
+};
+<span class="boring">}</span></code></pre></pre>
 <h2 id="continue-expressions"><a class="header" href="#continue-expressions"><code>continue</code> expressions</a></h2>
 <blockquote>
 <p><strong><sup>Syntax</sup></strong><br />
@@ -9858,7 +10061,7 @@ not a surrogate), represented as a 32-bit unsigned word in the 0x0000 to 0xD7FF
 or 0xE000 to 0x10FFFF range. It is immediate <a href="types/../behavior-considered-undefined.html">Undefined Behavior</a> to create a
 <code>char</code> that falls outside this range. A <code>[char]</code> is effectively a UCS-4 / UTF-32
 string of length 1.</p>
-<p>A value of type <code>str</code> is represented the same way as <code>[u8]</code>, it is a slice of
+<p>A value of type <code>str</code> is represented the same way as <code>[u8]</code>, a slice of
 8-bit unsigned bytes. However, the Rust standard library makes extra assumptions
 about <code>str</code>: methods working on <code>str</code> assume and ensure that the data in there
 is valid UTF-8. Calling a <code>str</code> method with a non-UTF-8 buffer can cause
@@ -9873,16 +10076,20 @@ pointer type, such as <code>&amp;str</code>.</p>
 <p>The never type <code>!</code> is a type with no values, representing the result of
 computations that never complete. Expressions of type <code>!</code> can be coerced into
 any other type.</p>
-<!-- ignore: unstable -->
-<pre><code class="language-rust ignore">let x: ! = panic!();
-// Can be coerced into any type.
-let y: u32 = x;</code></pre>
-<p><strong>NB.</strong> The never type was expected to be stabilized in 1.41, but due
-to some last minute regressions detected the stabilization was
-temporarily reverted. The <code>!</code> type can only appear in function return
-types presently. See <a href="https://github.com/rust-lang/rust/issues/35121">the tracking
-issue</a> for more
-details.</p>
+<p>The <code>!</code> type can <strong>only</strong> appear in function return types presently,
+indicating it is a diverging function that never returns.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn foo() -&gt; ! {
+    panic!(&quot;This call never returns.&quot;);
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>extern &quot;C&quot; {
+    pub fn no_return_extern_func() -&gt; !;
+}
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tuple-types"><a class="header" href="#tuple-types">Tuple types</a></h1>
 <blockquote>
 <p><strong><sup>Syntax</sup></strong><br />
@@ -10410,15 +10617,18 @@ fn bar() -&gt; impl Trait {
 <p>Functions can use <code>impl</code> followed by a set of trait bounds to declare a parameter as having an anonymous type.
 The caller must provide a type that satisfies the bounds declared by the anonymous type parameter, and the function can only use the methods available through the trait bounds of the anonymous type parameter.</p>
 <p>For example, these two forms are almost equivalent:</p>
-<pre><code class="language-rust ignore">trait Trait {}
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Trait {}
 
 // generic type parameter
-fn foo&lt;T: Trait&gt;(arg: T) {
+fn with_generic_type&lt;T: Trait&gt;(arg: T) {
 }
 
 // impl Trait in argument position
-fn foo(arg: impl Trait) {
-}</code></pre>
+fn with_impl_trait(arg: impl Trait) {
+}
+<span class="boring">}</span></code></pre></pre>
 <p>That is, <code>impl Trait</code> in argument position is syntactic sugar for a generic type parameter like <code>&lt;T: Trait&gt;</code>, except that the type is anonymous and doesn't appear in the <a href="types/../items/generics.html"><em>GenericParams</em></a> list.</p>
 <blockquote>
 <p><strong>Note:</strong>
@@ -10463,10 +10673,24 @@ Returning <code>impl Iterator</code> means that a function only exposes the <cod
 However, there are significant differences between the two in return position.
 With <code>impl Trait</code>, unlike with a generic type parameter, the function chooses the return type, and the caller cannot choose the return type.</p>
 <p>The function:</p>
-<pre><code class="language-rust ignore">fn foo&lt;T: Trait&gt;() -&gt; T {</code></pre>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">trait Trait {}
+</span>fn foo&lt;T: Trait&gt;() -&gt; T {
+    // ...
+<span class="boring">panic!()
+</span>}
+<span class="boring">}</span></code></pre></pre>
 <p>allows the caller to determine the return type, <code>T</code>, and the function returns that type.</p>
 <p>The function:</p>
-<pre><code class="language-rust ignore">fn foo() -&gt; impl Trait {</code></pre>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">trait Trait {}
+</span><span class="boring">impl Trait for () {}
+</span>fn foo() -&gt; impl Trait {
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
 <p>doesn't allow the caller to determine the return type.
 Instead, the function chooses the return type, but only promises that it will implement <code>Trait</code>.</p>
 <h2 id="limitations-1"><a class="header" href="#limitations-1">Limitations</a></h2>
@@ -11013,11 +11237,30 @@ important consequence of these rules is that a type with <code>#[repr(packed(1))
 <p>The <code>align</code> modifier can also be applied on an <code>enum</code>.
 When it is, the effect on the <code>enum</code>'s alignment is the same as if the <code>enum</code>
 was wrapped in a newtype <code>struct</code> with the same <code>align</code> modifier.</p>
-<div class="warning">
-<p><em><strong>Warning:</strong></em> Dereferencing an unaligned pointer is <a href="behavior-considered-undefined.html">undefined behavior</a> and
-it is possible to <a href="https://github.com/rust-lang/rust/issues/27060">safely create unaligned pointers to <code>packed</code> fields</a>.
-Like all ways to create undefined behavior in safe Rust, this is a bug.</p>
-</div>
+<blockquote>
+<p>Note: References to unaligned fields are not allowed because it is <a href="behavior-considered-undefined.html">undefined behavior</a>.
+When fields are unaligned due to an alignment modifier, consider the following options for using references and dereferences:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[repr(packed)]
+struct Packed {
+    f1: u8,
+    f2: u16,
+}
+let mut e = Packed { f1: 1, f2: 2 };
+// Instead of creating a reference to a field, copy the value to a local variable.
+let x = e.f2;
+// Or in situations like `println!` which creates a reference, use braces
+// to change it to a copy of the value.
+println!(&quot;{}&quot;, {e.f2});
+// Or if you need a pointer, use the unaligned methods for reading and writing
+// instead of dereferencing the pointer directly.
+let ptr: *const u16 = std::ptr::addr_of!(e.f2);
+let value = unsafe { ptr.read_unaligned() };
+let mut_ptr: *mut u16 = std::ptr::addr_of_mut!(e.f2);
+unsafe { mut_ptr.write_unaligned(3) }
+<span class="boring">}</span></code></pre></pre>
+</blockquote>
 <h3 id="the-transparent-representation"><a class="header" href="#the-transparent-representation">The <code>transparent</code> Representation</a></h3>
 <p>The <code>transparent</code> representation can only be used on a <a href="items/structs.html"><code>struct</code></a>
 or an <a href="items/enumerations.html"><code>enum</code></a> with a single variant that has:</p>
@@ -11832,7 +12075,7 @@ temporary scope.</p>
 <ul>
 <li>An <a href="patterns.html#identifier-patterns">identifier pattern</a> that binds by reference or mutable reference.</li>
 <li>A <a href="patterns.html#struct-patterns">struct</a>, <a href="patterns.html#tuple-patterns">tuple</a>, <a href="patterns.html#tuple-struct-patterns">tuple struct</a>, or <a href="patterns.html#slice-patterns">slice</a> pattern where at least one of the
-direct subpatterns is a extending pattern.</li>
+direct subpatterns is an extending pattern.</li>
 </ul>
 <p>So <code>ref x</code>, <code>V(ref x)</code> and <code>[ref x, y]</code> are all extending patterns, but <code>x</code>,
 <code>&amp;ref x</code> and <code>&amp;(ref x,)</code> are not.</p>
@@ -12331,6 +12574,7 @@ arms, <a href="names/../items/functions.html#function-parameters">function param
 <li>Label Namespace
 <ul>
 <li><a href="names/../expressions/loop-expr.html#loop-labels">Loop labels</a></li>
+<li><a href="names/../expressions/loop-expr.html#labelled-block-expressions">Block labels</a></li>
 </ul>
 </li>
 </ul>
@@ -12613,7 +12857,7 @@ S::f();  // Calls the inherent impl.
 <em>TypePath</em> :<br />
    <code>::</code><sup>?</sup> <em>TypePathSegment</em> (<code>::</code> <em>TypePathSegment</em>)<sup>*</sup></p>
 <p><em>TypePathSegment</em> :<br />
-   <em>PathIdentSegment</em> <code>::</code><sup>?</sup> (<a href="paths.html#paths-in-expressions"><em>GenericArgs</em></a> | <em>TypePathFn</em>)<sup>?</sup></p>
+   <em>PathIdentSegment</em> (<code>::</code><sup>?</sup> (<a href="paths.html#paths-in-expressions"><em>GenericArgs</em></a> | <em>TypePathFn</em>))<sup>?</sup></p>
 <p><em>TypePathFn</em> :<br />
 <code>(</code> <em>TypePathFnInputs</em><sup>?</sup> <code>)</code> (<code>-&gt;</code> <a href="types.html#type-expressions"><em>Type</em></a>)<sup>?</sup></p>
 <p><em>TypePathFnInputs</em> :<br />
@@ -13310,11 +13554,13 @@ It can be used to embed handwritten assembly in the assembly output generated by
 <li>ARM</li>
 <li>AArch64</li>
 <li>RISC-V</li>
+<li>LoongArch</li>
 </ul>
 <p>The compiler will emit an error if <code>asm!</code> is used on an unsupported target.</p>
 <h2 id="example-1"><a class="header" href="#example-1">Example</a></h2>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 // Multiply x by 6 using shifts and adds
@@ -13330,20 +13576,21 @@ unsafe {
     );
 }
 assert_eq!(x, 4 * 6);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="syntax"><a class="header" href="#syntax">Syntax</a></h2>
 <p>The following ABNF specifies the general syntax:</p>
 <pre><code class="language-text">format_string := STRING_LITERAL / RAW_STRING_LITERAL
 dir_spec := &quot;in&quot; / &quot;out&quot; / &quot;lateout&quot; / &quot;inout&quot; / &quot;inlateout&quot;
 reg_spec := &lt;register class&gt; / &quot;\&quot;&quot; &lt;explicit register&gt; &quot;\&quot;&quot;
 operand_expr := expr / &quot;_&quot; / expr &quot;=&gt;&quot; expr / expr &quot;=&gt;&quot; &quot;_&quot;
-reg_operand := dir_spec &quot;(&quot; reg_spec &quot;)&quot; operand_expr
-operand := reg_operand
+reg_operand := [ident &quot;=&quot;] dir_spec &quot;(&quot; reg_spec &quot;)&quot; operand_expr
 clobber_abi := &quot;clobber_abi(&quot; &lt;abi&gt; *(&quot;,&quot; &lt;abi&gt;) [&quot;,&quot;] &quot;)&quot;
 option := &quot;pure&quot; / &quot;nomem&quot; / &quot;readonly&quot; / &quot;preserves_flags&quot; / &quot;noreturn&quot; / &quot;nostack&quot; / &quot;att_syntax&quot; / &quot;raw&quot;
 options := &quot;options(&quot; option *(&quot;,&quot; option) [&quot;,&quot;] &quot;)&quot;
-asm := &quot;asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; [ident &quot;=&quot;] operand) *(&quot;,&quot; clobber_abi) *(&quot;,&quot; options) [&quot;,&quot;] &quot;)&quot;
-global_asm := &quot;global_asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; [ident &quot;=&quot;] operand) *(&quot;,&quot; options) [&quot;,&quot;] &quot;)&quot;
+operand := reg_operand / clobber_abi / options
+asm := &quot;asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; operand) [&quot;,&quot;] &quot;)&quot;
+global_asm := &quot;global_asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; operand) [&quot;,&quot;] &quot;)&quot;
 </code></pre>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
 <p>Inline assembly can be used in one of two ways.</p>
@@ -13359,8 +13606,7 @@ However, implicit named arguments (introduced by <a href="https://github.com/rus
 <p>An <code>asm!</code> invocation may have one or more template string arguments; an <code>asm!</code> with multiple template string arguments is treated as if all the strings were concatenated with a <code>\n</code> between them.
 The expected usage is for each template string argument to correspond to a line of assembly code.
 All template string arguments must appear before any other arguments.</p>
-<p>As with format strings, named arguments must appear after positional arguments.
-Explicit <a href="inline-assembly.html#register-operands">register operands</a> must appear at the end of the operand list, after named arguments if any.</p>
+<p>As with format strings, positional arguments must appear before named arguments and explicit <a href="inline-assembly.html#register-operands">register operands</a>.</p>
 <p>Explicit register operands cannot be used by placeholders in the template string.
 All other named and positional operands must appear at least once in the template string, otherwise a compiler error is generated.</p>
 <p>The exact assembly code syntax is target-specific and opaque to the compiler except for the way operands are substituted into the template string to form the code passed to the assembler.</p>
@@ -13477,6 +13723,8 @@ This includes architecture-specific vector types defined in <code>std::arch</cod
 <tr><td>RISC-V</td><td><code>reg</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[9-15]</code>, <code>x[16-31]</code> (non-RV32E)</td><td><code>r</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f[0-31]</code></td><td><code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td><code>v[0-31]</code></td><td>Only clobbers</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$r[23,30]</code></td><td><code>r</code></td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td><code>$f[0-31]</code></td><td><code>f</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13521,6 +13769,8 @@ The availability of supported types for a particular register class may depend o
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f</code></td><td><code>f32</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>d</code></td><td><code>f64</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td>N/A</td><td>Only clobbers</td></tr>
+<tr><td>LoongArch64</td><td><code>reg</code></td><td>None</td><td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>f32</code>, <code>f64</code></td></tr>
+<tr><td>LoongArch64</td><td><code>freg</code></td><td>None</td><td><code>f32</code>, <code>f64</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13579,14 +13829,26 @@ Here is the list of all supported register aliases:</p>
 <tr><td>RISC-V</td><td><code>f[10-17]</code></td><td><code>fa[0-7]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[18-27]</code></td><td><code>fs[2-11]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[28-31]</code></td><td><code>ft[8-11]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code></td><td><code>$zero</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r1</code></td><td><code>$ra</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code></td><td><code>$tp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r3</code></td><td><code>$sp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[4-11]</code></td><td><code>$a[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[12-20]</code></td><td><code>$t[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td></td></tr>
+<tr><td>LoongArch</td><td><code>$r22</code></td><td><code>$fp</code>, <code>$s9</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[23-31]</code></td><td><code>$s[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[0-7]</code></td><td><code>$fa[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[8-23]</code></td><td><code>$ft[0-15]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[24-31]</code></td><td><code>$fs[0-7]</code></td></tr>
 </tbody></table>
 </div>
 <p>Some registers cannot be used for input or output operands:</p>
 <div class="table-wrapper"><table><thead><tr><th>Architecture</th><th>Unsupported register</th><th>Reason</th></tr></thead><tbody>
 <tr><td>All</td><td><code>sp</code></td><td>The stack pointer must be restored to its original value at the end of an asm code block.</td></tr>
-<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
+<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V), <code>$fp</code> (LoongArch)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
 <tr><td>ARM</td><td><code>r7</code> or <code>r11</code></td><td>On ARM the frame pointer can be either <code>r7</code> or <code>r11</code> depending on the target. The frame pointer cannot be used as an input or output.</td></tr>
-<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
+<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V), <code>$s8</code> (LoongArch)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
 <tr><td>x86</td><td><code>ip</code></td><td>This is the program counter, not a real register.</td></tr>
 <tr><td>AArch64</td><td><code>xzr</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>AArch64</td><td><code>x18</code></td><td>This is an OS-reserved register on some AArch64 targets.</td></tr>
@@ -13594,6 +13856,9 @@ Here is the list of all supported register aliases:</p>
 <tr><td>ARM</td><td><code>r9</code></td><td>This is an OS-reserved register on some ARM targets.</td></tr>
 <tr><td>RISC-V</td><td><code>x0</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>RISC-V</td><td><code>gp</code>, <code>tp</code></td><td>These registers are reserved and cannot be used as inputs or outputs.</td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code> or <code>$zero</code></td><td>This is a constant zero register which can't be modified.</td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code> or <code>$tp</code></td><td>This is reserved for TLS.</td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td>This is reserved by the ABI.</td></tr>
 </tbody></table>
 </div>
 <p>The frame pointer and base pointer registers are reserved for internal use by LLVM. While <code>asm!</code> statements cannot explicitly specify the use of reserved registers, in some cases LLVM will allocate one of these reserved registers for <code>reg</code> operands. Assembly code making use of reserved registers should be careful since <code>reg</code> operands may use the same registers.</p>
@@ -13636,6 +13901,8 @@ Only one modifier is allowed per template placeholder.</p>
 <tr><td>ARM</td><td><code>qreg</code></td><td><code>e</code> / <code>f</code></td><td><code>d0</code> / <code>d1</code></td><td><code>e</code> / <code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>reg</code></td><td>None</td><td><code>x1</code></td><td>None</td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td>None</td><td><code>f0</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td>None</td><td><code>$r1</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td>None</td><td><code>$f0</code></td><td>None</td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13665,6 +13932,7 @@ The following ABIs can be used with <code>clobber_abi</code>:</p>
 <tr><td>AArch64</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x[0-17]</code>, <code>x18</code>*, <code>x30</code>, <code>v[0-31]</code>, <code>p[0-15]</code>, <code>ffr</code></td></tr>
 <tr><td>ARM</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code>, <code>&quot;aapcs&quot;</code></td><td><code>r[0-3]</code>, <code>r12</code>, <code>r14</code>, <code>s[0-15]</code>, <code>d[0-7]</code>, <code>d[16-31]</code></td></tr>
 <tr><td>RISC-V</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[10-17]</code>, <code>x[28-31]</code>, <code>f[0-7]</code>, <code>f[10-17]</code>, <code>f[28-31]</code>, <code>v[0-31]</code></td></tr>
+<tr><td>LoongArch</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$f[0-23]</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13788,6 +14056,11 @@ Behavior is also undefined if two executions of the <code>asm!</code> code with 
 <li>Vector extension state (<code>vtype</code>, <code>vl</code>, <code>vcsr</code>).</li>
 </ul>
 </li>
+<li>LoongArch
+<ul>
+<li>Floating-point condition flags in <code>$fcc[0-7]</code>.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>On x86, the direction flag (DF in <code>EFLAGS</code>) is clear on entry to an asm block and must be clear on exit.
@@ -13826,6 +14099,27 @@ The compiler is allowed to instantiate multiple copies of the <code>asm!</code> 
 <blockquote>
 <p><strong>Note</strong>: As a general rule, the flags covered by <code>preserves_flags</code> are those which are <em>not</em> preserved when performing a function call.</p>
 </blockquote>
+<h3 id="correctness-and-validity"><a class="header" href="#correctness-and-validity">Correctness and Validity</a></h3>
+<p>In addition to all of the previous rules, the string argument to <code>asm!</code> must ultimately become—
+after all other arguments are evaluated, formatting is performed, and operands are translated—
+assembly that is both syntactically correct and semantically valid for the target architecture.
+The formatting rules allow the compiler to generate assembly with correct syntax.
+Rules concerning operands permit valid translation of Rust operands into and out of <code>asm!</code>.
+Adherence to these rules is necessary, but not sufficient, for the final expanded assembly to be
+both correct and valid. For instance:</p>
+<ul>
+<li>arguments may be placed in positions which are syntactically incorrect after formatting</li>
+<li>an instruction may be correctly written, but given architecturally invalid operands</li>
+<li>an architecturally unspecified instruction may be assembled into unspecified code</li>
+<li>a set of instructions, each correct and valid, may cause undefined behavior if placed in immediate succession</li>
+</ul>
+<p>As a result, these rules are <em>non-exhaustive</em>. The compiler is not required to check the
+correctness and validity of the initial string nor the final assembly that is generated.
+The assembler may check for correctness and validity but is not required to do so.
+When using <code>asm!</code>, a typographical error may be sufficient to make a program unsound,
+and the rules for assembly may include thousands of pages of architectural reference manuals.
+Programmers should exercise appropriate care, as invoking this <code>unsafe</code> capability comes with
+assuming the responsibility of not violating rules of both the compiler or the architecture.</p>
 <h3 id="directives-support"><a class="header" href="#directives-support">Directives Support</a></h3>
 <p>Inline assembly supports a subset of the directives supported by both GNU AS and LLVM's internal assembler, given as follows.
 The result of using other directives is assembler-specific (and may cause an error, or may be accepted as-is).</p>
@@ -13836,12 +14130,9 @@ The result of using other directives is assembler-specific (and may cause an err
 <li><code>.4byte</code></li>
 <li><code>.8byte</code></li>
 <li><code>.align</code></li>
+<li><code>.alt_entry</code></li>
 <li><code>.ascii</code></li>
 <li><code>.asciz</code></li>
-<li><code>.alt_entry</code></li>
-<li><code>.balign</code></li>
-<li><code>.balignl</code></li>
-<li><code>.balignw</code></li>
 <li><code>.balign</code></li>
 <li><code>.balignl</code></li>
 <li><code>.balignw</code></li>
@@ -13857,17 +14148,17 @@ The result of using other directives is assembler-specific (and may cause an err
 <li><code>.eqv</code></li>
 <li><code>.fill</code></li>
 <li><code>.float</code></li>
-<li><code>.globl</code></li>
 <li><code>.global</code></li>
-<li><code>.lcomm</code></li>
+<li><code>.globl</code></li>
 <li><code>.inst</code></li>
+<li><code>.lcomm</code></li>
 <li><code>.long</code></li>
 <li><code>.octa</code></li>
 <li><code>.option</code></li>
-<li><code>.private_extern</code></li>
 <li><code>.p2align</code></li>
-<li><code>.pushsection</code></li>
 <li><code>.popsection</code></li>
+<li><code>.private_extern</code></li>
+<li><code>.pushsection</code></li>
 <li><code>.quad</code></li>
 <li><code>.scl</code></li>
 <li><code>.section</code></li>
@@ -13976,9 +14267,9 @@ By default, the body of an unsafe function is also considered to be an unsafe bl
 this can be changed by enabling the <a href="../rustc/lints/listing/allowed-by-default.html#unsafe-op-in-unsafe-fn"><code>unsafe_op_in_unsafe_fn</code></a> lint.</p>
 <p>By putting operations into an unsafe block, the programmer states that they have taken care of satisfying the extra safety conditions of all operations inside that block.</p>
 <p>Unsafe blocks are the logical dual to unsafe functions:
-where unsafe functions define a proof obligation that callers must uphold, unsafe blocks state that all relevant proof obligations have been discharged.
+where unsafe functions define a proof obligation that callers must uphold, unsafe blocks state that all relevant proof obligations of functions or operations called inside the block have been discharged.
 There are many ways to discharge proof obligations;
-for example, there could be run-time checks or data structure invariants that guarantee that certain properties are definitely true, or the unsafe block could be inside an <code>unsafe fn</code> and use its own proof obligations to discharge the proof obligations of its callees.</p>
+for example, there could be run-time checks or data structure invariants that guarantee that certain properties are definitely true, or the unsafe block could be inside an <code>unsafe fn</code>, in which case the block can use the proof obligations of that function to discharge the proof obligations arising inside the block.</p>
 <p>Unsafe blocks are used to wrap foreign libraries, make direct use of hardware or implement features not directly present in the language.
 For example, Rust provides the language features necessary to implement memory-safe concurrency in the language but the implementation of threads and message passing in the standard library uses unsafe blocks.</p>
 <p>Rust's type system is a conservative approximation of the dynamic safety requirements, so in some cases there is a performance cost to using safe code.
@@ -14040,9 +14331,10 @@ types are passed in a (nested) field of a compound type, but not behind
 pointer indirections.</p>
 </li>
 <li>
-<p>Mutating immutable data. All data inside a <a href="items/constant-items.html"><code>const</code></a> item is immutable. Moreover, all
-data reached through a shared reference or data owned by an immutable binding
-is immutable, unless that data is contained within an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Mutating immutable bytes. All bytes inside a <a href="items/constant-items.html"><code>const</code></a> item are immutable.
+The bytes owned by an immutable binding are immutable, unless those bytes are part of an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Moreover, the bytes <a href="behavior-considered-undefined.html#pointed-to-bytes">pointed to</a> by a shared reference, including transitively through other references (both shared and mutable) and <code>Box</code>es, are immutable; transitivity includes those references stored in fields of compound types.</p>
+<p>A mutation is any write of more than 0 bytes which overlaps with any of the relevant bytes (even if that write does not change the memory contents).</p>
 </li>
 <li>
 <p>Invoking undefined behavior via compiler intrinsics.</p>
@@ -14106,6 +14398,13 @@ In the standard library, this affects <a href="../core/ptr/struct.NonNull.html">
 <p>Incorrect use of inline assembly. For more details, refer to the <a href="inline-assembly.html#rules-for-inline-assembly">rules</a> to
 follow when writing code that uses inline assembly.</p>
 </li>
+<li>
+<p><strong>In <a href="const_eval.html#const-context">const context</a></strong>: transmuting or otherwise
+reinterpreting a pointer (reference, raw pointer, or function pointer) into
+some allocated object as a non-pointer type (such as integers).
+'Reinterpreting' refers to loading the pointer value at integer type without a
+cast, e.g. by doing raw pointer casts or using a union.</p>
+</li>
 </ul>
 <p><strong>Note:</strong> Uninitialized memory is also implicitly invalid for any type that has
 a restricted set of valid values. In other words, the only cases in which
@@ -14118,11 +14417,12 @@ program contains undefined behaviour that can also affect the Rust code. And
 vice versa, undefined behavior in Rust can cause adverse affects on code
 executed by any FFI calls to other languages.</p>
 </blockquote>
+<h3 id="pointed-to-bytes"><a class="header" href="#pointed-to-bytes">Pointed-to bytes</a></h3>
+<p>The span of bytes a pointer or reference &quot;points to&quot; is determined by the pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
 <h3 id="dangling-pointers"><a class="header" href="#dangling-pointers">Dangling pointers</a></h3>
 <p>A reference/pointer is &quot;dangling&quot; if it is null or not all of the bytes it
-points to are part of the same live allocation (so in particular they all have to be
-part of <em>some</em> allocation). The span of bytes it points to is determined by the
-pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
+<a href="behavior-considered-undefined.html#pointed-to-bytes">points to</a> are part of the same live allocation (so in particular they all have to be
+part of <em>some</em> allocation).</p>
 <p>If the size is 0, then the pointer must either point inside of a live allocation
 (including pointing just after the last byte of the allocation), or it must be
 directly constructed from a non-zero integer literal.</p>
@@ -15047,5 +15347,6 @@ example of an uninhabited type is the <a href="types/never.html">never type</a> 
         });
         </script>
 
+    </div>
     </body>
 </html>

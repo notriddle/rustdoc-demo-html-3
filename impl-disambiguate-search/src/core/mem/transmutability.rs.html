@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/mem/transmutability.rs`."><title>transmutability.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/mem/transmutability.rs`."><title>transmutability.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -105,17 +105,18 @@
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
 <a href="#107" id="107">107</a>
-</pre><pre class="rust"><code><span class="doccomment">/// Are values of a type transmutable into values of another type?
+<a href="#108" id="108">108</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::marker::ConstParamTy;
+
+<span class="doccomment">/// Are values of a type transmutable into values of another type?
 ///
 /// This trait is implemented on-the-fly by the compiler for types `Src` and `Self` when the bits of
 /// any value of type `Self` are safely transmutable into a value of type `Dst`, in a given `Context`,
 /// notwithstanding whatever safety checks you have asked the compiler to [`Assume`] are satisfied.
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
 #[lang = <span class="string">&quot;transmute_trait&quot;</span>]
-#[rustc_on_unimplemented(
-    message = <span class="string">&quot;`{Src}` cannot be safely transmuted into `{Self}` in the defining scope of `{Context}`.&quot;</span>,
-    label = <span class="string">&quot;`{Src}` cannot be safely transmuted into `{Self}` in the defining scope of `{Context}`.&quot;
-</span>)]
+#[rustc_deny_explicit_impl(implement_via_object = <span class="bool-val">false</span>)]
+#[rustc_coinductive]
 </span><span class="kw">pub unsafe trait </span>BikeshedIntrinsicFrom&lt;Src, Context, <span class="kw">const </span>ASSUME: Assume = { Assume::NOTHING }&gt;
 <span class="kw">where
     </span>Src: <span class="question-mark">?</span>Sized,
@@ -143,6 +144,9 @@
     /// instance of the destination type.
     </span><span class="kw">pub </span>validity: bool,
 }
+
+<span class="attr">#[unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
+</span><span class="kw">impl </span>ConstParamTy <span class="kw">for </span>Assume {}
 
 <span class="kw">impl </span>Assume {
     <span class="doccomment">/// Do not assume that *you* have ensured any safety properties are met.
@@ -192,8 +196,7 @@
 <span class="comment">// FIXME(jswrenn): This const op is not actually usable. Why?
 // https://github.com/rust-lang/rust/pull/100726#issuecomment-1219928926
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
-</span><span class="kw">impl const </span>core::ops::Add <span class="kw">for </span>Assume {
+</span><span class="kw">impl </span>core::ops::Add <span class="kw">for </span>Assume {
     <span class="kw">type </span>Output = Assume;
 
     <span class="kw">fn </span>add(<span class="self">self</span>, other_assumptions: Assume) -&gt; Assume {
@@ -204,13 +207,11 @@
 <span class="comment">// FIXME(jswrenn): This const op is not actually usable. Why?
 // https://github.com/rust-lang/rust/pull/100726#issuecomment-1219928926
 </span><span class="attr">#[unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;transmutability&quot;</span>, issue = <span class="string">&quot;99571&quot;</span>)]
-</span><span class="kw">impl const </span>core::ops::Sub <span class="kw">for </span>Assume {
+</span><span class="kw">impl </span>core::ops::Sub <span class="kw">for </span>Assume {
     <span class="kw">type </span>Output = Assume;
 
     <span class="kw">fn </span>sub(<span class="self">self</span>, other_assumptions: Assume) -&gt; Assume {
         <span class="self">self</span>.but_not(other_assumptions)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512vnni.rs`."><title>avx512vnni.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512vnni.rs`."><title>avx512vnni.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -937,7 +937,7 @@
 <a href="#937" id="937">937</a>
 <a href="#938" id="938">938</a>
 <a href="#939" id="939">939</a>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     core_arch::{simd::<span class="kw-2">*</span>, simd_llvm::<span class="kw-2">*</span>, x86::<span class="kw-2">*</span>},
     mem::transmute,
 };
@@ -947,7 +947,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_dpwssd_epi32&amp;expand=2219)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_dpwssd_epi32&amp;expand=2219)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -957,7 +957,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_dpwssd_epi32&amp;expand=2220)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_dpwssd_epi32&amp;expand=2220)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -973,7 +973,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_dpwssd_epi32&amp;expand=2221)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_dpwssd_epi32&amp;expand=2221)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -990,7 +990,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_dpwssd_epi32&amp;expand=2216)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_dpwssd_epi32&amp;expand=2216)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1000,7 +1000,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_dpwssd_epi32&amp;expand=2217)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_dpwssd_epi32&amp;expand=2217)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1016,7 +1016,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_dpwssd_epi32&amp;expand=2218)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_dpwssd_epi32&amp;expand=2218)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1033,7 +1033,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dpwssd_epi32&amp;expand=2213)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dpwssd_epi32&amp;expand=2213)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1043,7 +1043,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_dpwssd_epi32&amp;expand=2214)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_dpwssd_epi32&amp;expand=2214)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1054,7 +1054,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_dpwssd_epi32&amp;expand=2215)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_dpwssd_epi32&amp;expand=2215)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssd))]
@@ -1066,7 +1066,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_dpwssds_epi32&amp;expand=2228)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_dpwssds_epi32&amp;expand=2228)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1076,7 +1076,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_dpwssds_epi32&amp;expand=2229)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_dpwssds_epi32&amp;expand=2229)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1092,7 +1092,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_dpwssds_epi32&amp;expand=2230)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_dpwssds_epi32&amp;expand=2230)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1109,7 +1109,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_dpwssds_epi32&amp;expand=2225)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_dpwssds_epi32&amp;expand=2225)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1119,7 +1119,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_dpwssds_epi32&amp;expand=2226)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_dpwssds_epi32&amp;expand=2226)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1135,7 +1135,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_dpwssds_epi32&amp;expand=2227)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_dpwssds_epi32&amp;expand=2227)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1152,7 +1152,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dpwssds_epi32&amp;expand=2222)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dpwssds_epi32&amp;expand=2222)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1162,7 +1162,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_dpwssds_epi32&amp;expand=2223)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_dpwssds_epi32&amp;expand=2223)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1173,7 +1173,7 @@
 
 <span class="doccomment">/// Multiply groups of 2 adjacent pairs of signed 16-bit integers in a with corresponding 16-bit integers in b, producing 2 intermediate signed 32-bit results. Sum these 2 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_dpwssds_epi32&amp;expand=2224)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_dpwssds_epi32&amp;expand=2224)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpwssds))]
@@ -1190,7 +1190,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_dpbusd_epi32&amp;expand=2201)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_dpbusd_epi32&amp;expand=2201)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1200,7 +1200,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_dpbusd_epi32&amp;expand=2202)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_dpbusd_epi32&amp;expand=2202)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1216,7 +1216,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_dpbusd_epi32&amp;expand=2203)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_dpbusd_epi32&amp;expand=2203)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1233,7 +1233,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_dpbusd_epi32&amp;expand=2198)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_dpbusd_epi32&amp;expand=2198)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1243,7 +1243,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_dpbusd_epi32&amp;expand=2199)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_dpbusd_epi32&amp;expand=2199)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1259,7 +1259,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_dpbusd_epi32&amp;expand=2200)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_dpbusd_epi32&amp;expand=2200)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1276,7 +1276,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dpbusd_epi32&amp;expand=2195)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dpbusd_epi32&amp;expand=2195)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1286,7 +1286,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_dpbusd_epi32&amp;expand=2196)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_dpbusd_epi32&amp;expand=2196)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1297,7 +1297,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_dpbusd_epi32&amp;expand=2197)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_dpbusd_epi32&amp;expand=2197)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusd))]
@@ -1309,7 +1309,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_dpbusds_epi32&amp;expand=2210)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_dpbusds_epi32&amp;expand=2210)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1319,7 +1319,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_dpbusds_epi32&amp;expand=2211)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_dpbusds_epi32&amp;expand=2211)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1335,7 +1335,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_dpbusds_epi32&amp;expand=2212)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_dpbusds_epi32&amp;expand=2212)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1352,7 +1352,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_dpbusds_epi32&amp;expand=2207)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_dpbusds_epi32&amp;expand=2207)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1362,7 +1362,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_dpbusds_epi32&amp;expand=2208)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_dpbusds_epi32&amp;expand=2208)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1378,7 +1378,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_dpbusds_epi32&amp;expand=2209)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_dpbusds_epi32&amp;expand=2209)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1395,7 +1395,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dpbusds_epi32&amp;expand=2204)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dpbusds_epi32&amp;expand=2204)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1405,7 +1405,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_dpbusds_epi32&amp;expand=2205)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_dpbusds_epi32&amp;expand=2205)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1416,7 +1416,7 @@
 
 <span class="doccomment">/// Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results. Sum these 4 results with the corresponding 32-bit integer in src using signed saturation, and store the packed 32-bit results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_dpbusds_epi32&amp;expand=2206)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_dpbusds_epi32&amp;expand=2206)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512vnni,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpdpbusds))]
@@ -1876,5 +1876,4 @@
         assert_eq_m128i(r, e);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

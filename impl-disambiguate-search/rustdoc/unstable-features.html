@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -80,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.3.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.4.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html" class="active"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="read-documentation/in-doc-settings.html"><strong aria-hidden="true">3.1.</strong> In-doc settings</a></li></ol></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/re-exports.html"><strong aria-hidden="true">4.3.</strong> Re-exports</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.4.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.5.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html" class="active"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -170,6 +195,10 @@ that a piece of code emits from version to version, so this is unlikely to be st
 future.</p>
 <p>Attempting to use these error numbers on stable will result in the code sample being interpreted as
 plain text.</p>
+<h3 id="missing_doc_code_examples-lint"><a class="header" href="#missing_doc_code_examples-lint"><code>missing_doc_code_examples</code> lint</a></h3>
+<p>This lint will emit a warning if an item doesn't have a code example in its documentation.
+It can be enabled using:</p>
+<pre><code class="language-rust ignore (nightly)">#![deny(rustdoc::missing_doc_code_examples)]</code></pre>
 <h2 id="extensions-to-the-doc-attribute"><a class="header" href="#extensions-to-the-doc-attribute">Extensions to the <code>#[doc]</code> attribute</a></h2>
 <p>These features operate by extending the <code>#[doc]</code> attribute, and thus can be caught by the compiler
 and enabled with a <code>#![feature(...)]</code> attribute in your crate.</p>
@@ -283,9 +312,9 @@ Book</a> and <a href="https://github.com/rust-lang/rust/issues/44027">its tracki
 <h3 id="document-primitives"><a class="header" href="#document-primitives">Document primitives</a></h3>
 <p>This is for Rust compiler internal use only.</p>
 <p>Since primitive types are defined in the compiler, there's no place to attach documentation
-attributes. The <code>#[doc(primitive)]</code> attribute is used by the standard library to provide a way
-to generate documentation for primitive types, and requires <code>#![feature(rustdoc_internals)]</code> to
-enable.</p>
+attributes. The <code>#[rustc_doc_primitive = &quot;...&quot;]</code> attribute is used by the standard library to
+provide a way to generate documentation for primitive types, and requires <code>#![feature(rustc_attrs)]</code>
+to enable.</p>
 <h3 id="document-keywords"><a class="header" href="#document-keywords">Document keywords</a></h3>
 <p>This is for Rust compiler internal use only.</p>
 <p>Rust keywords are documented in the standard library (look for <code>match</code> for example).</p>
@@ -368,6 +397,9 @@ some consideration for their stability, and names that end in a number). Giving 
 <code>rustdoc</code> will disable this sorting and instead make it print the items in the order they appear in
 the source.</p>
 <h3 id="--show-type-layout-add-a-section-to-each-types-docs-describing-its-memory-layout"><a class="header" href="#--show-type-layout-add-a-section-to-each-types-docs-describing-its-memory-layout"><code>--show-type-layout</code>: add a section to each type's docs describing its memory layout</a></h3>
+<ul>
+<li>Tracking issue: <a href="https://github.com/rust-lang/rust/issues/113248">#113248</a></li>
+</ul>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs -Z unstable-options --show-type-layout
 </code></pre>
@@ -649,5 +681,6 @@ to jump to a type definition.</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

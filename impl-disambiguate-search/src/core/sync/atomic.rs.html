@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/sync/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/sync/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3626,7 +3626,32 @@
 <a href="#3626" id="3626">3626</a>
 <a href="#3627" id="3627">3627</a>
 <a href="#3628" id="3628">3628</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Atomic types
+<a href="#3629" id="3629">3629</a>
+<a href="#3630" id="3630">3630</a>
+<a href="#3631" id="3631">3631</a>
+<a href="#3632" id="3632">3632</a>
+<a href="#3633" id="3633">3633</a>
+<a href="#3634" id="3634">3634</a>
+<a href="#3635" id="3635">3635</a>
+<a href="#3636" id="3636">3636</a>
+<a href="#3637" id="3637">3637</a>
+<a href="#3638" id="3638">3638</a>
+<a href="#3639" id="3639">3639</a>
+<a href="#3640" id="3640">3640</a>
+<a href="#3641" id="3641">3641</a>
+<a href="#3642" id="3642">3642</a>
+<a href="#3643" id="3643">3643</a>
+<a href="#3644" id="3644">3644</a>
+<a href="#3645" id="3645">3645</a>
+<a href="#3646" id="3646">3646</a>
+<a href="#3647" id="3647">3647</a>
+<a href="#3648" id="3648">3648</a>
+<a href="#3649" id="3649">3649</a>
+<a href="#3650" id="3650">3650</a>
+<a href="#3651" id="3651">3651</a>
+<a href="#3652" id="3652">3652</a>
+<a href="#3653" id="3653">3653</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Atomic types
 //!
 //! Atomic types provide primitive shared-memory communication between
 //! threads, and are the building blocks of other concurrent
@@ -3759,6 +3784,17 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::hint::spin_loop;
 
+<span class="comment">// Some architectures don&#39;t have byte-sized atomics, which results in LLVM
+// emulating them using a LL/SC loop. However for AtomicBool we can take
+// advantage of the fact that it only ever contains 0 or 1 and use atomic OR/AND
+// instead, which LLVM can emulate using a larger atomic OR/AND operation.
+//
+// This list should only contain architectures which have word-sized atomic-or/
+// atomic-and instructions but don&#39;t natively support byte-sized atomics.
+</span><span class="attr">#[cfg(target_has_atomic = <span class="string">&quot;8&quot;</span>)]
+</span><span class="kw">const </span>EMULATE_ATOMIC_BOOL: bool =
+    <span class="macro">cfg!</span>(any(target_arch = <span class="string">&quot;riscv32&quot;</span>, target_arch = <span class="string">&quot;riscv64&quot;</span>, target_arch = <span class="string">&quot;loongarch64&quot;</span>));
+
 <span class="doccomment">/// A boolean type which can be safely shared between threads.
 ///
 /// This type has the same in-memory representation as a [`bool`].
@@ -3775,8 +3811,7 @@
 
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;8&quot;</span>)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl const </span>Default <span class="kw">for </span>AtomicBool {
+</span><span class="kw">impl </span>Default <span class="kw">for </span>AtomicBool {
     <span class="doccomment">/// Creates an `AtomicBool` initialized to `false`.
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
@@ -3807,8 +3842,7 @@
 
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span>AtomicPtr&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>AtomicPtr&lt;T&gt; {
     <span class="doccomment">/// Creates a null `AtomicPtr&lt;T&gt;`.
     </span><span class="kw">fn </span>default() -&gt; AtomicPtr&lt;T&gt; {
         AtomicPtr::new(<span class="kw">crate</span>::ptr::null_mut())
@@ -4183,8 +4217,12 @@
     #[cfg(target_has_atomic = <span class="string">&quot;8&quot;</span>)]
     #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
     </span><span class="kw">pub fn </span>swap(<span class="kw-2">&amp;</span><span class="self">self</span>, val: bool, order: Ordering) -&gt; bool {
-        <span class="comment">// SAFETY: data races are prevented by atomic intrinsics.
-        </span><span class="kw">unsafe </span>{ atomic_swap(<span class="self">self</span>.v.get(), val <span class="kw">as </span>u8, order) != <span class="number">0 </span>}
+        <span class="kw">if </span>EMULATE_ATOMIC_BOOL {
+            <span class="kw">if </span>val { <span class="self">self</span>.fetch_or(<span class="bool-val">true</span>, order) } <span class="kw">else </span>{ <span class="self">self</span>.fetch_and(<span class="bool-val">false</span>, order) }
+        } <span class="kw">else </span>{
+            <span class="comment">// SAFETY: data races are prevented by atomic intrinsics.
+            </span><span class="kw">unsafe </span>{ atomic_swap(<span class="self">self</span>.v.get(), val <span class="kw">as </span>u8, order) != <span class="number">0 </span>}
+        }
     }
 
     <span class="doccomment">/// Stores a value into the [`bool`] if the current value is the same as the `current` value.
@@ -4294,12 +4332,39 @@
         success: Ordering,
         failure: Ordering,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;bool, bool&gt; {
-        <span class="comment">// SAFETY: data races are prevented by atomic intrinsics.
-        </span><span class="kw">match unsafe </span>{
-            atomic_compare_exchange(<span class="self">self</span>.v.get(), current <span class="kw">as </span>u8, new <span class="kw">as </span>u8, success, failure)
-        } {
-            <span class="prelude-val">Ok</span>(x) =&gt; <span class="prelude-val">Ok</span>(x != <span class="number">0</span>),
-            <span class="prelude-val">Err</span>(x) =&gt; <span class="prelude-val">Err</span>(x != <span class="number">0</span>),
+        <span class="kw">if </span>EMULATE_ATOMIC_BOOL {
+            <span class="comment">// Pick the strongest ordering from success and failure.
+            </span><span class="kw">let </span>order = <span class="kw">match </span>(success, failure) {
+                (SeqCst, <span class="kw">_</span>) =&gt; SeqCst,
+                (<span class="kw">_</span>, SeqCst) =&gt; SeqCst,
+                (AcqRel, <span class="kw">_</span>) =&gt; AcqRel,
+                (<span class="kw">_</span>, AcqRel) =&gt; {
+                    <span class="macro">panic!</span>(<span class="string">&quot;there is no such thing as an acquire-release failure ordering&quot;</span>)
+                }
+                (Release, Acquire) =&gt; AcqRel,
+                (Acquire, <span class="kw">_</span>) =&gt; Acquire,
+                (<span class="kw">_</span>, Acquire) =&gt; Acquire,
+                (Release, Relaxed) =&gt; Release,
+                (<span class="kw">_</span>, Release) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;there is no such thing as a release failure ordering&quot;</span>),
+                (Relaxed, Relaxed) =&gt; Relaxed,
+            };
+            <span class="kw">let </span>old = <span class="kw">if </span>current == new {
+                <span class="comment">// This is a no-op, but we still need to perform the operation
+                // for memory ordering reasons.
+                </span><span class="self">self</span>.fetch_or(<span class="bool-val">false</span>, order)
+            } <span class="kw">else </span>{
+                <span class="comment">// This sets the value to the new one and returns the old one.
+                </span><span class="self">self</span>.swap(new, order)
+            };
+            <span class="kw">if </span>old == current { <span class="prelude-val">Ok</span>(old) } <span class="kw">else </span>{ <span class="prelude-val">Err</span>(old) }
+        } <span class="kw">else </span>{
+            <span class="comment">// SAFETY: data races are prevented by atomic intrinsics.
+            </span><span class="kw">match unsafe </span>{
+                atomic_compare_exchange(<span class="self">self</span>.v.get(), current <span class="kw">as </span>u8, new <span class="kw">as </span>u8, success, failure)
+            } {
+                <span class="prelude-val">Ok</span>(x) =&gt; <span class="prelude-val">Ok</span>(x != <span class="number">0</span>),
+                <span class="prelude-val">Err</span>(x) =&gt; <span class="prelude-val">Err</span>(x != <span class="number">0</span>),
+            }
         }
     }
 
@@ -4349,6 +4414,10 @@
         success: Ordering,
         failure: Ordering,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;bool, bool&gt; {
+        <span class="kw">if </span>EMULATE_ATOMIC_BOOL {
+            <span class="kw">return </span><span class="self">self</span>.compare_exchange(current, new, success, failure);
+        }
+
         <span class="comment">// SAFETY: data races are prevented by atomic intrinsics.
         </span><span class="kw">match unsafe </span>{
             atomic_compare_exchange_weak(<span class="self">self</span>.v.get(), current <span class="kw">as </span>u8, new <span class="kw">as </span>u8, success, failure)
@@ -4600,8 +4669,8 @@
     /// # }
     /// ```
     </span><span class="attr">#[inline]
-    #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
-    #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+    #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
     </span><span class="kw">pub const fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>bool {
         <span class="self">self</span>.v.get().cast()
     }
@@ -5535,8 +5604,8 @@
     /// }
     /// ```
     </span><span class="attr">#[inline]
-    #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
-    #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+    #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
     </span><span class="kw">pub const fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut *mut </span>T {
         <span class="self">self</span>.p.get()
     }
@@ -5544,8 +5613,7 @@
 
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;8&quot;</span>)]
 #[stable(feature = <span class="string">&quot;atomic_bool_from&quot;</span>, since = <span class="string">&quot;1.24.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl const </span>From&lt;bool&gt; <span class="kw">for </span>AtomicBool {
+</span><span class="kw">impl </span>From&lt;bool&gt; <span class="kw">for </span>AtomicBool {
     <span class="doccomment">/// Converts a `bool` into an `AtomicBool`.
     ///
     /// # Examples
@@ -5563,8 +5631,7 @@
 
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
 #[stable(feature = <span class="string">&quot;atomic_from&quot;</span>, since = <span class="string">&quot;1.23.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>From&lt;<span class="kw-2">*mut </span>T&gt; <span class="kw">for </span>AtomicPtr&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; From&lt;<span class="kw-2">*mut </span>T&gt; <span class="kw">for </span>AtomicPtr&lt;T&gt; {
     <span class="doccomment">/// Converts a `*mut T` into an `AtomicPtr&lt;T&gt;`.
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>from(p: <span class="kw-2">*mut </span>T) -&gt; <span class="self">Self </span>{
@@ -5590,14 +5657,12 @@
      <span class="macro-nonterminal">$stable_from</span>:meta,
      <span class="macro-nonterminal">$stable_nand</span>:meta,
      <span class="macro-nonterminal">$const_stable</span>:meta,
-     <span class="macro-nonterminal">$stable_init_const</span>:meta,
      <span class="macro-nonterminal">$diagnostic_item</span>:meta,
      <span class="macro-nonterminal">$s_int_type</span>:literal,
      <span class="macro-nonterminal">$extra_feature</span>:expr,
      <span class="macro-nonterminal">$min_fn</span>:ident, <span class="macro-nonterminal">$max_fn</span>:ident,
      <span class="macro-nonterminal">$align</span>:expr,
-     <span class="macro-nonterminal">$atomic_new</span>:expr,
-     <span class="macro-nonterminal">$int_type</span>:ident <span class="macro-nonterminal">$atomic_type</span>:ident <span class="macro-nonterminal">$atomic_init</span>:ident) =&gt; {
+     <span class="macro-nonterminal">$int_type</span>:ident <span class="macro-nonterminal">$atomic_type</span>:ident) =&gt; {
         <span class="doccomment">/// An integer type which can be safely shared between threads.
         ///
         /// This type has the same in-memory representation as the underlying
@@ -5620,18 +5685,8 @@
             v: UnsafeCell&lt;<span class="macro-nonterminal">$int_type</span>&gt;,
         }
 
-        <span class="doccomment">/// An atomic integer initialized to `0`.
-        </span><span class="attr">#[<span class="macro-nonterminal">$stable_init_const</span>]
-        #[deprecated(
-            since = <span class="string">&quot;1.34.0&quot;</span>,
-            note = <span class="string">&quot;the `new` function is now preferred&quot;</span>,
-            suggestion = <span class="macro-nonterminal">$atomic_new</span>,
-        )]
-        </span><span class="kw">pub const </span><span class="macro-nonterminal">$atomic_init</span>: <span class="macro-nonterminal">$atomic_type </span>= <span class="macro-nonterminal">$atomic_type::new</span>(<span class="number">0</span>);
-
         <span class="attr">#[<span class="macro-nonterminal">$stable</span>]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-        </span><span class="kw">impl const </span>Default <span class="kw">for </span><span class="macro-nonterminal">$atomic_type </span>{
+        </span><span class="kw">impl </span>Default <span class="kw">for </span><span class="macro-nonterminal">$atomic_type </span>{
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
                 <span class="self">Self</span>::new(Default::default())
@@ -5639,8 +5694,7 @@
         }
 
         <span class="attr">#[<span class="macro-nonterminal">$stable_from</span>]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_num_from_num&quot;</span>, issue = <span class="string">&quot;87852&quot;</span>)]
-        </span><span class="kw">impl const </span>From&lt;<span class="macro-nonterminal">$int_type</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$atomic_type </span>{
+        </span><span class="kw">impl </span>From&lt;<span class="macro-nonterminal">$int_type</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$atomic_type </span>{
             <span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Converts an `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$int_type</span>), <span class="string">&quot;` into an `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$atomic_type</span>), <span class="string">&quot;`.&quot;</span>)]
             #[inline]
             </span><span class="kw">fn </span>from(v: <span class="macro-nonterminal">$int_type</span>) -&gt; <span class="self">Self </span>{ <span class="self">Self</span>::new(v) }
@@ -6488,8 +6542,8 @@
             /// # }
             /// ```
             </span><span class="attr">#[inline]
-            #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
-            #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+            #[stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+            #[rustc_const_stable(feature = <span class="string">&quot;atomic_as_ptr&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
             </span><span class="kw">pub const fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span><span class="macro-nonterminal">$int_type </span>{
                 <span class="self">self</span>.v.get()
             }
@@ -6508,14 +6562,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicI8&quot;</span>),
     <span class="string">&quot;i8&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_min, atomic_max,
     <span class="number">1</span>,
-    <span class="string">&quot;AtomicI8::new(0)&quot;</span>,
-    i8 AtomicI8 ATOMIC_I8_INIT
+    i8 AtomicI8
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;8&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6528,14 +6580,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicU8&quot;</span>),
     <span class="string">&quot;u8&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_umin, atomic_umax,
     <span class="number">1</span>,
-    <span class="string">&quot;AtomicU8::new(0)&quot;</span>,
-    u8 AtomicU8 ATOMIC_U8_INIT
+    u8 AtomicU8
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;16&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6548,14 +6598,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicI16&quot;</span>),
     <span class="string">&quot;i16&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_min, atomic_max,
     <span class="number">2</span>,
-    <span class="string">&quot;AtomicI16::new(0)&quot;</span>,
-    i16 AtomicI16 ATOMIC_I16_INIT
+    i16 AtomicI16
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;16&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6568,14 +6616,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicU16&quot;</span>),
     <span class="string">&quot;u16&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_umin, atomic_umax,
     <span class="number">2</span>,
-    <span class="string">&quot;AtomicU16::new(0)&quot;</span>,
-    u16 AtomicU16 ATOMIC_U16_INIT
+    u16 AtomicU16
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;32&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6588,14 +6634,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicI32&quot;</span>),
     <span class="string">&quot;i32&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_min, atomic_max,
     <span class="number">4</span>,
-    <span class="string">&quot;AtomicI32::new(0)&quot;</span>,
-    i32 AtomicI32 ATOMIC_I32_INIT
+    i32 AtomicI32
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;32&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6608,14 +6652,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicU32&quot;</span>),
     <span class="string">&quot;u32&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_umin, atomic_umax,
     <span class="number">4</span>,
-    <span class="string">&quot;AtomicU32::new(0)&quot;</span>,
-    u32 AtomicU32 ATOMIC_U32_INIT
+    u32 AtomicU32
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;64&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6628,14 +6670,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicI64&quot;</span>),
     <span class="string">&quot;i64&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_min, atomic_max,
     <span class="number">8</span>,
-    <span class="string">&quot;AtomicI64::new(0)&quot;</span>,
-    i64 AtomicI64 ATOMIC_I64_INIT
+    i64 AtomicI64
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;64&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6648,14 +6688,12 @@
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     stable(feature = <span class="string">&quot;integer_atomics_stable&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicU64&quot;</span>),
     <span class="string">&quot;u64&quot;</span>,
     <span class="string">&quot;&quot;</span>,
     atomic_umin, atomic_umax,
     <span class="number">8</span>,
-    <span class="string">&quot;AtomicU64::new(0)&quot;</span>,
-    u64 AtomicU64 ATOMIC_U64_INIT
+    u64 AtomicU64
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;128&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6668,14 +6706,12 @@
     unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicI128&quot;</span>),
     <span class="string">&quot;i128&quot;</span>,
     <span class="string">&quot;#![feature(integer_atomics)]\n\n&quot;</span>,
     atomic_min, atomic_max,
     <span class="number">16</span>,
-    <span class="string">&quot;AtomicI128::new(0)&quot;</span>,
-    i128 AtomicI128 ATOMIC_I128_INIT
+    i128 AtomicI128
 }
 <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;128&quot;</span>)]
 </span><span class="macro">atomic_int! </span>{
@@ -6688,20 +6724,18 @@
     unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     rustc_const_stable(feature = <span class="string">&quot;const_integer_atomics&quot;</span>, since = <span class="string">&quot;1.34.0&quot;</span>),
-    unstable(feature = <span class="string">&quot;integer_atomics&quot;</span>, issue = <span class="string">&quot;99069&quot;</span>),
     cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicU128&quot;</span>),
     <span class="string">&quot;u128&quot;</span>,
     <span class="string">&quot;#![feature(integer_atomics)]\n\n&quot;</span>,
     atomic_umin, atomic_umax,
     <span class="number">16</span>,
-    <span class="string">&quot;AtomicU128::new(0)&quot;</span>,
-    u128 AtomicU128 ATOMIC_U128_INIT
+    u128 AtomicU128
 }
 
-<span class="macro">macro_rules! </span>atomic_int_ptr_sized {
+<span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
+</span><span class="macro">macro_rules! </span>atomic_int_ptr_sized {
     ( $(<span class="macro-nonterminal">$target_pointer_width</span>:literal <span class="macro-nonterminal">$align</span>:literal)* ) =&gt; { $(
-        <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
-        #[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
+        <span class="attr">#[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
         </span><span class="macro">atomic_int! </span>{
             cfg(target_has_atomic = <span class="string">&quot;ptr&quot;</span>),
             cfg(target_has_atomic_equal_alignment = <span class="string">&quot;ptr&quot;</span>),
@@ -6712,17 +6746,14 @@
             stable(feature = <span class="string">&quot;atomic_from&quot;</span>, since = <span class="string">&quot;1.23.0&quot;</span>),
             stable(feature = <span class="string">&quot;atomic_nand&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>),
             rustc_const_stable(feature = <span class="string">&quot;const_ptr_sized_atomics&quot;</span>, since = <span class="string">&quot;1.24.0&quot;</span>),
-            stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>),
             cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicIsize&quot;</span>),
             <span class="string">&quot;isize&quot;</span>,
             <span class="string">&quot;&quot;</span>,
             atomic_min, atomic_max,
             <span class="macro-nonterminal">$align</span>,
-            <span class="string">&quot;AtomicIsize::new(0)&quot;</span>,
-            isize AtomicIsize ATOMIC_ISIZE_INIT
+            isize AtomicIsize
         }
-        <span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
-        #[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
+        <span class="attr">#[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
         </span><span class="macro">atomic_int! </span>{
             cfg(target_has_atomic = <span class="string">&quot;ptr&quot;</span>),
             cfg(target_has_atomic_equal_alignment = <span class="string">&quot;ptr&quot;</span>),
@@ -6733,19 +6764,38 @@
             stable(feature = <span class="string">&quot;atomic_from&quot;</span>, since = <span class="string">&quot;1.23.0&quot;</span>),
             stable(feature = <span class="string">&quot;atomic_nand&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>),
             rustc_const_stable(feature = <span class="string">&quot;const_ptr_sized_atomics&quot;</span>, since = <span class="string">&quot;1.24.0&quot;</span>),
-            stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>),
             cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;AtomicUsize&quot;</span>),
             <span class="string">&quot;usize&quot;</span>,
             <span class="string">&quot;&quot;</span>,
             atomic_umin, atomic_umax,
             <span class="macro-nonterminal">$align</span>,
-            <span class="string">&quot;AtomicUsize::new(0)&quot;</span>,
-            usize AtomicUsize ATOMIC_USIZE_INIT
+            usize AtomicUsize
         }
+
+        <span class="doccomment">/// An [`AtomicIsize`] initialized to `0`.
+        </span><span class="attr">#[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
+        #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+        #[deprecated(
+            since = <span class="string">&quot;1.34.0&quot;</span>,
+            note = <span class="string">&quot;the `new` function is now preferred&quot;</span>,
+            suggestion = <span class="string">&quot;AtomicIsize::new(0)&quot;</span>,
+        )]
+        </span><span class="kw">pub const </span>ATOMIC_ISIZE_INIT: AtomicIsize = AtomicIsize::new(<span class="number">0</span>);
+
+        <span class="doccomment">/// An [`AtomicUsize`] initialized to `0`.
+        </span><span class="attr">#[cfg(target_pointer_width = <span class="macro-nonterminal">$target_pointer_width</span>)]
+        #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+        #[deprecated(
+            since = <span class="string">&quot;1.34.0&quot;</span>,
+            note = <span class="string">&quot;the `new` function is now preferred&quot;</span>,
+            suggestion = <span class="string">&quot;AtomicUsize::new(0)&quot;</span>,
+        )]
+        </span><span class="kw">pub const </span>ATOMIC_USIZE_INIT: AtomicUsize = AtomicUsize::new(<span class="number">0</span>);
     )* };
 }
 
-<span class="macro">atomic_int_ptr_sized! </span>{
+<span class="attr">#[cfg(target_has_atomic_load_store = <span class="string">&quot;ptr&quot;</span>)]
+</span><span class="macro">atomic_int_ptr_sized! </span>{
     <span class="string">&quot;16&quot; </span><span class="number">2
     </span><span class="string">&quot;32&quot; </span><span class="number">4
     </span><span class="string">&quot;64&quot; </span><span class="number">8
@@ -7254,5 +7304,4 @@
 </span><span class="kw">pub fn </span>spin_loop_hint() {
     spin_loop()
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sys/common/thread_local/fast_local.rs`."><title>fast_local.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../source-files1.70.0.js"></script><script defer src="../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../std/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sys/common/thread_local/fast_local.rs`."><title>fast_local.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files1.73.0.js"></script><script defer src="../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../std/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -241,53 +241,21 @@
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-</pre><pre class="rust"><code><span class="attr">#[doc(hidden)]
-#[macro_export]
-#[allow_internal_unstable(
-    thread_local_internals,
-    cfg_target_thread_local,
-    thread_local,
-    libstd_thread_internals
-)]
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::lazy::LazyKeyInner;
+<span class="kw">use </span><span class="kw">crate</span>::cell::Cell;
+<span class="kw">use </span><span class="kw">crate</span>::sys::thread_local_dtor::register_dtor;
+<span class="kw">use crate</span>::{fmt, mem, panic};
+
+<span class="attr">#[doc(hidden)]
+#[allow_internal_unstable(thread_local_internals, cfg_target_thread_local, thread_local)]
 #[allow_internal_unsafe]
-</span><span class="macro">macro_rules! </span>__thread_local_inner {
+#[unstable(feature = <span class="string">&quot;thread_local_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+#[rustc_macro_transparency = <span class="string">&quot;semitransparent&quot;</span>]
+</span><span class="kw">pub macro </span>thread_local_inner {
     <span class="comment">// used to generate the `LocalKey` value for const-initialized thread locals
     </span>(@key <span class="macro-nonterminal">$t</span>:ty, <span class="kw">const </span><span class="macro-nonterminal">$init</span>:expr) =&gt; {{
-        <span class="attr">#[cfg_attr(not(windows), inline)] </span><span class="comment">// see comments below
-        </span><span class="attr">#[deny(unsafe_op_in_unsafe_fn)]
+        <span class="attr">#[inline]
+        #[deny(unsafe_op_in_unsafe_fn)]
         </span><span class="kw">unsafe fn </span>__getit(
             _init: <span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="macro-nonterminal">$t</span>&gt;&gt;,
         ) -&gt; <span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="macro-nonterminal">$t</span>&gt; {
@@ -308,28 +276,29 @@
             // 1 == dtor registered, dtor not run
             // 2 == dtor registered and is running or has run
             </span><span class="attr">#[thread_local]
-            </span><span class="kw">static </span><span class="kw-2">mut </span>STATE: <span class="macro-nonterminal">$crate::primitive::u8 </span>= <span class="number">0</span>;
+            </span><span class="kw">static </span>STATE: <span class="macro-nonterminal">$crate::cell::Cell</span>&lt;<span class="macro-nonterminal">$crate::primitive::u8</span>&gt; = <span class="macro-nonterminal">$crate::cell::Cell::new</span>(<span class="number">0</span>);
 
-            <span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>destroy(ptr: <span class="kw-2">*mut </span><span class="macro-nonterminal">$crate::primitive::u8</span>) {
-                <span class="kw">let </span>ptr = ptr <span class="kw">as </span><span class="kw-2">*mut </span><span class="macro-nonterminal">$t</span>;
-
-                <span class="kw">unsafe </span>{
-                    <span class="macro-nonterminal">$</span><span class="macro">crate::debug_assert_eq!</span>(<span class="macro-nonterminal">STATE</span>, <span class="number">1</span>);
-                    STATE = <span class="number">2</span>;
-                    <span class="macro-nonterminal">$crate::ptr::drop_in_place</span>(ptr);
-                }
+            <span class="comment">// Safety: Performs `drop_in_place(ptr as *mut $t)`, and requires
+            // all that comes with it.
+            </span><span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>destroy(ptr: <span class="kw-2">*mut </span><span class="macro-nonterminal">$crate::primitive::u8</span>) {
+                <span class="macro-nonterminal">$crate::thread::local_impl::abort_on_dtor_unwind</span>(|| {
+                    <span class="kw">let </span>old_state = STATE.replace(<span class="number">2</span>);
+                    <span class="macro-nonterminal">$</span><span class="macro">crate::debug_assert_eq!</span>(<span class="macro-nonterminal">old_state</span>, <span class="number">1</span>);
+                    <span class="comment">// Safety: safety requirement is passed on to caller.
+                    </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$crate::ptr::drop_in_place</span>(ptr.cast::&lt;<span class="macro-nonterminal">$t</span>&gt;()); }
+                });
             }
 
             <span class="kw">unsafe </span>{
-                <span class="kw">match </span>STATE {
+                <span class="kw">match </span>STATE.get() {
                     <span class="comment">// 0 == we haven&#39;t registered a destructor, so do
                     //   so now.
                     </span><span class="number">0 </span>=&gt; {
-                        <span class="macro-nonterminal">$crate::thread::__LocalKeyInner</span>::&lt;<span class="macro-nonterminal">$t</span>&gt;::register_dtor(
+                        <span class="macro-nonterminal">$crate::thread::local_impl::Key</span>::&lt;<span class="macro-nonterminal">$t</span>&gt;::register_dtor(
                             <span class="macro-nonterminal">$</span><span class="macro">crate::ptr::addr_of_mut!</span>(<span class="macro-nonterminal">VAL</span>) <span class="kw">as </span><span class="kw-2">*mut </span><span class="macro-nonterminal">$crate::primitive::u8</span>,
                             destroy,
                         );
-                        STATE = <span class="number">1</span>;
+                        STATE.set(<span class="number">1</span>);
                         <span class="macro-nonterminal">$crate::option::Option::Some</span>(<span class="kw-2">&amp;</span>VAL)
                     }
                     <span class="comment">// 1 == the destructor is registered and the value
@@ -345,7 +314,7 @@
         <span class="kw">unsafe </span>{
             <span class="macro-nonterminal">$crate::thread::LocalKey::new</span>(__getit)
         }
-    }};
+    }},
 
     <span class="comment">// used to generate the `LocalKey` value for `thread_local!`
     </span>(@key <span class="macro-nonterminal">$t</span>:ty, <span class="macro-nonterminal">$init</span>:expr) =&gt; {
@@ -353,41 +322,15 @@
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>__init() -&gt; <span class="macro-nonterminal">$t </span>{ <span class="macro-nonterminal">$init </span>}
 
-            <span class="comment">// When reading this function you might ask &quot;why is this inlined
-            // everywhere other than Windows?&quot;, and that&#39;s a very reasonable
-            // question to ask. The short story is that it segfaults rustc if
-            // this function is inlined. The longer story is that Windows looks
-            // to not support `extern` references to thread locals across DLL
-            // boundaries. This appears to at least not be supported in the ABI
-            // that LLVM implements.
-            //
-            // Because of this we never inline on Windows, but we do inline on
-            // other platforms (where external references to thread locals
-            // across DLLs are supported). A better fix for this would be to
-            // inline this function on Windows, but only for &quot;statically linked&quot;
-            // components. For example if two separately compiled rlibs end up
-            // getting linked into a DLL then it&#39;s fine to inline this function
-            // across that boundary. It&#39;s only not fine to inline this function
-            // across a DLL boundary. Unfortunately rustc doesn&#39;t currently
-            // have this sort of logic available in an attribute, and it&#39;s not
-            // clear that rustc is even equipped to answer this (it&#39;s more of a
-            // Cargo question kinda). This means that, unfortunately, Windows
-            // gets the pessimistic path for now where it&#39;s never inlined.
-            //
-            // The issue of &quot;should enable on Windows sometimes&quot; is #84933
-            </span><span class="attr">#[cfg_attr(not(windows), inline)]
+            <span class="attr">#[inline]
             </span><span class="kw">unsafe fn </span>__getit(
                 init: <span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="macro-nonterminal">$t</span>&gt;&gt;,
             ) -&gt; <span class="macro-nonterminal">$crate::option::Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="macro-nonterminal">$t</span>&gt; {
                 <span class="attr">#[thread_local]
-                </span><span class="kw">static </span>__KEY: <span class="macro-nonterminal">$crate::thread::__LocalKeyInner</span>&lt;<span class="macro-nonterminal">$t</span>&gt; =
-                    <span class="macro-nonterminal">$crate::thread::__LocalKeyInner</span>::&lt;<span class="macro-nonterminal">$t</span>&gt;::new();
+                </span><span class="kw">static </span>__KEY: <span class="macro-nonterminal">$crate::thread::local_impl::Key</span>&lt;<span class="macro-nonterminal">$t</span>&gt; =
+                    <span class="macro-nonterminal">$crate::thread::local_impl::Key</span>::&lt;<span class="macro-nonterminal">$t</span>&gt;::new();
 
-                <span class="comment">// FIXME: remove the #[allow(...)] marker when macros don&#39;t
-                // raise warning for missing/extraneous unsafe blocks anymore.
-                // See https://github.com/rust-lang/rust/issues/74838.
-                </span><span class="attr">#[allow(unused_unsafe)]
-                </span><span class="kw">unsafe </span>{
+                <span class="kw">unsafe </span>{
                     __KEY.get(<span class="kw">move </span>|| {
                         <span class="kw">if let </span><span class="macro-nonterminal">$crate::option::Option::Some</span>(init) = init {
                             <span class="kw">if let </span><span class="macro-nonterminal">$crate::option::Option::Some</span>(value) = init.take() {
@@ -405,150 +348,140 @@
                 <span class="macro-nonterminal">$crate::thread::LocalKey::new</span>(__getit)
             }
         }
-    };
+    },
     ($(<span class="attr">#[<span class="macro-nonterminal">$attr</span>:meta]</span>)* <span class="macro-nonterminal">$vis</span>:vis <span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$t</span>:ty, $(<span class="macro-nonterminal">$init</span>:tt)<span class="kw-2">*</span>) =&gt; {
         $(<span class="attr">#[<span class="macro-nonterminal">$attr</span>]</span>)* <span class="macro-nonterminal">$vis </span><span class="kw">const </span><span class="macro-nonterminal">$name</span>: <span class="macro-nonterminal">$crate::thread::LocalKey</span>&lt;<span class="macro-nonterminal">$t</span>&gt; =
-            <span class="macro-nonterminal">$</span><span class="macro">crate::__thread_local_inner!</span>(@<span class="macro-nonterminal">key $t</span>, $(<span class="macro-nonterminal">$init</span>)<span class="kw-2">*</span>);
-    }
+            <span class="macro-nonterminal">$</span><span class="macro">crate::thread::local_impl::thread_local_inner!</span>(@<span class="macro-nonterminal">key $t</span>, $(<span class="macro-nonterminal">$init</span>)<span class="kw-2">*</span>);
+    },
 }
 
-<span class="attr">#[doc(hidden)]
-</span><span class="kw">pub mod </span>fast {
-    <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::lazy::LazyKeyInner;
-    <span class="kw">use </span><span class="kw">crate</span>::cell::Cell;
-    <span class="kw">use </span><span class="kw">crate</span>::sys::thread_local_dtor::register_dtor;
-    <span class="kw">use crate</span>::{fmt, mem, panic};
+<span class="attr">#[derive(Copy, Clone)]
+</span><span class="kw">enum </span>DtorState {
+    Unregistered,
+    Registered,
+    RunningOrHasRun,
+}
 
-    <span class="attr">#[derive(Copy, Clone)]
-    </span><span class="kw">enum </span>DtorState {
-        Unregistered,
-        Registered,
-        RunningOrHasRun,
-    }
-
-    <span class="comment">// This data structure has been carefully constructed so that the fast path
-    // only contains one branch on x86. That optimization is necessary to avoid
-    // duplicated tls lookups on OSX.
+<span class="comment">// This data structure has been carefully constructed so that the fast path
+// only contains one branch on x86. That optimization is necessary to avoid
+// duplicated tls lookups on OSX.
+//
+// LLVM issue: https://bugs.llvm.org/show_bug.cgi?id=41722
+</span><span class="kw">pub struct </span>Key&lt;T&gt; {
+    <span class="comment">// If `LazyKeyInner::get` returns `None`, that indicates either:
+    //   * The value has never been initialized
+    //   * The value is being recursively initialized
+    //   * The value has already been destroyed or is being destroyed
+    // To determine which kind of `None`, check `dtor_state`.
     //
+    // This is very optimizer friendly for the fast path - initialized but
+    // not yet dropped.
+    </span>inner: LazyKeyInner&lt;T&gt;,
+
+    <span class="comment">// Metadata to keep track of the state of the destructor. Remember that
+    // this variable is thread-local, not global.
+    </span>dtor_state: Cell&lt;DtorState&gt;,
+}
+
+<span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Key&lt;T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+        f.debug_struct(<span class="string">&quot;Key&quot;</span>).finish_non_exhaustive()
+    }
+}
+<span class="kw">impl</span>&lt;T&gt; Key&lt;T&gt; {
+    <span class="kw">pub const fn </span>new() -&gt; Key&lt;T&gt; {
+        Key { inner: LazyKeyInner::new(), dtor_state: Cell::new(DtorState::Unregistered) }
+    }
+
+    <span class="comment">// note that this is just a publicly-callable function only for the
+    // const-initialized form of thread locals, basically a way to call the
+    // free `register_dtor` function defined elsewhere in std.
+    </span><span class="kw">pub unsafe fn </span>register_dtor(a: <span class="kw-2">*mut </span>u8, dtor: <span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>u8)) {
+        <span class="kw">unsafe </span>{
+            register_dtor(a, dtor);
+        }
+    }
+
+    <span class="kw">pub unsafe fn </span>get&lt;F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, init: F) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>T&gt; {
+        <span class="comment">// SAFETY: See the definitions of `LazyKeyInner::get` and
+        // `try_initialize` for more information.
+        //
+        // The caller must ensure no mutable references are ever active to
+        // the inner cell or the inner T when this is called.
+        // The `try_initialize` is dependant on the passed `init` function
+        // for this.
+        </span><span class="kw">unsafe </span>{
+            <span class="kw">match </span><span class="self">self</span>.inner.get() {
+                <span class="prelude-val">Some</span>(val) =&gt; <span class="prelude-val">Some</span>(val),
+                <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.try_initialize(init),
+            }
+        }
+    }
+
+    <span class="comment">// `try_initialize` is only called once per fast thread local variable,
+    // except in corner cases where thread_local dtors reference other
+    // thread_local&#39;s, or it is being recursively initialized.
+    //
+    // Macos: Inlining this function can cause two `tlv_get_addr` calls to
+    // be performed for every call to `Key::get`.
     // LLVM issue: https://bugs.llvm.org/show_bug.cgi?id=41722
-    </span><span class="kw">pub struct </span>Key&lt;T&gt; {
-        <span class="comment">// If `LazyKeyInner::get` returns `None`, that indicates either:
-        //   * The value has never been initialized
-        //   * The value is being recursively initialized
-        //   * The value has already been destroyed or is being destroyed
-        // To determine which kind of `None`, check `dtor_state`.
-        //
-        // This is very optimizer friendly for the fast path - initialized but
-        // not yet dropped.
-        </span>inner: LazyKeyInner&lt;T&gt;,
-
-        <span class="comment">// Metadata to keep track of the state of the destructor. Remember that
-        // this variable is thread-local, not global.
-        </span>dtor_state: Cell&lt;DtorState&gt;,
-    }
-
-    <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Key&lt;T&gt; {
-        <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-            f.debug_struct(<span class="string">&quot;Key&quot;</span>).finish_non_exhaustive()
-        }
-    }
-
-    <span class="kw">impl</span>&lt;T&gt; Key&lt;T&gt; {
-        <span class="kw">pub const fn </span>new() -&gt; Key&lt;T&gt; {
-            Key { inner: LazyKeyInner::new(), dtor_state: Cell::new(DtorState::Unregistered) }
-        }
-
-        <span class="comment">// note that this is just a publicly-callable function only for the
-        // const-initialized form of thread locals, basically a way to call the
-        // free `register_dtor` function defined elsewhere in std.
-        </span><span class="kw">pub unsafe fn </span>register_dtor(a: <span class="kw-2">*mut </span>u8, dtor: <span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>u8)) {
-            <span class="kw">unsafe </span>{
-                register_dtor(a, dtor);
-            }
-        }
-
-        <span class="kw">pub unsafe fn </span>get&lt;F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, init: F) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>T&gt; {
-            <span class="comment">// SAFETY: See the definitions of `LazyKeyInner::get` and
-            // `try_initialize` for more information.
-            //
-            // The caller must ensure no mutable references are ever active to
-            // the inner cell or the inner T when this is called.
-            // The `try_initialize` is dependant on the passed `init` function
-            // for this.
-            </span><span class="kw">unsafe </span>{
-                <span class="kw">match </span><span class="self">self</span>.inner.get() {
-                    <span class="prelude-val">Some</span>(val) =&gt; <span class="prelude-val">Some</span>(val),
-                    <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.try_initialize(init),
-                }
-            }
-        }
-
-        <span class="comment">// `try_initialize` is only called once per fast thread local variable,
-        // except in corner cases where thread_local dtors reference other
-        // thread_local&#39;s, or it is being recursively initialized.
-        //
-        // Macos: Inlining this function can cause two `tlv_get_addr` calls to
-        // be performed for every call to `Key::get`.
-        // LLVM issue: https://bugs.llvm.org/show_bug.cgi?id=41722
-        </span><span class="attr">#[inline(never)]
-        </span><span class="kw">unsafe fn </span>try_initialize&lt;F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, init: F) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>T&gt; {
+    </span><span class="attr">#[inline(never)]
+    </span><span class="kw">unsafe fn </span>try_initialize&lt;F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, init: F) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>T&gt; {
+        <span class="comment">// SAFETY: See comment above (this function doc).
+        </span><span class="kw">if </span>!mem::needs_drop::&lt;T&gt;() || <span class="kw">unsafe </span>{ <span class="self">self</span>.try_register_dtor() } {
             <span class="comment">// SAFETY: See comment above (this function doc).
-            </span><span class="kw">if </span>!mem::needs_drop::&lt;T&gt;() || <span class="kw">unsafe </span>{ <span class="self">self</span>.try_register_dtor() } {
-                <span class="comment">// SAFETY: See comment above (this function doc).
-                </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.inner.initialize(init) })
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="comment">// `try_register_dtor` is only called once per fast thread local
-        // variable, except in corner cases where thread_local dtors reference
-        // other thread_local&#39;s, or it is being recursively initialized.
-        </span><span class="kw">unsafe fn </span>try_register_dtor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-            <span class="kw">match </span><span class="self">self</span>.dtor_state.get() {
-                DtorState::Unregistered =&gt; {
-                    <span class="comment">// SAFETY: dtor registration happens before initialization.
-                    // Passing `self` as a pointer while using `destroy_value&lt;T&gt;`
-                    // is safe because the function will build a pointer to a
-                    // Key&lt;T&gt;, which is the type of self and so find the correct
-                    // size.
-                    </span><span class="kw">unsafe </span>{ register_dtor(<span class="self">self </span><span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*mut </span>u8, destroy_value::&lt;T&gt;) };
-                    <span class="self">self</span>.dtor_state.set(DtorState::Registered);
-                    <span class="bool-val">true
-                </span>}
-                DtorState::Registered =&gt; {
-                    <span class="comment">// recursively initialized
-                    </span><span class="bool-val">true
-                </span>}
-                DtorState::RunningOrHasRun =&gt; <span class="bool-val">false</span>,
-            }
-        }
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.inner.initialize(init) })
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
     }
 
-    <span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>destroy_value&lt;T&gt;(ptr: <span class="kw-2">*mut </span>u8) {
-        <span class="kw">let </span>ptr = ptr <span class="kw">as </span><span class="kw-2">*mut </span>Key&lt;T&gt;;
-
-        <span class="comment">// SAFETY:
-        //
-        // The pointer `ptr` has been built just above and comes from
-        // `try_register_dtor` where it is originally a Key&lt;T&gt; coming from `self`,
-        // making it non-NUL and of the correct type.
-        //
-        // Right before we run the user destructor be sure to set the
-        // `Option&lt;T&gt;` to `None`, and `dtor_state` to `RunningOrHasRun`. This
-        // causes future calls to `get` to run `try_initialize_drop` again,
-        // which will now fail, and return `None`.
-        //
-        // Wrap the call in a catch to ensure unwinding is caught in the event
-        // a panic takes place in a destructor.
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(<span class="kw">_</span>) = panic::catch_unwind(panic::AssertUnwindSafe(|| <span class="kw">unsafe </span>{
-            <span class="kw">let </span>value = (<span class="kw-2">*</span>ptr).inner.take();
-            (<span class="kw-2">*</span>ptr).dtor_state.set(DtorState::RunningOrHasRun);
-            drop(value);
-        })) {
-            <span class="macro">rtabort!</span>(<span class="string">&quot;thread local panicked on drop&quot;</span>);
+    <span class="comment">// `try_register_dtor` is only called once per fast thread local
+    // variable, except in corner cases where thread_local dtors reference
+    // other thread_local&#39;s, or it is being recursively initialized.
+    </span><span class="kw">unsafe fn </span>try_register_dtor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.dtor_state.get() {
+            DtorState::Unregistered =&gt; {
+                <span class="comment">// SAFETY: dtor registration happens before initialization.
+                // Passing `self` as a pointer while using `destroy_value&lt;T&gt;`
+                // is safe because the function will build a pointer to a
+                // Key&lt;T&gt;, which is the type of self and so find the correct
+                // size.
+                </span><span class="kw">unsafe </span>{ register_dtor(<span class="self">self </span><span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*mut </span>u8, destroy_value::&lt;T&gt;) };
+                <span class="self">self</span>.dtor_state.set(DtorState::Registered);
+                <span class="bool-val">true
+            </span>}
+            DtorState::Registered =&gt; {
+                <span class="comment">// recursively initialized
+                </span><span class="bool-val">true
+            </span>}
+            DtorState::RunningOrHasRun =&gt; <span class="bool-val">false</span>,
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+
+<span class="kw">unsafe extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>destroy_value&lt;T&gt;(ptr: <span class="kw-2">*mut </span>u8) {
+    <span class="kw">let </span>ptr = ptr <span class="kw">as </span><span class="kw-2">*mut </span>Key&lt;T&gt;;
+
+    <span class="comment">// SAFETY:
+    //
+    // The pointer `ptr` has been built just above and comes from
+    // `try_register_dtor` where it is originally a Key&lt;T&gt; coming from `self`,
+    // making it non-NUL and of the correct type.
+    //
+    // Right before we run the user destructor be sure to set the
+    // `Option&lt;T&gt;` to `None`, and `dtor_state` to `RunningOrHasRun`. This
+    // causes future calls to `get` to run `try_initialize_drop` again,
+    // which will now fail, and return `None`.
+    //
+    // Wrap the call in a catch to ensure unwinding is caught in the event
+    // a panic takes place in a destructor.
+    </span><span class="kw">if let </span><span class="prelude-val">Err</span>(<span class="kw">_</span>) = panic::catch_unwind(panic::AssertUnwindSafe(|| <span class="kw">unsafe </span>{
+        <span class="kw">let </span>value = (<span class="kw-2">*</span>ptr).inner.take();
+        (<span class="kw-2">*</span>ptr).dtor_state.set(DtorState::RunningOrHasRun);
+        drop(value);
+    })) {
+        <span class="macro">rtabort!</span>(<span class="string">&quot;thread local panicked on drop&quot;</span>);
+    }
+}
+</code></pre></div></section></main></body></html>

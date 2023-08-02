@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/fmt/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/fmt/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2561,165 +2561,7 @@
 <a href="#2561" id="2561">2561</a>
 <a href="#2562" id="2562">2562</a>
 <a href="#2563" id="2563">2563</a>
-<a href="#2564" id="2564">2564</a>
-<a href="#2565" id="2565">2565</a>
-<a href="#2566" id="2566">2566</a>
-<a href="#2567" id="2567">2567</a>
-<a href="#2568" id="2568">2568</a>
-<a href="#2569" id="2569">2569</a>
-<a href="#2570" id="2570">2570</a>
-<a href="#2571" id="2571">2571</a>
-<a href="#2572" id="2572">2572</a>
-<a href="#2573" id="2573">2573</a>
-<a href="#2574" id="2574">2574</a>
-<a href="#2575" id="2575">2575</a>
-<a href="#2576" id="2576">2576</a>
-<a href="#2577" id="2577">2577</a>
-<a href="#2578" id="2578">2578</a>
-<a href="#2579" id="2579">2579</a>
-<a href="#2580" id="2580">2580</a>
-<a href="#2581" id="2581">2581</a>
-<a href="#2582" id="2582">2582</a>
-<a href="#2583" id="2583">2583</a>
-<a href="#2584" id="2584">2584</a>
-<a href="#2585" id="2585">2585</a>
-<a href="#2586" id="2586">2586</a>
-<a href="#2587" id="2587">2587</a>
-<a href="#2588" id="2588">2588</a>
-<a href="#2589" id="2589">2589</a>
-<a href="#2590" id="2590">2590</a>
-<a href="#2591" id="2591">2591</a>
-<a href="#2592" id="2592">2592</a>
-<a href="#2593" id="2593">2593</a>
-<a href="#2594" id="2594">2594</a>
-<a href="#2595" id="2595">2595</a>
-<a href="#2596" id="2596">2596</a>
-<a href="#2597" id="2597">2597</a>
-<a href="#2598" id="2598">2598</a>
-<a href="#2599" id="2599">2599</a>
-<a href="#2600" id="2600">2600</a>
-<a href="#2601" id="2601">2601</a>
-<a href="#2602" id="2602">2602</a>
-<a href="#2603" id="2603">2603</a>
-<a href="#2604" id="2604">2604</a>
-<a href="#2605" id="2605">2605</a>
-<a href="#2606" id="2606">2606</a>
-<a href="#2607" id="2607">2607</a>
-<a href="#2608" id="2608">2608</a>
-<a href="#2609" id="2609">2609</a>
-<a href="#2610" id="2610">2610</a>
-<a href="#2611" id="2611">2611</a>
-<a href="#2612" id="2612">2612</a>
-<a href="#2613" id="2613">2613</a>
-<a href="#2614" id="2614">2614</a>
-<a href="#2615" id="2615">2615</a>
-<a href="#2616" id="2616">2616</a>
-<a href="#2617" id="2617">2617</a>
-<a href="#2618" id="2618">2618</a>
-<a href="#2619" id="2619">2619</a>
-<a href="#2620" id="2620">2620</a>
-<a href="#2621" id="2621">2621</a>
-<a href="#2622" id="2622">2622</a>
-<a href="#2623" id="2623">2623</a>
-<a href="#2624" id="2624">2624</a>
-<a href="#2625" id="2625">2625</a>
-<a href="#2626" id="2626">2626</a>
-<a href="#2627" id="2627">2627</a>
-<a href="#2628" id="2628">2628</a>
-<a href="#2629" id="2629">2629</a>
-<a href="#2630" id="2630">2630</a>
-<a href="#2631" id="2631">2631</a>
-<a href="#2632" id="2632">2632</a>
-<a href="#2633" id="2633">2633</a>
-<a href="#2634" id="2634">2634</a>
-<a href="#2635" id="2635">2635</a>
-<a href="#2636" id="2636">2636</a>
-<a href="#2637" id="2637">2637</a>
-<a href="#2638" id="2638">2638</a>
-<a href="#2639" id="2639">2639</a>
-<a href="#2640" id="2640">2640</a>
-<a href="#2641" id="2641">2641</a>
-<a href="#2642" id="2642">2642</a>
-<a href="#2643" id="2643">2643</a>
-<a href="#2644" id="2644">2644</a>
-<a href="#2645" id="2645">2645</a>
-<a href="#2646" id="2646">2646</a>
-<a href="#2647" id="2647">2647</a>
-<a href="#2648" id="2648">2648</a>
-<a href="#2649" id="2649">2649</a>
-<a href="#2650" id="2650">2650</a>
-<a href="#2651" id="2651">2651</a>
-<a href="#2652" id="2652">2652</a>
-<a href="#2653" id="2653">2653</a>
-<a href="#2654" id="2654">2654</a>
-<a href="#2655" id="2655">2655</a>
-<a href="#2656" id="2656">2656</a>
-<a href="#2657" id="2657">2657</a>
-<a href="#2658" id="2658">2658</a>
-<a href="#2659" id="2659">2659</a>
-<a href="#2660" id="2660">2660</a>
-<a href="#2661" id="2661">2661</a>
-<a href="#2662" id="2662">2662</a>
-<a href="#2663" id="2663">2663</a>
-<a href="#2664" id="2664">2664</a>
-<a href="#2665" id="2665">2665</a>
-<a href="#2666" id="2666">2666</a>
-<a href="#2667" id="2667">2667</a>
-<a href="#2668" id="2668">2668</a>
-<a href="#2669" id="2669">2669</a>
-<a href="#2670" id="2670">2670</a>
-<a href="#2671" id="2671">2671</a>
-<a href="#2672" id="2672">2672</a>
-<a href="#2673" id="2673">2673</a>
-<a href="#2674" id="2674">2674</a>
-<a href="#2675" id="2675">2675</a>
-<a href="#2676" id="2676">2676</a>
-<a href="#2677" id="2677">2677</a>
-<a href="#2678" id="2678">2678</a>
-<a href="#2679" id="2679">2679</a>
-<a href="#2680" id="2680">2680</a>
-<a href="#2681" id="2681">2681</a>
-<a href="#2682" id="2682">2682</a>
-<a href="#2683" id="2683">2683</a>
-<a href="#2684" id="2684">2684</a>
-<a href="#2685" id="2685">2685</a>
-<a href="#2686" id="2686">2686</a>
-<a href="#2687" id="2687">2687</a>
-<a href="#2688" id="2688">2688</a>
-<a href="#2689" id="2689">2689</a>
-<a href="#2690" id="2690">2690</a>
-<a href="#2691" id="2691">2691</a>
-<a href="#2692" id="2692">2692</a>
-<a href="#2693" id="2693">2693</a>
-<a href="#2694" id="2694">2694</a>
-<a href="#2695" id="2695">2695</a>
-<a href="#2696" id="2696">2696</a>
-<a href="#2697" id="2697">2697</a>
-<a href="#2698" id="2698">2698</a>
-<a href="#2699" id="2699">2699</a>
-<a href="#2700" id="2700">2700</a>
-<a href="#2701" id="2701">2701</a>
-<a href="#2702" id="2702">2702</a>
-<a href="#2703" id="2703">2703</a>
-<a href="#2704" id="2704">2704</a>
-<a href="#2705" id="2705">2705</a>
-<a href="#2706" id="2706">2706</a>
-<a href="#2707" id="2707">2707</a>
-<a href="#2708" id="2708">2708</a>
-<a href="#2709" id="2709">2709</a>
-<a href="#2710" id="2710">2710</a>
-<a href="#2711" id="2711">2711</a>
-<a href="#2712" id="2712">2712</a>
-<a href="#2713" id="2713">2713</a>
-<a href="#2714" id="2714">2714</a>
-<a href="#2715" id="2715">2715</a>
-<a href="#2716" id="2716">2716</a>
-<a href="#2717" id="2717">2717</a>
-<a href="#2718" id="2718">2718</a>
-<a href="#2719" id="2719">2719</a>
-<a href="#2720" id="2720">2720</a>
-<a href="#2721" id="2721">2721</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Utilities for formatting and printing strings.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Utilities for formatting and printing strings.
 
 </span><span class="attr">#![stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 
@@ -2739,6 +2581,7 @@
 <span class="attr">#[cfg(no_fp_fmt_parse)]
 </span><span class="kw">mod </span>nofloat;
 <span class="kw">mod </span>num;
+<span class="kw">mod </span>rt;
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fmt_flags_align&quot;</span>, since = <span class="string">&quot;1.28.0&quot;</span>)]
 #[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;Alignment&quot;</span>)]
@@ -2758,12 +2601,6 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;debug_builders&quot;</span>, since = <span class="string">&quot;1.2.0&quot;</span>)]
 </span><span class="kw">pub use </span><span class="self">self</span>::builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-#[doc(hidden)]
-</span><span class="kw">pub mod </span>rt {
-    <span class="kw">pub mod </span>v1;
-}
 
 <span class="doccomment">/// The type returned by formatter methods.
 ///
@@ -2948,7 +2785,7 @@
 </span><span class="kw">pub struct </span>Formatter&lt;<span class="lifetime">&#39;a</span>&gt; {
     flags: u32,
     fill: char,
-    align: rt::v1::Alignment,
+    align: rt::Alignment,
     width: <span class="prelude-ty">Option</span>&lt;usize&gt;,
     precision: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 
@@ -2969,229 +2806,10 @@
         Formatter {
             flags: <span class="number">0</span>,
             fill: <span class="string">&#39; &#39;</span>,
-            align: rt::v1::Alignment::Unknown,
+            align: rt::Alignment::Unknown,
             width: <span class="prelude-val">None</span>,
             precision: <span class="prelude-val">None</span>,
             buf,
-        }
-    }
-}
-
-<span class="comment">// NB. Argument is essentially an optimized partially applied formatting function,
-// equivalent to `exists T.(&amp;T, fn(&amp;T, &amp;mut Formatter&lt;&#39;_&gt;) -&gt; Result`.
-
-</span><span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">type </span>Opaque;
-}
-
-<span class="doccomment">/// This struct represents the generic &quot;argument&quot; which is taken by the Xprintf
-/// family of functions. It contains a function to format the given value. At
-/// compile time it is ensured that the function and the value have the correct
-/// types, and then this struct is used to canonicalize arguments to one type.
-</span><span class="attr">#[lang = <span class="string">&quot;format_argument&quot;</span>]
-#[derive(Copy, Clone)]
-#[allow(missing_debug_implementations)]
-#[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-#[doc(hidden)]
-</span><span class="kw">pub struct </span>ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt; {
-    value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Opaque,
-    formatter: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>Opaque, <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>,
-}
-
-<span class="doccomment">/// This struct represents the unsafety of constructing an `Arguments`.
-/// It exists, rather than an unsafe function, in order to simplify the expansion
-/// of `format_args!(..)` and reduce the scope of the `unsafe` block.
-</span><span class="attr">#[lang = <span class="string">&quot;format_unsafe_arg&quot;</span>]
-#[allow(missing_debug_implementations)]
-#[doc(hidden)]
-#[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-</span><span class="kw">pub struct </span>UnsafeArg {
-    _private: (),
-}
-
-<span class="kw">impl </span>UnsafeArg {
-    <span class="doccomment">/// See documentation where `UnsafeArg` is required to know when it is safe to
-    /// create and use `UnsafeArg`.
-    </span><span class="attr">#[doc(hidden)]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    #[inline(always)]
-    </span><span class="kw">pub unsafe fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ _private: () }
-    }
-}
-
-<span class="comment">// This guarantees a single stable value for the function pointer associated with
-// indices/counts in the formatting infrastructure.
-//
-// Note that a function defined as such would not be correct as functions are
-// always tagged unnamed_addr with the current lowering to LLVM IR, so their
-// address is not considered important to LLVM and as such the as_usize cast
-// could have been miscompiled. In practice, we never call as_usize on non-usize
-// containing data (as a matter of static generation of the formatting
-// arguments), so this is merely an additional check.
-//
-// We primarily want to ensure that the function pointer at `USIZE_MARKER` has
-// an address corresponding *only* to functions that also take `&amp;usize` as their
-// first argument. The read_volatile here ensures that we can safely ready out a
-// usize from the passed reference and that this address does not point at a
-// non-usize taking function.
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-</span><span class="kw">static </span>USIZE_MARKER: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>usize, <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>= |ptr, <span class="kw">_</span>| {
-    <span class="comment">// SAFETY: ptr is a reference
-    </span><span class="kw">let </span>_v: usize = <span class="kw">unsafe </span>{ <span class="kw">crate</span>::ptr::read_volatile(ptr) };
-    <span class="kw">loop </span>{}
-};
-
-<span class="macro">macro_rules! </span>arg_new {
-    (<span class="macro-nonterminal">$f</span>: ident, <span class="macro-nonterminal">$t</span>: ident) =&gt; {
-        <span class="attr">#[doc(hidden)]
-        #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-        #[inline]
-        </span><span class="kw">pub fn </span><span class="macro-nonterminal">$f</span>&lt;<span class="lifetime">&#39;b</span>, T: <span class="macro-nonterminal">$t</span>&gt;(x: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>T) -&gt; ArgumentV1&lt;<span class="lifetime">&#39;_</span>&gt; {
-            <span class="self">Self</span>::new(x, <span class="macro-nonterminal">$t::fmt</span>)
-        }
-    };
-}
-
-<span class="attr">#[rustc_diagnostic_item = <span class="string">&quot;ArgumentV1Methods&quot;</span>]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="attr">#[doc(hidden)]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    #[inline]
-    </span><span class="kw">pub fn </span>new&lt;<span class="lifetime">&#39;b</span>, T&gt;(x: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>T, f: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>) -&gt; ArgumentV1&lt;<span class="lifetime">&#39;b</span>&gt; {
-        <span class="comment">// SAFETY: `mem::transmute(x)` is safe because
-        //     1. `&amp;&#39;b T` keeps the lifetime it originated with `&#39;b`
-        //              (so as to not have an unbounded lifetime)
-        //     2. `&amp;&#39;b T` and `&amp;&#39;b Opaque` have the same memory layout
-        //              (when `T` is `Sized`, as it is here)
-        // `mem::transmute(f)` is safe since `fn(&amp;T, &amp;mut Formatter&lt;&#39;_&gt;) -&gt; Result`
-        // and `fn(&amp;Opaque, &amp;mut Formatter&lt;&#39;_&gt;) -&gt; Result` have the same ABI
-        // (as long as `T` is `Sized`)
-        </span><span class="kw">unsafe </span>{ ArgumentV1 { formatter: mem::transmute(f), value: mem::transmute(x) } }
-    }
-
-    <span class="macro">arg_new!</span>(new_display, Display);
-    <span class="macro">arg_new!</span>(new_debug, Debug);
-    <span class="macro">arg_new!</span>(new_octal, Octal);
-    <span class="macro">arg_new!</span>(new_lower_hex, LowerHex);
-    <span class="macro">arg_new!</span>(new_upper_hex, UpperHex);
-    <span class="macro">arg_new!</span>(new_pointer, Pointer);
-    <span class="macro">arg_new!</span>(new_binary, Binary);
-    <span class="macro">arg_new!</span>(new_lower_exp, LowerExp);
-    <span class="macro">arg_new!</span>(new_upper_exp, UpperExp);
-
-    <span class="attr">#[doc(hidden)]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub fn </span>from_usize(x: <span class="kw-2">&amp;</span>usize) -&gt; ArgumentV1&lt;<span class="lifetime">&#39;_</span>&gt; {
-        ArgumentV1::new(x, USIZE_MARKER)
-    }
-
-    <span class="kw">fn </span>as_usize(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
-        <span class="comment">// We are type punning a bit here: USIZE_MARKER only takes an &amp;usize but
-        // formatter takes an &amp;Opaque. Rust understandably doesn&#39;t think we should compare
-        // the function pointers if they don&#39;t have the same signature, so we cast to
-        // usizes to tell it that we just want to compare addresses.
-        </span><span class="kw">if </span><span class="self">self</span>.formatter <span class="kw">as </span>usize == USIZE_MARKER <span class="kw">as </span>usize {
-            <span class="comment">// SAFETY: The `formatter` field is only set to USIZE_MARKER if
-            // the value is a usize, so this is safe
-            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="kw-2">*</span>(<span class="self">self</span>.value <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*const </span>usize) })
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>}
-    }
-}
-
-<span class="comment">// flags available in the v1 format of format_args
-</span><span class="attr">#[derive(Copy, Clone)]
-</span><span class="kw">enum </span>FlagV1 {
-    SignPlus,
-    SignMinus,
-    Alternate,
-    SignAwareZeroPad,
-    DebugLowerHex,
-    DebugUpperHex,
-}
-
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="attr">#[doc(hidden)]
-    #[inline]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_fmt_arguments_new&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub const fn </span>new_const(pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str]) -&gt; <span class="self">Self </span>{
-        <span class="kw">if </span>pieces.len() &gt; <span class="number">1 </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;invalid args&quot;</span>);
-        }
-        Arguments { pieces, fmt: <span class="prelude-val">None</span>, args: <span class="kw-2">&amp;</span>[] }
-    }
-
-    <span class="doccomment">/// When using the format_args!() macro, this function is used to generate the
-    /// Arguments structure.
-    </span><span class="attr">#[cfg(not(bootstrap))]
-    #[doc(hidden)]
-    #[inline]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub fn </span>new_v1(pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str], args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt;]) -&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
-        <span class="kw">if </span>pieces.len() &lt; args.len() || pieces.len() &gt; args.len() + <span class="number">1 </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;invalid args&quot;</span>);
-        }
-        Arguments { pieces, fmt: <span class="prelude-val">None</span>, args }
-    }
-
-    <span class="attr">#[cfg(bootstrap)]
-    #[doc(hidden)]
-    #[inline]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_fmt_arguments_new&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub const fn </span>new_v1(pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str], args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt;]) -&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
-        <span class="kw">if </span>pieces.len() &lt; args.len() || pieces.len() &gt; args.len() + <span class="number">1 </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;invalid args&quot;</span>);
-        }
-        Arguments { pieces, fmt: <span class="prelude-val">None</span>, args }
-    }
-
-    <span class="doccomment">/// This function is used to specify nonstandard formatting parameters.
-    ///
-    /// An `UnsafeArg` is required because the following invariants must be held
-    /// in order for this function to be safe:
-    /// 1. The `pieces` slice must be at least as long as `fmt`.
-    /// 2. Every [`rt::v1::Argument::position`] value within `fmt` must be a
-    ///    valid index of `args`.
-    /// 3. Every [`rt::v1::Count::Param`] within `fmt` must contain a valid index of
-    ///    `args`.
-    </span><span class="attr">#[doc(hidden)]
-    #[inline]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub fn </span>new_v1_formatted(
-        pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
-        args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt;],
-        fmt: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::v1::Argument],
-        _unsafe_arg: UnsafeArg,
-    ) -&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
-        Arguments { pieces, fmt: <span class="prelude-val">Some</span>(fmt), args }
-    }
-
-    <span class="doccomment">/// Estimates the length of the formatted text.
-    ///
-    /// This is intended to be used for setting initial `String` capacity
-    /// when using `format!`. Note: this is neither the lower nor upper bound.
-    </span><span class="attr">#[doc(hidden)]
-    #[inline]
-    #[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, reason = <span class="string">&quot;internal to format_args!&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-    </span><span class="kw">pub fn </span>estimated_capacity(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="kw">let </span>pieces_length: usize = <span class="self">self</span>.pieces.iter().map(|x| x.len()).sum();
-
-        <span class="kw">if </span><span class="self">self</span>.args.is_empty() {
-            pieces_length
-        } <span class="kw">else if </span>!<span class="self">self</span>.pieces.is_empty() &amp;&amp; <span class="self">self</span>.pieces[<span class="number">0</span>].is_empty() &amp;&amp; pieces_length &lt; <span class="number">16 </span>{
-            <span class="comment">// If the format string starts with an argument,
-            // don&#39;t preallocate anything, unless length
-            // of pieces is significant.
-            </span><span class="number">0
-        </span>} <span class="kw">else </span>{
-            <span class="comment">// There are some arguments, so any additional push
-            // will reallocate the string. To avoid that,
-            // we&#39;re &quot;pre-doubling&quot; the capacity here.
-            </span>pieces_length.checked_mul(<span class="number">2</span>).unwrap_or(<span class="number">0</span>)
         }
     }
 }
@@ -3226,11 +2844,75 @@
     </span>pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
 
     <span class="comment">// Placeholder specs, or `None` if all specs are default (as in &quot;{}{}&quot;).
-    </span>fmt: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::v1::Argument]&gt;,
+    </span>fmt: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::Placeholder]&gt;,
 
     <span class="comment">// Dynamic arguments for interpolation, to be interleaved with string
     // pieces. (Every argument is preceded by a string piece.)
-    </span>args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[ArgumentV1&lt;<span class="lifetime">&#39;a</span>&gt;],
+    </span>args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::Argument&lt;<span class="lifetime">&#39;a</span>&gt;],
+}
+
+<span class="doccomment">/// Used by the format_args!() macro to create a fmt::Arguments object.
+</span><span class="attr">#[doc(hidden)]
+#[unstable(feature = <span class="string">&quot;fmt_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="attr">#[inline]
+    #[rustc_const_unstable(feature = <span class="string">&quot;const_fmt_arguments_new&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    </span><span class="kw">pub const fn </span>new_const(pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str]) -&gt; <span class="self">Self </span>{
+        <span class="kw">if </span>pieces.len() &gt; <span class="number">1 </span>{
+            <span class="macro">panic!</span>(<span class="string">&quot;invalid args&quot;</span>);
+        }
+        Arguments { pieces, fmt: <span class="prelude-val">None</span>, args: <span class="kw-2">&amp;</span>[] }
+    }
+
+    <span class="doccomment">/// When using the format_args!() macro, this function is used to generate the
+    /// Arguments structure.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>new_v1(pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str], args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::Argument&lt;<span class="lifetime">&#39;a</span>&gt;]) -&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
+        <span class="kw">if </span>pieces.len() &lt; args.len() || pieces.len() &gt; args.len() + <span class="number">1 </span>{
+            <span class="macro">panic!</span>(<span class="string">&quot;invalid args&quot;</span>);
+        }
+        Arguments { pieces, fmt: <span class="prelude-val">None</span>, args }
+    }
+
+    <span class="doccomment">/// This function is used to specify nonstandard formatting parameters.
+    ///
+    /// An `rt::UnsafeArg` is required because the following invariants must be held
+    /// in order for this function to be safe:
+    /// 1. The `pieces` slice must be at least as long as `fmt`.
+    /// 2. Every `rt::Placeholder::position` value within `fmt` must be a valid index of `args`.
+    /// 3. Every `rt::Count::Param` within `fmt` must contain a valid index of `args`.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>new_v1_formatted(
+        pieces: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::Argument&lt;<span class="lifetime">&#39;a</span>&gt;],
+        fmt: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[rt::Placeholder],
+        _unsafe_arg: rt::UnsafeArg,
+    ) -&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
+        Arguments { pieces, fmt: <span class="prelude-val">Some</span>(fmt), args }
+    }
+
+    <span class="doccomment">/// Estimates the length of the formatted text.
+    ///
+    /// This is intended to be used for setting initial `String` capacity
+    /// when using `format!`. Note: this is neither the lower nor upper bound.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>estimated_capacity(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="kw">let </span>pieces_length: usize = <span class="self">self</span>.pieces.iter().map(|x| x.len()).sum();
+
+        <span class="kw">if </span><span class="self">self</span>.args.is_empty() {
+            pieces_length
+        } <span class="kw">else if </span>!<span class="self">self</span>.pieces.is_empty() &amp;&amp; <span class="self">self</span>.pieces[<span class="number">0</span>].is_empty() &amp;&amp; pieces_length &lt; <span class="number">16 </span>{
+            <span class="comment">// If the format string starts with an argument,
+            // don&#39;t preallocate anything, unless length
+            // of pieces is significant.
+            </span><span class="number">0
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// There are some arguments, so any additional push
+            // will reallocate the string. To avoid that,
+            // we&#39;re &quot;pre-doubling&quot; the capacity here.
+            </span>pieces_length.checked_mul(<span class="number">2</span>).unwrap_or(<span class="number">0</span>)
+        }
+    }
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Arguments&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -3262,7 +2944,7 @@
     ///
     /// fn write_str(_: &amp;str) { /* ... */ }
     ///
-    /// fn write_fmt(args: &amp;Arguments) {
+    /// fn write_fmt(args: &amp;Arguments&lt;&#39;_&gt;) {
     ///     if let Some(s) = args.as_str() {
     ///         write_str(s)
     ///     } else {
@@ -3972,7 +3654,7 @@
                 <span class="kw">if </span>!piece.is_empty() {
                     formatter.buf.write_str(<span class="kw-2">*</span>piece)<span class="question-mark">?</span>;
                 }
-                (arg.formatter)(arg.value, <span class="kw-2">&amp;mut </span>formatter)<span class="question-mark">?</span>;
+                arg.fmt(<span class="kw-2">&amp;mut </span>formatter)<span class="question-mark">?</span>;
                 idx += <span class="number">1</span>;
             }
         }
@@ -4002,15 +3684,15 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">unsafe fn </span>run(fmt: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;, arg: <span class="kw-2">&amp;</span>rt::v1::Argument, args: <span class="kw-2">&amp;</span>[ArgumentV1&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; <span class="prelude-ty">Result </span>{
-    fmt.fill = arg.format.fill;
-    fmt.align = arg.format.align;
-    fmt.flags = arg.format.flags;
+<span class="kw">unsafe fn </span>run(fmt: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;, arg: <span class="kw-2">&amp;</span>rt::Placeholder, args: <span class="kw-2">&amp;</span>[rt::Argument&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; <span class="prelude-ty">Result </span>{
+    fmt.fill = arg.fill;
+    fmt.align = arg.align;
+    fmt.flags = arg.flags;
     <span class="comment">// SAFETY: arg and args come from the same Arguments,
     // which guarantees the indexes are always within bounds.
     </span><span class="kw">unsafe </span>{
-        fmt.width = getcount(args, <span class="kw-2">&amp;</span>arg.format.width);
-        fmt.precision = getcount(args, <span class="kw-2">&amp;</span>arg.format.precision);
+        fmt.width = getcount(args, <span class="kw-2">&amp;</span>arg.width);
+        fmt.precision = getcount(args, <span class="kw-2">&amp;</span>arg.precision);
     }
 
     <span class="comment">// Extract the correct argument
@@ -4020,14 +3702,14 @@
     </span><span class="kw">let </span>value = <span class="kw">unsafe </span>{ args.get_unchecked(arg.position) };
 
     <span class="comment">// Then actually do some printing
-    </span>(value.formatter)(value.value, fmt)
+    </span>value.fmt(fmt)
 }
 
-<span class="kw">unsafe fn </span>getcount(args: <span class="kw-2">&amp;</span>[ArgumentV1&lt;<span class="lifetime">&#39;_</span>&gt;], cnt: <span class="kw-2">&amp;</span>rt::v1::Count) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+<span class="kw">unsafe fn </span>getcount(args: <span class="kw-2">&amp;</span>[rt::Argument&lt;<span class="lifetime">&#39;_</span>&gt;], cnt: <span class="kw-2">&amp;</span>rt::Count) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
     <span class="kw">match </span><span class="kw-2">*</span>cnt {
-        rt::v1::Count::Is(n) =&gt; <span class="prelude-val">Some</span>(n),
-        rt::v1::Count::Implied =&gt; <span class="prelude-val">None</span>,
-        rt::v1::Count::Param(i) =&gt; {
+        rt::Count::Is(n) =&gt; <span class="prelude-val">Some</span>(n),
+        rt::Count::Implied =&gt; <span class="prelude-val">None</span>,
+        rt::Count::Param(i) =&gt; {
             <span class="macro">debug_assert!</span>(i &lt; args.len());
             <span class="comment">// SAFETY: cnt and args come from the same Arguments,
             // which guarantees this index is always within bounds.
@@ -4109,7 +3791,7 @@
     /// }
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         // We need to remove &quot;-&quot; from the number output.
     ///         let tmp = self.nb.abs().to_string();
     ///
@@ -4170,9 +3852,9 @@
             // is zero
             </span><span class="prelude-val">Some</span>(min) <span class="kw">if </span><span class="self">self</span>.sign_aware_zero_pad() =&gt; {
                 <span class="kw">let </span>old_fill = <span class="kw">crate</span>::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.fill, <span class="string">&#39;0&#39;</span>);
-                <span class="kw">let </span>old_align = <span class="kw">crate</span>::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.align, rt::v1::Alignment::Right);
+                <span class="kw">let </span>old_align = <span class="kw">crate</span>::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.align, rt::Alignment::Right);
                 write_prefix(<span class="self">self</span>, sign, prefix)<span class="question-mark">?</span>;
-                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(min - width, rt::v1::Alignment::Right)<span class="question-mark">?</span>;
+                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(min - width, Alignment::Right)<span class="question-mark">?</span>;
                 <span class="self">self</span>.buf.write_str(buf)<span class="question-mark">?</span>;
                 post_padding.write(<span class="self">self</span>)<span class="question-mark">?</span>;
                 <span class="self">self</span>.fill = old_fill;
@@ -4181,7 +3863,7 @@
             }
             <span class="comment">// Otherwise, the sign and prefix goes after the padding
             </span><span class="prelude-val">Some</span>(min) =&gt; {
-                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(min - width, rt::v1::Alignment::Right)<span class="question-mark">?</span>;
+                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(min - width, Alignment::Right)<span class="question-mark">?</span>;
                 write_prefix(<span class="self">self</span>, sign, prefix)<span class="question-mark">?</span>;
                 <span class="self">self</span>.buf.write_str(buf)<span class="question-mark">?</span>;
                 post_padding.write(<span class="self">self</span>)
@@ -4209,7 +3891,7 @@
     /// struct Foo;
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         formatter.pad(&quot;Foo&quot;)
     ///     }
     /// }
@@ -4256,7 +3938,7 @@
                 <span class="comment">// If we&#39;re under both the maximum and the minimum width, then fill
                 // up the minimum width with the specified string + some alignment.
                 </span><span class="kw">else </span>{
-                    <span class="kw">let </span>align = rt::v1::Alignment::Left;
+                    <span class="kw">let </span>align = Alignment::Left;
                     <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(width - chars_count, align)<span class="question-mark">?</span>;
                     <span class="self">self</span>.buf.write_str(s)<span class="question-mark">?</span>;
                     post_padding.write(<span class="self">self</span>)
@@ -4271,17 +3953,19 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>padding(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         padding: usize,
-        default: rt::v1::Alignment,
+        default: Alignment,
     ) -&gt; result::Result&lt;PostPadding, Error&gt; {
         <span class="kw">let </span>align = <span class="kw">match </span><span class="self">self</span>.align {
-            rt::v1::Alignment::Unknown =&gt; default,
-            <span class="kw">_ </span>=&gt; <span class="self">self</span>.align,
+            rt::Alignment::Unknown =&gt; default,
+            rt::Alignment::Left =&gt; Alignment::Left,
+            rt::Alignment::Right =&gt; Alignment::Right,
+            rt::Alignment::Center =&gt; Alignment::Center,
         };
 
         <span class="kw">let </span>(pre_pad, post_pad) = <span class="kw">match </span>align {
-            rt::v1::Alignment::Left =&gt; (<span class="number">0</span>, padding),
-            rt::v1::Alignment::Right | rt::v1::Alignment::Unknown =&gt; (padding, <span class="number">0</span>),
-            rt::v1::Alignment::Center =&gt; (padding / <span class="number">2</span>, (padding + <span class="number">1</span>) / <span class="number">2</span>),
+            Alignment::Left =&gt; (<span class="number">0</span>, padding),
+            Alignment::Right =&gt; (padding, <span class="number">0</span>),
+            Alignment::Center =&gt; (padding / <span class="number">2</span>, (padding + <span class="number">1</span>) / <span class="number">2</span>),
         };
 
         <span class="kw">for _ in </span><span class="number">0</span>..pre_pad {
@@ -4294,14 +3978,17 @@
     <span class="doccomment">/// Takes the formatted parts and applies the padding.
     /// Assumes that the caller already has rendered the parts with required precision,
     /// so that `self.precision` can be ignored.
-    </span><span class="kw">fn </span>pad_formatted_parts(<span class="kw-2">&amp;mut </span><span class="self">self</span>, formatted: <span class="kw-2">&amp;</span>numfmt::Formatted&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
+    ///
+    /// # Safety
+    ///
+    /// Any `numfmt::Part::Copy` parts in `formatted` must contain valid UTF-8.
+    </span><span class="kw">unsafe fn </span>pad_formatted_parts(<span class="kw-2">&amp;mut </span><span class="self">self</span>, formatted: <span class="kw-2">&amp;</span>numfmt::Formatted&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>width) = <span class="self">self</span>.width {
             <span class="comment">// for the sign-aware zero padding, we render the sign first and
             // behave as if we had no sign from the beginning.
             </span><span class="kw">let </span><span class="kw-2">mut </span>formatted = formatted.clone();
             <span class="kw">let </span>old_fill = <span class="self">self</span>.fill;
             <span class="kw">let </span>old_align = <span class="self">self</span>.align;
-            <span class="kw">let </span><span class="kw-2">mut </span>align = old_align;
             <span class="kw">if </span><span class="self">self</span>.sign_aware_zero_pad() {
                 <span class="comment">// a sign always goes first
                 </span><span class="kw">let </span>sign = formatted.sign;
@@ -4310,19 +3997,22 @@
                 <span class="comment">// remove the sign from the formatted parts
                 </span>formatted.sign = <span class="string">&quot;&quot;</span>;
                 width = width.saturating_sub(sign.len());
-                align = rt::v1::Alignment::Right;
                 <span class="self">self</span>.fill = <span class="string">&#39;0&#39;</span>;
-                <span class="self">self</span>.align = rt::v1::Alignment::Right;
+                <span class="self">self</span>.align = rt::Alignment::Right;
             }
 
             <span class="comment">// remaining parts go through the ordinary padding process.
             </span><span class="kw">let </span>len = formatted.len();
             <span class="kw">let </span>ret = <span class="kw">if </span>width &lt;= len {
                 <span class="comment">// no padding
-                </span><span class="self">self</span>.write_formatted_parts(<span class="kw-2">&amp;</span>formatted)
+                // SAFETY: Per the precondition.
+                </span><span class="kw">unsafe </span>{ <span class="self">self</span>.write_formatted_parts(<span class="kw-2">&amp;</span>formatted) }
             } <span class="kw">else </span>{
-                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(width - len, align)<span class="question-mark">?</span>;
-                <span class="self">self</span>.write_formatted_parts(<span class="kw-2">&amp;</span>formatted)<span class="question-mark">?</span>;
+                <span class="kw">let </span>post_padding = <span class="self">self</span>.padding(width - len, Alignment::Right)<span class="question-mark">?</span>;
+                <span class="comment">// SAFETY: Per the precondition.
+                </span><span class="kw">unsafe </span>{
+                    <span class="self">self</span>.write_formatted_parts(<span class="kw-2">&amp;</span>formatted)<span class="question-mark">?</span>;
+                }
                 post_padding.write(<span class="self">self</span>)
             };
             <span class="self">self</span>.fill = old_fill;
@@ -4330,20 +4020,20 @@
             ret
         } <span class="kw">else </span>{
             <span class="comment">// this is the common case and we take a shortcut
-            </span><span class="self">self</span>.write_formatted_parts(formatted)
+            // SAFETY: Per the precondition.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.write_formatted_parts(formatted) }
         }
     }
 
-    <span class="kw">fn </span>write_formatted_parts(<span class="kw-2">&amp;mut </span><span class="self">self</span>, formatted: <span class="kw-2">&amp;</span>numfmt::Formatted&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
-        <span class="kw">fn </span>write_bytes(buf: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Write, s: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result </span>{
+    <span class="doccomment">/// # Safety
+    ///
+    /// Any `numfmt::Part::Copy` parts in `formatted` must contain valid UTF-8.
+    </span><span class="kw">unsafe fn </span>write_formatted_parts(<span class="kw-2">&amp;mut </span><span class="self">self</span>, formatted: <span class="kw-2">&amp;</span>numfmt::Formatted&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
+        <span class="kw">unsafe fn </span>write_bytes(buf: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Write, s: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result </span>{
             <span class="comment">// SAFETY: This is used for `numfmt::Part::Num` and `numfmt::Part::Copy`.
             // It&#39;s safe to use for `numfmt::Part::Num` since every char `c` is between
-            // `b&#39;0&#39;` and `b&#39;9&#39;`, which means `s` is valid UTF-8.
-            // It&#39;s also probably safe in practice to use for `numfmt::Part::Copy(buf)`
-            // since `buf` should be plain ASCII, but it&#39;s possible for someone to pass
-            // in a bad value for `buf` into `numfmt::to_shortest_str` since it is a
-            // public function.
-            // FIXME: Determine whether this could result in UB.
+            // `b&#39;0&#39;` and `b&#39;9&#39;`, which means `s` is valid UTF-8. It&#39;s safe to use for
+            // `numfmt::Part::Copy` due to this function&#39;s precondition.
             </span>buf.write_str(<span class="kw">unsafe </span>{ str::from_utf8_unchecked(s) })
         }
 
@@ -4370,11 +4060,15 @@
                         <span class="kw-2">*</span>c = <span class="string">b&#39;0&#39; </span>+ (v % <span class="number">10</span>) <span class="kw">as </span>u8;
                         v /= <span class="number">10</span>;
                     }
-                    write_bytes(<span class="self">self</span>.buf, <span class="kw-2">&amp;</span>s[..len])<span class="question-mark">?</span>;
+                    <span class="comment">// SAFETY: Per the precondition.
+                    </span><span class="kw">unsafe </span>{
+                        write_bytes(<span class="self">self</span>.buf, <span class="kw-2">&amp;</span>s[..len])<span class="question-mark">?</span>;
+                    }
                 }
-                numfmt::Part::Copy(buf) =&gt; {
+                <span class="comment">// SAFETY: Per the precondition.
+                </span>numfmt::Part::Copy(buf) =&gt; <span class="kw">unsafe </span>{
                     write_bytes(<span class="self">self</span>.buf, buf)<span class="question-mark">?</span>;
-                }
+                },
             }
         }
         <span class="prelude-val">Ok</span>(())
@@ -4391,7 +4085,7 @@
     /// struct Foo;
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         formatter.write_str(&quot;Foo&quot;)
     ///         // This is equivalent to:
     ///         // write!(formatter, &quot;Foo&quot;)
@@ -4416,7 +4110,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         formatter.write_fmt(format_args!(&quot;Foo {}&quot;, self.0))
     ///     }
     /// }
@@ -4451,7 +4145,7 @@
     /// struct Foo;
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         let c = formatter.fill();
     ///         if let Some(width) = formatter.width() {
     ///             for _ in 0..width {
@@ -4479,14 +4173,12 @@
     /// # Examples
     ///
     /// ```
-    /// extern crate core;
-    ///
     /// use std::fmt::{self, Alignment};
     ///
     /// struct Foo;
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         let s = if let Some(s) = formatter.align() {
     ///             match s {
     ///                 Alignment::Left    =&gt; &quot;left&quot;,
@@ -4509,10 +4201,10 @@
     #[stable(feature = <span class="string">&quot;fmt_flags_align&quot;</span>, since = <span class="string">&quot;1.28.0&quot;</span>)]
     </span><span class="kw">pub fn </span>align(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Alignment&gt; {
         <span class="kw">match </span><span class="self">self</span>.align {
-            rt::v1::Alignment::Left =&gt; <span class="prelude-val">Some</span>(Alignment::Left),
-            rt::v1::Alignment::Right =&gt; <span class="prelude-val">Some</span>(Alignment::Right),
-            rt::v1::Alignment::Center =&gt; <span class="prelude-val">Some</span>(Alignment::Center),
-            rt::v1::Alignment::Unknown =&gt; <span class="prelude-val">None</span>,
+            rt::Alignment::Left =&gt; <span class="prelude-val">Some</span>(Alignment::Left),
+            rt::Alignment::Right =&gt; <span class="prelude-val">Some</span>(Alignment::Right),
+            rt::Alignment::Center =&gt; <span class="prelude-val">Some</span>(Alignment::Center),
+            rt::Alignment::Unknown =&gt; <span class="prelude-val">None</span>,
         }
     }
 
@@ -4526,7 +4218,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         if let Some(width) = formatter.width() {
     ///             // If we received a width, we use it
     ///             write!(formatter, &quot;{:width$}&quot;, format!(&quot;Foo({})&quot;, self.0), width = width)
@@ -4557,7 +4249,7 @@
     /// struct Foo(f32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         if let Some(precision) = formatter.precision() {
     ///             // If we received a precision, we use it.
     ///             write!(formatter, &quot;Foo({1:.*})&quot;, precision, self.0)
@@ -4587,7 +4279,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         if formatter.sign_plus() {
     ///             write!(formatter,
     ///                    &quot;Foo({}{})&quot;,
@@ -4606,7 +4298,7 @@
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;fmt_flags&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
     </span><span class="kw">pub fn </span>sign_plus(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::SignPlus <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::SignPlus <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="doccomment">/// Determines if the `-` flag was specified.
@@ -4619,7 +4311,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         if formatter.sign_minus() {
     ///             // You want a minus sign? Have one!
     ///             write!(formatter, &quot;-Foo({})&quot;, self.0)
@@ -4635,7 +4327,7 @@
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;fmt_flags&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
     </span><span class="kw">pub fn </span>sign_minus(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::SignMinus <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::SignMinus <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="doccomment">/// Determines if the `#` flag was specified.
@@ -4648,7 +4340,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         if formatter.alternate() {
     ///             write!(formatter, &quot;Foo({})&quot;, self.0)
     ///         } else {
@@ -4663,7 +4355,7 @@
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;fmt_flags&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
     </span><span class="kw">pub fn </span>alternate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::Alternate <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::Alternate <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="doccomment">/// Determines if the `0` flag was specified.
@@ -4676,7 +4368,7 @@
     /// struct Foo(i32);
     ///
     /// impl fmt::Display for Foo {
-    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, formatter: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         assert!(formatter.sign_aware_zero_pad());
     ///         assert_eq!(formatter.width(), Some(4));
     ///         // We ignore the formatter&#39;s options.
@@ -4689,17 +4381,17 @@
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;fmt_flags&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
     </span><span class="kw">pub fn </span>sign_aware_zero_pad(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::SignAwareZeroPad <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::SignAwareZeroPad <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="comment">// FIXME: Decide what public API we want for these two flags.
     // https://github.com/rust-lang/rust/issues/48584
     </span><span class="kw">fn </span>debug_lower_hex(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::DebugLowerHex <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::DebugLowerHex <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="kw">fn </span>debug_upper_hex(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; FlagV1::DebugUpperHex <span class="kw">as </span>u32) != <span class="number">0
+        <span class="self">self</span>.flags &amp; (<span class="number">1 </span>&lt;&lt; rt::Flag::DebugUpperHex <span class="kw">as </span>u32) != <span class="number">0
     </span>}
 
     <span class="doccomment">/// Creates a [`DebugStruct`] builder designed to assist with creation of
@@ -4720,7 +4412,7 @@
     /// }
     ///
     /// impl fmt::Debug for Foo {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_struct(&quot;Foo&quot;)
     ///             .field(&quot;bar&quot;, &amp;self.bar)
     ///             .field(&quot;baz&quot;, &amp;self.baz)
@@ -4878,7 +4570,7 @@
     /// struct Foo&lt;T&gt;(i32, String, PhantomData&lt;T&gt;);
     ///
     /// impl&lt;T&gt; fmt::Debug for Foo&lt;T&gt; {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_tuple(&quot;Foo&quot;)
     ///             .field(&amp;self.0)
     ///             .field(&amp;self.1)
@@ -5010,7 +4702,7 @@
     /// struct Foo(Vec&lt;i32&gt;);
     ///
     /// impl fmt::Debug for Foo {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_list().entries(self.0.iter()).finish()
     ///     }
     /// }
@@ -5033,7 +4725,7 @@
     /// struct Foo(Vec&lt;i32&gt;);
     ///
     /// impl fmt::Debug for Foo {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_set().entries(self.0.iter()).finish()
     ///     }
     /// }
@@ -5049,14 +4741,14 @@
     /// ```rust
     /// use std::fmt;
     ///
-    /// struct Arm&lt;&#39;a, L: &#39;a, R: &#39;a&gt;(&amp;&#39;a (L, R));
-    /// struct Table&lt;&#39;a, K: &#39;a, V: &#39;a&gt;(&amp;&#39;a [(K, V)], V);
+    /// struct Arm&lt;&#39;a, L, R&gt;(&amp;&#39;a (L, R));
+    /// struct Table&lt;&#39;a, K, V&gt;(&amp;&#39;a [(K, V)], V);
     ///
     /// impl&lt;&#39;a, L, R&gt; fmt::Debug for Arm&lt;&#39;a, L, R&gt;
     /// where
     ///     L: &#39;a + fmt::Debug, R: &#39;a + fmt::Debug
     /// {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         L::fmt(&amp;(self.0).0, fmt)?;
     ///         fmt.write_str(&quot; =&gt; &quot;)?;
     ///         R::fmt(&amp;(self.0).1, fmt)
@@ -5067,7 +4759,7 @@
     /// where
     ///     K: &#39;a + fmt::Debug, V: &#39;a + fmt::Debug
     /// {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_set()
     ///         .entries(self.0.iter().map(Arm))
     ///         .entry(&amp;Arm(&amp;(format_args!(&quot;_&quot;), &amp;self.1)))
@@ -5091,7 +4783,7 @@
     /// struct Foo(Vec&lt;(String, i32)&gt;);
     ///
     /// impl fmt::Debug for Foo {
-    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+    ///     fn fmt(&amp;self, fmt: &amp;mut fmt::Formatter&lt;&#39;_&gt;) -&gt; fmt::Result {
     ///         fmt.debug_map().entries(self.0.iter().map(|&amp;(ref k, ref v)| (k, v))).finish()
     ///     }
     /// }
@@ -5150,14 +4842,16 @@
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
 </span><span class="kw">impl </span>Debug <span class="kw">for </span>! {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
         <span class="kw-2">*</span><span class="self">self
     </span>}
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
 </span><span class="kw">impl </span>Display <span class="kw">for </span>! {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
         <span class="kw-2">*</span><span class="self">self
     </span>}
 }
@@ -5259,13 +4953,13 @@
     // or not to zero extend, and then unconditionally set it to get the
     // prefix.
     </span><span class="kw">if </span>f.alternate() {
-        f.flags |= <span class="number">1 </span>&lt;&lt; (FlagV1::SignAwareZeroPad <span class="kw">as </span>u32);
+        f.flags |= <span class="number">1 </span>&lt;&lt; (rt::Flag::SignAwareZeroPad <span class="kw">as </span>u32);
 
         <span class="kw">if </span>f.width.is_none() {
             f.width = <span class="prelude-val">Some</span>((usize::BITS / <span class="number">4</span>) <span class="kw">as </span>usize + <span class="number">2</span>);
         }
     }
-    f.flags |= <span class="number">1 </span>&lt;&lt; (FlagV1::Alternate <span class="kw">as </span>u32);
+    f.flags |= <span class="number">1 </span>&lt;&lt; (rt::Flag::Alternate <span class="kw">as </span>u32);
 
     <span class="kw">let </span>ret = LowerHex::fmt(<span class="kw-2">&amp;</span>ptr_addr, f);
 
@@ -5390,22 +5084,12 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Debug&gt; Debug <span class="kw">for </span>RefCell&lt;T&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>d = f.debug_struct(<span class="string">&quot;RefCell&quot;</span>);
         <span class="kw">match </span><span class="self">self</span>.try_borrow() {
-            <span class="prelude-val">Ok</span>(borrow) =&gt; f.debug_struct(<span class="string">&quot;RefCell&quot;</span>).field(<span class="string">&quot;value&quot;</span>, <span class="kw-2">&amp;</span>borrow).finish(),
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                <span class="comment">// The RefCell is mutably borrowed so we can&#39;t look at its value
-                // here. Show a placeholder instead.
-                </span><span class="kw">struct </span>BorrowedPlaceholder;
-
-                <span class="kw">impl </span>Debug <span class="kw">for </span>BorrowedPlaceholder {
-                    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result </span>{
-                        f.write_str(<span class="string">&quot;&lt;borrowed&gt;&quot;</span>)
-                    }
-                }
-
-                f.debug_struct(<span class="string">&quot;RefCell&quot;</span>).field(<span class="string">&quot;value&quot;</span>, <span class="kw-2">&amp;</span>BorrowedPlaceholder).finish()
-            }
-        }
+            <span class="prelude-val">Ok</span>(borrow) =&gt; d.field(<span class="string">&quot;value&quot;</span>, <span class="kw-2">&amp;</span>borrow),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; d.field(<span class="string">&quot;value&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format_args!</span>(<span class="string">&quot;&lt;borrowed&gt;&quot;</span>)),
+        };
+        d.finish()
     }
 }
 
@@ -5440,5 +5124,4 @@
 <span class="comment">// If you expected tests to be here, look instead at the core/tests/fmt.rs file,
 // it&#39;s a lot easier than creating all of the rt::Piece structures here.
 // There are also tests in the alloc crate, for those that need allocations.
-</span></code></pre></div>
-</section></main></body></html>
+</span></code></pre></div></section></main></body></html>

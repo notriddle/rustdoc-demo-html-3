@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/iter/macros.rs`."><title>macros.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/iter/macros.rs`."><title>macros.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -420,32 +420,129 @@
 <a href="#420" id="420">420</a>
 <a href="#421" id="421">421</a>
 <a href="#422" id="422">422</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Macros used by iterators of slice.
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Macros used by iterators of slice.
 
-</span><span class="comment">// Inlining is_empty and len makes a huge performance difference
+/// Convenience &amp; performance macro for consuming the `end_or_len` field, by
+/// giving a `(&amp;mut) usize` or `(&amp;mut) NonNull&lt;T&gt;` depending whether `T` is
+/// or is not a ZST respectively.
+///
+/// Internally, this reads the `end` through a pointer-to-`NonNull` so that
+/// it&#39;ll get the appropriate non-null metadata in the backend without needing
+/// to call `assume` manually.
+</span><span class="macro">macro_rules! </span>if_zst {
+    (<span class="kw-2">mut </span><span class="macro-nonterminal">$this</span>:ident, <span class="macro-nonterminal">$len</span>:ident =&gt; <span class="macro-nonterminal">$zst_body</span>:expr, <span class="macro-nonterminal">$end</span>:ident =&gt; <span class="macro-nonterminal">$other_body</span>:expr,) =&gt; {{
+        <span class="attr">#![allow(unused_unsafe)] </span><span class="comment">// we&#39;re sometimes used within an unsafe block
+
+        </span><span class="kw">if </span>T::IS_ZST {
+            <span class="comment">// SAFETY: for ZSTs, the pointer is storing a provenance-free length,
+            // so consuming and updating it as a `usize` is fine.
+            </span><span class="kw">let </span><span class="macro-nonterminal">$len </span>= <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span><span class="macro">ptr::addr_of_mut!</span>(<span class="macro-nonterminal">$this</span>.end_or_len).cast::&lt;usize&gt;() };
+            <span class="macro-nonterminal">$zst_body
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
+            </span><span class="kw">let </span><span class="macro-nonterminal">$end </span>= <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span><span class="macro">ptr::addr_of_mut!</span>(<span class="macro-nonterminal">$this</span>.end_or_len).cast::&lt;NonNull&lt;T&gt;&gt;() };
+            <span class="macro-nonterminal">$other_body
+        </span>}
+    }};
+    (<span class="macro-nonterminal">$this</span>:ident, <span class="macro-nonterminal">$len</span>:ident =&gt; <span class="macro-nonterminal">$zst_body</span>:expr, <span class="macro-nonterminal">$end</span>:ident =&gt; <span class="macro-nonterminal">$other_body</span>:expr,) =&gt; {{
+        <span class="attr">#![allow(unused_unsafe)] </span><span class="comment">// we&#39;re sometimes used within an unsafe block
+
+        </span><span class="kw">if </span>T::IS_ZST {
+            <span class="kw">let </span><span class="macro-nonterminal">$len </span>= <span class="macro-nonterminal">$this</span>.end_or_len.addr();
+            <span class="macro-nonterminal">$zst_body
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
+            </span><span class="kw">let </span><span class="macro-nonterminal">$end </span>= <span class="kw">unsafe </span>{ <span class="kw-2">*</span><span class="macro">ptr::addr_of!</span>(<span class="macro-nonterminal">$this</span>.end_or_len).cast::&lt;NonNull&lt;T&gt;&gt;() };
+            <span class="macro-nonterminal">$other_body
+        </span>}
+    }};
+}
+
+<span class="comment">// Inlining is_empty and len makes a huge performance difference
 </span><span class="macro">macro_rules! </span>is_empty {
-    <span class="comment">// The way we encode the length of a ZST iterator, this works both for ZST
-    // and non-ZST.
-    </span>(<span class="macro-nonterminal">$self</span>: ident) =&gt; {
-        <span class="macro-nonterminal">$self</span>.ptr.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>T == <span class="macro-nonterminal">$self</span>.end
+    (<span class="macro-nonterminal">$self</span>: ident) =&gt; {
+        <span class="macro">if_zst!</span>(<span class="macro-nonterminal">$self</span>,
+            len =&gt; len == <span class="number">0</span>,
+            end =&gt; <span class="macro-nonterminal">$self</span>.ptr == end,
+        )
     };
 }
 
 <span class="macro">macro_rules! </span>len {
     (<span class="macro-nonterminal">$self</span>: ident) =&gt; {{
-        <span class="attr">#![allow(unused_unsafe)] </span><span class="comment">// we&#39;re sometimes used within an unsafe block
-
-        </span><span class="kw">let </span>start = <span class="macro-nonterminal">$self</span>.ptr;
-        <span class="kw">if </span>T::IS_ZST {
-            <span class="comment">// This _cannot_ use `ptr_sub` because we depend on wrapping
-            // to represent the length of long ZST slice iterators.
-            </span><span class="macro-nonterminal">$self</span>.end.addr().wrapping_sub(start.as_ptr().addr())
-        } <span class="kw">else </span>{
-            <span class="comment">// To get rid of some bounds checks (see `position`), we use ptr_sub instead of
-            // offset_from (Tested by `codegen/slice-position-bounds-check`.)
-            // SAFETY: by the type invariant pointers are aligned and `start &lt;= end`
-            </span><span class="kw">unsafe </span>{ <span class="macro-nonterminal">$self</span>.end.sub_ptr(start.as_ptr()) }
-        }
+        <span class="macro">if_zst!</span>(<span class="macro-nonterminal">$self</span>,
+            len =&gt; len,
+            end =&gt; {
+                <span class="comment">// To get rid of some bounds checks (see `position`), we use ptr_sub instead of
+                // offset_from (Tested by `codegen/slice-position-bounds-check`.)
+                // SAFETY: by the type invariant pointers are aligned and `start &lt;= end`
+                </span><span class="kw">unsafe </span>{ end.sub_ptr(<span class="macro-nonterminal">$self</span>.ptr) }
+            },
+        )
     }};
 }
 
@@ -456,28 +553,21 @@
         <span class="macro-nonterminal">$elem</span>:ty,
         <span class="macro-nonterminal">$raw_mut</span>:tt,
         {$( <span class="macro-nonterminal">$mut_</span>:tt )<span class="question-mark">?</span>},
+        <span class="macro-nonterminal">$into_ref</span>:ident,
         {$(<span class="macro-nonterminal">$extra</span>:tt)<span class="kw-2">*</span>}
     ) =&gt; {
         <span class="comment">// Returns the first element and moves the start of the iterator forwards by 1.
         // Greatly improves performance compared to an inlined function. The iterator
         // must not be empty.
         </span><span class="macro">macro_rules! </span>next_unchecked {
-            (<span class="macro-nonterminal">$self</span>: ident) =&gt; {&amp; $( <span class="macro-nonterminal">$mut_ </span>)<span class="question-mark">? </span><span class="kw-2">*</span><span class="macro-nonterminal">$self</span>.post_inc_start(<span class="number">1</span>)}
+            (<span class="macro-nonterminal">$self</span>: ident) =&gt; { <span class="macro-nonterminal">$self</span>.post_inc_start(<span class="number">1</span>).<span class="macro-nonterminal">$into_ref</span>() }
         }
 
         <span class="comment">// Returns the last element and moves the end of the iterator backwards by 1.
         // Greatly improves performance compared to an inlined function. The iterator
         // must not be empty.
         </span><span class="macro">macro_rules! </span>next_back_unchecked {
-            (<span class="macro-nonterminal">$self</span>: ident) =&gt; {&amp; $( <span class="macro-nonterminal">$mut_ </span>)<span class="question-mark">? </span><span class="kw-2">*</span><span class="macro-nonterminal">$self</span>.pre_dec_end(<span class="number">1</span>)}
-        }
-
-        <span class="comment">// Shrinks the iterator when T is a ZST, by moving the end of the iterator
-        // backwards by `n`. `n` must not exceed `self.len()`.
-        </span><span class="macro">macro_rules! </span>zst_shrink {
-            (<span class="macro-nonterminal">$self</span>: ident, <span class="macro-nonterminal">$n</span>: ident) =&gt; {
-                <span class="macro-nonterminal">$self</span>.end = <span class="macro-nonterminal">$self</span>.end.wrapping_byte_sub(<span class="macro-nonterminal">$n</span>);
-            }
+            (<span class="macro-nonterminal">$self</span>: ident) =&gt; { <span class="macro-nonterminal">$self</span>.pre_dec_end(<span class="number">1</span>).<span class="macro-nonterminal">$into_ref</span>() }
         }
 
         <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; <span class="macro-nonterminal">$name</span>&lt;<span class="lifetime">&#39;a</span>, T&gt; {
@@ -494,34 +584,40 @@
             // returning the old start.
             // Unsafe because the offset must not exceed `self.len()`.
             </span><span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>post_inc_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: usize) -&gt; * <span class="macro-nonterminal">$raw_mut </span>T {
-                <span class="kw">if </span>mem::size_of::&lt;T&gt;() == <span class="number">0 </span>{
-                    <span class="macro">zst_shrink!</span>(<span class="self">self</span>, offset);
-                    <span class="self">self</span>.ptr.as_ptr()
-                } <span class="kw">else </span>{
-                    <span class="kw">let </span>old = <span class="self">self</span>.ptr.as_ptr();
-                    <span class="comment">// SAFETY: the caller guarantees that `offset` doesn&#39;t exceed `self.len()`,
-                    // so this new pointer is inside `self` and thus guaranteed to be non-null.
-                    </span><span class="self">self</span>.ptr = <span class="kw">unsafe </span>{ NonNull::new_unchecked(<span class="self">self</span>.ptr.as_ptr().add(offset)) };
-                    old
+            </span><span class="kw">unsafe fn </span>post_inc_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: usize) -&gt; NonNull&lt;T&gt; {
+                <span class="kw">let </span>old = <span class="self">self</span>.ptr;
+
+                <span class="comment">// SAFETY: the caller guarantees that `offset` doesn&#39;t exceed `self.len()`,
+                // so this new pointer is inside `self` and thus guaranteed to be non-null.
+                </span><span class="kw">unsafe </span>{
+                    <span class="macro">if_zst!</span>(<span class="kw-2">mut </span><span class="self">self</span>,
+                        len =&gt; <span class="kw-2">*</span>len = len.unchecked_sub(offset),
+                        _end =&gt; <span class="self">self</span>.ptr = <span class="self">self</span>.ptr.add(offset),
+                    );
                 }
+                old
             }
 
             <span class="comment">// Helper function for moving the end of the iterator backwards by `offset` elements,
             // returning the new end.
             // Unsafe because the offset must not exceed `self.len()`.
             </span><span class="attr">#[inline(always)]
-            </span><span class="kw">unsafe fn </span>pre_dec_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: usize) -&gt; * <span class="macro-nonterminal">$raw_mut </span>T {
-                <span class="kw">if </span>T::IS_ZST {
-                    <span class="macro">zst_shrink!</span>(<span class="self">self</span>, offset);
-                    <span class="self">self</span>.ptr.as_ptr()
-                } <span class="kw">else </span>{
+            </span><span class="kw">unsafe fn </span>pre_dec_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: usize) -&gt; NonNull&lt;T&gt; {
+                <span class="macro">if_zst!</span>(<span class="kw-2">mut </span><span class="self">self</span>,
+                    <span class="comment">// SAFETY: By our precondition, `offset` can be at most the
+                    // current length, so the subtraction can never overflow.
+                    </span>len =&gt; <span class="kw">unsafe </span>{
+                        <span class="kw-2">*</span>len = len.unchecked_sub(offset);
+                        <span class="self">self</span>.ptr
+                    },
                     <span class="comment">// SAFETY: the caller guarantees that `offset` doesn&#39;t exceed `self.len()`,
                     // which is guaranteed to not overflow an `isize`. Also, the resulting pointer
                     // is in bounds of `slice`, which fulfills the other requirements for `offset`.
-                    </span><span class="self">self</span>.end = <span class="kw">unsafe </span>{ <span class="self">self</span>.end.sub(offset) };
-                    <span class="self">self</span>.end
-                }
+                    </span>end =&gt; <span class="kw">unsafe </span>{
+                        <span class="kw-2">*</span>end = end.sub(offset);
+                        <span class="kw-2">*</span>end
+                    },
+                )
             }
         }
 
@@ -546,15 +642,9 @@
             </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$elem</span>&gt; {
                 <span class="comment">// could be implemented with slices, but this avoids bounds checks
 
-                // SAFETY: `assume` calls are safe since a slice&#39;s start pointer
-                // must be non-null, and slices over non-ZSTs must also have a
-                // non-null end pointer. The call to `next_unchecked!` is safe
-                // since we check if the iterator is empty first.
+                // SAFETY: The call to `next_unchecked!` is
+                // safe since we check if the iterator is empty first.
                 </span><span class="kw">unsafe </span>{
-                    assume(!<span class="self">self</span>.ptr.as_ptr().is_null());
-                    <span class="kw">if </span>!&lt;T&gt;::IS_ZST {
-                        assume(!<span class="self">self</span>.end.is_null());
-                    }
                     <span class="kw">if </span><span class="macro">is_empty!</span>(<span class="self">self</span>) {
                         <span class="prelude-val">None
                     </span>} <span class="kw">else </span>{
@@ -578,16 +668,10 @@
             </span><span class="kw">fn </span>nth(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$elem</span>&gt; {
                 <span class="kw">if </span>n &gt;= <span class="macro">len!</span>(<span class="self">self</span>) {
                     <span class="comment">// This iterator is now empty.
-                    </span><span class="kw">if </span>T::IS_ZST {
-                        <span class="comment">// We have to do it this way as `ptr` may never be 0, but `end`
-                        // could be (due to wrapping).
-                        </span><span class="self">self</span>.end = <span class="self">self</span>.ptr.as_ptr();
-                    } <span class="kw">else </span>{
-                        <span class="comment">// SAFETY: end can&#39;t be 0 if T isn&#39;t ZST because ptr isn&#39;t 0 and end &gt;= ptr
-                        </span><span class="kw">unsafe </span>{
-                            <span class="self">self</span>.ptr = NonNull::new_unchecked(<span class="self">self</span>.end <span class="kw">as </span><span class="kw-2">*mut </span>T);
-                        }
-                    }
+                    </span><span class="macro">if_zst!</span>(<span class="kw-2">mut </span><span class="self">self</span>,
+                        len =&gt; <span class="kw-2">*</span>len = <span class="number">0</span>,
+                        end =&gt; <span class="self">self</span>.ptr = <span class="kw-2">*</span>end,
+                    );
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
                 <span class="comment">// SAFETY: We are in bounds. `post_inc_start` does the right thing even for ZSTs.
@@ -598,16 +682,49 @@
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>advance_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), usize&gt; {
+            </span><span class="kw">fn </span>advance_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), NonZeroUsize&gt; {
                 <span class="kw">let </span>advance = cmp::min(<span class="macro">len!</span>(<span class="self">self</span>), n);
                 <span class="comment">// SAFETY: By construction, `advance` does not exceed `self.len()`.
                 </span><span class="kw">unsafe </span>{ <span class="self">self</span>.post_inc_start(advance) };
-                <span class="kw">if </span>advance == n { <span class="prelude-val">Ok</span>(()) } <span class="kw">else </span>{ <span class="prelude-val">Err</span>(advance) }
+                NonZeroUsize::new(n - advance).map_or(<span class="prelude-val">Ok</span>(()), <span class="prelude-val">Err</span>)
             }
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>last(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$elem</span>&gt; {
                 <span class="self">self</span>.next_back()
+            }
+
+            <span class="attr">#[inline]
+            </span><span class="kw">fn </span>fold&lt;B, F&gt;(<span class="self">self</span>, init: B, <span class="kw-2">mut </span>f: F) -&gt; B
+                <span class="kw">where
+                    </span>F: FnMut(B, <span class="self">Self</span>::Item) -&gt; B,
+            {
+                <span class="comment">// this implementation consists of the following optimizations compared to the
+                // default implementation:
+                // - do-while loop, as is llvm&#39;s preferred loop shape,
+                //   see https://releases.llvm.org/16.0.0/docs/LoopTerminology.html#more-canonical-loops
+                // - bumps an index instead of a pointer since the latter case inhibits
+                //   some optimizations, see #111603
+                // - avoids Option wrapping/matching
+                </span><span class="kw">if </span><span class="macro">is_empty!</span>(<span class="self">self</span>) {
+                    <span class="kw">return </span>init;
+                }
+                <span class="kw">let </span><span class="kw-2">mut </span>acc = init;
+                <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
+                <span class="kw">let </span>len = <span class="macro">len!</span>(<span class="self">self</span>);
+                <span class="kw">loop </span>{
+                    <span class="comment">// SAFETY: the loop iterates `i in 0..len`, which always is in bounds of
+                    // the slice allocation
+                    </span>acc = f(acc, <span class="kw">unsafe </span>{ &amp; $( <span class="macro-nonterminal">$mut_ </span>)<span class="question-mark">? </span><span class="kw-2">*</span><span class="self">self</span>.ptr.add(i).as_ptr() });
+                    <span class="comment">// SAFETY: `i` can&#39;t overflow since it&#39;ll only reach usize::MAX if the
+                    // slice had that length, in which case we&#39;ll break out of the loop
+                    // after the increment
+                    </span>i = <span class="kw">unsafe </span>{ i.unchecked_add(<span class="number">1</span>) };
+                    <span class="kw">if </span>i == len {
+                        <span class="kw">break</span>;
+                    }
+                }
+                acc
             }
 
             <span class="comment">// We override the default implementation, which uses `try_fold`,
@@ -761,15 +878,9 @@
             </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$elem</span>&gt; {
                 <span class="comment">// could be implemented with slices, but this avoids bounds checks
 
-                // SAFETY: `assume` calls are safe since a slice&#39;s start pointer must be non-null,
-                // and slices over non-ZSTs must also have a non-null end pointer.
-                // The call to `next_back_unchecked!` is safe since we check if the iterator is
-                // empty first.
+                // SAFETY: The call to `next_back_unchecked!`
+                // is safe since we check if the iterator is empty first.
                 </span><span class="kw">unsafe </span>{
-                    assume(!<span class="self">self</span>.ptr.as_ptr().is_null());
-                    <span class="kw">if </span>!&lt;T&gt;::IS_ZST {
-                        assume(!<span class="self">self</span>.end.is_null());
-                    }
                     <span class="kw">if </span><span class="macro">is_empty!</span>(<span class="self">self</span>) {
                         <span class="prelude-val">None
                     </span>} <span class="kw">else </span>{
@@ -782,7 +893,10 @@
             </span><span class="kw">fn </span>nth_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="macro-nonterminal">$elem</span>&gt; {
                 <span class="kw">if </span>n &gt;= <span class="macro">len!</span>(<span class="self">self</span>) {
                     <span class="comment">// This iterator is now empty.
-                    </span><span class="self">self</span>.end = <span class="self">self</span>.ptr.as_ptr();
+                    </span><span class="macro">if_zst!</span>(<span class="kw-2">mut </span><span class="self">self</span>,
+                        len =&gt; <span class="kw-2">*</span>len = <span class="number">0</span>,
+                        end =&gt; <span class="kw-2">*</span>end = <span class="self">self</span>.ptr,
+                    );
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
                 <span class="comment">// SAFETY: We are in bounds. `pre_dec_end` does the right thing even for ZSTs.
@@ -793,11 +907,11 @@
             }
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>advance_back_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), usize&gt; {
+            </span><span class="kw">fn </span>advance_back_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), NonZeroUsize&gt; {
                 <span class="kw">let </span>advance = cmp::min(<span class="macro">len!</span>(<span class="self">self</span>), n);
                 <span class="comment">// SAFETY: By construction, `advance` does not exceed `self.len()`.
                 </span><span class="kw">unsafe </span>{ <span class="self">self</span>.pre_dec_end(advance) };
-                <span class="kw">if </span>advance == n { <span class="prelude-val">Ok</span>(()) } <span class="kw">else </span>{ <span class="prelude-val">Err</span>(advance) }
+                NonZeroUsize::new(n - advance).map_or(<span class="prelude-val">Ok</span>(()), <span class="prelude-val">Err</span>)
             }
         }
 
@@ -813,6 +927,20 @@
                 </span><span class="kw">unsafe </span>{
                     <span class="macro">next_unchecked!</span>(<span class="self">self</span>)
                 }
+            }
+        }
+
+        <span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+        </span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span><span class="macro-nonterminal">$name</span>&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+            <span class="doccomment">/// Creates an empty slice iterator.
+            ///
+            /// ```
+            </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;# use core::slice::&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$name</span>), <span class="string">&quot;;&quot;</span>)]
+            #[doc = <span class="macro">concat!</span>(<span class="string">&quot;let iter: &quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$name</span>&lt;<span class="lifetime">&#39;_</span>, u8&gt;), <span class="string">&quot; = Default::default();&quot;</span>)]
+            </span><span class="doccomment">/// assert_eq!(iter.len(), 0);
+            /// ```
+            </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+                (&amp; $( <span class="macro-nonterminal">$mut_ </span>)<span class="question-mark">? </span>[]).into_iter()
             }
         }
     }
@@ -842,5 +970,4 @@
         </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="macro-nonterminal">$elem</span>, P&gt; FusedIterator <span class="kw">for </span><span class="macro-nonterminal">$name</span>&lt;<span class="lifetime">&#39;a</span>, <span class="macro-nonterminal">$elem</span>, P&gt; <span class="kw">where </span>P: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool {}
     };
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

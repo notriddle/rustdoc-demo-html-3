@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/vec/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../alloc/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/vec/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../alloc/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3254,25 +3254,7 @@
 <a href="#3254" id="3254">3254</a>
 <a href="#3255" id="3255">3255</a>
 <a href="#3256" id="3256">3256</a>
-<a href="#3257" id="3257">3257</a>
-<a href="#3258" id="3258">3258</a>
-<a href="#3259" id="3259">3259</a>
-<a href="#3260" id="3260">3260</a>
-<a href="#3261" id="3261">3261</a>
-<a href="#3262" id="3262">3262</a>
-<a href="#3263" id="3263">3263</a>
-<a href="#3264" id="3264">3264</a>
-<a href="#3265" id="3265">3265</a>
-<a href="#3266" id="3266">3266</a>
-<a href="#3267" id="3267">3267</a>
-<a href="#3268" id="3268">3268</a>
-<a href="#3269" id="3269">3269</a>
-<a href="#3270" id="3270">3270</a>
-<a href="#3271" id="3271">3271</a>
-<a href="#3272" id="3272">3272</a>
-<a href="#3273" id="3273">3273</a>
-<a href="#3274" id="3274">3274</a>
-</pre><pre class="rust"><code><span class="doccomment">//! A contiguous growable array type with heap-allocated contents, written
+</pre></div><pre class="rust"><code><span class="doccomment">//! A contiguous growable array type with heap-allocated contents, written
 //! `Vec&lt;T&gt;`.
 //!
 //! Vectors have *O*(1) indexing, amortized *O*(1) push (to the end) and
@@ -3330,13 +3312,9 @@
 #[cfg(not(no_global_oom_handling))]
 </span><span class="kw">use </span>core::cmp;
 <span class="kw">use </span>core::cmp::Ordering;
-<span class="kw">use </span>core::convert::TryFrom;
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::hash::{Hash, Hasher};
-<span class="kw">use </span>core::intrinsics::assume;
 <span class="kw">use </span>core::iter;
-<span class="attr">#[cfg(not(no_global_oom_handling))]
-</span><span class="kw">use </span>core::iter::FromIterator;
 <span class="kw">use </span>core::marker::PhantomData;
 <span class="kw">use </span>core::mem::{<span class="self">self</span>, ManuallyDrop, MaybeUninit, SizedTypeProperties};
 <span class="kw">use </span>core::ops::{<span class="self">self</span>, Index, IndexMut, Range, RangeBounds};
@@ -3349,10 +3327,10 @@
 <span class="kw">use </span><span class="kw">crate</span>::collections::TryReserveError;
 <span class="kw">use </span><span class="kw">crate</span>::raw_vec::RawVec;
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-</span><span class="kw">pub use </span><span class="self">self</span>::drain_filter::DrainFilter;
+<span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+</span><span class="kw">pub use </span><span class="self">self</span>::extract_if::ExtractIf;
 
-<span class="kw">mod </span>drain_filter;
+<span class="kw">mod </span>extract_if;
 
 <span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;vec_splice&quot;</span>, since = <span class="string">&quot;1.21.0&quot;</span>)]
@@ -3491,7 +3469,7 @@
 ///
 /// # Indexing
 ///
-/// The `Vec` type allows to access values by index, because it implements the
+/// The `Vec` type allows access to values by index, because it implements the
 /// [`Index`] trait. An example will be more explicit:
 ///
 /// ```
@@ -3838,22 +3816,20 @@
     /// Using memory that was allocated elsewhere:
     ///
     /// ```rust
-    /// #![feature(allocator_api)]
-    ///
-    /// use std::alloc::{AllocError, Allocator, Global, Layout};
+    /// use std::alloc::{alloc, Layout};
     ///
     /// fn main() {
     ///     let layout = Layout::array::&lt;u32&gt;(16).expect(&quot;overflow cannot happen&quot;);
     ///
     ///     let vec = unsafe {
-    ///         let mem = match Global.allocate(layout) {
-    ///             Ok(mem) =&gt; mem.cast::&lt;u32&gt;().as_ptr(),
-    ///             Err(AllocError) =&gt; return,
-    ///         };
+    ///         let mem = alloc(layout).cast::&lt;u32&gt;();
+    ///         if mem.is_null() {
+    ///             return;
+    ///         }
     ///
     ///         mem.write(1_000_000);
     ///
-    ///         Vec::from_raw_parts_in(mem, 1, 16, Global)
+    ///         Vec::from_raw_parts(mem, 1, 16)
     ///     };
     ///
     ///     assert_eq!(vec, &amp;[1_000_000]);
@@ -3924,14 +3900,14 @@
     ///
     /// // The vector contains no items, even though it has capacity for more
     /// assert_eq!(vec.len(), 0);
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     ///
     /// // These are all done without reallocating...
     /// for i in 0..10 {
     ///     vec.push(i);
     /// }
     /// assert_eq!(vec.len(), 10);
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     ///
     /// // ...but this may make the vector reallocate
     /// vec.push(11);
@@ -4036,19 +4012,22 @@
     /// Using memory that was allocated elsewhere:
     ///
     /// ```rust
-    /// use std::alloc::{alloc, Layout};
+    /// #![feature(allocator_api)]
+    ///
+    /// use std::alloc::{AllocError, Allocator, Global, Layout};
     ///
     /// fn main() {
     ///     let layout = Layout::array::&lt;u32&gt;(16).expect(&quot;overflow cannot happen&quot;);
+    ///
     ///     let vec = unsafe {
-    ///         let mem = alloc(layout).cast::&lt;u32&gt;();
-    ///         if mem.is_null() {
-    ///             return;
-    ///         }
+    ///         let mem = match Global.allocate(layout) {
+    ///             Ok(mem) =&gt; mem.cast::&lt;u32&gt;().as_ptr(),
+    ///             Err(AllocError) =&gt; return,
+    ///         };
     ///
     ///         mem.write(1_000_000);
     ///
-    ///         Vec::from_raw_parts(mem, 1, 16)
+    ///         Vec::from_raw_parts_in(mem, 1, 16, Global)
     ///     };
     ///
     ///     assert_eq!(vec, &amp;[1_000_000]);
@@ -4155,7 +4134,7 @@
     /// ```
     /// let mut vec: Vec&lt;i32&gt; = Vec::with_capacity(10);
     /// vec.push(42);
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     /// ```
     </span><span class="attr">#[inline]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -4306,7 +4285,7 @@
     /// ```
     /// let mut vec = Vec::with_capacity(10);
     /// vec.extend([1, 2, 3]);
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     /// vec.shrink_to_fit();
     /// assert!(vec.capacity() &gt;= 3);
     /// ```
@@ -4333,7 +4312,7 @@
     /// ```
     /// let mut vec = Vec::with_capacity(10);
     /// vec.extend([1, 2, 3]);
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     /// vec.shrink_to(4);
     /// assert!(vec.capacity() &gt;= 4);
     /// vec.shrink_to(0);
@@ -4368,7 +4347,7 @@
     /// let mut vec = Vec::with_capacity(10);
     /// vec.extend([1, 2, 3]);
     ///
-    /// assert_eq!(vec.capacity(), 10);
+    /// assert!(vec.capacity() &gt;= 10);
     /// let slice = vec.into_boxed_slice();
     /// assert_eq!(slice.into_vec().capacity(), 3);
     /// ```
@@ -4514,11 +4493,7 @@
     </span><span class="kw">pub fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*const </span>T {
         <span class="comment">// We shadow the slice method of the same name to avoid going through
         // `deref`, which creates an intermediate reference.
-        </span><span class="kw">let </span>ptr = <span class="self">self</span>.buf.ptr();
-        <span class="kw">unsafe </span>{
-            assume(!ptr.is_null());
-        }
-        ptr
+        </span><span class="self">self</span>.buf.ptr()
     }
 
     <span class="doccomment">/// Returns an unsafe mutable pointer to the vector&#39;s buffer, or a dangling
@@ -4551,11 +4526,7 @@
     </span><span class="kw">pub fn </span>as_mut_ptr(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>T {
         <span class="comment">// We shadow the slice method of the same name to avoid going through
         // `deref_mut`, which creates an intermediate reference.
-        </span><span class="kw">let </span>ptr = <span class="self">self</span>.buf.ptr();
-        <span class="kw">unsafe </span>{
-            assume(!ptr.is_null());
-        }
-        ptr
+        </span><span class="self">self</span>.buf.ptr()
     }
 
     <span class="doccomment">/// Returns a reference to the underlying allocator.
@@ -5641,7 +5612,7 @@
         <span class="kw">let </span>len = <span class="self">self</span>.len();
 
         <span class="kw">if </span>new_len &gt; len {
-            <span class="self">self</span>.extend_with(new_len - len, ExtendElement(value))
+            <span class="self">self</span>.extend_with(new_len - len, value)
         } <span class="kw">else </span>{
             <span class="self">self</span>.truncate(new_len);
         }
@@ -5755,26 +5726,10 @@
     }
 }
 
-<span class="comment">// This code generalizes `extend_with_{element,default}`.
-</span><span class="kw">trait </span>ExtendWith&lt;T&gt; {
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; T;
-    <span class="kw">fn </span>last(<span class="self">self</span>) -&gt; T;
-}
-
-<span class="kw">struct </span>ExtendElement&lt;T&gt;(T);
-<span class="kw">impl</span>&lt;T: Clone&gt; ExtendWith&lt;T&gt; <span class="kw">for </span>ExtendElement&lt;T&gt; {
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; T {
-        <span class="self">self</span>.<span class="number">0</span>.clone()
-    }
-    <span class="kw">fn </span>last(<span class="self">self</span>) -&gt; T {
-        <span class="self">self</span>.<span class="number">0
-    </span>}
-}
-
-<span class="kw">impl</span>&lt;T, A: Allocator&gt; Vec&lt;T, A&gt; {
+<span class="kw">impl</span>&lt;T: Clone, A: Allocator&gt; Vec&lt;T, A&gt; {
     <span class="attr">#[cfg(not(no_global_oom_handling))]
-    </span><span class="doccomment">/// Extend the vector by `n` values, using the given generator.
-    </span><span class="kw">fn </span>extend_with&lt;E: ExtendWith&lt;T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize, <span class="kw-2">mut </span>value: E) {
+    </span><span class="doccomment">/// Extend the vector by `n` clones of value.
+    </span><span class="kw">fn </span>extend_with(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize, value: T) {
         <span class="self">self</span>.reserve(n);
 
         <span class="kw">unsafe </span>{
@@ -5786,15 +5741,15 @@
 
             <span class="comment">// Write all elements except the last one
             </span><span class="kw">for _ in </span><span class="number">1</span>..n {
-                ptr::write(ptr, value.next());
+                ptr::write(ptr, value.clone());
                 ptr = ptr.add(<span class="number">1</span>);
-                <span class="comment">// Increment the length in every step in case next() panics
+                <span class="comment">// Increment the length in every step in case clone() panics
                 </span>local_len.increment_len(<span class="number">1</span>);
             }
 
             <span class="kw">if </span>n &gt; <span class="number">0 </span>{
                 <span class="comment">// We can write the last element directly without cloning needlessly
-                </span>ptr::write(ptr, value.last());
+                </span>ptr::write(ptr, value);
                 local_len.increment_len(<span class="number">1</span>);
             }
 
@@ -5948,7 +5903,6 @@
 /// as required by the `core::borrow::Borrow` implementation.
 ///
 /// ```
-/// #![feature(build_hasher_simple_hash_one)]
 /// use std::hash::BuildHasher;
 ///
 /// let b = std::collections::hash_map::RandomState::new();
@@ -6195,6 +6149,12 @@
     /// If the closure returns false, the element will remain in the vector and will not be yielded
     /// by the iterator.
     ///
+    /// If the returned `ExtractIf` is not exhausted, e.g. because it is dropped without iterating
+    /// or the iteration short-circuits, then the remaining elements will be retained.
+    /// Use [`retain`] with a negated predicate if you do not need the returned iterator.
+    ///
+    /// [`retain`]: Vec::retain
+    ///
     /// Using this method is equivalent to the following code:
     ///
     /// ```
@@ -6213,10 +6173,10 @@
     /// # assert_eq!(vec, vec![1, 4, 5]);
     /// ```
     ///
-    /// But `drain_filter` is easier to use. `drain_filter` is also more efficient,
+    /// But `extract_if` is easier to use. `extract_if` is also more efficient,
     /// because it can backshift the elements of the array in bulk.
     ///
-    /// Note that `drain_filter` also lets you mutate every element in the filter closure,
+    /// Note that `extract_if` also lets you mutate every element in the filter closure,
     /// regardless of whether you choose to keep or remove it.
     ///
     /// # Examples
@@ -6224,17 +6184,17 @@
     /// Splitting an array into evens and odds, reusing the original allocation:
     ///
     /// ```
-    /// #![feature(drain_filter)]
+    /// #![feature(extract_if)]
     /// let mut numbers = vec![1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14, 15];
     ///
-    /// let evens = numbers.drain_filter(|x| *x % 2 == 0).collect::&lt;Vec&lt;_&gt;&gt;();
+    /// let evens = numbers.extract_if(|x| *x % 2 == 0).collect::&lt;Vec&lt;_&gt;&gt;();
     /// let odds = numbers;
     ///
     /// assert_eq!(evens, vec![2, 4, 6, 8, 14]);
     /// assert_eq!(odds, vec![1, 3, 5, 9, 11, 13, 15]);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;drain_filter&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_filter&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: F) -&gt; DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;extract_if&quot;</span>, reason = <span class="string">&quot;recently added&quot;</span>, issue = <span class="string">&quot;43244&quot;</span>)]
+    </span><span class="kw">pub fn </span>extract_if&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: F) -&gt; ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; bool,
     {
@@ -6245,7 +6205,7 @@
             <span class="self">self</span>.set_len(<span class="number">0</span>);
         }
 
-        DrainFilter { vec: <span class="self">self</span>, idx: <span class="number">0</span>, del: <span class="number">0</span>, old_len, pred: filter, panic_flag: <span class="bool-val">false </span>}
+        ExtractIf { vec: <span class="self">self</span>, idx: <span class="number">0</span>, del: <span class="number">0</span>, old_len, pred: filter }
     }
 }
 
@@ -6257,7 +6217,7 @@
 /// [`copy_from_slice`]: slice::copy_from_slice
 </span><span class="attr">#[cfg(not(no_global_oom_handling))]
 #[stable(feature = <span class="string">&quot;extend_ref&quot;</span>, since = <span class="string">&quot;1.2.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Copy + <span class="lifetime">&#39;a</span>, A: Allocator + <span class="lifetime">&#39;a</span>&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>Vec&lt;T, A&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: Copy + <span class="lifetime">&#39;a</span>, A: Allocator&gt; Extend&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; <span class="kw">for </span>Vec&lt;T, A&gt; {
     <span class="kw">fn </span>extend&lt;I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, iter: I) {
         <span class="self">self</span>.spec_extend(iter.into_iter())
     }
@@ -6273,11 +6233,16 @@
     }
 }
 
-<span class="doccomment">/// Implements comparison of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
+<span class="doccomment">/// Implements comparison of vectors, [lexicographically](Ord#lexicographical-comparison).
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: PartialOrd, A: Allocator&gt; PartialOrd <span class="kw">for </span>Vec&lt;T, A&gt; {
+</span><span class="kw">impl</span>&lt;T, A1, A2&gt; PartialOrd&lt;Vec&lt;T, A2&gt;&gt; <span class="kw">for </span>Vec&lt;T, A1&gt;
+<span class="kw">where
+    </span>T: PartialOrd,
+    A1: Allocator,
+    A2: Allocator,
+{
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
+    </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>Vec&lt;T, A2&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
         PartialOrd::partial_cmp(<span class="kw-2">&amp;**</span><span class="self">self</span>, <span class="kw-2">&amp;**</span>other)
     }
 }
@@ -6285,7 +6250,7 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T: Eq, A: Allocator&gt; Eq <span class="kw">for </span>Vec&lt;T, A&gt; {}
 
-<span class="doccomment">/// Implements ordering of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
+<span class="doccomment">/// Implements ordering of vectors, [lexicographically](Ord#lexicographical-comparison).
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T: Ord, A: Allocator&gt; Ord <span class="kw">for </span>Vec&lt;T, A&gt; {
     <span class="attr">#[inline]
@@ -6308,8 +6273,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span>Vec&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>Vec&lt;T&gt; {
     <span class="doccomment">/// Creates an empty `Vec&lt;T&gt;`.
     ///
     /// The vector will not allocate until elements are pushed onto it.
@@ -6429,8 +6393,8 @@
     ///
     /// ```
     /// # use std::borrow::Cow;
-    /// let o: Cow&lt;[i32]&gt; = Cow::Owned(vec![1, 2, 3]);
-    /// let b: Cow&lt;[i32]&gt; = Cow::Borrowed(&amp;[1, 2, 3]);
+    /// let o: Cow&lt;&#39;_, [i32]&gt; = Cow::Owned(vec![1, 2, 3]);
+    /// let b: Cow&lt;&#39;_, [i32]&gt; = Cow::Borrowed(&amp;[1, 2, 3]);
     /// assert_eq!(Vec::from(o), Vec::from(b));
     /// ```
     </span><span class="kw">fn </span>from(s: Cow&lt;<span class="lifetime">&#39;a</span>, [T]&gt;) -&gt; Vec&lt;T&gt; {
@@ -6546,5 +6510,4 @@
         <span class="prelude-val">Ok</span>(array)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

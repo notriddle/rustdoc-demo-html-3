@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/dec2flt/common.rs`."><title>common.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/dec2flt/common.rs`."><title>common.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -79,284 +79,62 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
-<a href="#82" id="82">82</a>
-<a href="#83" id="83">83</a>
-<a href="#84" id="84">84</a>
-<a href="#85" id="85">85</a>
-<a href="#86" id="86">86</a>
-<a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-<a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-<a href="#168" id="168">168</a>
-<a href="#169" id="169">169</a>
-<a href="#170" id="170">170</a>
-<a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
-<a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a>
-<a href="#179" id="179">179</a>
-<a href="#180" id="180">180</a>
-<a href="#181" id="181">181</a>
-<a href="#182" id="182">182</a>
-<a href="#183" id="183">183</a>
-<a href="#184" id="184">184</a>
-<a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Common utilities, for internal use only.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Common utilities, for internal use only.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::ptr;
-
-<span class="doccomment">/// Helper methods to process immutable bytes.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>ByteSlice: AsRef&lt;[u8]&gt; {
-    <span class="kw">unsafe fn </span>first_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
-        <span class="macro">debug_assert!</span>(!<span class="self">self</span>.is_empty());
-        <span class="comment">// SAFETY: safe as long as self is not empty
-        </span><span class="kw">unsafe </span>{ <span class="kw-2">*</span><span class="self">self</span>.as_ref().get_unchecked(<span class="number">0</span>) }
-    }
-
-    <span class="doccomment">/// Get if the slice contains no elements.
-    </span><span class="kw">fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.as_ref().is_empty()
-    }
-
-    <span class="doccomment">/// Check if the slice at least `n` length.
-    </span><span class="kw">fn </span>check_len(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; bool {
-        n &lt;= <span class="self">self</span>.as_ref().len()
-    }
-
-    <span class="doccomment">/// Check if the first character in the slice is equal to c.
-    </span><span class="kw">fn </span>first_is(<span class="kw-2">&amp;</span><span class="self">self</span>, c: u8) -&gt; bool {
-        <span class="self">self</span>.as_ref().first() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c)
-    }
-
-    <span class="doccomment">/// Check if the first character in the slice is equal to c1 or c2.
-    </span><span class="kw">fn </span>first_is2(<span class="kw-2">&amp;</span><span class="self">self</span>, c1: u8, c2: u8) -&gt; bool {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = <span class="self">self</span>.as_ref().first() { c == c1 || c == c2 } <span class="kw">else </span>{ <span class="bool-val">false </span>}
-    }
-
-    <span class="doccomment">/// Bounds-checked test if the first character in the slice is a digit.
-    </span><span class="kw">fn </span>first_isdigit(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = <span class="self">self</span>.as_ref().first() { c.is_ascii_digit() } <span class="kw">else </span>{ <span class="bool-val">false </span>}
-    }
-
-    <span class="doccomment">/// Check if self starts with u with a case-insensitive comparison.
-    </span><span class="kw">fn </span>starts_with_ignore_case(<span class="kw-2">&amp;</span><span class="self">self</span>, u: <span class="kw-2">&amp;</span>[u8]) -&gt; bool {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.as_ref().len() &gt;= u.len());
-        <span class="kw">let </span>iter = <span class="self">self</span>.as_ref().iter().zip(u.iter());
-        <span class="kw">let </span>d = iter.fold(<span class="number">0</span>, |i, (<span class="kw-2">&amp;</span>x, <span class="kw-2">&amp;</span>y)| i | (x ^ y));
-        d == <span class="number">0 </span>|| d == <span class="number">32
-    </span>}
-
-    <span class="doccomment">/// Get the remaining slice after the first N elements.
-    </span><span class="kw">fn </span>advance(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.as_ref()[n..]
-    }
-
-    <span class="doccomment">/// Get the slice after skipping all leading characters equal c.
-    </span><span class="kw">fn </span>skip_chars(<span class="kw-2">&amp;</span><span class="self">self</span>, c: u8) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="self">self</span>.as_ref();
-        <span class="kw">while </span>s.first_is(c) {
-            s = s.advance(<span class="number">1</span>);
-        }
-        s
-    }
-
-    <span class="doccomment">/// Get the slice after skipping all leading characters equal c1 or c2.
-    </span><span class="kw">fn </span>skip_chars2(<span class="kw-2">&amp;</span><span class="self">self</span>, c1: u8, c2: u8) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="self">self</span>.as_ref();
-        <span class="kw">while </span>s.first_is2(c1, c2) {
-            s = s.advance(<span class="number">1</span>);
-        }
-        s
-    }
-
+/// Helper methods to process immutable bytes.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>ByteSlice {
     <span class="doccomment">/// Read 8 bytes as a 64-bit integer in little-endian order.
-    </span><span class="kw">unsafe fn </span>read_u64_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.check_len(<span class="number">8</span>));
-        <span class="kw">let </span>src = <span class="self">self</span>.as_ref().as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>u64;
-        <span class="comment">// SAFETY: safe as long as self is at least 8 bytes
-        </span>u64::from_le(<span class="kw">unsafe </span>{ ptr::read_unaligned(src) })
-    }
+    </span><span class="kw">fn </span>read_u64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64;
 
-    <span class="doccomment">/// Try to read the next 8 bytes from the slice.
-    </span><span class="kw">fn </span>read_u64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-        <span class="kw">if </span><span class="self">self</span>.check_len(<span class="number">8</span>) {
-            <span class="comment">// SAFETY: self must be at least 8 bytes.
-            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.read_u64_unchecked() })
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>}
-    }
-
-    <span class="doccomment">/// Calculate the offset of slice from another.
-    </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; isize {
-        other.as_ref().len() <span class="kw">as </span>isize - <span class="self">self</span>.as_ref().len() <span class="kw">as </span>isize
-    }
-}
-
-<span class="kw">impl </span>ByteSlice <span class="kw">for </span>[u8] {}
-
-<span class="doccomment">/// Helper methods to process mutable bytes.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>ByteSliceMut: AsMut&lt;[u8]&gt; {
     <span class="doccomment">/// Write a 64-bit integer as 8 bytes in little-endian order.
-    </span><span class="kw">unsafe fn </span>write_u64_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u64) {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.as_mut().len() &gt;= <span class="number">8</span>);
-        <span class="kw">let </span>dst = <span class="self">self</span>.as_mut().as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>u64;
-        <span class="comment">// NOTE: we must use `write_unaligned`, since dst is not
-        // guaranteed to be properly aligned. Miri will warn us
-        // if we use `write` instead of `write_unaligned`, as expected.
-        // SAFETY: safe as long as self is at least 8 bytes
-        </span><span class="kw">unsafe </span>{
-            ptr::write_unaligned(dst, u64::to_le(value));
-        }
-    }
-}
+    </span><span class="kw">fn </span>write_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u64);
 
-<span class="kw">impl </span>ByteSliceMut <span class="kw">for </span>[u8] {}
-
-<span class="doccomment">/// Bytes wrapper with specialized methods for ASCII characters.
-</span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>AsciiStr&lt;<span class="lifetime">&#39;a</span>&gt; {
-    slc: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-}
-
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; AsciiStr&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub fn </span>new(slc: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ slc }
-    }
-
-    <span class="doccomment">/// Advance the view by n, advancing it in-place to (n..).
-    </span><span class="kw">pub unsafe fn </span>step_by(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="comment">// SAFETY: safe as long n is less than the buffer length
-        </span><span class="self">self</span>.slc = <span class="kw">unsafe </span>{ <span class="self">self</span>.slc.get_unchecked(n..) };
-        <span class="self">self
-    </span>}
-
-    <span class="doccomment">/// Advance the view by n, advancing it in-place to (1..).
-    </span><span class="kw">pub unsafe fn </span>step(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
-        <span class="comment">// SAFETY: safe as long as self is not empty
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.step_by(<span class="number">1</span>) }
-    }
+    <span class="doccomment">/// Calculate the offset of a slice from another.
+    </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; isize;
 
     <span class="doccomment">/// Iteratively parse and consume digits from bytes.
-    </span><span class="kw">pub fn </span>parse_digits(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>func: <span class="kw">impl </span>FnMut(u8)) {
-        <span class="kw">while let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = <span class="self">self</span>.as_ref().first() {
+    /// Returns the same bytes with consumed digits being
+    /// elided.
+    </span><span class="kw">fn </span>parse_digits(<span class="kw-2">&amp;</span><span class="self">self</span>, func: <span class="kw">impl </span>FnMut(u8)) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>;
+}
+
+<span class="kw">impl </span>ByteSlice <span class="kw">for </span>[u8] {
+    <span class="attr">#[inline(always)] </span><span class="comment">// inlining this is crucial to remove bound checks
+    </span><span class="kw">fn </span>read_u64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
+        <span class="kw">let </span><span class="kw-2">mut </span>tmp = [<span class="number">0</span>; <span class="number">8</span>];
+        tmp.copy_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>[..<span class="number">8</span>]);
+        u64::from_le_bytes(tmp)
+    }
+
+    <span class="attr">#[inline(always)] </span><span class="comment">// inlining this is crucial to remove bound checks
+    </span><span class="kw">fn </span>write_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u64) {
+        <span class="self">self</span>[..<span class="number">8</span>].copy_from_slice(<span class="kw-2">&amp;</span>value.to_le_bytes())
+    }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>offset_from(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; isize {
+        other.len() <span class="kw">as </span>isize - <span class="self">self</span>.len() <span class="kw">as </span>isize
+    }
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>parse_digits(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>func: <span class="kw">impl </span>FnMut(u8)) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="self">self</span>;
+
+        <span class="comment">// FIXME: Can&#39;t use s.split_first() here yet,
+        // see https://github.com/rust-lang/rust/issues/109328
+        </span><span class="kw">while let </span>[c, s_next @ ..] = s {
             <span class="kw">let </span>c = c.wrapping_sub(<span class="string">b&#39;0&#39;</span>);
             <span class="kw">if </span>c &lt; <span class="number">10 </span>{
                 func(c);
-                <span class="comment">// SAFETY: self cannot be empty
-                </span><span class="kw">unsafe </span>{
-                    <span class="self">self</span>.step();
-                }
+                s = s_next;
             } <span class="kw">else </span>{
                 <span class="kw">break</span>;
             }
         }
+
+        s
     }
 }
-
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; AsRef&lt;[u8]&gt; <span class="kw">for </span>AsciiStr&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="self">self</span>.slc
-    }
-}
-
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ByteSlice <span class="kw">for </span>AsciiStr&lt;<span class="lifetime">&#39;a</span>&gt; {}
 
 <span class="doccomment">/// Determine if 8 bytes are all decimal digits.
 /// This does not care about the order in which the bytes were loaded.
@@ -365,19 +143,6 @@
     <span class="kw">let </span>b = v.wrapping_sub(<span class="number">0x3030_3030_3030_3030</span>);
     (a | b) &amp; <span class="number">0x8080_8080_8080_8080 </span>== <span class="number">0
 </span>}
-
-<span class="doccomment">/// Iteratively parse and consume digits from bytes.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_digits(s: <span class="kw-2">&amp;mut &amp;</span>[u8], <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(u8)) {
-    <span class="kw">while let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = s.get(<span class="number">0</span>) {
-        <span class="kw">let </span>c = c.wrapping_sub(<span class="string">b&#39;0&#39;</span>);
-        <span class="kw">if </span>c &lt; <span class="number">10 </span>{
-            f(c);
-            <span class="kw-2">*</span>s = s.advance(<span class="number">1</span>);
-        } <span class="kw">else </span>{
-            <span class="kw">break</span>;
-        }
-    }
-}
 
 <span class="doccomment">/// A custom 64-bit floating point type, representing `f * 2^e`.
 /// e is biased, so it be directly shifted into the exponent bits.
@@ -390,9 +155,9 @@
 }
 
 <span class="kw">impl </span>BiasedFp {
-    <span class="kw">pub const fn </span>zero_pow2(e: i32) -&gt; <span class="self">Self </span>{
+    <span class="attr">#[inline]
+    </span><span class="kw">pub const fn </span>zero_pow2(e: i32) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ f: <span class="number">0</span>, e }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

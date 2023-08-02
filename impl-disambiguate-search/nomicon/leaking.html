@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -258,10 +283,10 @@ impl&lt;T&gt; Rc&lt;T&gt; {
             // Wouldn't it be nice if heap::allocate worked like this?
             let ptr = heap::allocate::&lt;RcBox&lt;T&gt;&gt;();
             ptr::write(ptr, RcBox {
-                data: data,
+                data,
                 ref_count: 1,
             });
-            Rc { ptr: ptr }
+            Rc { ptr }
         }
     }
 
@@ -309,7 +334,7 @@ of scope.</p>
 <pre><code class="language-rust ignore">pub fn scoped&lt;'a, F&gt;(f: F) -&gt; JoinGuard&lt;'a&gt;
     where F: FnOnce() + Send + 'a</code></pre>
 <p>Here <code>f</code> is some closure for the other thread to execute. Saying that
-<code>F: Send +'a</code> is saying that it closes over data that lives for <code>'a</code>, and it
+<code>F: Send + 'a</code> is saying that it closes over data that lives for <code>'a</code>, and it
 either owns that data or the data was Sync (implying <code>&amp;data</code> is Send).</p>
 <p>Because JoinGuard has a lifetime, it keeps all the data it closes over
 borrowed in the parent thread. This means the JoinGuard can't outlive
@@ -406,5 +431,6 @@ to be scrapped in favor of a completely different design.</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

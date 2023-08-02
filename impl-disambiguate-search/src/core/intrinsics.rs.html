@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/intrinsics.rs`."><title>intrinsics.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/intrinsics.rs`."><title>intrinsics.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2560,7 +2560,272 @@
 <a href="#2560" id="2560">2560</a>
 <a href="#2561" id="2561">2561</a>
 <a href="#2562" id="2562">2562</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Compiler intrinsics.
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
+<a href="#2586" id="2586">2586</a>
+<a href="#2587" id="2587">2587</a>
+<a href="#2588" id="2588">2588</a>
+<a href="#2589" id="2589">2589</a>
+<a href="#2590" id="2590">2590</a>
+<a href="#2591" id="2591">2591</a>
+<a href="#2592" id="2592">2592</a>
+<a href="#2593" id="2593">2593</a>
+<a href="#2594" id="2594">2594</a>
+<a href="#2595" id="2595">2595</a>
+<a href="#2596" id="2596">2596</a>
+<a href="#2597" id="2597">2597</a>
+<a href="#2598" id="2598">2598</a>
+<a href="#2599" id="2599">2599</a>
+<a href="#2600" id="2600">2600</a>
+<a href="#2601" id="2601">2601</a>
+<a href="#2602" id="2602">2602</a>
+<a href="#2603" id="2603">2603</a>
+<a href="#2604" id="2604">2604</a>
+<a href="#2605" id="2605">2605</a>
+<a href="#2606" id="2606">2606</a>
+<a href="#2607" id="2607">2607</a>
+<a href="#2608" id="2608">2608</a>
+<a href="#2609" id="2609">2609</a>
+<a href="#2610" id="2610">2610</a>
+<a href="#2611" id="2611">2611</a>
+<a href="#2612" id="2612">2612</a>
+<a href="#2613" id="2613">2613</a>
+<a href="#2614" id="2614">2614</a>
+<a href="#2615" id="2615">2615</a>
+<a href="#2616" id="2616">2616</a>
+<a href="#2617" id="2617">2617</a>
+<a href="#2618" id="2618">2618</a>
+<a href="#2619" id="2619">2619</a>
+<a href="#2620" id="2620">2620</a>
+<a href="#2621" id="2621">2621</a>
+<a href="#2622" id="2622">2622</a>
+<a href="#2623" id="2623">2623</a>
+<a href="#2624" id="2624">2624</a>
+<a href="#2625" id="2625">2625</a>
+<a href="#2626" id="2626">2626</a>
+<a href="#2627" id="2627">2627</a>
+<a href="#2628" id="2628">2628</a>
+<a href="#2629" id="2629">2629</a>
+<a href="#2630" id="2630">2630</a>
+<a href="#2631" id="2631">2631</a>
+<a href="#2632" id="2632">2632</a>
+<a href="#2633" id="2633">2633</a>
+<a href="#2634" id="2634">2634</a>
+<a href="#2635" id="2635">2635</a>
+<a href="#2636" id="2636">2636</a>
+<a href="#2637" id="2637">2637</a>
+<a href="#2638" id="2638">2638</a>
+<a href="#2639" id="2639">2639</a>
+<a href="#2640" id="2640">2640</a>
+<a href="#2641" id="2641">2641</a>
+<a href="#2642" id="2642">2642</a>
+<a href="#2643" id="2643">2643</a>
+<a href="#2644" id="2644">2644</a>
+<a href="#2645" id="2645">2645</a>
+<a href="#2646" id="2646">2646</a>
+<a href="#2647" id="2647">2647</a>
+<a href="#2648" id="2648">2648</a>
+<a href="#2649" id="2649">2649</a>
+<a href="#2650" id="2650">2650</a>
+<a href="#2651" id="2651">2651</a>
+<a href="#2652" id="2652">2652</a>
+<a href="#2653" id="2653">2653</a>
+<a href="#2654" id="2654">2654</a>
+<a href="#2655" id="2655">2655</a>
+<a href="#2656" id="2656">2656</a>
+<a href="#2657" id="2657">2657</a>
+<a href="#2658" id="2658">2658</a>
+<a href="#2659" id="2659">2659</a>
+<a href="#2660" id="2660">2660</a>
+<a href="#2661" id="2661">2661</a>
+<a href="#2662" id="2662">2662</a>
+<a href="#2663" id="2663">2663</a>
+<a href="#2664" id="2664">2664</a>
+<a href="#2665" id="2665">2665</a>
+<a href="#2666" id="2666">2666</a>
+<a href="#2667" id="2667">2667</a>
+<a href="#2668" id="2668">2668</a>
+<a href="#2669" id="2669">2669</a>
+<a href="#2670" id="2670">2670</a>
+<a href="#2671" id="2671">2671</a>
+<a href="#2672" id="2672">2672</a>
+<a href="#2673" id="2673">2673</a>
+<a href="#2674" id="2674">2674</a>
+<a href="#2675" id="2675">2675</a>
+<a href="#2676" id="2676">2676</a>
+<a href="#2677" id="2677">2677</a>
+<a href="#2678" id="2678">2678</a>
+<a href="#2679" id="2679">2679</a>
+<a href="#2680" id="2680">2680</a>
+<a href="#2681" id="2681">2681</a>
+<a href="#2682" id="2682">2682</a>
+<a href="#2683" id="2683">2683</a>
+<a href="#2684" id="2684">2684</a>
+<a href="#2685" id="2685">2685</a>
+<a href="#2686" id="2686">2686</a>
+<a href="#2687" id="2687">2687</a>
+<a href="#2688" id="2688">2688</a>
+<a href="#2689" id="2689">2689</a>
+<a href="#2690" id="2690">2690</a>
+<a href="#2691" id="2691">2691</a>
+<a href="#2692" id="2692">2692</a>
+<a href="#2693" id="2693">2693</a>
+<a href="#2694" id="2694">2694</a>
+<a href="#2695" id="2695">2695</a>
+<a href="#2696" id="2696">2696</a>
+<a href="#2697" id="2697">2697</a>
+<a href="#2698" id="2698">2698</a>
+<a href="#2699" id="2699">2699</a>
+<a href="#2700" id="2700">2700</a>
+<a href="#2701" id="2701">2701</a>
+<a href="#2702" id="2702">2702</a>
+<a href="#2703" id="2703">2703</a>
+<a href="#2704" id="2704">2704</a>
+<a href="#2705" id="2705">2705</a>
+<a href="#2706" id="2706">2706</a>
+<a href="#2707" id="2707">2707</a>
+<a href="#2708" id="2708">2708</a>
+<a href="#2709" id="2709">2709</a>
+<a href="#2710" id="2710">2710</a>
+<a href="#2711" id="2711">2711</a>
+<a href="#2712" id="2712">2712</a>
+<a href="#2713" id="2713">2713</a>
+<a href="#2714" id="2714">2714</a>
+<a href="#2715" id="2715">2715</a>
+<a href="#2716" id="2716">2716</a>
+<a href="#2717" id="2717">2717</a>
+<a href="#2718" id="2718">2718</a>
+<a href="#2719" id="2719">2719</a>
+<a href="#2720" id="2720">2720</a>
+<a href="#2721" id="2721">2721</a>
+<a href="#2722" id="2722">2722</a>
+<a href="#2723" id="2723">2723</a>
+<a href="#2724" id="2724">2724</a>
+<a href="#2725" id="2725">2725</a>
+<a href="#2726" id="2726">2726</a>
+<a href="#2727" id="2727">2727</a>
+<a href="#2728" id="2728">2728</a>
+<a href="#2729" id="2729">2729</a>
+<a href="#2730" id="2730">2730</a>
+<a href="#2731" id="2731">2731</a>
+<a href="#2732" id="2732">2732</a>
+<a href="#2733" id="2733">2733</a>
+<a href="#2734" id="2734">2734</a>
+<a href="#2735" id="2735">2735</a>
+<a href="#2736" id="2736">2736</a>
+<a href="#2737" id="2737">2737</a>
+<a href="#2738" id="2738">2738</a>
+<a href="#2739" id="2739">2739</a>
+<a href="#2740" id="2740">2740</a>
+<a href="#2741" id="2741">2741</a>
+<a href="#2742" id="2742">2742</a>
+<a href="#2743" id="2743">2743</a>
+<a href="#2744" id="2744">2744</a>
+<a href="#2745" id="2745">2745</a>
+<a href="#2746" id="2746">2746</a>
+<a href="#2747" id="2747">2747</a>
+<a href="#2748" id="2748">2748</a>
+<a href="#2749" id="2749">2749</a>
+<a href="#2750" id="2750">2750</a>
+<a href="#2751" id="2751">2751</a>
+<a href="#2752" id="2752">2752</a>
+<a href="#2753" id="2753">2753</a>
+<a href="#2754" id="2754">2754</a>
+<a href="#2755" id="2755">2755</a>
+<a href="#2756" id="2756">2756</a>
+<a href="#2757" id="2757">2757</a>
+<a href="#2758" id="2758">2758</a>
+<a href="#2759" id="2759">2759</a>
+<a href="#2760" id="2760">2760</a>
+<a href="#2761" id="2761">2761</a>
+<a href="#2762" id="2762">2762</a>
+<a href="#2763" id="2763">2763</a>
+<a href="#2764" id="2764">2764</a>
+<a href="#2765" id="2765">2765</a>
+<a href="#2766" id="2766">2766</a>
+<a href="#2767" id="2767">2767</a>
+<a href="#2768" id="2768">2768</a>
+<a href="#2769" id="2769">2769</a>
+<a href="#2770" id="2770">2770</a>
+<a href="#2771" id="2771">2771</a>
+<a href="#2772" id="2772">2772</a>
+<a href="#2773" id="2773">2773</a>
+<a href="#2774" id="2774">2774</a>
+<a href="#2775" id="2775">2775</a>
+<a href="#2776" id="2776">2776</a>
+<a href="#2777" id="2777">2777</a>
+<a href="#2778" id="2778">2778</a>
+<a href="#2779" id="2779">2779</a>
+<a href="#2780" id="2780">2780</a>
+<a href="#2781" id="2781">2781</a>
+<a href="#2782" id="2782">2782</a>
+<a href="#2783" id="2783">2783</a>
+<a href="#2784" id="2784">2784</a>
+<a href="#2785" id="2785">2785</a>
+<a href="#2786" id="2786">2786</a>
+<a href="#2787" id="2787">2787</a>
+<a href="#2788" id="2788">2788</a>
+<a href="#2789" id="2789">2789</a>
+<a href="#2790" id="2790">2790</a>
+<a href="#2791" id="2791">2791</a>
+<a href="#2792" id="2792">2792</a>
+<a href="#2793" id="2793">2793</a>
+<a href="#2794" id="2794">2794</a>
+<a href="#2795" id="2795">2795</a>
+<a href="#2796" id="2796">2796</a>
+<a href="#2797" id="2797">2797</a>
+<a href="#2798" id="2798">2798</a>
+<a href="#2799" id="2799">2799</a>
+<a href="#2800" id="2800">2800</a>
+<a href="#2801" id="2801">2801</a>
+<a href="#2802" id="2802">2802</a>
+<a href="#2803" id="2803">2803</a>
+<a href="#2804" id="2804">2804</a>
+<a href="#2805" id="2805">2805</a>
+<a href="#2806" id="2806">2806</a>
+<a href="#2807" id="2807">2807</a>
+<a href="#2808" id="2808">2808</a>
+<a href="#2809" id="2809">2809</a>
+<a href="#2810" id="2810">2810</a>
+<a href="#2811" id="2811">2811</a>
+<a href="#2812" id="2812">2812</a>
+<a href="#2813" id="2813">2813</a>
+<a href="#2814" id="2814">2814</a>
+<a href="#2815" id="2815">2815</a>
+<a href="#2816" id="2816">2816</a>
+<a href="#2817" id="2817">2817</a>
+<a href="#2818" id="2818">2818</a>
+<a href="#2819" id="2819">2819</a>
+<a href="#2820" id="2820">2820</a>
+<a href="#2821" id="2821">2821</a>
+<a href="#2822" id="2822">2822</a>
+<a href="#2823" id="2823">2823</a>
+<a href="#2824" id="2824">2824</a>
+<a href="#2825" id="2825">2825</a>
+<a href="#2826" id="2826">2826</a>
+<a href="#2827" id="2827">2827</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Compiler intrinsics.
 //!
 //! The corresponding definitions are in &lt;https://github.com/rust-lang/rust/blob/master/compiler/rustc_codegen_llvm/src/intrinsic.rs&gt;.
 //! The corresponding const implementations are in &lt;https://github.com/rust-lang/rust/blob/master/compiler/rustc_const_eval/src/interpret/intrinsics.rs&gt;.
@@ -2646,6 +2911,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Relaxed`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_relaxed_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2653,6 +2919,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Relaxed`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_relaxed_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2660,6 +2927,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Relaxed`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_relaxed_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2667,6 +2935,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Acquire`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acquire_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2674,6 +2943,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Acquire`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acquire_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2681,6 +2951,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Acquire`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acquire_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2688,6 +2959,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Release`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_release_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2695,6 +2967,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Release`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_release_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2702,6 +2975,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::Release`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_release_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2709,6 +2983,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acqrel_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2716,6 +2991,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acqrel_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2723,6 +2999,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_acqrel_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2730,6 +3007,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::SeqCst`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_seqcst_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2737,6 +3015,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::SeqCst`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_seqcst_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2744,6 +3023,7 @@
     /// [`atomic`] types via the `compare_exchange` method by passing
     /// [`Ordering::SeqCst`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchg_seqcst_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
 
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
@@ -2752,6 +3032,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Relaxed`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_relaxed_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2759,6 +3040,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Relaxed`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_relaxed_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2766,6 +3048,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Relaxed`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_relaxed_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2773,6 +3056,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Acquire`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acquire_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2780,6 +3064,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Acquire`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acquire_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2787,6 +3072,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Acquire`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acquire_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2794,6 +3080,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Release`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_release_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2801,6 +3088,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Release`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_release_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2808,6 +3096,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::Release`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_release_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2815,6 +3104,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acqrel_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2822,6 +3112,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acqrel_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2829,6 +3120,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::AcqRel`] and [`Ordering::SeqCst`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_acqrel_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2836,6 +3128,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::SeqCst`] and [`Ordering::Relaxed`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_seqcst_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2843,6 +3136,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::SeqCst`] and [`Ordering::Acquire`] as the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_seqcst_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
     <span class="doccomment">/// Stores a value if the current value is the same as the `old` value.
     ///
@@ -2850,6 +3144,7 @@
     /// [`atomic`] types via the `compare_exchange_weak` method by passing
     /// [`Ordering::SeqCst`] as both the success and failure parameters.
     /// For example, [`AtomicBool::compare_exchange_weak`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_cxchgweak_seqcst_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, old: T, src: T) -&gt; (T, bool);
 
     <span class="doccomment">/// Loads the current value of the pointer.
@@ -2857,70 +3152,83 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `load` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::load`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_load_seqcst&lt;T: Copy&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
     <span class="doccomment">/// Loads the current value of the pointer.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `load` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::load`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_load_acquire&lt;T: Copy&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
     <span class="doccomment">/// Loads the current value of the pointer.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `load` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::load`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_load_relaxed&lt;T: Copy&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
-    <span class="kw">pub fn </span>atomic_load_unordered&lt;T: Copy&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
+    <span class="attr">#[rustc_nounwind]
+    </span><span class="kw">pub fn </span>atomic_load_unordered&lt;T: Copy&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
 
     <span class="doccomment">/// Stores the value at the specified memory location.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `store` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::store`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_store_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
     <span class="doccomment">/// Stores the value at the specified memory location.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `store` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::store`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_store_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
     <span class="doccomment">/// Stores the value at the specified memory location.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `store` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::store`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_store_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
-    <span class="kw">pub fn </span>atomic_store_unordered&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
+    <span class="attr">#[rustc_nounwind]
+    </span><span class="kw">pub fn </span>atomic_store_unordered&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
 
     <span class="doccomment">/// Stores the value at the specified memory location, returning the old value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `swap` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::swap`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xchg_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Stores the value at the specified memory location, returning the old value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `swap` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::swap`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xchg_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Stores the value at the specified memory location, returning the old value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `swap` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::swap`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xchg_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Stores the value at the specified memory location, returning the old value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `swap` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicBool::swap`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xchg_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Stores the value at the specified memory location, returning the old value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `swap` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::swap`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xchg_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Adds to the current value, returning the previous value.
@@ -2928,30 +3236,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_add` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicIsize::fetch_add`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xadd_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Adds to the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_add` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicIsize::fetch_add`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xadd_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Adds to the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_add` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicIsize::fetch_add`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xadd_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Adds to the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_add` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicIsize::fetch_add`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xadd_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Adds to the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_add` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicIsize::fetch_add`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xadd_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Subtract from the current value, returning the previous value.
@@ -2959,30 +3272,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_sub` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicIsize::fetch_sub`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xsub_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Subtract from the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_sub` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicIsize::fetch_sub`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xsub_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Subtract from the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_sub` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicIsize::fetch_sub`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xsub_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Subtract from the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_sub` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicIsize::fetch_sub`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xsub_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Subtract from the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_sub` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicIsize::fetch_sub`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xsub_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Bitwise and with the current value, returning the previous value.
@@ -2990,30 +3308,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_and` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::fetch_and`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_and_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise and with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_and` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::fetch_and`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_and_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise and with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_and` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::fetch_and`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_and_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise and with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_and` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicBool::fetch_and`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_and_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise and with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_and` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::fetch_and`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_and_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Bitwise nand with the current value, returning the previous value.
@@ -3021,30 +3344,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`AtomicBool`] type via the `fetch_nand` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::fetch_nand`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_nand_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise nand with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`AtomicBool`] type via the `fetch_nand` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::fetch_nand`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_nand_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise nand with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`AtomicBool`] type via the `fetch_nand` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::fetch_nand`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_nand_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise nand with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`AtomicBool`] type via the `fetch_nand` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicBool::fetch_nand`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_nand_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise nand with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`AtomicBool`] type via the `fetch_nand` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::fetch_nand`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_nand_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Bitwise or with the current value, returning the previous value.
@@ -3052,30 +3380,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_or` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::fetch_or`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_or_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise or with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_or` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::fetch_or`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_or_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise or with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_or` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::fetch_or`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_or_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise or with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_or` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicBool::fetch_or`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_or_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise or with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_or` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::fetch_or`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_or_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Bitwise xor with the current value, returning the previous value.
@@ -3083,30 +3416,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_xor` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicBool::fetch_xor`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xor_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise xor with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_xor` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicBool::fetch_xor`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xor_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise xor with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_xor` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicBool::fetch_xor`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xor_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise xor with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_xor` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicBool::fetch_xor`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xor_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Bitwise xor with the current value, returning the previous value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] types via the `fetch_xor` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicBool::fetch_xor`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_xor_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Maximum with the current value using a signed comparison.
@@ -3114,30 +3452,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_max` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicI32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_max_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using a signed comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_max` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicI32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_max_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using a signed comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_max` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicI32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_max_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using a signed comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_max` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicI32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_max_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_max` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicI32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_max_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Minimum with the current value using a signed comparison.
@@ -3145,18 +3488,21 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_min` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicI32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_min_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using a signed comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_min` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicI32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_min_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using a signed comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_min` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicI32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_min_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using a signed comparison.
     ///
@@ -3169,6 +3515,7 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] signed integer types via the `fetch_min` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicI32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_min_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Minimum with the current value using an unsigned comparison.
@@ -3176,30 +3523,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_min` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicU32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umin_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_min` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicU32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umin_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_min` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicU32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umin_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_min` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicU32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umin_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Minimum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_min` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicU32::fetch_min`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umin_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// Maximum with the current value using an unsigned comparison.
@@ -3207,30 +3559,35 @@
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_max` method by passing
     /// [`Ordering::SeqCst`] as the `order`. For example, [`AtomicU32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umax_seqcst&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_max` method by passing
     /// [`Ordering::Acquire`] as the `order`. For example, [`AtomicU32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umax_acquire&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_max` method by passing
     /// [`Ordering::Release`] as the `order`. For example, [`AtomicU32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umax_release&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_max` method by passing
     /// [`Ordering::AcqRel`] as the `order`. For example, [`AtomicU32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umax_acqrel&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
     <span class="doccomment">/// Maximum with the current value using an unsigned comparison.
     ///
     /// The stabilized version of this intrinsic is available on the
     /// [`atomic`] unsigned integer types via the `fetch_max` method by passing
     /// [`Ordering::Relaxed`] as the `order`. For example, [`AtomicU32::fetch_max`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_umax_relaxed&lt;T: Copy&gt;(dst: <span class="kw-2">*mut </span>T, src: T) -&gt; T;
 
     <span class="doccomment">/// An atomic fence.
@@ -3238,24 +3595,28 @@
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::fence`] by passing [`Ordering::SeqCst`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_fence_seqcst();
     <span class="doccomment">/// An atomic fence.
     ///
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::fence`] by passing [`Ordering::Acquire`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_fence_acquire();
     <span class="doccomment">/// An atomic fence.
     ///
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::fence`] by passing [`Ordering::Release`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_fence_release();
     <span class="doccomment">/// An atomic fence.
     ///
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::fence`] by passing [`Ordering::AcqRel`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_fence_acqrel();
 
     <span class="doccomment">/// A compiler-only memory barrier.
@@ -3268,6 +3629,7 @@
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::compiler_fence`] by passing [`Ordering::SeqCst`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_singlethreadfence_seqcst();
     <span class="doccomment">/// A compiler-only memory barrier.
     ///
@@ -3279,6 +3641,7 @@
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::compiler_fence`] by passing [`Ordering::Acquire`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_singlethreadfence_acquire();
     <span class="doccomment">/// A compiler-only memory barrier.
     ///
@@ -3290,6 +3653,7 @@
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::compiler_fence`] by passing [`Ordering::Release`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_singlethreadfence_release();
     <span class="doccomment">/// A compiler-only memory barrier.
     ///
@@ -3301,6 +3665,7 @@
     /// The stabilized version of this intrinsic is available in
     /// [`atomic::compiler_fence`] by passing [`Ordering::AcqRel`]
     /// as the `order`.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>atomic_singlethreadfence_acqrel();
 
     <span class="doccomment">/// The `prefetch` intrinsic is a hint to the code generator to insert a prefetch instruction
@@ -3312,6 +3677,7 @@
     /// ranging from (0) - no locality, to (3) - extremely local keep in cache.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>prefetch_read_data&lt;T&gt;(data: <span class="kw-2">*const </span>T, locality: i32);
     <span class="doccomment">/// The `prefetch` intrinsic is a hint to the code generator to insert a prefetch instruction
     /// if supported; otherwise, it is a no-op.
@@ -3322,6 +3688,7 @@
     /// ranging from (0) - no locality, to (3) - extremely local keep in cache.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>prefetch_write_data&lt;T&gt;(data: <span class="kw-2">*const </span>T, locality: i32);
     <span class="doccomment">/// The `prefetch` intrinsic is a hint to the code generator to insert a prefetch instruction
     /// if supported; otherwise, it is a no-op.
@@ -3332,6 +3699,7 @@
     /// ranging from (0) - no locality, to (3) - extremely local keep in cache.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>prefetch_read_instruction&lt;T&gt;(data: <span class="kw-2">*const </span>T, locality: i32);
     <span class="doccomment">/// The `prefetch` intrinsic is a hint to the code generator to insert a prefetch instruction
     /// if supported; otherwise, it is a no-op.
@@ -3342,6 +3710,7 @@
     /// ranging from (0) - no locality, to (3) - extremely local keep in cache.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>prefetch_write_instruction&lt;T&gt;(data: <span class="kw-2">*const </span>T, locality: i32);
 
     <span class="doccomment">/// Magic intrinsic that derives its meaning from attributes
@@ -3354,6 +3723,7 @@
     ///
     /// This intrinsic should not be used outside of the compiler.
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>rustc_peek&lt;T&gt;(<span class="kw">_</span>: T) -&gt; T;
 
     <span class="doccomment">/// Aborts the execution of the process.
@@ -3372,6 +3742,7 @@
     /// process will probably terminate with a signal like `SIGABRT`, `SIGILL`, `SIGTRAP`, `SIGSEGV` or
     /// `SIGBUS`.  The precise behaviour is not guaranteed and not stable.
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>abort() -&gt; !;
 
     <span class="doccomment">/// Informs the optimizer that this point in the code is not reachable,
@@ -3383,6 +3754,7 @@
     ///
     /// The stabilized version of this intrinsic is [`core::hint::unreachable_unchecked`].
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_unreachable_unchecked&quot;</span>, since = <span class="string">&quot;1.57.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unreachable() -&gt; !;
 
     <span class="doccomment">/// Informs the optimizer that a condition is always true.
@@ -3396,6 +3768,7 @@
     ///
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_assume&quot;</span>, issue = <span class="string">&quot;76972&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>assume(b: bool);
 
     <span class="doccomment">/// Hints to the compiler that branch condition is likely to be true.
@@ -3411,6 +3784,7 @@
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_likely&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>likely(b: bool) -&gt; bool;
 
     <span class="doccomment">/// Hints to the compiler that branch condition is likely to be false.
@@ -3426,11 +3800,13 @@
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_likely&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unlikely(b: bool) -&gt; bool;
 
     <span class="doccomment">/// Executes a breakpoint trap, for inspection by a debugger.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>breakpoint();
 
     <span class="doccomment">/// The size of a type in bytes.
@@ -3446,6 +3822,7 @@
     /// The stabilized version of this intrinsic is [`core::mem::size_of`].
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_size_of&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>size_of&lt;T&gt;() -&gt; usize;
 
     <span class="doccomment">/// The minimum alignment of a type.
@@ -3458,23 +3835,27 @@
     /// The stabilized version of this intrinsic is [`core::mem::align_of`].
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_min_align_of&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>min_align_of&lt;T&gt;() -&gt; usize;
     <span class="doccomment">/// The preferred alignment of a type.
     ///
     /// This intrinsic does not have a stable counterpart.
     /// It&#39;s &quot;tracking issue&quot; is [#91971](https://github.com/rust-lang/rust/issues/91971).
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_pref_align_of&quot;</span>, issue = <span class="string">&quot;91971&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>pref_align_of&lt;T&gt;() -&gt; usize;
 
     <span class="doccomment">/// The size of the referenced value in bytes.
     ///
     /// The stabilized version of this intrinsic is [`mem::size_of_val`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_size_of_val&quot;</span>, issue = <span class="string">&quot;46571&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>size_of_val&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="kw">_</span>: <span class="kw-2">*const </span>T) -&gt; usize;
     <span class="doccomment">/// The required alignment of the referenced value.
     ///
     /// The stabilized version of this intrinsic is [`core::mem::align_of_val`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_align_of_val&quot;</span>, issue = <span class="string">&quot;46571&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>min_align_of_val&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="kw">_</span>: <span class="kw-2">*const </span>T) -&gt; usize;
 
     <span class="doccomment">/// Gets a static string slice containing the name of a type.
@@ -3487,6 +3868,7 @@
     /// The stabilized version of this intrinsic is [`core::any::type_name`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_type_name&quot;</span>, issue = <span class="string">&quot;63084&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>type_name&lt;T: <span class="question-mark">?</span>Sized&gt;() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str;
 
     <span class="doccomment">/// Gets an identifier which is globally unique to the specified type. This
@@ -3501,7 +3883,8 @@
     /// The stabilized version of this intrinsic is [`core::any::TypeId::of`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_type_id&quot;</span>, issue = <span class="string">&quot;77125&quot;</span>)]
     #[rustc_safe_intrinsic]
-    </span><span class="kw">pub fn </span>type_id&lt;T: <span class="question-mark">?</span>Sized + <span class="lifetime">&#39;static</span>&gt;() -&gt; u64;
+    #[rustc_nounwind]
+    </span><span class="kw">pub fn </span>type_id&lt;T: <span class="question-mark">?</span>Sized + <span class="lifetime">&#39;static</span>&gt;() -&gt; u128;
 
     <span class="doccomment">/// A guard for unsafe functions that cannot ever be executed if `T` is uninhabited:
     /// This will statically either panic, or do nothing.
@@ -3509,6 +3892,7 @@
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_assert_type&quot;</span>, since = <span class="string">&quot;1.59.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>assert_inhabited&lt;T&gt;();
 
     <span class="doccomment">/// A guard for unsafe functions that cannot ever be executed if `T` does not permit
@@ -3517,6 +3901,7 @@
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_assert_type2&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>assert_zero_valid&lt;T&gt;();
 
     <span class="doccomment">/// A guard for `std::mem::uninitialized`. This will statically either panic, or do nothing.
@@ -3524,6 +3909,7 @@
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_assert_type2&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>assert_mem_uninitialized_valid&lt;T&gt;();
 
     <span class="doccomment">/// Gets a reference to a static `Location` indicating where it was called.
@@ -3536,6 +3922,7 @@
     /// Consider using [`core::panic::Location::caller`] instead.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_caller_location&quot;</span>, issue = <span class="string">&quot;76156&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>caller_location() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="kw">crate</span>::panic::Location&lt;<span class="lifetime">&#39;static</span>&gt;;
 
     <span class="doccomment">/// Moves a value out of scope without running drop glue.
@@ -3549,6 +3936,7 @@
     /// any safety invariants.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_intrinsic_forget&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>forget&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="kw">_</span>: T);
 
     <span class="doccomment">/// Reinterprets the bits of a value of one type as another type.
@@ -3626,7 +4014,7 @@
     /// Below are common applications of `transmute` which can be replaced with safer
     /// constructs.
     ///
-    /// Turning raw bytes (`&amp;[u8]`) into `u32`, `f64`, etc.:
+    /// Turning raw bytes (`[u8; SZ]`) into `u32`, `f64`, etc.:
     ///
     /// ```
     /// let raw_bytes = [0x78, 0x56, 0x34, 0x12];
@@ -3812,7 +4200,21 @@
     #[rustc_allowed_through_unstable_modules]
     #[rustc_const_stable(feature = <span class="string">&quot;const_transmute&quot;</span>, since = <span class="string">&quot;1.56.0&quot;</span>)]
     #[rustc_diagnostic_item = <span class="string">&quot;transmute&quot;</span>]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>transmute&lt;Src, Dst&gt;(src: Src) -&gt; Dst;
+
+    <span class="doccomment">/// Like [`transmute`], but even less checked at compile-time: rather than
+    /// giving an error for `size_of::&lt;Src&gt;() != size_of::&lt;Dst&gt;()`, it&#39;s
+    /// **Undefined Behaviour** at runtime.
+    ///
+    /// Prefer normal `transmute` where possible, for the extra checking, since
+    /// both do exactly the same thing at runtime, if they both compile.
+    ///
+    /// This is not expected to ever be exposed directly to users, rather it
+    /// may eventually be exposed through some more-constrained API.
+    </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_transmute&quot;</span>, since = <span class="string">&quot;1.56.0&quot;</span>)]
+    #[rustc_nounwind]
+    </span><span class="kw">pub fn </span>transmute_unchecked&lt;Src, Dst&gt;(src: Src) -&gt; Dst;
 
     <span class="doccomment">/// Returns `true` if the actual type given as `T` requires drop
     /// glue; returns `false` if the actual type provided for `T`
@@ -3829,12 +4231,17 @@
     /// The stabilized version of this intrinsic is [`mem::needs_drop`](crate::mem::needs_drop).
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_needs_drop&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>needs_drop&lt;T: <span class="question-mark">?</span>Sized&gt;() -&gt; bool;
 
     <span class="doccomment">/// Calculates the offset from a pointer.
     ///
     /// This is implemented as an intrinsic to avoid converting to and from an
     /// integer, since the conversion would throw away aliasing information.
+    ///
+    /// This can only be used with `Ptr` as a raw pointer type (`*mut` or `*const`)
+    /// to a `Sized` pointee and with `Delta` as `usize` or `isize`.  Any other
+    /// instantiations may arbitrarily misbehave, and that&#39;s *not* a compiler bug.
     ///
     /// # Safety
     ///
@@ -3846,7 +4253,8 @@
     /// The stabilized version of this intrinsic is [`pointer::offset`].
     </span><span class="attr">#[must_use = <span class="string">&quot;returns a new pointer rather than modifying its argument&quot;</span>]
     #[rustc_const_stable(feature = <span class="string">&quot;const_ptr_offset&quot;</span>, since = <span class="string">&quot;1.61.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>offset&lt;T&gt;(dst: <span class="kw-2">*const </span>T, offset: isize) -&gt; <span class="kw-2">*const </span>T;
+    #[rustc_nounwind]
+    </span><span class="kw">pub fn </span>offset&lt;Ptr, Delta&gt;(dst: Ptr, offset: Delta) -&gt; Ptr;
 
     <span class="doccomment">/// Calculates the offset from a pointer, potentially wrapping.
     ///
@@ -3863,6 +4271,7 @@
     /// The stabilized version of this intrinsic is [`pointer::wrapping_offset`].
     </span><span class="attr">#[must_use = <span class="string">&quot;returns a new pointer rather than modifying its argument&quot;</span>]
     #[rustc_const_stable(feature = <span class="string">&quot;const_ptr_offset&quot;</span>, since = <span class="string">&quot;1.61.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>arith_offset&lt;T&gt;(dst: <span class="kw-2">*const </span>T, offset: isize) -&gt; <span class="kw-2">*const </span>T;
 
     <span class="doccomment">/// Masks out bits of the pointer according to a mask.
@@ -3874,6 +4283,7 @@
     ///
     /// Consider using [`pointer::mask`] instead.
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ptr_mask&lt;T&gt;(ptr: <span class="kw-2">*const </span>T, mask: usize) -&gt; <span class="kw-2">*const </span>T;
 
     <span class="doccomment">/// Equivalent to the appropriate `llvm.memcpy.p0i8.0i8.*` intrinsic, with
@@ -3884,6 +4294,7 @@
     /// unless size is equal to zero.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>volatile_copy_nonoverlapping_memory&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, src: <span class="kw-2">*const </span>T, count: usize);
     <span class="doccomment">/// Equivalent to the appropriate `llvm.memmove.p0i8.0i8.*` intrinsic, with
     /// a size of `count * size_of::&lt;T&gt;()` and an alignment of
@@ -3893,6 +4304,7 @@
     /// unless size is equal to zero.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>volatile_copy_memory&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, src: <span class="kw-2">*const </span>T, count: usize);
     <span class="doccomment">/// Equivalent to the appropriate `llvm.memset.p0i8.*` intrinsic, with a
     /// size of `count * size_of::&lt;T&gt;()` and an alignment of
@@ -3902,158 +4314,187 @@
     /// unless size is equal to zero.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>volatile_set_memory&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, val: u8, count: usize);
 
     <span class="doccomment">/// Performs a volatile load from the `src` pointer.
     ///
     /// The stabilized version of this intrinsic is [`core::ptr::read_volatile`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>volatile_load&lt;T&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
     <span class="doccomment">/// Performs a volatile store to the `dst` pointer.
     ///
     /// The stabilized version of this intrinsic is [`core::ptr::write_volatile`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>volatile_store&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
 
     <span class="doccomment">/// Performs a volatile load from the `src` pointer
     /// The pointer is not required to be aligned.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>unaligned_volatile_load&lt;T&gt;(src: <span class="kw-2">*const </span>T) -&gt; T;
     <span class="doccomment">/// Performs a volatile store to the `dst` pointer.
     /// The pointer is not required to be aligned.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>unaligned_volatile_store&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, val: T);
 
     <span class="doccomment">/// Returns the square root of an `f32`
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::sqrt`](../../std/primitive.f32.html#method.sqrt)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>sqrtf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the square root of an `f64`
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::sqrt`](../../std/primitive.f64.html#method.sqrt)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>sqrtf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Raises an `f32` to an integer power.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::powi`](../../std/primitive.f32.html#method.powi)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>powif32(a: f32, x: i32) -&gt; f32;
     <span class="doccomment">/// Raises an `f64` to an integer power.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::powi`](../../std/primitive.f64.html#method.powi)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>powif64(a: f64, x: i32) -&gt; f64;
 
     <span class="doccomment">/// Returns the sine of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::sin`](../../std/primitive.f32.html#method.sin)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>sinf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the sine of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::sin`](../../std/primitive.f64.html#method.sin)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>sinf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the cosine of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::cos`](../../std/primitive.f32.html#method.cos)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>cosf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the cosine of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::cos`](../../std/primitive.f64.html#method.cos)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>cosf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Raises an `f32` to an `f32` power.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::powf`](../../std/primitive.f32.html#method.powf)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>powf32(a: f32, x: f32) -&gt; f32;
     <span class="doccomment">/// Raises an `f64` to an `f64` power.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::powf`](../../std/primitive.f64.html#method.powf)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>powf64(a: f64, x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the exponential of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::exp`](../../std/primitive.f32.html#method.exp)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>expf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the exponential of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::exp`](../../std/primitive.f64.html#method.exp)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>expf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns 2 raised to the power of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::exp2`](../../std/primitive.f32.html#method.exp2)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>exp2f32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns 2 raised to the power of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::exp2`](../../std/primitive.f64.html#method.exp2)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>exp2f64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the natural logarithm of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::ln`](../../std/primitive.f32.html#method.ln)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>logf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the natural logarithm of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::ln`](../../std/primitive.f64.html#method.ln)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>logf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the base 10 logarithm of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::log10`](../../std/primitive.f32.html#method.log10)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>log10f32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the base 10 logarithm of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::log10`](../../std/primitive.f64.html#method.log10)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>log10f64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the base 2 logarithm of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::log2`](../../std/primitive.f32.html#method.log2)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>log2f32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the base 2 logarithm of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::log2`](../../std/primitive.f64.html#method.log2)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>log2f64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns `a * b + c` for `f32` values.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::mul_add`](../../std/primitive.f32.html#method.mul_add)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fmaf32(a: f32, b: f32, c: f32) -&gt; f32;
     <span class="doccomment">/// Returns `a * b + c` for `f64` values.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::mul_add`](../../std/primitive.f64.html#method.mul_add)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fmaf64(a: f64, b: f64, c: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the absolute value of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::abs`](../../std/primitive.f32.html#method.abs)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fabsf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the absolute value of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::abs`](../../std/primitive.f64.html#method.abs)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fabsf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the minimum of two `f32` values.
@@ -4066,6 +4507,7 @@
     /// The stabilized version of this intrinsic is
     /// [`f32::min`]
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>minnumf32(x: f32, y: f32) -&gt; f32;
     <span class="doccomment">/// Returns the minimum of two `f64` values.
     ///
@@ -4077,6 +4519,7 @@
     /// The stabilized version of this intrinsic is
     /// [`f64::min`]
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>minnumf64(x: f64, y: f64) -&gt; f64;
     <span class="doccomment">/// Returns the maximum of two `f32` values.
     ///
@@ -4088,6 +4531,7 @@
     /// The stabilized version of this intrinsic is
     /// [`f32::max`]
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>maxnumf32(x: f32, y: f32) -&gt; f32;
     <span class="doccomment">/// Returns the maximum of two `f64` values.
     ///
@@ -4099,50 +4543,59 @@
     /// The stabilized version of this intrinsic is
     /// [`f64::max`]
     </span><span class="attr">#[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>maxnumf64(x: f64, y: f64) -&gt; f64;
 
     <span class="doccomment">/// Copies the sign from `y` to `x` for `f32` values.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::copysign`](../../std/primitive.f32.html#method.copysign)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>copysignf32(x: f32, y: f32) -&gt; f32;
     <span class="doccomment">/// Copies the sign from `y` to `x` for `f64` values.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::copysign`](../../std/primitive.f64.html#method.copysign)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>copysignf64(x: f64, y: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the largest integer less than or equal to an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::floor`](../../std/primitive.f32.html#method.floor)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>floorf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the largest integer less than or equal to an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::floor`](../../std/primitive.f64.html#method.floor)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>floorf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the smallest integer greater than or equal to an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::ceil`](../../std/primitive.f32.html#method.ceil)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>ceilf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the smallest integer greater than or equal to an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::ceil`](../../std/primitive.f64.html#method.ceil)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>ceilf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the integer part of an `f32`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::trunc`](../../std/primitive.f32.html#method.trunc)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>truncf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the integer part of an `f64`.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::trunc`](../../std/primitive.f64.html#method.trunc)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>truncf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the nearest integer to an `f32`. May raise an inexact floating-point exception
@@ -4150,81 +4603,93 @@
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::round_ties_even`](../../std/primitive.f32.html#method.round_ties_even)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>rintf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the nearest integer to an `f64`. May raise an inexact floating-point exception
     /// if the argument is not an integer.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::round_ties_even`](../../std/primitive.f64.html#method.round_ties_even)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>rintf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the nearest integer to an `f32`.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>nearbyintf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the nearest integer to an `f64`.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>nearbyintf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the nearest integer to an `f32`. Rounds half-way cases away from zero.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f32::round`](../../std/primitive.f32.html#method.round)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>roundf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the nearest integer to an `f64`. Rounds half-way cases away from zero.
     ///
     /// The stabilized version of this intrinsic is
     /// [`f64::round`](../../std/primitive.f64.html#method.round)
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>roundf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Returns the nearest integer to an `f32`. Rounds half-way cases to the number
     /// with an even least significant digit.
     ///
     /// This intrinsic does not have a stable counterpart.
-    </span><span class="attr">#[cfg(not(bootstrap))]
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>roundevenf32(x: f32) -&gt; f32;
     <span class="doccomment">/// Returns the nearest integer to an `f64`. Rounds half-way cases to the number
     /// with an even least significant digit.
     ///
     /// This intrinsic does not have a stable counterpart.
-    </span><span class="attr">#[cfg(not(bootstrap))]
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>roundevenf64(x: f64) -&gt; f64;
 
     <span class="doccomment">/// Float addition that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fadd_fast&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Float subtraction that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fsub_fast&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Float multiplication that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fmul_fast&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Float division that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>fdiv_fast&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Float remainder that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     ///
     /// This intrinsic does not have a stable counterpart.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>frem_fast&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Convert with LLVM’s fptoui/fptosi, which may return undef for values out of range
     /// (&lt;https://github.com/rust-lang/rust/issues/10184&gt;)
     ///
     /// Stabilized as [`f32::to_int_unchecked`] and [`f64::to_int_unchecked`].
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>float_to_int_unchecked&lt;Float: Copy, Int: Copy&gt;(value: Float) -&gt; Int;
 
     <span class="doccomment">/// Returns the number of bits set in an integer type `T`
@@ -4239,6 +4704,7 @@
     /// [`u32::count_ones`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_ctpop&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ctpop&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Returns the number of leading unset bits (zeroes) in an integer type `T`.
@@ -4277,6 +4743,7 @@
     /// ```
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_ctlz&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ctlz&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Like `ctlz`, but extra-unsafe as it returns `undef` when
@@ -4296,6 +4763,7 @@
     /// assert_eq!(num_leading, 3);
     /// ```
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;constctlz&quot;</span>, since = <span class="string">&quot;1.50.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ctlz_nonzero&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Returns the number of trailing unset bits (zeroes) in an integer type `T`.
@@ -4334,6 +4802,7 @@
     /// ```
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_cttz&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>cttz&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Like `cttz`, but extra-unsafe as it returns `undef` when
@@ -4353,6 +4822,7 @@
     /// assert_eq!(num_trailing, 3);
     /// ```
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_cttz_nonzero&quot;</span>, since = <span class="string">&quot;1.53.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>cttz_nonzero&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Reverses the bytes in an integer type `T`.
@@ -4367,6 +4837,7 @@
     /// [`u32::swap_bytes`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_bswap&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>bswap&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Reverses the bits in an integer type `T`.
@@ -4381,6 +4852,7 @@
     /// [`u32::reverse_bits`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_bitreverse&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>bitreverse&lt;T: Copy&gt;(x: T) -&gt; T;
 
     <span class="doccomment">/// Performs checked integer addition.
@@ -4395,6 +4867,7 @@
     /// [`u32::overflowing_add`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_overflow&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>add_with_overflow&lt;T: Copy&gt;(x: T, y: T) -&gt; (T, bool);
 
     <span class="doccomment">/// Performs checked integer subtraction
@@ -4409,6 +4882,7 @@
     /// [`u32::overflowing_sub`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_overflow&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>sub_with_overflow&lt;T: Copy&gt;(x: T, y: T) -&gt; (T, bool);
 
     <span class="doccomment">/// Performs checked integer multiplication
@@ -4423,6 +4897,7 @@
     /// [`u32::overflowing_mul`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_overflow&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>mul_with_overflow&lt;T: Copy&gt;(x: T, y: T) -&gt; (T, bool);
 
     <span class="doccomment">/// Performs an exact division, resulting in undefined behavior where
@@ -4430,6 +4905,7 @@
     ///
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_exact_div&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>exact_div&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Performs an unchecked division, resulting in undefined behavior
@@ -4439,6 +4915,7 @@
     /// primitives via the `checked_div` method. For example,
     /// [`u32::checked_div`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_unchecked_div&quot;</span>, since = <span class="string">&quot;1.52.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_div&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
     <span class="doccomment">/// Returns the remainder of an unchecked division, resulting in
     /// undefined behavior when `y == 0` or `x == T::MIN &amp;&amp; y == -1`
@@ -4447,6 +4924,7 @@
     /// primitives via the `checked_rem` method. For example,
     /// [`u32::checked_rem`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_unchecked_rem&quot;</span>, since = <span class="string">&quot;1.52.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_rem&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Performs an unchecked left shift, resulting in undefined behavior when
@@ -4456,6 +4934,7 @@
     /// primitives via the `checked_shl` method. For example,
     /// [`u32::checked_shl`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_unchecked&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_shl&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
     <span class="doccomment">/// Performs an unchecked right shift, resulting in undefined behavior when
     /// `y &lt; 0` or `y &gt;= N`, where N is the width of T in bits.
@@ -4464,6 +4943,7 @@
     /// primitives via the `checked_shr` method. For example,
     /// [`u32::checked_shr`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_unchecked&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_shr&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Returns the result of an unchecked addition, resulting in
@@ -4471,6 +4951,7 @@
     ///
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_int_unchecked_arith&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_add&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Returns the result of an unchecked subtraction, resulting in
@@ -4478,6 +4959,7 @@
     ///
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_int_unchecked_arith&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_sub&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Returns the result of an unchecked multiplication, resulting in
@@ -4485,6 +4967,7 @@
     ///
     /// This intrinsic does not have a stable counterpart.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_int_unchecked_arith&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>unchecked_mul&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Performs rotate left.
@@ -4499,6 +4982,7 @@
     /// [`u32::rotate_left`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_rotate&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>rotate_left&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Performs rotate right.
@@ -4513,6 +4997,7 @@
     /// [`u32::rotate_right`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_rotate&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>rotate_right&lt;T: Copy&gt;(x: T, y: T) -&gt; T;
 
     <span class="doccomment">/// Returns (a + b) mod 2&lt;sup&gt;N&lt;/sup&gt;, where N is the width of T in bits.
@@ -4527,6 +5012,7 @@
     /// [`u32::wrapping_add`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_wrapping&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>wrapping_add&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
     <span class="doccomment">/// Returns (a - b) mod 2&lt;sup&gt;N&lt;/sup&gt;, where N is the width of T in bits.
     ///
@@ -4540,6 +5026,7 @@
     /// [`u32::wrapping_sub`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_wrapping&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>wrapping_sub&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
     <span class="doccomment">/// Returns (a * b) mod 2&lt;sup&gt;N&lt;/sup&gt;, where N is the width of T in bits.
     ///
@@ -4553,6 +5040,7 @@
     /// [`u32::wrapping_mul`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_wrapping&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>wrapping_mul&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// Computes `a + b`, saturating at numeric bounds.
@@ -4567,6 +5055,7 @@
     /// [`u32::saturating_add`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_saturating&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>saturating_add&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
     <span class="doccomment">/// Computes `a - b`, saturating at numeric bounds.
     ///
@@ -4580,17 +5069,28 @@
     /// [`u32::saturating_sub`]
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_int_saturating&quot;</span>, since = <span class="string">&quot;1.40.0&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>saturating_sub&lt;T: Copy&gt;(a: T, b: T) -&gt; T;
 
     <span class="doccomment">/// This is an implementation detail of [`crate::ptr::read`] and should
     /// not be used anywhere else.  See its comments for why this exists.
     ///
-    /// This intrinsic can *only* be called where the argument is a local without
-    /// projections (`read_via_copy(p)`, not `read_via_copy(*p)`) so that it
+    /// This intrinsic can *only* be called where the pointer is a local without
+    /// projections (`read_via_copy(ptr)`, not `read_via_copy(*ptr)`) so that it
     /// trivially obeys runtime-MIR rules about derefs in operands.
-    </span><span class="attr">#[cfg(not(bootstrap))]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, issue = <span class="string">&quot;80377&quot;</span>)]
-    </span><span class="kw">pub fn </span>read_via_copy&lt;T&gt;(p: <span class="kw-2">*const </span>T) -&gt; T;
+    </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_ptr_read&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+    #[rustc_nounwind]
+    </span><span class="kw">pub fn </span>read_via_copy&lt;T&gt;(ptr: <span class="kw-2">*const </span>T) -&gt; T;
+
+    <span class="doccomment">/// This is an implementation detail of [`crate::ptr::write`] and should
+    /// not be used anywhere else.  See its comments for why this exists.
+    ///
+    /// This intrinsic can *only* be called where the pointer is a local without
+    /// projections (`write_via_move(ptr, x)`, not `write_via_move(*ptr, x)`) so
+    /// that it trivially obeys runtime-MIR rules about derefs in operands.
+    </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_write&quot;</span>, issue = <span class="string">&quot;86302&quot;</span>)]
+    #[rustc_nounwind]
+    </span><span class="kw">pub fn </span>write_via_move&lt;T&gt;(ptr: <span class="kw-2">*mut </span>T, value: T);
 
     <span class="doccomment">/// Returns the value of the discriminant for the variant in &#39;v&#39;;
     /// if `T` has no discriminant, returns `0`.
@@ -4603,6 +5103,7 @@
     /// The stabilized version of this intrinsic is [`core::mem::discriminant`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_discriminant&quot;</span>, issue = <span class="string">&quot;69821&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>discriminant_value&lt;T&gt;(v: <span class="kw-2">&amp;</span>T) -&gt; &lt;T <span class="kw">as </span>DiscriminantKind&gt;::Discriminant;
 
     <span class="doccomment">/// Returns the number of variants of the type `T` cast to a `usize`;
@@ -4616,6 +5117,7 @@
     /// The to-be-stabilized version of this intrinsic is [`mem::variant_count`].
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;variant_count&quot;</span>, issue = <span class="string">&quot;73662&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>variant_count&lt;T&gt;() -&gt; usize;
 
     <span class="doccomment">/// Rust&#39;s &quot;try catch&quot; construct which invokes the function pointer `try_fn`
@@ -4625,18 +5127,24 @@
     /// takes the data pointer and a pointer to the target-specific exception
     /// object that was caught. For more information see the compiler&#39;s
     /// source as well as std&#39;s catch implementation.
+    ///
+    /// `catch_fn` must not unwind.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>r#try(try_fn: <span class="kw">fn</span>(<span class="kw-2">*mut </span>u8), data: <span class="kw-2">*mut </span>u8, catch_fn: <span class="kw">fn</span>(<span class="kw-2">*mut </span>u8, <span class="kw-2">*mut </span>u8)) -&gt; i32;
 
     <span class="doccomment">/// Emits a `!nontemporal` store according to LLVM (see their docs).
     /// Probably will never become stable.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>nontemporal_store&lt;T&gt;(ptr: <span class="kw-2">*mut </span>T, val: T);
 
     <span class="doccomment">/// See documentation of `&lt;*const T&gt;::offset_from` for details.
     </span><span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_ptr_offset_from&quot;</span>, since = <span class="string">&quot;1.65.0&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ptr_offset_from&lt;T&gt;(ptr: <span class="kw-2">*const </span>T, base: <span class="kw-2">*const </span>T) -&gt; isize;
 
     <span class="doccomment">/// See documentation of `&lt;*const T&gt;::sub_ptr` for details.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_sub_ptr&quot;</span>, issue = <span class="string">&quot;95892&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ptr_offset_from_unsigned&lt;T&gt;(ptr: <span class="kw-2">*const </span>T, base: <span class="kw-2">*const </span>T) -&gt; usize;
 
     <span class="doccomment">/// See documentation of `&lt;*const T&gt;::guaranteed_eq` for details.
@@ -4650,6 +5158,7 @@
     /// any safety invariants.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_raw_ptr_comparison&quot;</span>, issue = <span class="string">&quot;53020&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>ptr_guaranteed_cmp&lt;T&gt;(ptr: <span class="kw-2">*const </span>T, other: <span class="kw-2">*const </span>T) -&gt; u8;
 
     <span class="doccomment">/// Allocates a block of memory at compile time.
@@ -4661,6 +5170,7 @@
     ///    - At compile time, a compile error occurs if this constraint is violated.
     ///    - At runtime, it is not checked.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_heap&quot;</span>, issue = <span class="string">&quot;79597&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>const_allocate(size: usize, align: usize) -&gt; <span class="kw-2">*mut </span>u8;
 
     <span class="doccomment">/// Deallocates a memory which allocated by `intrinsics::const_allocate` at compile time.
@@ -4674,6 +5184,7 @@
     /// - If the `ptr` is created in an another const, this intrinsic doesn&#39;t deallocate it.
     /// - If the `ptr` is pointing to a local variable, this intrinsic doesn&#39;t deallocate it.
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_heap&quot;</span>, issue = <span class="string">&quot;79597&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>const_deallocate(ptr: <span class="kw-2">*mut </span>u8, size: usize, align: usize);
 
     <span class="doccomment">/// Determines whether the raw bytes of the two values are equal.
@@ -4698,6 +5209,7 @@
     /// (The implementation is allowed to branch on the results of comparisons,
     /// which is UB if any of their inputs are `undef`.)
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_intrinsic_raw_eq&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>raw_eq&lt;T&gt;(a: <span class="kw-2">&amp;</span>T, b: <span class="kw-2">&amp;</span>T) -&gt; bool;
 
     <span class="doccomment">/// See documentation of [`std::hint::black_box`] for details.
@@ -4705,14 +5217,17 @@
     /// [`std::hint::black_box`]: crate::hint::black_box
     </span><span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_black_box&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[rustc_safe_intrinsic]
+    #[rustc_nounwind]
     </span><span class="kw">pub fn </span>black_box&lt;T&gt;(dummy: T) -&gt; T;
 
     <span class="doccomment">/// `ptr` must point to a vtable.
     /// The intrinsic will return the size stored in that vtable.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>vtable_size(ptr: <span class="kw-2">*const </span>()) -&gt; usize;
 
     <span class="doccomment">/// `ptr` must point to a vtable.
     /// The intrinsic will return the alignment stored in that vtable.
+    </span><span class="attr">#[rustc_nounwind]
     </span><span class="kw">pub fn </span>vtable_align(ptr: <span class="kw-2">*const </span>()) -&gt; usize;
 
     <span class="doccomment">/// Selects which function to call depending on the context.
@@ -4776,6 +5291,12 @@
     <span class="kw">where
         </span>G: FnOnce&lt;ARG, Output = RET&gt;,
         F: FnOnce&lt;ARG, Output = RET&gt;;
+
+    <span class="doccomment">/// This method creates a pointer to any `Some` value. If the argument is
+    /// `None`, an invalid within-bounds pointer (that is still acceptable for
+    /// constructing an empty slice) is returned.
+    </span><span class="attr">#[rustc_nounwind]
+    </span><span class="kw">pub fn </span>option_payload_ptr&lt;T&gt;(arg: <span class="kw-2">*const </span><span class="prelude-ty">Option</span>&lt;T&gt;) -&gt; <span class="kw-2">*const </span>T;
 }
 
 <span class="comment">// Some functions are defined here because they accidentally got made
@@ -4789,7 +5310,7 @@
 /// This macro should be called as `assert_unsafe_precondition!([Generics](name: Type) =&gt; Expression)`
 /// where the names specified will be moved into the macro as captured variables, and defines an item
 /// to call `const_eval_select` on. The tokens inside the square brackets are used to denote generics
-/// for the function declaractions and can be omitted if there is no generics.
+/// for the function declarations and can be omitted if there is no generics.
 ///
 /// # Safety
 ///
@@ -4819,6 +5340,7 @@
                 }
             }
             <span class="attr">#[allow(non_snake_case)]
+            #[inline]
             </span><span class="kw">const fn </span>comptime$(&lt;$(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>&gt;)<span class="question-mark">?</span>($(<span class="kw">_</span>:<span class="macro-nonterminal">$ty</span>),<span class="kw-2">*</span>) {}
 
             ::core::intrinsics::const_eval_select(($(<span class="macro-nonterminal">$i</span>,)<span class="kw-2">*</span>), comptime, runtime);
@@ -4829,12 +5351,14 @@
 
 <span class="doccomment">/// Checks whether `ptr` is properly aligned with respect to
 /// `align_of::&lt;T&gt;()`.
+</span><span class="attr">#[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_aligned_and_not_null&lt;T&gt;(ptr: <span class="kw-2">*const </span>T) -&gt; bool {
     !ptr.is_null() &amp;&amp; ptr.is_aligned()
 }
 
 <span class="doccomment">/// Checks whether an allocation of `len` instances of `T` exceeds
 /// the maximum allowed allocation size.
+</span><span class="attr">#[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_valid_allocation_size&lt;T&gt;(len: usize) -&gt; bool {
     <span class="kw">let </span>max_len = <span class="kw">const </span>{
         <span class="kw">let </span>size = <span class="kw">crate</span>::mem::size_of::&lt;T&gt;();
@@ -4845,10 +5369,13 @@
 
 <span class="doccomment">/// Checks whether the regions of memory starting at `src` and `dst` of size
 /// `count * size_of::&lt;T&gt;()` do *not* overlap.
+</span><span class="attr">#[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_nonoverlapping&lt;T&gt;(src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*const </span>T, count: usize) -&gt; bool {
     <span class="kw">let </span>src_usize = src.addr();
     <span class="kw">let </span>dst_usize = dst.addr();
-    <span class="kw">let </span>size = mem::size_of::&lt;T&gt;().checked_mul(count).unwrap();
+    <span class="kw">let </span>size = mem::size_of::&lt;T&gt;()
+        .checked_mul(count)
+        .expect(<span class="string">&quot;is_nonoverlapping: `size_of::&lt;T&gt;() * count` overflows a usize&quot;</span>);
     <span class="kw">let </span>diff = <span class="kw">if </span>src_usize &gt; dst_usize { src_usize - dst_usize } <span class="kw">else </span>{ dst_usize - src_usize };
     <span class="comment">// If the absolute distance between the ptrs is at least as big as the size of the buffer,
     // they do not overlap.
@@ -4943,11 +5470,12 @@
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[rustc_allowed_through_unstable_modules]
 #[rustc_const_stable(feature = <span class="string">&quot;const_intrinsic_copy&quot;</span>, since = <span class="string">&quot;1.63.0&quot;</span>)]
-#[inline]
+#[inline(always)]
 #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
 </span><span class="kw">pub const unsafe fn </span>copy_nonoverlapping&lt;T&gt;(src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*mut </span>T, count: usize) {
     <span class="kw">extern </span><span class="string">&quot;rust-intrinsic&quot; </span>{
         <span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_intrinsic_copy&quot;</span>, since = <span class="string">&quot;1.63.0&quot;</span>)]
+        #[rustc_nounwind]
         </span><span class="kw">pub fn </span>copy_nonoverlapping&lt;T&gt;(src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*mut </span>T, count: usize);
     }
 
@@ -5033,18 +5561,19 @@
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[rustc_allowed_through_unstable_modules]
 #[rustc_const_stable(feature = <span class="string">&quot;const_intrinsic_copy&quot;</span>, since = <span class="string">&quot;1.63.0&quot;</span>)]
-#[inline]
+#[inline(always)]
 #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
 </span><span class="kw">pub const unsafe fn </span>copy&lt;T&gt;(src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*mut </span>T, count: usize) {
     <span class="kw">extern </span><span class="string">&quot;rust-intrinsic&quot; </span>{
         <span class="attr">#[rustc_const_stable(feature = <span class="string">&quot;const_intrinsic_copy&quot;</span>, since = <span class="string">&quot;1.63.0&quot;</span>)]
+        #[rustc_nounwind]
         </span><span class="kw">fn </span>copy&lt;T&gt;(src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*mut </span>T, count: usize);
     }
 
     <span class="comment">// SAFETY: the safety contract for `copy` must be upheld by the caller.
     </span><span class="kw">unsafe </span>{
         <span class="macro">assert_unsafe_precondition!</span>(
-            <span class="string">&quot;ptr::copy requires that both pointer arguments are aligned aligned and non-null&quot;</span>,
+            <span class="string">&quot;ptr::copy requires that both pointer arguments are aligned and non-null&quot;</span>,
             [T](src: <span class="kw-2">*const </span>T, dst: <span class="kw-2">*mut </span>T) =&gt;
             is_aligned_and_not_null(src) &amp;&amp; is_aligned_and_not_null(dst)
         );
@@ -5105,11 +5634,12 @@
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[rustc_allowed_through_unstable_modules]
 #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_write&quot;</span>, issue = <span class="string">&quot;86302&quot;</span>)]
-#[inline]
+#[inline(always)]
 #[cfg_attr(miri, track_caller)] </span><span class="comment">// even without panics, this helps for Miri backtraces
 </span><span class="kw">pub const unsafe fn </span>write_bytes&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, val: u8, count: usize) {
     <span class="kw">extern </span><span class="string">&quot;rust-intrinsic&quot; </span>{
         <span class="attr">#[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_write&quot;</span>, issue = <span class="string">&quot;86302&quot;</span>)]
+        #[rustc_nounwind]
         </span><span class="kw">fn </span>write_bytes&lt;T&gt;(dst: <span class="kw-2">*mut </span>T, val: u8, count: usize);
     }
 
@@ -5122,5 +5652,4 @@
         write_bytes(dst, val, count)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

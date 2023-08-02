@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/btree/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/btree/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3152,12 +3152,110 @@
 <a href="#3152" id="3152">3152</a>
 <a href="#3153" id="3153">3153</a>
 <a href="#3154" id="3154">3154</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vec::Vec;
+<a href="#3155" id="3155">3155</a>
+<a href="#3156" id="3156">3156</a>
+<a href="#3157" id="3157">3157</a>
+<a href="#3158" id="3158">3158</a>
+<a href="#3159" id="3159">3159</a>
+<a href="#3160" id="3160">3160</a>
+<a href="#3161" id="3161">3161</a>
+<a href="#3162" id="3162">3162</a>
+<a href="#3163" id="3163">3163</a>
+<a href="#3164" id="3164">3164</a>
+<a href="#3165" id="3165">3165</a>
+<a href="#3166" id="3166">3166</a>
+<a href="#3167" id="3167">3167</a>
+<a href="#3168" id="3168">3168</a>
+<a href="#3169" id="3169">3169</a>
+<a href="#3170" id="3170">3170</a>
+<a href="#3171" id="3171">3171</a>
+<a href="#3172" id="3172">3172</a>
+<a href="#3173" id="3173">3173</a>
+<a href="#3174" id="3174">3174</a>
+<a href="#3175" id="3175">3175</a>
+<a href="#3176" id="3176">3176</a>
+<a href="#3177" id="3177">3177</a>
+<a href="#3178" id="3178">3178</a>
+<a href="#3179" id="3179">3179</a>
+<a href="#3180" id="3180">3180</a>
+<a href="#3181" id="3181">3181</a>
+<a href="#3182" id="3182">3182</a>
+<a href="#3183" id="3183">3183</a>
+<a href="#3184" id="3184">3184</a>
+<a href="#3185" id="3185">3185</a>
+<a href="#3186" id="3186">3186</a>
+<a href="#3187" id="3187">3187</a>
+<a href="#3188" id="3188">3188</a>
+<a href="#3189" id="3189">3189</a>
+<a href="#3190" id="3190">3190</a>
+<a href="#3191" id="3191">3191</a>
+<a href="#3192" id="3192">3192</a>
+<a href="#3193" id="3193">3193</a>
+<a href="#3194" id="3194">3194</a>
+<a href="#3195" id="3195">3195</a>
+<a href="#3196" id="3196">3196</a>
+<a href="#3197" id="3197">3197</a>
+<a href="#3198" id="3198">3198</a>
+<a href="#3199" id="3199">3199</a>
+<a href="#3200" id="3200">3200</a>
+<a href="#3201" id="3201">3201</a>
+<a href="#3202" id="3202">3202</a>
+<a href="#3203" id="3203">3203</a>
+<a href="#3204" id="3204">3204</a>
+<a href="#3205" id="3205">3205</a>
+<a href="#3206" id="3206">3206</a>
+<a href="#3207" id="3207">3207</a>
+<a href="#3208" id="3208">3208</a>
+<a href="#3209" id="3209">3209</a>
+<a href="#3210" id="3210">3210</a>
+<a href="#3211" id="3211">3211</a>
+<a href="#3212" id="3212">3212</a>
+<a href="#3213" id="3213">3213</a>
+<a href="#3214" id="3214">3214</a>
+<a href="#3215" id="3215">3215</a>
+<a href="#3216" id="3216">3216</a>
+<a href="#3217" id="3217">3217</a>
+<a href="#3218" id="3218">3218</a>
+<a href="#3219" id="3219">3219</a>
+<a href="#3220" id="3220">3220</a>
+<a href="#3221" id="3221">3221</a>
+<a href="#3222" id="3222">3222</a>
+<a href="#3223" id="3223">3223</a>
+<a href="#3224" id="3224">3224</a>
+<a href="#3225" id="3225">3225</a>
+<a href="#3226" id="3226">3226</a>
+<a href="#3227" id="3227">3227</a>
+<a href="#3228" id="3228">3228</a>
+<a href="#3229" id="3229">3229</a>
+<a href="#3230" id="3230">3230</a>
+<a href="#3231" id="3231">3231</a>
+<a href="#3232" id="3232">3232</a>
+<a href="#3233" id="3233">3233</a>
+<a href="#3234" id="3234">3234</a>
+<a href="#3235" id="3235">3235</a>
+<a href="#3236" id="3236">3236</a>
+<a href="#3237" id="3237">3237</a>
+<a href="#3238" id="3238">3238</a>
+<a href="#3239" id="3239">3239</a>
+<a href="#3240" id="3240">3240</a>
+<a href="#3241" id="3241">3241</a>
+<a href="#3242" id="3242">3242</a>
+<a href="#3243" id="3243">3243</a>
+<a href="#3244" id="3244">3244</a>
+<a href="#3245" id="3245">3245</a>
+<a href="#3246" id="3246">3246</a>
+<a href="#3247" id="3247">3247</a>
+<a href="#3248" id="3248">3248</a>
+<a href="#3249" id="3249">3249</a>
+<a href="#3250" id="3250">3250</a>
+<a href="#3251" id="3251">3251</a>
+<a href="#3252" id="3252">3252</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vec::Vec;
 <span class="kw">use </span>core::borrow::Borrow;
 <span class="kw">use </span>core::cmp::Ordering;
 <span class="kw">use </span>core::fmt::{<span class="self">self</span>, Debug};
 <span class="kw">use </span>core::hash::{Hash, Hasher};
-<span class="kw">use </span>core::iter::{FromIterator, FusedIterator};
+<span class="kw">use </span>core::iter::FusedIterator;
 <span class="kw">use </span>core::marker::PhantomData;
 <span class="kw">use </span>core::mem::{<span class="self">self</span>, ManuallyDrop};
 <span class="kw">use </span>core::ops::{Bound, Index, RangeBounds};
@@ -3516,6 +3614,20 @@
     }
 }
 
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K: <span class="lifetime">&#39;a</span>, V: <span class="lifetime">&#39;a</span>&gt; Default <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+    <span class="doccomment">/// Creates an empty `btree_map::Iter`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::Iter&lt;&#39;_, u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Iter { range: Default::default(), length: <span class="number">0 </span>}
+    }
+}
+
 <span class="doccomment">/// A mutable iterator over the entries of a `BTreeMap`.
 ///
 /// This `struct` is created by the [`iter_mut`] method on [`BTreeMap`]. See its
@@ -3540,13 +3652,26 @@
     }
 }
 
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K: <span class="lifetime">&#39;a</span>, V: <span class="lifetime">&#39;a</span>&gt; Default <span class="kw">for </span>IterMut&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+    <span class="doccomment">/// Creates an empty `btree_map::IterMut`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::IterMut&lt;&#39;_, u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IterMut { range: Default::default(), length: <span class="number">0</span>, _marker: PhantomData {} }
+    }
+}
+
 <span class="doccomment">/// An owning iterator over the entries of a `BTreeMap`.
 ///
 /// This `struct` is created by the [`into_iter`] method on [`BTreeMap`]
 /// (provided by the [`IntoIterator`] trait). See its documentation for more.
 ///
 /// [`into_iter`]: IntoIterator::into_iter
-/// [`IntoIterator`]: core::iter::IntoIterator
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[rustc_insignificant_dtor]
 </span><span class="kw">pub struct </span>IntoIter&lt;
@@ -3572,6 +3697,23 @@
 </span><span class="kw">impl</span>&lt;K: Debug, V: Debug, A: Allocator + Clone&gt; Debug <span class="kw">for </span>IntoIter&lt;K, V, A&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         f.debug_list().entries(<span class="self">self</span>.iter()).finish()
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, A&gt; Default <span class="kw">for </span>IntoIter&lt;K, V, A&gt;
+<span class="kw">where
+    </span>A: Allocator + Default + Clone,
+{
+    <span class="doccomment">/// Creates an empty `btree_map::IntoIter`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::IntoIter&lt;u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IntoIter { range: Default::default(), length: <span class="number">0</span>, alloc: Default::default() }
     }
 }
 
@@ -3723,8 +3865,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -3746,8 +3886,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -3759,7 +3897,7 @@
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="comment">// avoid moving the allocator
-        </span>mem::drop(BTreeMap {
+        </span>drop(BTreeMap {
             root: mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.root, <span class="prelude-val">None</span>),
             length: mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.length, <span class="number">0</span>),
             alloc: <span class="self">self</span>.alloc.clone(),
@@ -3770,8 +3908,6 @@
     <span class="doccomment">/// Makes a new empty BTreeMap with a reasonable choice for B.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// # #![feature(allocator_api)]
@@ -3797,8 +3933,6 @@
     /// on the borrowed form *must* match the ordering on the key type.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -3853,8 +3987,6 @@
     /// The key in this pair is the minimum key in the map.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -3939,8 +4071,6 @@
     /// The key in this pair is the maximum key in the map.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -4027,8 +4157,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -4052,8 +4180,6 @@
     /// on the borrowed form *must* match the ordering on the key type.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -4092,8 +4218,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -4127,8 +4251,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// #![feature(map_try_insert)]
     ///
@@ -4161,8 +4283,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -4187,8 +4307,6 @@
     /// on the borrowed form *must* match the ordering on the key type.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -4242,7 +4360,7 @@
         </span>K: Ord,
         F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
     {
-        <span class="self">self</span>.drain_filter(|k, v| !f(k, v));
+        <span class="self">self</span>.extract_if(|k, v| !f(k, v)).for_each(drop);
     }
 
     <span class="doccomment">/// Moves all elements from `other` into `self`, leaving `other` empty.
@@ -4318,8 +4436,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     /// use std::ops::Bound::Included;
@@ -4361,8 +4477,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -4392,8 +4506,6 @@
     <span class="doccomment">/// Gets the given key&#39;s corresponding entry in the map for in-place manipulation.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -4445,8 +4557,6 @@
     /// including the key.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -4505,40 +4615,37 @@
     /// The iterator also lets you mutate the value of each element in the
     /// closure, regardless of whether you choose to keep or remove it.
     ///
-    /// If the iterator is only partially consumed or not consumed at all, each
-    /// of the remaining elements is still subjected to the closure, which may
-    /// change its value and, by returning `true`, have the element removed and
-    /// dropped.
+    /// If the returned `ExtractIf` is not exhausted, e.g. because it is dropped without iterating
+    /// or the iteration short-circuits, then the remaining elements will be retained.
+    /// Use [`retain`] with a negated predicate if you do not need the returned iterator.
     ///
-    /// It is unspecified how many more elements will be subjected to the
-    /// closure if a panic occurs in the closure, or a panic occurs while
-    /// dropping an element, or if the `DrainFilter` value is leaked.
+    /// [`retain`]: BTreeMap::retain
     ///
     /// # Examples
     ///
     /// Splitting a map into even and odd keys, reusing the original map:
     ///
     /// ```
-    /// #![feature(btree_drain_filter)]
+    /// #![feature(btree_extract_if)]
     /// use std::collections::BTreeMap;
     ///
     /// let mut map: BTreeMap&lt;i32, i32&gt; = (0..8).map(|x| (x, x)).collect();
-    /// let evens: BTreeMap&lt;_, _&gt; = map.drain_filter(|k, _v| k % 2 == 0).collect();
+    /// let evens: BTreeMap&lt;_, _&gt; = map.extract_if(|k, _v| k % 2 == 0).collect();
     /// let odds = map;
     /// assert_eq!(evens.keys().copied().collect::&lt;Vec&lt;_&gt;&gt;(), [0, 2, 4, 6]);
     /// assert_eq!(odds.keys().copied().collect::&lt;Vec&lt;_&gt;&gt;(), [1, 3, 5, 7]);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_filter&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pred: F) -&gt; DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F, A&gt;
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+    </span><span class="kw">pub fn </span>extract_if&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pred: F) -&gt; ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F, A&gt;
     <span class="kw">where
         </span>K: Ord,
         F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
     {
-        <span class="kw">let </span>(inner, alloc) = <span class="self">self</span>.drain_filter_inner();
-        DrainFilter { pred, inner, alloc }
+        <span class="kw">let </span>(inner, alloc) = <span class="self">self</span>.extract_if_inner();
+        ExtractIf { pred, inner, alloc }
     }
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>drain_filter_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (DrainFilterInner&lt;<span class="lifetime">&#39;_</span>, K, V&gt;, A)
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>extract_if_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (ExtractIfInner&lt;<span class="lifetime">&#39;_</span>, K, V&gt;, A)
     <span class="kw">where
         </span>K: Ord,
     {
@@ -4546,7 +4653,7 @@
             <span class="kw">let </span>(root, dormant_root) = DormantMutRef::new(root);
             <span class="kw">let </span>front = root.borrow_mut().first_leaf_edge();
             (
-                DrainFilterInner {
+                ExtractIfInner {
                     length: <span class="kw-2">&amp;mut </span><span class="self">self</span>.length,
                     dormant_root: <span class="prelude-val">Some</span>(dormant_root),
                     cur_leaf_edge: <span class="prelude-val">Some</span>(front),
@@ -4555,7 +4662,7 @@
             )
         } <span class="kw">else </span>{
             (
-                DrainFilterInner {
+                ExtractIfInner {
                     length: <span class="kw-2">&amp;mut </span><span class="self">self</span>.length,
                     dormant_root: <span class="prelude-val">None</span>,
                     cur_leaf_edge: <span class="prelude-val">None</span>,
@@ -4653,11 +4760,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V): Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V): Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -4722,11 +4835,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V): Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V): Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -4889,11 +5008,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K: Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K: Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -4919,6 +5044,20 @@
 </span><span class="kw">impl</span>&lt;K, V&gt; Clone <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;_</span>, K, V&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         Keys { inner: <span class="self">self</span>.inner.clone() }
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V&gt; Default <span class="kw">for </span>Keys&lt;<span class="lifetime">&#39;_</span>, K, V&gt; {
+    <span class="doccomment">/// Creates an empty `btree_map::Keys`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::Keys&lt;&#39;_, u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Keys { inner: Default::default() }
     }
 }
 
@@ -4963,9 +5102,24 @@
     }
 }
 
-<span class="doccomment">/// An iterator produced by calling `drain_filter` on BTreeMap.
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">pub struct </span>DrainFilter&lt;
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V&gt; Default <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;_</span>, K, V&gt; {
+    <span class="doccomment">/// Creates an empty `btree_map::Values`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::Values&lt;&#39;_, u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Values { inner: Default::default() }
+    }
+}
+
+<span class="doccomment">/// An iterator produced by calling `extract_if` on BTreeMap.
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+#[must_use = <span class="string">&quot;iterators are lazy and do nothing unless consumed&quot;</span>]
+</span><span class="kw">pub struct </span>ExtractIf&lt;
     <span class="lifetime">&#39;a</span>,
     K,
     V,
@@ -4975,13 +5129,13 @@
     </span>F: <span class="lifetime">&#39;a </span>+ FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
     pred: F,
-    inner: DrainFilterInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt;,
+    inner: ExtractIfInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt;,
     <span class="doccomment">/// The BTreeMap will outlive this IntoIter so we don&#39;t care about drop order for `alloc`.
     </span>alloc: A,
 }
-<span class="doccomment">/// Most of the implementation of DrainFilter are generic over the type
-/// of the predicate, thus also serving for BTreeSet::DrainFilter.
-</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>DrainFilterInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="doccomment">/// Most of the implementation of ExtractIf are generic over the type
+/// of the predicate, thus also serving for BTreeSet::ExtractIf.
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ExtractIfInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
     <span class="doccomment">/// Reference to the length field in the borrowed map, updated live.
     </span>length: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>usize,
     <span class="doccomment">/// Buried reference to the root field in the borrowed map.
@@ -4993,30 +5147,20 @@
     </span>cur_leaf_edge: <span class="prelude-ty">Option</span>&lt;Handle&lt;NodeRef&lt;marker::Mut&lt;<span class="lifetime">&#39;a</span>&gt;, K, V, marker::Leaf&gt;, marker::Edge&gt;&gt;,
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F, A: Allocator + Clone&gt; Drop <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F, A&gt;
-<span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
-{
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.for_each(drop);
-    }
-}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F&gt; fmt::Debug <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, F&gt; fmt::Debug <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt;
 <span class="kw">where
     </span>K: fmt::Debug,
     V: fmt::Debug,
     F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_tuple(<span class="string">&quot;DrainFilter&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.peek()).finish()
+        f.debug_tuple(<span class="string">&quot;ExtractIf&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.peek()).finish()
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F, A: Allocator + Clone&gt; Iterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F, A&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, F, A: Allocator + Clone&gt; Iterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F, A&gt;
 <span class="kw">where
     </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
 {
@@ -5031,14 +5175,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; DrainFilterInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; ExtractIfInner&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
     <span class="doccomment">/// Allow Debug implementations to predict the next element.
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>peek(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;</span>V)&gt; {
         <span class="kw">let </span>edge = <span class="self">self</span>.cur_leaf_edge.as_ref()<span class="question-mark">?</span>;
         edge.reborrow().next_kv().ok().map(Handle::into_kv)
     }
 
-    <span class="doccomment">/// Implementation of a typical `DrainFilter::next` method, given the predicate.
+    <span class="doccomment">/// Implementation of a typical `ExtractIf::next` method, given the predicate.
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>next&lt;F, A: Allocator + Clone&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pred: <span class="kw-2">&amp;mut </span>F, alloc: A) -&gt; <span class="prelude-ty">Option</span>&lt;(K, V)&gt;
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool,
@@ -5065,7 +5209,7 @@
         <span class="prelude-val">None
     </span>}
 
-    <span class="doccomment">/// Implementation of a typical `DrainFilter::size_hint` method.
+    <span class="doccomment">/// Implementation of a typical `ExtractIf::size_hint` method.
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
         <span class="comment">// In most of the btree iterators, `self.length` is the number of elements
         // yet to be visited. Here, it includes elements that were visited and that
@@ -5075,8 +5219,8 @@
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;K, V, F&gt; FusedIterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt; <span class="kw">where </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool {}
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, F&gt; FusedIterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, K, V, F&gt; <span class="kw">where </span>F: FnMut(<span class="kw-2">&amp;</span>K, <span class="kw-2">&amp;mut </span>V) -&gt; bool {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;btree_range&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
@@ -5090,12 +5234,32 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V): Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V): Ord,
+    {
         <span class="self">self</span>.next_back()
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V&gt; Default <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;_</span>, K, V&gt; {
+    <span class="doccomment">/// Creates an empty `btree_map::Range`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::Range&lt;&#39;_, u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.count(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Range { inner: Default::default() }
     }
 }
 
@@ -5149,11 +5313,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;K&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;K&gt;
+    <span class="kw">where
+        </span>K: Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;K&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;K&gt;
+    <span class="kw">where
+        </span>K: Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -5174,6 +5344,23 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;map_into_keys_values&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;K, V, A: Allocator + Clone&gt; FusedIterator <span class="kw">for </span>IntoKeys&lt;K, V, A&gt; {}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, A&gt; Default <span class="kw">for </span>IntoKeys&lt;K, V, A&gt;
+<span class="kw">where
+    </span>A: Allocator + Default + Clone,
+{
+    <span class="doccomment">/// Creates an empty `btree_map::IntoKeys`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::IntoKeys&lt;u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IntoKeys { inner: Default::default() }
+    }
+}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;map_into_keys_values&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;K, V, A: Allocator + Clone&gt; Iterator <span class="kw">for </span>IntoValues&lt;K, V, A&gt; {
@@ -5209,6 +5396,23 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;map_into_keys_values&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;K, V, A: Allocator + Clone&gt; FusedIterator <span class="kw">for </span>IntoValues&lt;K, V, A&gt; {}
 
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;K, V, A&gt; Default <span class="kw">for </span>IntoValues&lt;K, V, A&gt;
+<span class="kw">where
+    </span>A: Allocator + Default + Clone,
+{
+    <span class="doccomment">/// Creates an empty `btree_map::IntoValues`.
+    ///
+    /// ```
+    /// # use std::collections::btree_map;
+    /// let iter: btree_map::IntoValues&lt;u8, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IntoValues { inner: Default::default() }
+    }
+}
+
 <span class="attr">#[stable(feature = <span class="string">&quot;btree_range&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; DoubleEndedIterator <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
     <span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V)&gt; {
@@ -5238,11 +5442,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V): Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V)&gt;
+    <span class="kw">where
+        </span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>K, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>V): Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -5398,8 +5608,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -5429,8 +5637,6 @@
     <span class="doccomment">/// Gets a mutable iterator over the entries of the map, sorted by key.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -5463,8 +5669,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -5484,8 +5688,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -5504,8 +5706,6 @@
     <span class="doccomment">/// Gets a mutable iterator over the values of the map, in order by key.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -5531,8 +5731,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::collections::BTreeMap;
     ///
@@ -5555,8 +5753,6 @@
     <span class="doccomment">/// Returns `true` if the map contains no elements.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// use std::collections::BTreeMap;
@@ -5588,8 +5784,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// #![feature(btree_cursors)]
     ///
@@ -5601,6 +5795,8 @@
     /// a.insert(2, &quot;b&quot;);
     /// a.insert(3, &quot;c&quot;);
     /// a.insert(4, &quot;c&quot;);
+    /// let cursor = a.lower_bound(Bound::Included(&amp;2));
+    /// assert_eq!(cursor.key(), Some(&amp;2));
     /// let cursor = a.lower_bound(Bound::Excluded(&amp;2));
     /// assert_eq!(cursor.key(), Some(&amp;3));
     /// ```
@@ -5629,8 +5825,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// #![feature(btree_cursors)]
     ///
@@ -5642,6 +5836,8 @@
     /// a.insert(2, &quot;b&quot;);
     /// a.insert(3, &quot;c&quot;);
     /// a.insert(4, &quot;c&quot;);
+    /// let cursor = a.lower_bound_mut(Bound::Included(&amp;2));
+    /// assert_eq!(cursor.key(), Some(&amp;2));
     /// let cursor = a.lower_bound_mut(Bound::Excluded(&amp;2));
     /// assert_eq!(cursor.key(), Some(&amp;3));
     /// ```
@@ -5683,8 +5879,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// #![feature(btree_cursors)]
     ///
@@ -5696,6 +5890,8 @@
     /// a.insert(2, &quot;b&quot;);
     /// a.insert(3, &quot;c&quot;);
     /// a.insert(4, &quot;c&quot;);
+    /// let cursor = a.upper_bound(Bound::Included(&amp;3));
+    /// assert_eq!(cursor.key(), Some(&amp;3));
     /// let cursor = a.upper_bound(Bound::Excluded(&amp;3));
     /// assert_eq!(cursor.key(), Some(&amp;2));
     /// ```
@@ -5724,8 +5920,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// #![feature(btree_cursors)]
     ///
@@ -5737,6 +5931,8 @@
     /// a.insert(2, &quot;b&quot;);
     /// a.insert(3, &quot;c&quot;);
     /// a.insert(4, &quot;c&quot;);
+    /// let cursor = a.upper_bound_mut(Bound::Included(&amp;3));
+    /// assert_eq!(cursor.key(), Some(&amp;3));
     /// let cursor = a.upper_bound_mut(Bound::Excluded(&amp;3));
     /// assert_eq!(cursor.key(), Some(&amp;2));
     /// ```
@@ -6019,7 +6215,7 @@
         })
     }
 
-    <span class="doccomment">/// Returns a mutable reference to the of the element that the cursor is
+    <span class="doccomment">/// Returns a mutable reference to the key of the element that the cursor is
     /// currently pointing to.
     ///
     /// This returns `None` if the cursor is currently pointing to the
@@ -6077,8 +6273,8 @@
                 </span><span class="kw">unsafe </span>{ <span class="self">self</span>.root.reborrow() }
                     .as_mut()<span class="question-mark">?
                     </span>.borrow_mut()
-                    .first_leaf_edge()
-                    .next_kv()
+                    .last_leaf_edge()
+                    .next_back_kv()
                     .ok()<span class="question-mark">?
                     </span>.into_kv_valmut()
             }
@@ -6216,7 +6412,7 @@
                 <span class="macro">panic!</span>(<span class="string">&quot;key must be ordered above the current element&quot;</span>);
             }
         }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>((next, <span class="kw">_</span>)) = <span class="self">self</span>.peek_prev() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>((next, <span class="kw">_</span>)) = <span class="self">self</span>.peek_next() {
             <span class="kw">if </span><span class="kw-2">&amp;</span>key &gt;= next {
                 <span class="macro">panic!</span>(<span class="string">&quot;key must be ordered below the next element&quot;</span>);
             }
@@ -6306,5 +6502,4 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

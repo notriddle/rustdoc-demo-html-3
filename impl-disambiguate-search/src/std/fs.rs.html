@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2537,7 +2537,75 @@
 <a href="#2537" id="2537">2537</a>
 <a href="#2538" id="2538">2538</a>
 <a href="#2539" id="2539">2539</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Filesystem manipulation operations.
+<a href="#2540" id="2540">2540</a>
+<a href="#2541" id="2541">2541</a>
+<a href="#2542" id="2542">2542</a>
+<a href="#2543" id="2543">2543</a>
+<a href="#2544" id="2544">2544</a>
+<a href="#2545" id="2545">2545</a>
+<a href="#2546" id="2546">2546</a>
+<a href="#2547" id="2547">2547</a>
+<a href="#2548" id="2548">2548</a>
+<a href="#2549" id="2549">2549</a>
+<a href="#2550" id="2550">2550</a>
+<a href="#2551" id="2551">2551</a>
+<a href="#2552" id="2552">2552</a>
+<a href="#2553" id="2553">2553</a>
+<a href="#2554" id="2554">2554</a>
+<a href="#2555" id="2555">2555</a>
+<a href="#2556" id="2556">2556</a>
+<a href="#2557" id="2557">2557</a>
+<a href="#2558" id="2558">2558</a>
+<a href="#2559" id="2559">2559</a>
+<a href="#2560" id="2560">2560</a>
+<a href="#2561" id="2561">2561</a>
+<a href="#2562" id="2562">2562</a>
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
+<a href="#2586" id="2586">2586</a>
+<a href="#2587" id="2587">2587</a>
+<a href="#2588" id="2588">2588</a>
+<a href="#2589" id="2589">2589</a>
+<a href="#2590" id="2590">2590</a>
+<a href="#2591" id="2591">2591</a>
+<a href="#2592" id="2592">2592</a>
+<a href="#2593" id="2593">2593</a>
+<a href="#2594" id="2594">2594</a>
+<a href="#2595" id="2595">2595</a>
+<a href="#2596" id="2596">2596</a>
+<a href="#2597" id="2597">2597</a>
+<a href="#2598" id="2598">2598</a>
+<a href="#2599" id="2599">2599</a>
+<a href="#2600" id="2600">2600</a>
+<a href="#2601" id="2601">2601</a>
+<a href="#2602" id="2602">2602</a>
+<a href="#2603" id="2603">2603</a>
+<a href="#2604" id="2604">2604</a>
+<a href="#2605" id="2605">2605</a>
+<a href="#2606" id="2606">2606</a>
+<a href="#2607" id="2607">2607</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Filesystem manipulation operations.
 //!
 //! This module contains basic methods to manipulate the contents of the local
 //! filesystem. All methods in this module represent cross-platform filesystem
@@ -2554,6 +2622,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::fmt;
 <span class="kw">use </span><span class="kw">crate</span>::io::{<span class="self">self</span>, BorrowedCursor, IoSlice, IoSliceMut, Read, Seek, SeekFrom, Write};
 <span class="kw">use </span><span class="kw">crate</span>::path::{Path, PathBuf};
+<span class="kw">use </span><span class="kw">crate</span>::sealed::Sealed;
+<span class="kw">use </span><span class="kw">crate</span>::sync::Arc;
 <span class="kw">use </span><span class="kw">crate</span>::sys::fs <span class="kw">as </span>fs_imp;
 <span class="kw">use </span><span class="kw">crate</span>::sys_common::{AsInner, AsInnerMut, FromInner, IntoInner};
 <span class="kw">use </span><span class="kw">crate</span>::time::SystemTime;
@@ -2788,9 +2858,9 @@
 </span><span class="kw">pub fn </span>read&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; io::Result&lt;Vec&lt;u8&gt;&gt; {
     <span class="kw">fn </span>inner(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;u8&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>file = File::open(path)<span class="question-mark">?</span>;
-        <span class="kw">let </span>size = file.metadata().map(|m| m.len()).unwrap_or(<span class="number">0</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>bytes = Vec::with_capacity(size <span class="kw">as </span>usize);
-        io::default_read_to_end(<span class="kw-2">&amp;mut </span>file, <span class="kw-2">&amp;mut </span>bytes)<span class="question-mark">?</span>;
+        <span class="kw">let </span>size = file.metadata().map(|m| m.len() <span class="kw">as </span>usize).ok();
+        <span class="kw">let </span><span class="kw-2">mut </span>bytes = Vec::with_capacity(size.unwrap_or(<span class="number">0</span>));
+        io::default_read_to_end(<span class="kw-2">&amp;mut </span>file, <span class="kw-2">&amp;mut </span>bytes, size)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(bytes)
     }
     inner(path.as_ref())
@@ -2828,9 +2898,9 @@
 </span><span class="kw">pub fn </span>read_to_string&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; io::Result&lt;String&gt; {
     <span class="kw">fn </span>inner(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;String&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>file = File::open(path)<span class="question-mark">?</span>;
-        <span class="kw">let </span>size = file.metadata().map(|m| m.len()).unwrap_or(<span class="number">0</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>string = String::with_capacity(size <span class="kw">as </span>usize);
-        io::default_read_to_string(<span class="kw-2">&amp;mut </span>file, <span class="kw-2">&amp;mut </span>string)<span class="question-mark">?</span>;
+        <span class="kw">let </span>size = file.metadata().map(|m| m.len() <span class="kw">as </span>usize).ok();
+        <span class="kw">let </span><span class="kw-2">mut </span>string = String::with_capacity(size.unwrap_or(<span class="number">0</span>));
+        io::default_read_to_string(<span class="kw-2">&amp;mut </span>file, <span class="kw-2">&amp;mut </span>string, size)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(string)
     }
     inner(path.as_ref())
@@ -3248,7 +3318,8 @@
 // `AsRawHandle`/`IntoRawHandle`/`FromRawHandle` on Windows.
 
 </span><span class="kw">impl </span>AsInner&lt;fs_imp::File&gt; <span class="kw">for </span>File {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::File {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::File {
         <span class="kw-2">&amp;</span><span class="self">self</span>.inner
     }
 }
@@ -3271,82 +3342,26 @@
 }
 
 <span class="doccomment">/// Indicates how much extra capacity is needed to read the rest of the file.
-</span><span class="kw">fn </span>buffer_capacity_required(<span class="kw-2">mut </span>file: <span class="kw-2">&amp;</span>File) -&gt; usize {
-    <span class="kw">let </span>size = file.metadata().map(|m| m.len()).unwrap_or(<span class="number">0</span>);
-    <span class="kw">let </span>pos = file.stream_position().unwrap_or(<span class="number">0</span>);
+</span><span class="kw">fn </span>buffer_capacity_required(<span class="kw-2">mut </span>file: <span class="kw-2">&amp;</span>File) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+    <span class="kw">let </span>size = file.metadata().map(|m| m.len()).ok()<span class="question-mark">?</span>;
+    <span class="kw">let </span>pos = file.stream_position().ok()<span class="question-mark">?</span>;
     <span class="comment">// Don&#39;t worry about `usize` overflow because reading will fail regardless
     // in that case.
-    </span>size.saturating_sub(pos) <span class="kw">as </span>usize
+    </span><span class="prelude-val">Some</span>(size.saturating_sub(pos) <span class="kw">as </span>usize)
 }
 
-<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl </span>Read <span class="kw">for </span>File {
-    <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
-        <span class="self">self</span>.inner.read(buf)
-    }
-
-    <span class="kw">fn </span>read_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
-        <span class="self">self</span>.inner.read_vectored(bufs)
-    }
-
-    <span class="kw">fn </span>read_buf(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: BorrowedCursor&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
-        <span class="self">self</span>.inner.read_buf(cursor)
-    }
-
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>is_read_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.inner.is_read_vectored()
-    }
-
-    <span class="comment">// Reserves space in the buffer based on the file size when available.
-    </span><span class="kw">fn </span>read_to_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; io::Result&lt;usize&gt; {
-        buf.reserve(buffer_capacity_required(<span class="self">self</span>));
-        io::default_read_to_end(<span class="self">self</span>, buf)
-    }
-
-    <span class="comment">// Reserves space in the buffer based on the file size when available.
-    </span><span class="kw">fn </span>read_to_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>String) -&gt; io::Result&lt;usize&gt; {
-        buf.reserve(buffer_capacity_required(<span class="self">self</span>));
-        io::default_read_to_string(<span class="self">self</span>, buf)
-    }
-}
-<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl </span>Write <span class="kw">for </span>File {
-    <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
-        <span class="self">self</span>.inner.write(buf)
-    }
-
-    <span class="kw">fn </span>write_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;</span>[IoSlice&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
-        <span class="self">self</span>.inner.write_vectored(bufs)
-    }
-
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>is_write_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.inner.is_write_vectored()
-    }
-
-    <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
-        <span class="self">self</span>.inner.flush()
-    }
-}
-<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl </span>Seek <span class="kw">for </span>File {
-    <span class="kw">fn </span>seek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
-        <span class="self">self</span>.inner.seek(pos)
-    }
-}
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl </span>Read <span class="kw">for </span><span class="kw-2">&amp;</span>File {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="self">self</span>.inner.read(buf)
     }
 
-    <span class="kw">fn </span>read_buf(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: BorrowedCursor&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
-        <span class="self">self</span>.inner.read_buf(cursor)
-    }
-
     <span class="kw">fn </span>read_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
         <span class="self">self</span>.inner.read_vectored(bufs)
+    }
+
+    <span class="kw">fn </span>read_buf(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: BorrowedCursor&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+        <span class="self">self</span>.inner.read_buf(cursor)
     }
 
     <span class="attr">#[inline]
@@ -3356,14 +3371,16 @@
 
     <span class="comment">// Reserves space in the buffer based on the file size when available.
     </span><span class="kw">fn </span>read_to_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; io::Result&lt;usize&gt; {
-        buf.reserve(buffer_capacity_required(<span class="self">self</span>));
-        io::default_read_to_end(<span class="self">self</span>, buf)
+        <span class="kw">let </span>size = buffer_capacity_required(<span class="self">self</span>);
+        buf.reserve(size.unwrap_or(<span class="number">0</span>));
+        io::default_read_to_end(<span class="self">self</span>, buf, size)
     }
 
     <span class="comment">// Reserves space in the buffer based on the file size when available.
     </span><span class="kw">fn </span>read_to_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>String) -&gt; io::Result&lt;usize&gt; {
-        buf.reserve(buffer_capacity_required(<span class="self">self</span>));
-        io::default_read_to_string(<span class="self">self</span>, buf)
+        <span class="kw">let </span>size = buffer_capacity_required(<span class="self">self</span>);
+        buf.reserve(size.unwrap_or(<span class="number">0</span>));
+        io::default_read_to_string(<span class="self">self</span>, buf, size)
     }
 }
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -3389,6 +3406,96 @@
 </span><span class="kw">impl </span>Seek <span class="kw">for </span><span class="kw-2">&amp;</span>File {
     <span class="kw">fn </span>seek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
         <span class="self">self</span>.inner.seek(pos)
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+</span><span class="kw">impl </span>Read <span class="kw">for </span>File {
+    <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).read(buf)
+    }
+    <span class="kw">fn </span>read_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).read_vectored(bufs)
+    }
+    <span class="kw">fn </span>read_buf(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: BorrowedCursor&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).read_buf(cursor)
+    }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>is_read_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        (&amp;&amp;<span class="kw-2">*</span><span class="self">self</span>).is_read_vectored()
+    }
+    <span class="kw">fn </span>read_to_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).read_to_end(buf)
+    }
+    <span class="kw">fn </span>read_to_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>String) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).read_to_string(buf)
+    }
+}
+<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+</span><span class="kw">impl </span>Write <span class="kw">for </span>File {
+    <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).write(buf)
+    }
+    <span class="kw">fn </span>write_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;</span>[IoSlice&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).write_vectored(bufs)
+    }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>is_write_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        (&amp;&amp;<span class="kw-2">*</span><span class="self">self</span>).is_write_vectored()
+    }
+    <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).flush()
+    }
+}
+<span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+</span><span class="kw">impl </span>Seek <span class="kw">for </span>File {
+    <span class="kw">fn </span>seek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
+        (<span class="kw-2">&amp;*</span><span class="self">self</span>).seek(pos)
+    }
+}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;io_traits_arc&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+</span><span class="kw">impl </span>Read <span class="kw">for </span>Arc&lt;File&gt; {
+    <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).read(buf)
+    }
+    <span class="kw">fn </span>read_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).read_vectored(bufs)
+    }
+    <span class="kw">fn </span>read_buf(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: BorrowedCursor&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).read_buf(cursor)
+    }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>is_read_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).is_read_vectored()
+    }
+    <span class="kw">fn </span>read_to_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).read_to_end(buf)
+    }
+    <span class="kw">fn </span>read_to_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>String) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).read_to_string(buf)
+    }
+}
+<span class="attr">#[stable(feature = <span class="string">&quot;io_traits_arc&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+</span><span class="kw">impl </span>Write <span class="kw">for </span>Arc&lt;File&gt; {
+    <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).write(buf)
+    }
+    <span class="kw">fn </span>write_vectored(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bufs: <span class="kw-2">&amp;</span>[IoSlice&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; io::Result&lt;usize&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).write_vectored(bufs)
+    }
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>is_write_vectored(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).is_write_vectored()
+    }
+    <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).flush()
+    }
+}
+<span class="attr">#[stable(feature = <span class="string">&quot;io_traits_arc&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
+</span><span class="kw">impl </span>Seek <span class="kw">for </span>Arc&lt;File&gt; {
+    <span class="kw">fn </span>seek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
+        (<span class="kw-2">&amp;**</span><span class="self">self</span>).seek(pos)
     }
 }
 
@@ -3622,13 +3729,15 @@
 }
 
 <span class="kw">impl </span>AsInner&lt;fs_imp::OpenOptions&gt; <span class="kw">for </span>OpenOptions {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::OpenOptions {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::OpenOptions {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
 
 <span class="kw">impl </span>AsInnerMut&lt;fs_imp::OpenOptions&gt; <span class="kw">for </span>OpenOptions {
-    <span class="kw">fn </span>as_inner_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>fs_imp::OpenOptions {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>fs_imp::OpenOptions {
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0
     </span>}
 }
@@ -3887,7 +3996,8 @@
 }
 
 <span class="kw">impl </span>AsInner&lt;fs_imp::FileAttr&gt; <span class="kw">for </span>Metadata {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FileAttr {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FileAttr {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
@@ -3921,6 +4031,16 @@
         <span class="self">self
     </span>}
 }
+
+<span class="kw">impl </span>AsInnerMut&lt;fs_imp::FileTimes&gt; <span class="kw">for </span>FileTimes {
+    <span class="kw">fn </span>as_inner_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>fs_imp::FileTimes {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0
+    </span>}
+}
+
+<span class="comment">// For implementing OS extension traits in `std::os`
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;file_set_times&quot;</span>, issue = <span class="string">&quot;98245&quot;</span>)]
+</span><span class="kw">impl </span>Sealed <span class="kw">for </span>FileTimes {}
 
 <span class="kw">impl </span>Permissions {
     <span class="doccomment">/// Returns `true` if these permissions describe a readonly (unwritable) file.
@@ -4139,7 +4259,8 @@
 }
 
 <span class="kw">impl </span>AsInner&lt;fs_imp::FileType&gt; <span class="kw">for </span>FileType {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FileType {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FileType {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
@@ -4151,7 +4272,8 @@
 }
 
 <span class="kw">impl </span>AsInner&lt;fs_imp::FilePermissions&gt; <span class="kw">for </span>Permissions {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FilePermissions {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::FilePermissions {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
@@ -4273,8 +4395,14 @@
         <span class="self">self</span>.<span class="number">0</span>.file_type().map(FileType)
     }
 
-    <span class="doccomment">/// Returns the bare file name of this directory entry without any other
-    /// leading path component.
+    <span class="doccomment">/// Returns the file name of this directory entry without any
+    /// leading path component(s).
+    ///
+    /// As an example,
+    /// the output of the function will result in &quot;foo&quot; for all the following paths:
+    /// - &quot;./foo&quot;
+    /// - &quot;/the/foo&quot;
+    /// - &quot;../../foo&quot;
     ///
     /// # Examples
     ///
@@ -4305,7 +4433,8 @@
 }
 
 <span class="kw">impl </span>AsInner&lt;fs_imp::DirEntry&gt; <span class="kw">for </span>DirEntry {
-    <span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::DirEntry {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>fs_imp::DirEntry {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
@@ -4474,7 +4603,7 @@
 /// On success, the total number of bytes copied is returned and it is equal to
 /// the length of the `to` file as reported by `metadata`.
 ///
-/// If you’re wanting to copy the contents of one file to another and you’re
+/// If you want to copy the contents of one file to another and you’re
 /// working with [`File`]s, see the [`io::copy()`] function.
 ///
 /// # Platform-specific behavior
@@ -4819,6 +4948,11 @@
 ///
 /// See [`fs::remove_file`] and [`fs::remove_dir`].
 ///
+/// `remove_dir_all` will fail if `remove_dir` or `remove_file` fail on any constituent paths, including the root path.
+/// As a result, the directory you are deleting must exist, meaning that this function is not idempotent.
+///
+/// Consider ignoring the error if validating the removal is not required for your use case.
+///
 /// [`fs::remove_file`]: remove_file
 /// [`fs::remove_dir`]: remove_dir
 ///
@@ -5040,7 +5174,8 @@
 }
 
 <span class="kw">impl </span>AsInnerMut&lt;fs_imp::DirBuilder&gt; <span class="kw">for </span>DirBuilder {
-    <span class="kw">fn </span>as_inner_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>fs_imp::DirBuilder {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>as_inner_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>fs_imp::DirBuilder {
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.inner
     }
 }
@@ -5050,9 +5185,10 @@
 /// This function will traverse symbolic links to query information about the
 /// destination file. In case of broken symbolic links this will return `Ok(false)`.
 ///
-/// As opposed to the [`Path::exists`] method, this one doesn&#39;t silently ignore errors
-/// unrelated to the path not existing. (E.g. it will return `Err(_)` in case of permission
-/// denied on some of the parent directories.)
+/// As opposed to the [`Path::exists`] method, this will only return `Ok(true)` or `Ok(false)`
+/// if the path was _verified_ to exist or not exist. If its existence can neither be confirmed
+/// nor denied, an `Err(_)` will be propagated instead. This can be the case if e.g. listing
+/// permission is denied on one of the parent directories.
 ///
 /// Note that while this avoids some pitfalls of the `exists()` method, it still can not
 /// prevent time-of-check to time-of-use (TOCTOU) bugs. You should only use it in scenarios
@@ -5076,5 +5212,4 @@
 </span><span class="kw">pub fn </span>try_exists&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; io::Result&lt;bool&gt; {
     fs_imp::try_exists(path.as_ref())
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

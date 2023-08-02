@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -184,7 +209,7 @@ non-trivial untracked ownership, and it's unlikely that their author was
 necessarily thinking hard about thread safety. In the case of <code>Rc</code>, we have a nice
 example of a type that contains a <code>*mut</code> that is definitely not thread-safe.</p>
 <p>Types that aren't automatically derived can simply implement them if desired:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct MyBox(*mut u8);
 
@@ -193,7 +218,7 @@ unsafe impl Sync for MyBox {}
 <span class="boring">}</span></code></pre></pre>
 <p>In the <em>incredibly rare</em> case that a type is inappropriately automatically
 derived to be Send or Sync, then one can also unimplement Send and Sync:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span>#![feature(negative_impls)]
 
 <span class="boring">fn main() {
@@ -219,7 +244,7 @@ with similar-ish behavior ourselves to see an example of when it is sound to
 implement Send and Sync. Let's call it a <code>Carton</code>.</p>
 <p>We start by writing code to take a value allocated on the stack and transfer it
 to the heap.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">pub mod libc {
 </span><span class="boring">   pub use ::std::os::raw::{c_int, c_void};
@@ -272,7 +297,7 @@ impl&lt;T&gt; Carton&lt;T&gt; {
 to access it. <a href="https://doc.rust-lang.org/std/boxed/struct.Box.html"><code>Box</code></a> implements <a href="https://doc.rust-lang.org/core/ops/trait.Deref.html"><code>Deref</code></a> and
 <a href="https://doc.rust-lang.org/core/ops/trait.DerefMut.html"><code>DerefMut</code></a> so that you can access the inner value. Let's do
 that.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use std::ops::{Deref, DerefMut};
 
@@ -312,7 +337,7 @@ impl&lt;T&gt; DerefMut for Carton&lt;T&gt; {
 safely be Send unless it shares mutable state with something else without
 enforcing exclusive access to it. Each <code>Carton</code> has a unique pointer, so
 we're good.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">struct Carton&lt;T&gt;(std::ptr::NonNull&lt;T&gt;);
 </span>// Safety: No one besides us has the raw pointer, so we can safely transfer the
@@ -325,7 +350,7 @@ or written to from another <code>&amp;Carton</code>. Since you need an <code>&am
 write to the pointer, and the borrow checker enforces that mutable
 references must be exclusive, there are no soundness issues making <code>Carton</code>
 sync either.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">struct Carton&lt;T&gt;(std::ptr::NonNull&lt;T&gt;);
 </span>// Safety: Since there exists a public way to go from a `&amp;Carton&lt;T&gt;` to a `&amp;T`
@@ -341,7 +366,7 @@ contained type is Send and Sync. When writing custom types that behave like
 standard library types we can assert that we have the same requirements.
 For example, the following code asserts that a Carton is Send if the same
 sort of Box would be Send, which in this case is the same as saying T is Send.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">struct Carton&lt;T&gt;(std::ptr::NonNull&lt;T&gt;);
 </span>unsafe impl&lt;T&gt; Send for Carton&lt;T&gt; where Box&lt;T&gt;: Send {}
@@ -351,7 +376,7 @@ Once we fix that we have a new requirement we have to ensure we meet to be Send:
 we need to know <code>free</code> can be called on a pointer that was yielded by an
 allocation done on another thread. We can check this is true in the docs for
 <a href="https://linux.die.net/man/3/free"><code>libc::free</code></a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">struct Carton&lt;T&gt;(std::ptr::NonNull&lt;T&gt;);
 </span><span class="boring">mod libc {
@@ -425,5 +450,6 @@ only to data races?</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

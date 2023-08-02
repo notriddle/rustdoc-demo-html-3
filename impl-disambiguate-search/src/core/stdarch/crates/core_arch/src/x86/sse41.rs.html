@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/sse41.rs`."><title>sse41.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/sse41.rs`."><title>sse41.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1885,7 +1885,7 @@
 <a href="#1885" id="1885">1885</a>
 <a href="#1886" id="1886">1886</a>
 <a href="#1887" id="1887">1887</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Streaming SIMD Extensions 4.1 (SSE4.1)
+</pre></div><pre class="rust"><code><span class="doccomment">//! Streaming SIMD Extensions 4.1 (SSE4.1)
 
 </span><span class="kw">use crate</span>::{
     core_arch::{simd::<span class="kw-2">*</span>, simd_llvm::<span class="kw-2">*</span>, x86::<span class="kw-2">*</span>},
@@ -1943,7 +1943,7 @@
 /// If the high bit is set the element of `a` is selected. The element
 /// of `b` is selected otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blendv_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blendv_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pblendvb))]
@@ -1958,7 +1958,7 @@
 /// corresponding element of `a`, and a set bit the corresponding
 /// element of `b`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blend_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blend_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 </span><span class="comment">// Note: LLVM7 prefers the single-precision floating-point domain when possible
@@ -1968,14 +1968,14 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_blend_epi16&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     transmute(pblendw(a.as_i16x8(), b.as_i16x8(), IMM8 <span class="kw">as </span>u8))
 }
 
 <span class="doccomment">/// Blend packed double-precision (64-bit) floating-point elements from `a`
 /// and `b` using `mask`
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blendv_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blendv_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(blendvpd))]
@@ -1987,7 +1987,7 @@
 <span class="doccomment">/// Blend packed single-precision (32-bit) floating-point elements from `a`
 /// and `b` using `mask`
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blendv_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blendv_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(blendvps))]
@@ -1999,7 +1999,7 @@
 <span class="doccomment">/// Blend packed double-precision (64-bit) floating-point elements from `a`
 /// and `b` using control mask `IMM2`
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blend_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blend_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 </span><span class="comment">// Note: LLVM7 prefers the single-precision floating-point domain when possible
@@ -2009,21 +2009,21 @@
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_blend_pd&lt;<span class="kw">const </span>IMM2: i32&gt;(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">static_assert_imm2!</span>(IMM2);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM2, <span class="number">2</span>);
     blendpd(a, b, IMM2 <span class="kw">as </span>u8)
 }
 
 <span class="doccomment">/// Blend packed single-precision (32-bit) floating-point elements from `a`
 /// and `b` using mask `IMM4`
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_blend_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blend_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(blendps, IMM4 = <span class="number">0b0101</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_blend_ps&lt;<span class="kw">const </span>IMM4: i32&gt;(a: __m128, b: __m128) -&gt; __m128 {
-    <span class="macro">static_assert_imm4!</span>(IMM4);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM4, <span class="number">4</span>);
     blendps(a, b, IMM4 <span class="kw">as </span>u8)
 }
 
@@ -2051,7 +2051,7 @@
 /// #   }
 /// # }
 /// ```
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_extract_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(
@@ -2061,7 +2061,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_extract_ps&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128) -&gt; i32 {
-    <span class="macro">static_assert_imm2!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">2</span>);
     transmute(simd_extract::&lt;<span class="kw">_</span>, f32&gt;(a, IMM8 <span class="kw">as </span>u32))
 }
 
@@ -2070,20 +2070,20 @@
 ///
 /// See [LLVM commit D20468](https://reviews.llvm.org/D20468).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_extract_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pextrb, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_extract_epi8&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; i32 {
-    <span class="macro">static_assert_imm4!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">4</span>);
     simd_extract::&lt;<span class="kw">_</span>, u8&gt;(a.as_u8x16(), IMM8 <span class="kw">as </span>u32) <span class="kw">as </span>i32
 }
 
 <span class="doccomment">/// Extracts an 32-bit integer from `a` selected with `IMM8`
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_extract_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(
@@ -2093,7 +2093,7 @@
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_extract_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i) -&gt; i32 {
-    <span class="macro">static_assert_imm2!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">2</span>);
     simd_extract::&lt;<span class="kw">_</span>, i32&gt;(a.as_i32x4(), IMM8 <span class="kw">as </span>u32)
 }
 
@@ -2120,49 +2120,49 @@
 /// * Bits `[3:0]`: If any of these bits are set, the corresponding result
 /// element is cleared.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_insert_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_insert_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(insertps, IMM8 = <span class="number">0b1010</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_insert_ps&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128, b: __m128) -&gt; __m128 {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     insertps(a, b, IMM8 <span class="kw">as </span>u8)
 }
 
 <span class="doccomment">/// Returns a copy of `a` with the 8-bit integer from `i` inserted at a
 /// location specified by `IMM8`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_insert_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_insert_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pinsrb, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_insert_epi8&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, i: i32) -&gt; __m128i {
-    <span class="macro">static_assert_imm4!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">4</span>);
     transmute(simd_insert(a.as_i8x16(), IMM8 <span class="kw">as </span>u32, i <span class="kw">as </span>i8))
 }
 
 <span class="doccomment">/// Returns a copy of `a` with the 32-bit integer from `i` inserted at a
 /// location specified by `IMM8`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_insert_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_insert_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pinsrd, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_insert_epi32&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, i: i32) -&gt; __m128i {
-    <span class="macro">static_assert_imm2!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">2</span>);
     transmute(simd_insert(a.as_i32x4(), IMM8 <span class="kw">as </span>u32, i))
 }
 
 <span class="doccomment">/// Compares packed 8-bit integers in `a` and `b` and returns packed maximum
 /// values in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxsb))]
@@ -2176,7 +2176,7 @@
 <span class="doccomment">/// Compares packed unsigned 16-bit integers in `a` and `b`, and returns packed
 /// maximum.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxuw))]
@@ -2190,7 +2190,7 @@
 <span class="doccomment">/// Compares packed 32-bit integers in `a` and `b`, and returns packed maximum
 /// values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxsd))]
@@ -2204,7 +2204,7 @@
 <span class="doccomment">/// Compares packed unsigned 32-bit integers in `a` and `b`, and returns packed
 /// maximum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_max_epu32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_max_epu32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmaxud))]
@@ -2218,7 +2218,7 @@
 <span class="doccomment">/// Compares packed 8-bit integers in `a` and `b` and returns packed minimum
 /// values in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epi8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epi8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminsb))]
@@ -2232,7 +2232,7 @@
 <span class="doccomment">/// Compares packed unsigned 16-bit integers in `a` and `b`, and returns packed
 /// minimum.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminuw))]
@@ -2246,7 +2246,7 @@
 <span class="doccomment">/// Compares packed 32-bit integers in `a` and `b`, and returns packed minimum
 /// values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminsd))]
@@ -2260,7 +2260,7 @@
 <span class="doccomment">/// Compares packed unsigned 32-bit integers in `a` and `b`, and returns packed
 /// minimum values.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_min_epu32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_min_epu32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pminud))]
@@ -2274,7 +2274,7 @@
 <span class="doccomment">/// Converts packed 32-bit integers from `a` and `b` to packed 16-bit integers
 /// using unsigned saturation
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_packus_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_packus_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(packusdw))]
@@ -2285,7 +2285,7 @@
 
 <span class="doccomment">/// Compares packed 64-bit integers in `a` and `b` for equality
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cmpeq_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpeq_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpeqq))]
@@ -2296,161 +2296,161 @@
 
 <span class="doccomment">/// Sign extend packed 8-bit integers in `a` to packed 16-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi8_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi8_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxbw))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi8_epi16(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i8x16();
-    <span class="kw">let </span>a: i8x8 = <span class="macro">simd_shuffle8!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]);
+    <span class="kw">let </span>a: i8x8 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i16x8&gt;(a))
 }
 
 <span class="doccomment">/// Sign extend packed 8-bit integers in `a` to packed 32-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi8_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi8_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxbd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi8_epi32(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i8x16();
-    <span class="kw">let </span>a: i8x4 = <span class="macro">simd_shuffle4!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+    <span class="kw">let </span>a: i8x4 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i32x4&gt;(a))
 }
 
 <span class="doccomment">/// Sign extend packed 8-bit integers in the low 8 bytes of `a` to packed
 /// 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi8_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi8_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxbq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi8_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i8x16();
-    <span class="kw">let </span>a: i8x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: i8x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
 <span class="doccomment">/// Sign extend packed 16-bit integers in `a` to packed 32-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi16_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi16_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxwd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi16_epi32(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i16x8();
-    <span class="kw">let </span>a: i16x4 = <span class="macro">simd_shuffle4!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+    <span class="kw">let </span>a: i16x4 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i32x4&gt;(a))
 }
 
 <span class="doccomment">/// Sign extend packed 16-bit integers in `a` to packed 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi16_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi16_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxwq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi16_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i16x8();
-    <span class="kw">let </span>a: i16x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: i16x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
 <span class="doccomment">/// Sign extend packed 32-bit integers in `a` to packed 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepi32_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepi32_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovsxdq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepi32_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_i32x4();
-    <span class="kw">let </span>a: i32x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: i32x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 8-bit integers in `a` to packed 16-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu8_epi16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu8_epi16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxbw))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu8_epi16(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u8x16();
-    <span class="kw">let </span>a: u8x8 = <span class="macro">simd_shuffle8!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]);
+    <span class="kw">let </span>a: u8x8 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i16x8&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 8-bit integers in `a` to packed 32-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu8_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu8_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxbd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu8_epi32(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u8x16();
-    <span class="kw">let </span>a: u8x4 = <span class="macro">simd_shuffle4!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+    <span class="kw">let </span>a: u8x4 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i32x4&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 8-bit integers in `a` to packed 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu8_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu8_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxbq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu8_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u8x16();
-    <span class="kw">let </span>a: u8x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: u8x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 16-bit integers in `a`
 /// to packed 32-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu16_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu16_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxwd))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu16_epi32(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u16x8();
-    <span class="kw">let </span>a: u16x4 = <span class="macro">simd_shuffle4!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+    <span class="kw">let </span>a: u16x4 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i32x4&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 16-bit integers in `a`
 /// to packed 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu16_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu16_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxwq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu16_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u16x8();
-    <span class="kw">let </span>a: u16x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: u16x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
 <span class="doccomment">/// Zeroes extend packed unsigned 32-bit integers in `a`
 /// to packed 64-bit integers
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_cvtepu32_epi64)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cvtepu32_epi64)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmovzxdq))]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_cvtepu32_epi64(a: __m128i) -&gt; __m128i {
     <span class="kw">let </span>a = a.as_u32x4();
-    <span class="kw">let </span>a: u32x2 = <span class="macro">simd_shuffle2!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
+    <span class="kw">let </span>a: u32x2 = <span class="macro">simd_shuffle!</span>(a, a, [<span class="number">0</span>, <span class="number">1</span>]);
     transmute(simd_cast::&lt;<span class="kw">_</span>, i64x2&gt;(a))
 }
 
@@ -2462,14 +2462,14 @@
 /// the dot product will be stored in the return value component. Otherwise if
 /// the broadcast mask bit is zero then the return component will be zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dp_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dp_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(dppd, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_dp_pd&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     dppd(a, b, IMM8 <span class="kw">as </span>u8)
 }
 
@@ -2481,14 +2481,14 @@
 /// the dot product will be stored in the return value component. Otherwise if
 /// the broadcast mask bit is zero then the return component will be zero.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_dp_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_dp_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(dpps, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_dp_ps&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128, b: __m128) -&gt; __m128 {
-    <span class="macro">static_assert_imm8!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">8</span>);
     dpps(a, b, IMM8 <span class="kw">as </span>u8)
 }
 
@@ -2496,7 +2496,7 @@
 /// down to an integer value, and stores the results as packed double-precision
 /// floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_floor_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_floor_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundpd))]
@@ -2509,7 +2509,7 @@
 /// down to an integer value, and stores the results as packed single-precision
 /// floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_floor_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_floor_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundps))]
@@ -2524,7 +2524,7 @@
 /// and copies the upper element from `a` to the upper element of the intrinsic
 /// result.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_floor_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_floor_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundsd))]
@@ -2539,7 +2539,7 @@
 /// and copies the upper 3 packed elements from `a` to the upper elements
 /// of the intrinsic result.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_floor_ss)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_floor_ss)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundss))]
@@ -2552,7 +2552,7 @@
 /// up to an integer value, and stores the results as packed double-precision
 /// floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ceil_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ceil_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundpd))]
@@ -2565,7 +2565,7 @@
 /// up to an integer value, and stores the results as packed single-precision
 /// floating-point elements.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ceil_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ceil_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundps))]
@@ -2576,11 +2576,11 @@
 
 <span class="doccomment">/// Round the lower double-precision (64-bit) floating-point element in `b`
 /// up to an integer value, store the result as a double-precision
-/// floating-point element in the lower element of the intrisic result,
+/// floating-point element in the lower element of the intrinsic result,
 /// and copies the upper element from `a` to the upper element
 /// of the intrinsic result.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ceil_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ceil_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundsd))]
@@ -2595,7 +2595,7 @@
 /// and copies the upper 3 packed elements from `a` to the upper elements
 /// of the intrinsic result.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_ceil_ss)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_ceil_ss)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundss))]
@@ -2634,14 +2634,14 @@
 /// # }
 /// ```
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_round_pd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_round_pd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundpd, ROUNDING = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_round_pd&lt;<span class="kw">const </span>ROUNDING: i32&gt;(a: __m128d) -&gt; __m128d {
-    <span class="macro">static_assert_imm4!</span>(ROUNDING);
+    <span class="macro">static_assert_uimm_bits!</span>(ROUNDING, <span class="number">4</span>);
     roundpd(a, ROUNDING)
 }
 
@@ -2675,14 +2675,14 @@
 /// # }
 /// ```
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_round_ps)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_round_ps)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundps, ROUNDING = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">1</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_round_ps&lt;<span class="kw">const </span>ROUNDING: i32&gt;(a: __m128) -&gt; __m128 {
-    <span class="macro">static_assert_imm4!</span>(ROUNDING);
+    <span class="macro">static_assert_uimm_bits!</span>(ROUNDING, <span class="number">4</span>);
     roundps(a, ROUNDING)
 }
 
@@ -2718,14 +2718,14 @@
 /// # }
 /// ```
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_round_sd)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_round_sd)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundsd, ROUNDING = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_round_sd&lt;<span class="kw">const </span>ROUNDING: i32&gt;(a: __m128d, b: __m128d) -&gt; __m128d {
-    <span class="macro">static_assert_imm4!</span>(ROUNDING);
+    <span class="macro">static_assert_uimm_bits!</span>(ROUNDING, <span class="number">4</span>);
     roundsd(a, b, ROUNDING)
 }
 
@@ -2761,14 +2761,14 @@
 /// # }
 /// ```
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_round_ss)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_round_ss)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(roundss, ROUNDING = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_round_ss&lt;<span class="kw">const </span>ROUNDING: i32&gt;(a: __m128, b: __m128) -&gt; __m128 {
-    <span class="macro">static_assert_imm4!</span>(ROUNDING);
+    <span class="macro">static_assert_uimm_bits!</span>(ROUNDING, <span class="number">4</span>);
     roundss(a, b, ROUNDING)
 }
 
@@ -2792,7 +2792,7 @@
 /// * bits `[18:16]` - contain the index of the minimum value
 /// * remaining bits are set to `0`.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_minpos_epu16)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_minpos_epu16)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(phminposuw))]
@@ -2804,7 +2804,7 @@
 <span class="doccomment">/// Multiplies the low 32-bit integers from each packed 64-bit
 /// element in `a` and `b`, and returns the signed 64-bit result.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mul_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mul_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmuldq))]
@@ -2820,7 +2820,7 @@
 /// arithmetic `pmulld __m128i::splat(i32::MAX), __m128i::splat(2)` would
 /// return a negative number.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mullo_epi32)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mullo_epi32)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pmulld))]
@@ -2861,14 +2861,14 @@
 /// * A `__m128i` vector containing the sums of the sets of   absolute
 ///   differences between both operands.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mpsadbw_epu8)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mpsadbw_epu8)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(mpsadbw, IMM8 = <span class="number">0</span>))]
 #[rustc_legacy_const_generics(<span class="number">2</span>)]
 #[stable(feature = <span class="string">&quot;simd_x86&quot;</span>, since = <span class="string">&quot;1.27.0&quot;</span>)]
 </span><span class="kw">pub unsafe fn </span>_mm_mpsadbw_epu8&lt;<span class="kw">const </span>IMM8: i32&gt;(a: __m128i, b: __m128i) -&gt; __m128i {
-    <span class="macro">static_assert_imm3!</span>(IMM8);
+    <span class="macro">static_assert_uimm_bits!</span>(IMM8, <span class="number">3</span>);
     transmute(mpsadbw(a.as_u8x16(), b.as_u8x16(), IMM8 <span class="kw">as </span>u8))
 }
 
@@ -2886,7 +2886,7 @@
 /// * `1` - if the specified bits are all zeros,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_testz_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testz_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(ptest))]
@@ -2909,7 +2909,7 @@
 /// * `1` - if the specified bits are all ones,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_testc_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testc_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(ptest))]
@@ -2932,7 +2932,7 @@
 /// * `1` - if the specified bits are neither all zeros nor all ones,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_testnzc_si128)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testnzc_si128)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(ptest))]
@@ -2955,7 +2955,7 @@
 /// * `1` - if the specified bits are all zeros,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_test_all_zeros)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_test_all_zeros)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(ptest))]
@@ -2976,7 +2976,7 @@
 /// * `1` - if the bits specified in the operand are all set to 1,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_test_all_ones)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_test_all_ones)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(pcmpeqd))]
@@ -3000,7 +3000,7 @@
 /// * `1` - if the specified bits are neither all zeros nor all ones,
 /// * `0` - otherwise.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_test_mix_ones_zeros)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_test_mix_ones_zeros)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;sse4.1&quot;</span>)]
 #[cfg_attr(test, assert_instr(ptest))]
@@ -3772,5 +3772,4 @@
         <span class="macro">assert_eq!</span>(r, <span class="number">0</span>);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cmp.rs`."><title>cmp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cmp.rs`."><title>cmp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1577,48 +1577,7 @@
 <a href="#1577" id="1577">1577</a>
 <a href="#1578" id="1578">1578</a>
 <a href="#1579" id="1579">1579</a>
-<a href="#1580" id="1580">1580</a>
-<a href="#1581" id="1581">1581</a>
-<a href="#1582" id="1582">1582</a>
-<a href="#1583" id="1583">1583</a>
-<a href="#1584" id="1584">1584</a>
-<a href="#1585" id="1585">1585</a>
-<a href="#1586" id="1586">1586</a>
-<a href="#1587" id="1587">1587</a>
-<a href="#1588" id="1588">1588</a>
-<a href="#1589" id="1589">1589</a>
-<a href="#1590" id="1590">1590</a>
-<a href="#1591" id="1591">1591</a>
-<a href="#1592" id="1592">1592</a>
-<a href="#1593" id="1593">1593</a>
-<a href="#1594" id="1594">1594</a>
-<a href="#1595" id="1595">1595</a>
-<a href="#1596" id="1596">1596</a>
-<a href="#1597" id="1597">1597</a>
-<a href="#1598" id="1598">1598</a>
-<a href="#1599" id="1599">1599</a>
-<a href="#1600" id="1600">1600</a>
-<a href="#1601" id="1601">1601</a>
-<a href="#1602" id="1602">1602</a>
-<a href="#1603" id="1603">1603</a>
-<a href="#1604" id="1604">1604</a>
-<a href="#1605" id="1605">1605</a>
-<a href="#1606" id="1606">1606</a>
-<a href="#1607" id="1607">1607</a>
-<a href="#1608" id="1608">1608</a>
-<a href="#1609" id="1609">1609</a>
-<a href="#1610" id="1610">1610</a>
-<a href="#1611" id="1611">1611</a>
-<a href="#1612" id="1612">1612</a>
-<a href="#1613" id="1613">1613</a>
-<a href="#1614" id="1614">1614</a>
-<a href="#1615" id="1615">1615</a>
-<a href="#1616" id="1616">1616</a>
-<a href="#1617" id="1617">1617</a>
-<a href="#1618" id="1618">1618</a>
-<a href="#1619" id="1619">1619</a>
-<a href="#1620" id="1620">1620</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Utilities for comparing and ordering values.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Utilities for comparing and ordering values.
 //!
 //! This module contains various tools for comparing and ordering values. In
 //! summary:
@@ -1644,8 +1603,6 @@
 
 </span><span class="kw">mod </span>bytewise;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>bytewise::BytewiseEq;
-
-<span class="kw">use </span><span class="kw">crate</span>::marker::Destruct;
 
 <span class="kw">use </span><span class="self">self</span>::Ordering::<span class="kw-2">*</span>;
 
@@ -1832,7 +1789,6 @@
     label = <span class="string">&quot;no implementation for `{Self} == {Rhs}`&quot;</span>,
     append_const_msg
 )]
-#[const_trait]
 #[rustc_diagnostic_item = <span class="string">&quot;PartialEq&quot;</span>]
 </span><span class="kw">pub trait </span>PartialEq&lt;Rhs: <span class="question-mark">?</span>Sized = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// This method tests for `self` and `other` values to be equal, and is used
@@ -1851,7 +1807,8 @@
     }
 }
 
-<span class="doccomment">/// Derive macro generating an impl of the trait `PartialEq`.
+<span class="doccomment">/// Derive macro generating an impl of the trait [`PartialEq`].
+/// The behavior of this macro is described in detail [here](PartialEq#derivable).
 </span><span class="attr">#[rustc_builtin_macro]
 #[stable(feature = <span class="string">&quot;builtin_macro_prelude&quot;</span>, since = <span class="string">&quot;1.38.0&quot;</span>)]
 #[allow_internal_unstable(core_intrinsics, structural_match)]
@@ -1917,7 +1874,7 @@
     </span><span class="kw">fn </span>assert_receiver_is_total_eq(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
 }
 
-<span class="doccomment">/// Derive macro generating an impl of the trait `Eq`.
+<span class="doccomment">/// Derive macro generating an impl of the trait [`Eq`].
 </span><span class="attr">#[rustc_builtin_macro]
 #[stable(feature = <span class="string">&quot;builtin_macro_prelude&quot;</span>, since = <span class="string">&quot;1.38.0&quot;</span>)]
 #[allow_internal_unstable(core_intrinsics, derive_eq, structural_match, no_coverage)]
@@ -1943,17 +1900,13 @@
 /// ```
 /// use std::cmp::Ordering;
 ///
-/// let result = 1.cmp(&amp;2);
-/// assert_eq!(Ordering::Less, result);
+/// assert_eq!(1.cmp(&amp;2), Ordering::Less);
 ///
-/// let result = 1.cmp(&amp;1);
-/// assert_eq!(Ordering::Equal, result);
+/// assert_eq!(1.cmp(&amp;1), Ordering::Equal);
 ///
-/// let result = 2.cmp(&amp;1);
-/// assert_eq!(Ordering::Greater, result);
+/// assert_eq!(2.cmp(&amp;1), Ordering::Greater);
 /// ```
-</span><span class="attr">#[derive(Clone, Copy, Eq, Debug, Hash)]
-#[derive_const(PartialOrd, Ord, PartialEq)]
+</span><span class="attr">#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[repr(i8)]
 </span><span class="kw">pub enum </span>Ordering {
@@ -2223,8 +2176,7 @@
 </span><span class="kw">pub struct </span>Reverse&lt;T&gt;(<span class="attr">#[stable(feature = <span class="string">&quot;reverse_cmp_key&quot;</span>, since = <span class="string">&quot;1.19.0&quot;</span>)] </span><span class="kw">pub </span>T);
 
 <span class="attr">#[stable(feature = <span class="string">&quot;reverse_cmp_key&quot;</span>, since = <span class="string">&quot;1.19.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: ~<span class="kw">const </span>PartialOrd&gt; <span class="kw">const </span>PartialOrd <span class="kw">for </span>Reverse&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: PartialOrd&gt; PartialOrd <span class="kw">for </span>Reverse&lt;T&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>Reverse&lt;T&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
         other.<span class="number">0</span>.partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>)
@@ -2382,7 +2334,6 @@
 #[doc(alias = <span class="string">&quot;&gt;=&quot;</span>)]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[rustc_diagnostic_item = <span class="string">&quot;Ord&quot;</span>]
-#[const_trait]
 </span><span class="kw">pub trait </span>Ord: Eq + PartialOrd&lt;<span class="self">Self</span>&gt; {
     <span class="doccomment">/// This method returns an [`Ordering`] between `self` and `other`.
     ///
@@ -2409,8 +2360,8 @@
     /// # Examples
     ///
     /// ```
-    /// assert_eq!(2, 1.max(2));
-    /// assert_eq!(2, 2.max(2));
+    /// assert_eq!(1.max(2), 2);
+    /// assert_eq!(2.max(2), 2);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;ord_max_min&quot;</span>, since = <span class="string">&quot;1.21.0&quot;</span>)]
     #[inline]
@@ -2418,7 +2369,6 @@
     </span><span class="kw">fn </span>max(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span><span class="self">Self</span>: Sized,
-        <span class="self">Self</span>: ~<span class="kw">const </span>Destruct,
     {
         max_by(<span class="self">self</span>, other, Ord::cmp)
     }
@@ -2430,8 +2380,8 @@
     /// # Examples
     ///
     /// ```
-    /// assert_eq!(1, 1.min(2));
-    /// assert_eq!(2, 2.min(2));
+    /// assert_eq!(1.min(2), 1);
+    /// assert_eq!(2.min(2), 2);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;ord_max_min&quot;</span>, since = <span class="string">&quot;1.21.0&quot;</span>)]
     #[inline]
@@ -2439,7 +2389,6 @@
     </span><span class="kw">fn </span>min(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span><span class="self">Self</span>: Sized,
-        <span class="self">Self</span>: ~<span class="kw">const </span>Destruct,
     {
         min_by(<span class="self">self</span>, other, Ord::cmp)
     }
@@ -2456,17 +2405,16 @@
     /// # Examples
     ///
     /// ```
-    /// assert!((-3).clamp(-2, 1) == -2);
-    /// assert!(0.clamp(-2, 1) == 0);
-    /// assert!(2.clamp(-2, 1) == 1);
+    /// assert_eq!((-3).clamp(-2, 1), -2);
+    /// assert_eq!(0.clamp(-2, 1), 0);
+    /// assert_eq!(2.clamp(-2, 1), 1);
     /// ```
     </span><span class="attr">#[must_use]
     #[stable(feature = <span class="string">&quot;clamp&quot;</span>, since = <span class="string">&quot;1.50.0&quot;</span>)]
     </span><span class="kw">fn </span>clamp(<span class="self">self</span>, min: <span class="self">Self</span>, max: <span class="self">Self</span>) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span><span class="self">Self</span>: Sized,
-        <span class="self">Self</span>: ~<span class="kw">const </span>Destruct,
-        <span class="self">Self</span>: ~<span class="kw">const </span>PartialOrd,
+        <span class="self">Self</span>: PartialOrd,
     {
         <span class="macro">assert!</span>(min &lt;= max);
         <span class="kw">if </span><span class="self">self </span>&lt; min {
@@ -2479,7 +2427,8 @@
     }
 }
 
-<span class="doccomment">/// Derive macro generating an impl of the trait `Ord`.
+<span class="doccomment">/// Derive macro generating an impl of the trait [`Ord`].
+/// The behavior of this macro is described in detail [here](Ord#derivable).
 </span><span class="attr">#[rustc_builtin_macro]
 #[stable(feature = <span class="string">&quot;builtin_macro_prelude&quot;</span>, since = <span class="string">&quot;1.38.0&quot;</span>)]
 #[allow_internal_unstable(core_intrinsics)]
@@ -2653,7 +2602,6 @@
     label = <span class="string">&quot;no implementation for `{Self} &lt; {Rhs}` and `{Self} &gt; {Rhs}`&quot;</span>,
     append_const_msg
 )]
-#[const_trait]
 #[rustc_diagnostic_item = <span class="string">&quot;PartialOrd&quot;</span>]
 </span><span class="kw">pub trait </span>PartialOrd&lt;Rhs: <span class="question-mark">?</span>Sized = <span class="self">Self</span>&gt;: PartialEq&lt;Rhs&gt; {
     <span class="doccomment">/// This method returns an ordering between `self` and `other` values if one exists.
@@ -2688,11 +2636,9 @@
     /// # Examples
     ///
     /// ```
-    /// let result = 1.0 &lt; 2.0;
-    /// assert_eq!(result, true);
-    ///
-    /// let result = 2.0 &lt; 1.0;
-    /// assert_eq!(result, false);
+    /// assert_eq!(1.0 &lt; 1.0, false);
+    /// assert_eq!(1.0 &lt; 2.0, true);
+    /// assert_eq!(2.0 &lt; 1.0, false);
     /// ```
     </span><span class="attr">#[inline]
     #[must_use]
@@ -2707,11 +2653,9 @@
     /// # Examples
     ///
     /// ```
-    /// let result = 1.0 &lt;= 2.0;
-    /// assert_eq!(result, true);
-    ///
-    /// let result = 2.0 &lt;= 2.0;
-    /// assert_eq!(result, true);
+    /// assert_eq!(1.0 &lt;= 1.0, true);
+    /// assert_eq!(1.0 &lt;= 2.0, true);
+    /// assert_eq!(2.0 &lt;= 1.0, false);
     /// ```
     </span><span class="attr">#[inline]
     #[must_use]
@@ -2725,11 +2669,9 @@
     /// # Examples
     ///
     /// ```
-    /// let result = 1.0 &gt; 2.0;
-    /// assert_eq!(result, false);
-    ///
-    /// let result = 2.0 &gt; 2.0;
-    /// assert_eq!(result, false);
+    /// assert_eq!(1.0 &gt; 1.0, false);
+    /// assert_eq!(1.0 &gt; 2.0, false);
+    /// assert_eq!(2.0 &gt; 1.0, true);
     /// ```
     </span><span class="attr">#[inline]
     #[must_use]
@@ -2744,11 +2686,9 @@
     /// # Examples
     ///
     /// ```
-    /// let result = 2.0 &gt;= 1.0;
-    /// assert_eq!(result, true);
-    ///
-    /// let result = 2.0 &gt;= 2.0;
-    /// assert_eq!(result, true);
+    /// assert_eq!(1.0 &gt;= 1.0, true);
+    /// assert_eq!(1.0 &gt;= 2.0, false);
+    /// assert_eq!(2.0 &gt;= 1.0, true);
     /// ```
     </span><span class="attr">#[inline]
     #[must_use]
@@ -2758,7 +2698,8 @@
     }
 }
 
-<span class="doccomment">/// Derive macro generating an impl of the trait `PartialOrd`.
+<span class="doccomment">/// Derive macro generating an impl of the trait [`PartialOrd`].
+/// The behavior of this macro is described in detail [here](PartialOrd#derivable).
 </span><span class="attr">#[rustc_builtin_macro]
 #[stable(feature = <span class="string">&quot;builtin_macro_prelude&quot;</span>, since = <span class="string">&quot;1.38.0&quot;</span>)]
 #[allow_internal_unstable(core_intrinsics)]
@@ -2777,15 +2718,14 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(1, cmp::min(1, 2));
-/// assert_eq!(2, cmp::min(2, 2));
+/// assert_eq!(cmp::min(1, 2), 1);
+/// assert_eq!(cmp::min(2, 2), 2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
 #[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;cmp_min&quot;</span>)]
-</span><span class="kw">pub const fn </span>min&lt;T: ~<span class="kw">const </span>Ord + ~<span class="kw">const </span>Destruct&gt;(v1: T, v2: T) -&gt; T {
+</span><span class="kw">pub fn </span>min&lt;T: Ord&gt;(v1: T, v2: T) -&gt; T {
     v1.min(v2)
 }
 
@@ -2798,18 +2738,16 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(cmp::min_by(-2, 1, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs())), 1);
-/// assert_eq!(cmp::min_by(-2, 2, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs())), -2);
+/// let result = cmp::min_by(-2, 1, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs()));
+/// assert_eq!(result, 1);
+///
+/// let result = cmp::min_by(-2, 3, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs()));
+/// assert_eq!(result, -2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;cmp_min_max_by&quot;</span>, since = <span class="string">&quot;1.53.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-</span><span class="kw">pub const fn </span>min_by&lt;T, F: ~<span class="kw">const </span>FnOnce(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(v1: T, v2: T, compare: F) -&gt; T
-<span class="kw">where
-    </span>T: ~<span class="kw">const </span>Destruct,
-    F: ~<span class="kw">const </span>Destruct,
-{
+</span><span class="kw">pub fn </span>min_by&lt;T, F: FnOnce(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(v1: T, v2: T, compare: F) -&gt; T {
     <span class="kw">match </span>compare(<span class="kw-2">&amp;</span>v1, <span class="kw-2">&amp;</span>v2) {
         Ordering::Less | Ordering::Equal =&gt; v1,
         Ordering::Greater =&gt; v2,
@@ -2825,20 +2763,17 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(cmp::min_by_key(-2, 1, |x: &amp;i32| x.abs()), 1);
-/// assert_eq!(cmp::min_by_key(-2, 2, |x: &amp;i32| x.abs()), -2);
+/// let result = cmp::min_by_key(-2, 1, |x: &amp;i32| x.abs());
+/// assert_eq!(result, 1);
+///
+/// let result = cmp::min_by_key(-2, 2, |x: &amp;i32| x.abs());
+/// assert_eq!(result, -2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;cmp_min_max_by&quot;</span>, since = <span class="string">&quot;1.53.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-</span><span class="kw">pub const fn </span>min_by_key&lt;T, F: ~<span class="kw">const </span>FnMut(<span class="kw-2">&amp;</span>T) -&gt; K, K: ~<span class="kw">const </span>Ord&gt;(v1: T, v2: T, <span class="kw-2">mut </span>f: F) -&gt; T
-<span class="kw">where
-    </span>T: ~<span class="kw">const </span>Destruct,
-    F: ~<span class="kw">const </span>Destruct,
-    K: ~<span class="kw">const </span>Destruct,
-{
-    min_by(v1, v2, <span class="kw">const </span>|v1, v2| f(v1).cmp(<span class="kw-2">&amp;</span>f(v2)))
+</span><span class="kw">pub fn </span>min_by_key&lt;T, F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K, K: Ord&gt;(v1: T, v2: T, <span class="kw-2">mut </span>f: F) -&gt; T {
+    min_by(v1, v2, |v1, v2| f(v1).cmp(<span class="kw-2">&amp;</span>f(v2)))
 }
 
 <span class="doccomment">/// Compares and returns the maximum of two values.
@@ -2852,15 +2787,14 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(2, cmp::max(1, 2));
-/// assert_eq!(2, cmp::max(2, 2));
+/// assert_eq!(cmp::max(1, 2), 2);
+/// assert_eq!(cmp::max(2, 2), 2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
 #[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;cmp_max&quot;</span>)]
-</span><span class="kw">pub const fn </span>max&lt;T: ~<span class="kw">const </span>Ord + ~<span class="kw">const </span>Destruct&gt;(v1: T, v2: T) -&gt; T {
+</span><span class="kw">pub fn </span>max&lt;T: Ord&gt;(v1: T, v2: T) -&gt; T {
     v1.max(v2)
 }
 
@@ -2873,18 +2807,16 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(cmp::max_by(-2, 1, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs())), -2);
-/// assert_eq!(cmp::max_by(-2, 2, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs())), 2);
+/// let result = cmp::max_by(-2, 1, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs()));
+/// assert_eq!(result, -2);
+///
+/// let result = cmp::max_by(-2, 2, |x: &amp;i32, y: &amp;i32| x.abs().cmp(&amp;y.abs())) ;
+/// assert_eq!(result, 2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;cmp_min_max_by&quot;</span>, since = <span class="string">&quot;1.53.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-</span><span class="kw">pub const fn </span>max_by&lt;T, F: ~<span class="kw">const </span>FnOnce(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(v1: T, v2: T, compare: F) -&gt; T
-<span class="kw">where
-    </span>T: ~<span class="kw">const </span>Destruct,
-    F: ~<span class="kw">const </span>Destruct,
-{
+</span><span class="kw">pub fn </span>max_by&lt;T, F: FnOnce(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering&gt;(v1: T, v2: T, compare: F) -&gt; T {
     <span class="kw">match </span>compare(<span class="kw-2">&amp;</span>v1, <span class="kw-2">&amp;</span>v2) {
         Ordering::Less | Ordering::Equal =&gt; v2,
         Ordering::Greater =&gt; v1,
@@ -2900,20 +2832,17 @@
 /// ```
 /// use std::cmp;
 ///
-/// assert_eq!(cmp::max_by_key(-2, 1, |x: &amp;i32| x.abs()), -2);
-/// assert_eq!(cmp::max_by_key(-2, 2, |x: &amp;i32| x.abs()), 2);
+/// let result = cmp::max_by_key(-2, 1, |x: &amp;i32| x.abs());
+/// assert_eq!(result, -2);
+///
+/// let result = cmp::max_by_key(-2, 2, |x: &amp;i32| x.abs());
+/// assert_eq!(result, 2);
 /// ```
 </span><span class="attr">#[inline]
 #[must_use]
 #[stable(feature = <span class="string">&quot;cmp_min_max_by&quot;</span>, since = <span class="string">&quot;1.53.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-</span><span class="kw">pub const fn </span>max_by_key&lt;T, F: ~<span class="kw">const </span>FnMut(<span class="kw-2">&amp;</span>T) -&gt; K, K: ~<span class="kw">const </span>Ord&gt;(v1: T, v2: T, <span class="kw-2">mut </span>f: F) -&gt; T
-<span class="kw">where
-    </span>T: ~<span class="kw">const </span>Destruct,
-    F: ~<span class="kw">const </span>Destruct,
-    K: ~<span class="kw">const </span>Destruct,
-{
-    max_by(v1, v2, <span class="kw">const </span>|v1, v2| f(v1).cmp(<span class="kw-2">&amp;</span>f(v2)))
+</span><span class="kw">pub fn </span>max_by_key&lt;T, F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K, K: Ord&gt;(v1: T, v2: T, <span class="kw-2">mut </span>f: F) -&gt; T {
+    max_by(v1, v2, |v1, v2| f(v1).cmp(<span class="kw-2">&amp;</span>f(v2)))
 }
 
 <span class="comment">// Implementation of PartialEq, Eq, PartialOrd and Ord for primitive types
@@ -2924,8 +2853,7 @@
     <span class="macro">macro_rules! </span>partial_eq_impl {
         ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
             <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-            </span><span class="kw">impl const </span>PartialEq <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+            </span><span class="kw">impl </span>PartialEq <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) == (<span class="kw-2">*</span>other) }
                 <span class="attr">#[inline]
@@ -2935,8 +2863,7 @@
     }
 
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>PartialEq <span class="kw">for </span>() {
+    </span><span class="kw">impl </span>PartialEq <span class="kw">for </span>() {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, _other: <span class="kw-2">&amp;</span>()) -&gt; bool {
             <span class="bool-val">true
@@ -2963,8 +2890,7 @@
     <span class="macro">macro_rules! </span>partial_ord_impl {
         ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
             <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-            </span><span class="kw">impl const </span>PartialOrd <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+            </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
                     <span class="kw">match </span>(<span class="kw-2">*</span><span class="self">self </span>&lt;= <span class="kw-2">*</span>other, <span class="kw-2">*</span><span class="self">self </span>&gt;= <span class="kw-2">*</span>other) {
@@ -2974,21 +2900,20 @@
                         (<span class="bool-val">true</span>, <span class="bool-val">true</span>) =&gt; <span class="prelude-val">Some</span>(Equal),
                     }
                 }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &lt; (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>le(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &lt;= (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>ge(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &gt;= (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &gt; (<span class="kw-2">*</span>other) }
             }
         )<span class="kw-2">*</span>)
     }
 
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>PartialOrd <span class="kw">for </span>() {
+    </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span>() {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>()) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
             <span class="prelude-val">Some</span>(Equal)
@@ -2996,8 +2921,7 @@
     }
 
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>PartialOrd <span class="kw">for </span>bool {
+    </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span>bool {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>bool) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
             <span class="prelude-val">Some</span>(<span class="self">self</span>.cmp(other))
@@ -3009,25 +2933,23 @@
     <span class="macro">macro_rules! </span>ord_impl {
         ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
             <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-            </span><span class="kw">impl const </span>PartialOrd <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+            </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
                     <span class="prelude-val">Some</span>(<span class="self">self</span>.cmp(other))
                 }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &lt; (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>le(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &lt;= (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>ge(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &gt;= (<span class="kw-2">*</span>other) }
-                <span class="attr">#[inline]
+                <span class="attr">#[inline(always)]
                 </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; bool { (<span class="kw-2">*</span><span class="self">self</span>) &gt; (<span class="kw-2">*</span>other) }
             }
 
             <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-            #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-            </span><span class="kw">impl const </span>Ord <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+            </span><span class="kw">impl </span>Ord <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
                 <span class="attr">#[inline]
                 </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$t</span>) -&gt; Ordering {
                     <span class="comment">// The order here is important to generate more optimal assembly.
@@ -3041,8 +2963,7 @@
     }
 
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>Ord <span class="kw">for </span>() {
+    </span><span class="kw">impl </span>Ord <span class="kw">for </span>() {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, _other: <span class="kw-2">&amp;</span>()) -&gt; Ordering {
             Equal
@@ -3050,8 +2971,7 @@
     }
 
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>Ord <span class="kw">for </span>bool {
+    </span><span class="kw">impl </span>Ord <span class="kw">for </span>bool {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>bool) -&gt; Ordering {
             <span class="comment">// Casting to i8&#39;s and converting the difference to an Ordering generates
@@ -3070,9 +2990,9 @@
     <span class="macro">ord_impl! </span>{ char usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
 
     <span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>PartialEq <span class="kw">for </span>! {
-        <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; bool {
+    </span><span class="kw">impl </span>PartialEq <span class="kw">for </span>! {
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; bool {
             <span class="kw-2">*</span><span class="self">self
         </span>}
     }
@@ -3081,17 +3001,17 @@
     </span><span class="kw">impl </span>Eq <span class="kw">for </span>! {}
 
     <span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>PartialOrd <span class="kw">for </span>! {
-        <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
+    </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span>! {
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
             <span class="kw-2">*</span><span class="self">self
         </span>}
     }
 
     <span class="attr">#[unstable(feature = <span class="string">&quot;never_type&quot;</span>, issue = <span class="string">&quot;35121&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl const </span>Ord <span class="kw">for </span>! {
-        <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; Ordering {
+    </span><span class="kw">impl </span>Ord <span class="kw">for </span>! {
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span>!) -&gt; Ordering {
             <span class="kw-2">*</span><span class="self">self
         </span>}
     }
@@ -3099,10 +3019,9 @@
     <span class="comment">// &amp; pointers
 
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl</span>&lt;A: <span class="question-mark">?</span>Sized, B: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>PartialEq&lt;<span class="kw-2">&amp;</span>B&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>A
+    </span><span class="kw">impl</span>&lt;A: <span class="question-mark">?</span>Sized, B: <span class="question-mark">?</span>Sized&gt; PartialEq&lt;<span class="kw-2">&amp;</span>B&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>A
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>PartialEq&lt;B&gt;,
+        </span>A: PartialEq&lt;B&gt;,
     {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: &amp;&amp;B) -&gt; bool {
@@ -3114,10 +3033,9 @@
         }
     }
     <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_cmp&quot;</span>, issue = <span class="string">&quot;92391&quot;</span>)]
-    </span><span class="kw">impl</span>&lt;A: <span class="question-mark">?</span>Sized, B: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>PartialOrd&lt;<span class="kw-2">&amp;</span>B&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>A
+    </span><span class="kw">impl</span>&lt;A: <span class="question-mark">?</span>Sized, B: <span class="question-mark">?</span>Sized&gt; PartialOrd&lt;<span class="kw-2">&amp;</span>B&gt; <span class="kw">for </span><span class="kw-2">&amp;</span>A
     <span class="kw">where
-        </span>A: ~<span class="kw">const </span>PartialOrd&lt;B&gt;,
+        </span>A: PartialOrd&lt;B&gt;,
     {
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: &amp;&amp;B) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
@@ -3238,5 +3156,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

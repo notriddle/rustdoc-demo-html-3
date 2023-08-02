@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -81,16 +84,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.3.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.4.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="read-documentation/in-doc-settings.html"><strong aria-hidden="true">3.1.</strong> In-doc settings</a></li></ol></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/re-exports.html"><strong aria-hidden="true">4.3.</strong> Re-exports</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.4.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.5.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -172,7 +197,7 @@ a web browser, you will see a page with a search bar, and &quot;Crate lib&quot; 
 top, with no contents.</p>
 <h2 id="configuring-rustdoc"><a class="header" href="#configuring-rustdoc">Configuring rustdoc</a></h2>
 <p>There are two problems with this: first, why does it
-think that our package is named &quot;lib&quot;? Second, why does it not have any
+think that our crate is named &quot;lib&quot;? Second, why does it not have any
 contents?</p>
 <p>The first problem is due to <code>rustdoc</code> trying to be helpful; like <code>rustc</code>,
 it assumes that our crate's name is the name of the file for the crate
@@ -370,12 +395,19 @@ get the full list.</p>
 </code></pre>
 <p>This flag will run your code examples as tests. For more, see <a href="write-documentation/documentation-tests.html">the chapter
 on documentation tests</a>.</p>
-<p>See also <code>--test-args</code>.</p>
+<p>See also <code>--test-args</code> and <code>--test-run-directory</code>.</p>
 <h2 id="--test-args-pass-options-to-test-runner"><a class="header" href="#--test-args-pass-options-to-test-runner"><code>--test-args</code>: pass options to test runner</a></h2>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs --test --test-args ignored
 </code></pre>
 <p>This flag will pass options to the test runner when running documentation tests.
+For more, see <a href="write-documentation/documentation-tests.html">the chapter on documentation tests</a>.</p>
+<p>See also <code>--test</code>.</p>
+<h2 id="--test-run-directory-run-code-examples-in-a-specific-directory"><a class="header" href="#--test-run-directory-run-code-examples-in-a-specific-directory"><code>--test-run-directory</code>: run code examples in a specific directory</a></h2>
+<p>Using this flag looks like this:</p>
+<pre><code class="language-bash">$ rustdoc src/lib.rs --test --test-run-directory=/path/to/working/directory
+</code></pre>
+<p>This flag will run your code examples in the specified working directory.
 For more, see <a href="write-documentation/documentation-tests.html">the chapter on documentation tests</a>.</p>
 <p>See also <code>--test</code>.</p>
 <h2 id="--target-generate-documentation-for-the-specified-target-triple"><a class="header" href="#--target-generate-documentation-for-the-specified-target-triple"><code>--target</code>: generate documentation for the specified target triple</a></h2>
@@ -450,9 +482,7 @@ generated.</p>
 $ rustdoc src/lib.rs --extend-css extra.css
 </code></pre>
 <p>With this flag, the contents of the files you pass are included at the bottom
-of Rustdoc's <code>theme.css</code> file.</p>
-<p>While this flag is stable, the contents of <code>theme.css</code> are not, so be careful!
-Updates may break your theme extensions.</p>
+of the <code>theme.css</code> file.</p>
 <h2 id="--sysroot-override-the-system-root"><a class="header" href="#--sysroot-override-the-system-root"><code>--sysroot</code>: override the system root</a></h2>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs --sysroot /path/to/sysroot
@@ -549,7 +579,7 @@ including automatic and blanket implementations that <code>rustdoc</code> knows 
 <p>Subheadings, variants, fields, and many other things in this documentation
 are anchors and can be clicked on and deep-linked to,
 which is a great way to communicate exactly what you're talking about.
-The typograpical character &quot;§&quot; appears next to lines with anchors on them
+The typographical character &quot;§&quot; appears next to lines with anchors on them
 when hovered or given keyboard focus.</p>
 <h2 id="the-navigation-bar"><a class="header" href="#the-navigation-bar">The Navigation Bar</a></h2>
 <p>For example, when looking at documentation for the crate root,
@@ -567,7 +597,7 @@ interface, help screen, and options.</p>
 <p>Typing in the search bar instantly searches the available documentation for
 the string entered with a fuzzy matching algorithm that is tolerant of minor
 typos.</p>
-<p>By default, the search results give are &quot;In Names&quot;,
+<p>By default, the search results given are &quot;In Names&quot;,
 meaning that the fuzzy match is made against the names of items.
 Matching names are shown on the left, and the first few words of their
 descriptions are given on the right.
@@ -577,14 +607,37 @@ By clicking an item, you will navigate to its particular documentation.</p>
 functions, and &quot;In Return Types&quot; shows matches in the return types of functions.
 Both are very useful when looking for a function whose name you can't quite
 bring to mind when you know the type you have or want.</p>
-<p>When typing in the search bar, you can prefix your search term with a type
-followed by a colon (such as <code>mod:</code>) to restrict the results to just that
-kind of item. (The available items are listed in the help popup.)</p>
-<p>Searching for <code>println!</code> will search for a macro named <code>println</code>, just like
+<p>Names in the search interface can be prefixed with an item type followed by a
+colon (such as <code>mod:</code>) to restrict the results to just that kind of item. Also,
+searching for <code>println!</code> will search for a macro named <code>println</code>, just like
 searching for <code>macro:println</code> does.</p>
-<h3 id="changing-displayed-theme"><a class="header" href="#changing-displayed-theme">Changing displayed theme</a></h3>
-<p>You can change the displayed theme by opening the settings menu (the gear
-icon in the upper right) and then pick a new one from there.</p>
+<p>Function signature searches can query generics, wrapped in angle brackets, and
+traits are normalized like types in the search engine. For example, a function
+with the signature <code>fn my_function&lt;I: Iterator&lt;Item=u32&gt;&gt;(input: I) -&gt; usize</code>
+can be matched with the following queries:</p>
+<ul>
+<li><code>Iterator&lt;u32&gt; -&gt; usize</code></li>
+<li><code>trait:Iterator&lt;primitive:u32&gt; -&gt; primitive:usize</code></li>
+<li><code>Iterator -&gt; usize</code></li>
+</ul>
+<p>Generics and function parameters are order-agnostic, but sensitive to nesting
+and number of matches. For example, a function with the signature
+<code>fn read_all(&amp;mut self: impl Read) -&gt; Result&lt;Vec&lt;u8&gt;, Error&gt;</code>
+will match these queries:</p>
+<ul>
+<li><code>Read -&gt; Result&lt;Vec&lt;u8&gt;, Error&gt;</code></li>
+<li><code>Read -&gt; Result&lt;Error, Vec&gt;</code></li>
+<li><code>Read -&gt; Result&lt;Vec&lt;u8&gt;&gt;</code></li>
+</ul>
+<p>But it <em>does not</em> match <code>Result&lt;Vec, u8&gt;</code> or <code>Result&lt;u8&lt;Vec&gt;&gt;</code>.</p>
+<p>Function signature searches also support arrays and slices. The explicit name
+<code>primitive:slice&lt;u8&gt;</code> and <code>primitive:array&lt;u8&gt;</code> can be used to match a slice
+or array of bytes, while square brackets <code>[u8]</code> will match either one. Empty
+square brackets, <code>[]</code>, will match any slice regardless of what it contains.</p>
+<p>Paths are supported as well, you can look for <code>Vec::new</code> or <code>Option::Some</code> or
+even <code>module::module_child::another_child::struct::field</code>. Whitespace characters
+are considered the same as <code>::</code>, so if you write <code>Vec    new</code>, it will be
+considered the same as <code>Vec::new</code>.</p>
 <h3 id="shortcuts"><a class="header" href="#shortcuts">Shortcuts</a></h3>
 <p>Pressing <code>S</code> while focused elsewhere on the page will move focus to the
 search bar, and pressing <code>?</code> shows the help screen,
@@ -595,6 +648,49 @@ among the results.
 Pressing the enter or return key opens the highlighted result.</p>
 <p>When looking at the documentation for an item, the plus and minus keys expand
 and collapse all sections in the document.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rustdoc-in-doc-settings"><a class="header" href="#rustdoc-in-doc-settings">Rustdoc in-doc settings</a></h1>
+<p>Rustdoc's HTML output includes a settings menu, and this chapter describes what
+each setting in this menu does.</p>
+<p>It can be accessed by clicking on the gear button
+(<i class="fa fa-cog" aria-hidden="true"></i>) in the upper right.</p>
+<h2 id="changing-displayed-theme"><a class="header" href="#changing-displayed-theme">Changing displayed theme</a></h2>
+<p>It is possible to change the theme. If you pick the &quot;system preference&quot;, you
+will be able to see two new sub-menus: &quot;Preferred light theme&quot; and &quot;Preferred
+dark theme&quot;. It means that if your system preference is set to &quot;light&quot;, then
+rustdoc will use the theme you selected in &quot;Preferred light theme&quot;.</p>
+<h2 id="auto-hide-item-contents-for-large-items"><a class="header" href="#auto-hide-item-contents-for-large-items">Auto-hide item contents for large items</a></h2>
+<p>If the type definition contains more than 12 items, and this setting is enabled,
+it'll collapse them by default. You can see them by clicking on the <code>[+]</code> button
+to expand them.</p>
+<p>A good example of this setting in use can be seen in the
+<a href="https://doc.rust-lang.org/stable/std/iter/trait.Iterator.html"><code>Iterator</code></a> doc
+page:</p>
+<p><img src="read-documentation/../images/collapsed-long-item.png" alt="Collapsed long item" /></p>
+<h2 id="auto-hide-item-methods-documentation"><a class="header" href="#auto-hide-item-methods-documentation">Auto-hide item methods' documentation</a></h2>
+<p>If enabled, this setting will collapse all trait implementations blocks. It is
+convenient if you just want an overview of all the methods available. You can
+still see a method's documentation by expanding it.</p>
+<h2 id="auto-hide-trait-implementation-documentation"><a class="header" href="#auto-hide-trait-implementation-documentation">Auto-hide trait implementation documentation</a></h2>
+<p>If enabled, this setting will collapse all trait implementations blocks (you can
+see them in the &quot;Trait Implementations&quot; section). It is convenient if you just
+want an overview of all the trait implemented on a type. You can still see
+a trait implementation's associated items by expanding it.</p>
+<p>Example:</p>
+<p><img src="read-documentation/../images/collapsed-trait-impls.png" alt="Collapsed trait implementations" /></p>
+<h2 id="directly-go-to-item-in-search-if-there-is-only-one-result"><a class="header" href="#directly-go-to-item-in-search-if-there-is-only-one-result">Directly go to item in search if there is only one result</a></h2>
+<p>If this setting is enabled, you will directly be taken to the result page if
+your search only returned one element. Useful if you know exactly what you're
+looking for and want to be taken there directly and not waste time selecting the
+only search result.</p>
+<h2 id="show-line-numbers-on-code-examples"><a class="header" href="#show-line-numbers-on-code-examples">Show line numbers on code examples</a></h2>
+<p>If enabled, this setting will add line numbers to the code examples in the
+documentation. It provides a visual aide for the code reading.</p>
+<h2 id="disable-keyboard-shortcuts"><a class="header" href="#disable-keyboard-shortcuts">Disable keyboard shortcuts</a></h2>
+<p>If this setting is enabled, the keyboard shortcuts will be disabled. It's useful
+in case some of these shortcuts are already used by a web extension you're
+using.</p>
+<p>To see the full list of the rustdoc keyboard shortcuts, you can open the help
+menu (the button with the question mark on the left of the setting menu button).</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="how-to-write-documentation"><a class="header" href="#how-to-write-documentation">How to write documentation</a></h1>
 <p>Good documentation is not natural.  There are opposing goals that make writing
 good documentation difficult.  It requires expertise in the subject but also
@@ -733,12 +829,12 @@ interested in taking a look at their website to see what's possible:</p>
 extensions:</p>
 <h3 id="strikethrough"><a class="header" href="#strikethrough">Strikethrough</a></h3>
 <p>Text may be rendered with a horizontal line through the center by wrapping the
-text with two tilde characters on each side:</p>
-<pre><code class="language-text">An example of ~~strikethrough text~~.
+text with one or two tilde characters on each side:</p>
+<pre><code class="language-text">An example of ~~strikethrough text~~. You can also use ~single tildes~.
 </code></pre>
 <p>This example will render as:</p>
 <blockquote>
-<p>An example of <del>strikethrough text</del>.</p>
+<p>An example of <del>strikethrough text</del>. You can also use <del>single tildes</del>.</p>
 </blockquote>
 <p>This follows the <a href="https://github.github.com/gfm/#strikethrough-extension-">GitHub Strikethrough extension</a>.</p>
 <h3 id="footnotes"><a class="header" href="#footnotes">Footnotes</a></h3>
@@ -840,9 +936,7 @@ warning: 1 warning emitted
 <p>As a library author, adding the lint <code>#![deny(missing_docs)]</code> is a great way to
 ensure the project does not drift away from being documented well, and
 <code>#![warn(missing_docs)]</code> is a good way to move towards comprehensive
-documentation.  In addition to docs, <code>#![deny(missing_doc_code_examples)]</code>
-ensures each function contains a usage example.  In our example above, the
-warning is resolved by adding crate level documentation.</p>
+documentation.</p>
 <p>There are more lints in the upcoming chapter <a href="write-documentation/../lints.html">Lints</a>.</p>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
 <p>Of course this is contrived to be simple, but part of the power of documentation
@@ -1063,10 +1157,14 @@ mod bar {
 <p>Now we'll have a <code>Re-exports</code> line, and <code>Bar</code> will not link to anywhere.</p>
 <p>One special case: In Rust 2018 and later, if you <code>pub use</code> one of your dependencies, <code>rustdoc</code> will
 not eagerly inline it as a module unless you add <code>#[doc(inline)]</code>.</p>
+<p>If you want to know more about inlining rules, take a look at the
+<a href="write-documentation/./re-exports.html"><code>re-exports</code> chapter</a>.</p>
 <h3 id="hidden"><a class="header" href="#hidden"><code>hidden</code></a></h3>
 <p><span id="dochidden"></span></p>
 <p>Any item annotated with <code>#[doc(hidden)]</code> will not appear in the documentation, unless
-the <code>strip-hidden</code> pass is removed.</p>
+the <code>strip-hidden</code> pass is removed. Re-exported items where one of its ancestors has
+<code>#[doc(hidden)]</code> will be considered the same as private.</p>
+<p>You can find more information in the <a href="write-documentation/./re-exports.html"><code>re-exports</code> chapter</a>.</p>
 <h3 id="alias"><a class="header" href="#alias"><code>alias</code></a></h3>
 <p>This attribute adds an alias in the search index.</p>
 <p>Let's take an example:</p>
@@ -1101,6 +1199,126 @@ you have no way to do so.</p>
 on the <code>do_something</code> method and then it's all good!
 Users can now look for <code>lib_name_do_something</code> in our crate directly and find
 <code>Obj::do_something</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="re-exports"><a class="header" href="#re-exports">Re-exports</a></h1>
+<p>Let's start by explaining what are re-exports. To do so, we will use an example where we are
+writing a library (named <code>lib</code>) with some types dispatched in sub-modules:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub mod sub_module1 {
+    pub struct Foo;
+}
+pub mod sub_module2 {
+    pub struct AnotherFoo;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Users can import them like this:</p>
+<pre><code class="language-rust ignore (inline)">use lib::sub_module1::Foo;
+use lib::sub_module2::AnotherFoo;</code></pre>
+<p>But what if you want the types to be available directly at the crate root or if we don't want the
+modules to be visible for users? That's where re-exports come in:</p>
+<pre><code class="language-rust ignore (inline)">// `sub_module1` and `sub_module2` are not visible outside.
+mod sub_module1 {
+    pub struct Foo;
+}
+mod sub_module2 {
+    pub struct AnotherFoo;
+}
+// We re-export both types:
+pub use crate::sub_module1::Foo;
+pub use crate::sub_module2::AnotherFoo;</code></pre>
+<p>And now users will be able to do:</p>
+<pre><code class="language-rust ignore (inline)">use lib::{Foo, AnotherFoo};</code></pre>
+<p>And since both <code>sub_module1</code> and <code>sub_module2</code> are private, users won't be able to import them.</p>
+<p>Now what's interesting is that the generated documentation for this crate will show both <code>Foo</code> and
+<code>AnotherFoo</code> directly at the crate root, meaning they have been inlined. There are a few rules to
+know whether or not a re-exported item will be inlined.</p>
+<h2 id="inlining-rules"><a class="header" href="#inlining-rules">Inlining rules</a></h2>
+<p>If a public item comes from a private module, it will be inlined:</p>
+<pre><code class="language-rust ignore (inline)">mod private_module {
+    pub struct Public;
+}
+pub mod public_mod {
+    // `Public` will inlined here since `private_module` is private.
+    pub use super::private_module::Public;
+}
+// `Public` will not be inlined here since `public_mod` is public.
+pub use self::public_mod::Public;</code></pre>
+<p>Likewise, if an item inherits <code>#[doc(hidden)]</code> from any of its ancestors, it will be inlined:</p>
+<pre><code class="language-rust ignore (inline)">#[doc(hidden)]
+pub mod public_mod {
+    pub struct Public;
+}
+// `Public` be inlined since its parent (`public_mod`) has `#[doc(hidden)]`.
+pub use self::public_mod::Public;</code></pre>
+<p>If an item has <code>#[doc(hidden)]</code>, it won't be inlined (nor visible in the generated documentation):</p>
+<pre><code class="language-rust ignore (inline)">// This struct won't be visible.
+#[doc(hidden)]
+pub struct Hidden;
+
+// This re-export won't be visible.
+pub use self::Hidden as InlinedHidden;</code></pre>
+<p>The same applies on re-exports themselves: if you have multiple re-exports and some of them have
+<code>#[doc(hidden)]</code>, then these ones (and only these) own't appear in the documentation:</p>
+<pre><code class="language-rust ignore (inline)">mod private_mod {
+    /// First
+    pub struct InPrivate;
+}
+
+/// Second
+#[doc(hidden)]
+pub use self::private_mod::InPrivate as Hidden;
+/// Third
+pub use self::Hidden as Visible;</code></pre>
+<p>In this case, <code>InPrivate</code> will be inlined as <code>Visible</code>. However, its documentation will be
+<code>First Third</code> and not <code>First Second Third</code> because the re-export with <code>Second</code> as documentation has
+<code>#[doc(hidden)]</code>, therefore, all its attributes are ignored.</p>
+<h2 id="inlining-with-docinline"><a class="header" href="#inlining-with-docinline">Inlining with <code>#[doc(inline)]</code></a></h2>
+<p>You can use the <code>#[doc(inline)]</code> attribute if you want to force an item to be inlined:</p>
+<pre><code class="language-rust ignore (inline)">pub mod public_mod {
+    pub struct Public;
+}
+#[doc(inline)]
+pub use self::public_mod::Public;</code></pre>
+<p>With this code, even though <code>public_mod::Public</code> is public and present in the documentation, the
+<code>Public</code> type will be present both at the crate root and in the <code>public_mod</code> module.</p>
+<h2 id="preventing-inlining-with-docno_inline"><a class="header" href="#preventing-inlining-with-docno_inline">Preventing inlining with <code>#[doc(no_inline)]</code></a></h2>
+<p>On the opposite of the <code>#[doc(inline)]</code> attribute, if you want to prevent an item from being
+inlined, you can use <code>#[doc(no_inline)]</code>:</p>
+<pre><code class="language-rust ignore (inline)">mod private_mod {
+    pub struct Public;
+}
+#[doc(no_inline)]
+pub use self::private_mod::Public;</code></pre>
+<p>In the generated documentation, you will see a re-export at the crate root and not the type
+directly.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>When an item is inlined, its doc comments and most of its attributes will be inlined along with it:</p>
+<pre><code class="language-rust ignore (inline)">mod private_mod {
+    /// First
+    #[cfg(a)]
+    pub struct InPrivate;
+    /// Second
+    #[cfg(b)]
+    pub use self::InPrivate as Second;
+}
+
+/// Third
+#[doc(inline)]
+#[cfg(c)]
+pub use self::private_mod::Second as Visible;</code></pre>
+<p>In this case, <code>Visible</code> will have as documentation <code>First Second Third</code> and will also have as <code>cfg</code>:
+<code>#[cfg(a, b, c)]</code>.</p>
+<p><a href="write-documentation/./linking-to-items-by-name.html">Intra-doc links</a> are resolved relative to where the doc comment is
+defined.</p>
+<p>There are a few attributes which are not inlined though:</p>
+<ul>
+<li><code>#[doc(alias=&quot;&quot;)]</code></li>
+<li><code>#[doc(inline)]</code></li>
+<li><code>#[doc(no_inline)]</code></li>
+<li><code>#[doc(hidden)]</code> (because the re-export itself and its attributes are ignored).</li>
+</ul>
+<p>All other attributes are inherited when inlined, so that the documentation matches the behavior if
+the inlined item was directly defined at the spot where it's shown.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="linking-to-items-by-name"><a class="header" href="#linking-to-items-by-name">Linking to items by name</a></h1>
 <p>Rustdoc is capable of directly linking to other rustdoc pages using the path of
 the item as a link. This is referred to as an 'intra-doc link'.</p>
@@ -1176,12 +1394,15 @@ struct Foo {}
 fn Foo() {}
 <span class="boring">}</span></code></pre></pre>
 <p>These prefixes will be stripped when displayed in the documentation, so <code>[struct@Foo]</code> will be
-rendered as <code>Foo</code>.</p>
+rendered as <code>Foo</code>. The following prefixes are available: <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>union</code>,
+<code>mod</code>, <code>module</code>, <code>const</code>, <code>constant</code>, <code>fn</code>, <code>function</code>, <code>method</code>, <code>derive</code>, <code>type</code>, <code>value</code>,
+<code>macro</code>, <code>prim</code> or <code>primitive</code>.</p>
 <p>You can also disambiguate for functions by adding <code>()</code> after the function name,
-or for macros by adding <code>!</code> after the macro name:</p>
+or for macros by adding <code>!</code> after the macro name. The macro <code>!</code> can be followed by <code>()</code>, <code>{}</code>,
+or <code>[]</code>. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>/// This is different from [`foo!`]
+</span>/// This is different from [`foo!()`].
 fn foo() {}
 
 /// This is different from [`foo()`]
@@ -1189,6 +1410,12 @@ macro_rules! foo {
   () =&gt; {}
 }
 <span class="boring">}</span></code></pre></pre>
+<p>There is one case where the disambiguation will be performed automatically: if an intra doc
+link is resolved at the same time as a trait and as a derive proc-macro. In this case, it'll
+always generate a link to the trait and not emit a &quot;missing disambiguation&quot; warning. A good
+example of this case is when you link to the <code>Clone</code> trait: there is also a <code>Clone</code>
+proc-macro but it ignores it in this case. If you want to link to the proc-macro, you can
+use the <code>macro@</code> disambiguator.</p>
 <h2 id="warnings-re-exports-and-scoping"><a class="header" href="#warnings-re-exports-and-scoping">Warnings, re-exports, and scoping</a></h2>
 <p>Links are resolved in the scope of the module where the item is defined, even
 when the item is re-exported. If a link from another crate fails to resolve, no
@@ -1471,7 +1698,7 @@ macro_rules! panic_unless {
 we can add the <code>#[macro_use]</code> attribute. Second, we’ll need to add our own
 <code>main()</code> as well (for reasons discussed above). Finally, a judicious use of
 <code>#</code> to comment out those two things, so they don’t show up in the output.</p>
-<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
 <p>Code blocks can be annotated with attributes that help <code>rustdoc</code> do the right
 thing when testing your code:</p>
 <p>The <code>ignore</code> attribute tells Rust to ignore your code. This is almost never
@@ -1589,6 +1816,15 @@ pub struct ReadmeDoctests;
 <span class="boring">}</span></code></pre></pre>
 <p>This will include your README as documentation on the hidden struct <code>ReadmeDoctests</code>, which will
 then be tested alongside the rest of your doctests.</p>
+<h2 id="controlling-the-compilation-and-run-directories"><a class="header" href="#controlling-the-compilation-and-run-directories">Controlling the compilation and run directories</a></h2>
+<p>By default, <code>rustdoc --test</code> will compile and run documentation test examples
+from the same working directory.
+The compilation directory is being used for compiler diagnostics, the <code>file!()</code> macro and
+the output of <code>rustdoc</code> test runner itself, whereas the run directory has an influence on file-system
+operations within documentation test examples, such as <code>std::fs::read_to_string</code>.</p>
+<p>The <code>--test-run-directory</code> flag allows controlling the run directory separately from the compilation directory.
+This is particularly useful in workspaces, where compiler invocations and thus diagnostics should be
+relative to the workspace directory, but documentation test examples should run relative to the crate directory.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="lints"><a class="header" href="#lints">Lints</a></h1>
 <p><code>rustdoc</code> provides lints to help you writing and testing your documentation. You
 can use them like any other lints by doing this:</p>
@@ -1889,6 +2125,39 @@ warning: this URL is not a hyperlink
 
 warning: 2 warnings emitted
 </code></pre>
+<h2 id="unescaped_backticks"><a class="header" href="#unescaped_backticks"><code>unescaped_backticks</code></a></h2>
+<p>This lint is <strong>allowed by default</strong>. It detects backticks (`) that are not escaped.
+This usually means broken inline code. For example:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>#![warn(rustdoc::unescaped_backticks)]
+
+<span class="boring">fn main() {
+</span>/// `add(a, b) is the same as `add(b, a)`.
+pub fn add(a: i32, b: i32) -&gt; i32 { a + b }
+<span class="boring">}</span></code></pre></pre>
+<p>Which will give:</p>
+<pre><code class="language-text">warning: unescaped backtick
+ --&gt; src/lib.rs:3:41
+  |
+3 | /// `add(a, b) is the same as `add(b, a)`.
+  |                                         ^
+  |
+note: the lint level is defined here
+ --&gt; src/lib.rs:1:9
+  |
+1 | #![warn(rustdoc::unescaped_backticks)]
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: a previous inline code might be longer than expected
+  |
+3 | /// `add(a, b)` is the same as `add(b, a)`.
+  |               +
+help: if you meant to use a literal backtick, escape it
+  |
+3 | /// `add(a, b) is the same as `add(b, a)\`.
+  |                                         +
+
+warning: 1 warning emitted
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="scraped-examples"><a class="header" href="#scraped-examples">Scraped examples</a></h1>
 <p>Rustdoc has an unstable feature where it can automatically scrape examples of items being documented from the <code>examples/</code> directory of a Cargo workspace. These examples will be included within the generated documentation for that item. For example, if your library contains a public function:</p>
 <pre><code class="language-rust ignore (needs-other-file)">// a_crate/src/lib.rs
@@ -1901,11 +2170,11 @@ fn main() {
 <p>Then this code snippet will be included in the documentation for <code>a_func</code>. This documentation is inserted by Rustdoc and cannot be manually edited by the crate author.</p>
 <h2 id="how-to-use-this-feature"><a class="header" href="#how-to-use-this-feature">How to use this feature</a></h2>
 <p>This feature is unstable, so you can enable it by calling Rustdoc with the unstable <code>rustdoc-scrape-examples</code> flag:</p>
-<pre><code class="language-bash">cargo doc -Zunstable-options -Zrustdoc-scrape-examples=examples
+<pre><code class="language-bash">cargo doc -Zunstable-options -Zrustdoc-scrape-examples
 </code></pre>
 <p>To enable this feature on <a href="https://docs.rs">docs.rs</a>, add this to your Cargo.toml:</p>
 <pre><code class="language-toml">[package.metadata.docs.rs]
-cargo-args = [&quot;-Zunstable-options&quot;, &quot;-Zrustdoc-scrape-examples=examples&quot;]
+cargo-args = [&quot;-Zunstable-options&quot;, &quot;-Zrustdoc-scrape-examples&quot;]
 </code></pre>
 <h2 id="how-it-works"><a class="header" href="#how-it-works">How it works</a></h2>
 <p>When you run <code>cargo doc</code>, Rustdoc will analyze all the crates that match Cargo's <code>--examples</code> filter for instances of items being documented. Then Rustdoc will include the source code of these instances in the generated documentation.</p>
@@ -2023,6 +2292,10 @@ that a piece of code emits from version to version, so this is unlikely to be st
 future.</p>
 <p>Attempting to use these error numbers on stable will result in the code sample being interpreted as
 plain text.</p>
+<h3 id="missing_doc_code_examples-lint"><a class="header" href="#missing_doc_code_examples-lint"><code>missing_doc_code_examples</code> lint</a></h3>
+<p>This lint will emit a warning if an item doesn't have a code example in its documentation.
+It can be enabled using:</p>
+<pre><code class="language-rust ignore (nightly)">#![deny(rustdoc::missing_doc_code_examples)]</code></pre>
 <h2 id="extensions-to-the-doc-attribute"><a class="header" href="#extensions-to-the-doc-attribute">Extensions to the <code>#[doc]</code> attribute</a></h2>
 <p>These features operate by extending the <code>#[doc]</code> attribute, and thus can be caught by the compiler
 and enabled with a <code>#![feature(...)]</code> attribute in your crate.</p>
@@ -2136,9 +2409,9 @@ Book</a> and <a href="https://github.com/rust-lang/rust/issues/44027">its tracki
 <h3 id="document-primitives"><a class="header" href="#document-primitives">Document primitives</a></h3>
 <p>This is for Rust compiler internal use only.</p>
 <p>Since primitive types are defined in the compiler, there's no place to attach documentation
-attributes. The <code>#[doc(primitive)]</code> attribute is used by the standard library to provide a way
-to generate documentation for primitive types, and requires <code>#![feature(rustdoc_internals)]</code> to
-enable.</p>
+attributes. The <code>#[rustc_doc_primitive = &quot;...&quot;]</code> attribute is used by the standard library to
+provide a way to generate documentation for primitive types, and requires <code>#![feature(rustc_attrs)]</code>
+to enable.</p>
 <h3 id="document-keywords"><a class="header" href="#document-keywords">Document keywords</a></h3>
 <p>This is for Rust compiler internal use only.</p>
 <p>Rust keywords are documented in the standard library (look for <code>match</code> for example).</p>
@@ -2221,6 +2494,9 @@ some consideration for their stability, and names that end in a number). Giving 
 <code>rustdoc</code> will disable this sorting and instead make it print the items in the order they appear in
 the source.</p>
 <h3 id="--show-type-layout-add-a-section-to-each-types-docs-describing-its-memory-layout"><a class="header" href="#--show-type-layout-add-a-section-to-each-types-docs-describing-its-memory-layout"><code>--show-type-layout</code>: add a section to each type's docs describing its memory layout</a></h3>
+<ul>
+<li>Tracking issue: <a href="https://github.com/rust-lang/rust/issues/113248">#113248</a></li>
+</ul>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs -Z unstable-options --show-type-layout
 </code></pre>
@@ -2476,8 +2752,8 @@ If you know of other great resources, please submit a pull request!</p>
 <h2 id="community"><a class="header" href="#community">Community</a></h2>
 <ul>
 <li><a href="https://rust-lang.github.io/api-guidelines/documentation.html">API Guidelines</a></li>
-<li><a href="https://github.com/rust-lang/rfcs/issues?q=label%3AT-rustdoc">Github tagged RFCs</a></li>
-<li><a href="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3AT-rustdoc">Github tagged issues</a></li>
+<li><a href="https://github.com/rust-lang/rfcs/issues?q=label%3AT-rustdoc">GitHub tagged RFCs</a></li>
+<li><a href="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3AT-rustdoc">GitHub tagged issues</a></li>
 <li><a href="https://github.com/rust-lang/rfcs/pull/1687">RFC (stalled) front page styleguide</a></li>
 <li><a href="https://blog.guillaume-gomez.fr/articles/2020-03-12+Guide+on+how+to+write+documentation+for+a+Rust+crate">Guide on how to write documentation for a Rust crate</a></li>
 </ul>
@@ -2523,5 +2799,6 @@ If you know of other great resources, please submit a pull request!</p>
         });
         </script>
 
+    </div>
     </body>
 </html>

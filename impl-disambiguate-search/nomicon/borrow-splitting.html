@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -151,7 +176,7 @@ working with a composite structure. The borrow checker (a.k.a. borrowck)
 understands some basic stuff, but will fall over pretty easily. It does
 understand structs sufficiently to know that it's possible to borrow disjoint
 fields of a struct simultaneously. So this works today:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Foo {
     a: i32,
@@ -170,7 +195,7 @@ println!(&quot;{} {} {} {}&quot;, a, b, c, c2);
 <span class="boring">}</span></code></pre></pre>
 <p>However borrowck doesn't understand arrays or slices in any way, so this doesn't
 work:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust compile_fail edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let mut x = [1, 2, 3];
 let a = &amp;mut x[0];
@@ -200,7 +225,7 @@ that consumes the slice and returns two mutable slices. One for everything to
 the left of the index, and one for everything to the right. Intuitively we know
 this is safe because the slices don't overlap, and therefore alias. However
 the implementation requires some unsafety:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span><span class="boring">use std::slice::from_raw_parts_mut;
 </span><span class="boring">struct FakeSlice&lt;T&gt;(T);
@@ -224,7 +249,7 @@ the implementation requires some unsafety:</p>
 same value, we explicitly construct brand-new slices through raw pointers.</p>
 <p>However more subtle is how iterators that yield mutable references work.
 The iterator trait is defined as follows:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>trait Iterator {
     type Item;
@@ -247,7 +272,7 @@ actually ever yield multiple mutable references to the same piece of data.</p>
 <p>Perhaps surprisingly, mutable iterators don't require unsafe code to be
 implemented for many types!</p>
 <p>For instance here's a singly linked list:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">fn main() {}
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">fn main() {}
 </span>type Link&lt;T&gt; = Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;;
 
 struct Node&lt;T&gt; {
@@ -278,7 +303,7 @@ impl&lt;'a, T&gt; Iterator for IterMut&lt;'a, T&gt; {
     }
 }</code></pre></pre>
 <p>Here's a mutable slice:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">fn main() {}
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">fn main() {}
 </span>use std::mem;
 
 pub struct IterMut&lt;'a, T: 'a&gt;(&amp;'a mut[T]);
@@ -308,7 +333,7 @@ impl&lt;'a, T&gt; DoubleEndedIterator for IterMut&lt;'a, T&gt; {
     }
 }</code></pre></pre>
 <p>And here's a binary tree:</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">fn main() {}
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">fn main() {}
 </span>use std::collections::VecDeque;
 
 type Link&lt;T&gt; = Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;;
@@ -465,5 +490,6 @@ replacing with an empty slice).</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512cd.rs`."><title>avx512cd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/x86/avx512cd.rs`."><title>avx512cd.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1168,7 +1168,7 @@
 <a href="#1168" id="1168">1168</a>
 <a href="#1169" id="1169">1169</a>
 <a href="#1170" id="1170">1170</a>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     core_arch::{simd::<span class="kw-2">*</span>, simd_llvm::<span class="kw-2">*</span>, x86::<span class="kw-2">*</span>},
     mem::transmute,
 };
@@ -1178,7 +1178,7 @@
 
 <span class="doccomment">/// Broadcast the low 16-bits from input mask k to all 32-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_broadcastmw_epi32&amp;expand=553)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_broadcastmw_epi32&amp;expand=553)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmw2d
@@ -1188,7 +1188,7 @@
 
 <span class="doccomment">/// Broadcast the low 16-bits from input mask k to all 32-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_broadcastmw_epi32&amp;expand=552)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_broadcastmw_epi32&amp;expand=552)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmw2d
@@ -1198,7 +1198,7 @@
 
 <span class="doccomment">/// Broadcast the low 16-bits from input mask k to all 32-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_broadcastmw_epi32&amp;expand=551)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_broadcastmw_epi32&amp;expand=551)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmw2d
@@ -1208,7 +1208,7 @@
 
 <span class="doccomment">/// Broadcast the low 8-bits from input mask k to all 64-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_broadcastmb_epi64&amp;expand=550)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_broadcastmb_epi64&amp;expand=550)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmb2q
@@ -1218,7 +1218,7 @@
 
 <span class="doccomment">/// Broadcast the low 8-bits from input mask k to all 64-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_broadcastmb_epi64&amp;expand=549)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_broadcastmb_epi64&amp;expand=549)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmb2q
@@ -1228,7 +1228,7 @@
 
 <span class="doccomment">/// Broadcast the low 8-bits from input mask k to all 64-bit elements of dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_broadcastmb_epi64&amp;expand=548)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_broadcastmb_epi64&amp;expand=548)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpbroadcast))] </span><span class="comment">// should be vpbroadcastmb2q
@@ -1238,7 +1238,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_conflict_epi32&amp;expand=1248)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_conflict_epi32&amp;expand=1248)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1248,7 +1248,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_conflict_epi32&amp;expand=1249)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_conflict_epi32&amp;expand=1249)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1259,7 +1259,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_conflict_epi32&amp;expand=1250)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_conflict_epi32&amp;expand=1250)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1271,7 +1271,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_conflict_epi32&amp;expand=1245)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_conflict_epi32&amp;expand=1245)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1281,7 +1281,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_conflict_epi32&amp;expand=1246)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_conflict_epi32&amp;expand=1246)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1292,7 +1292,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_conflict_epi32&amp;expand=1247)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_conflict_epi32&amp;expand=1247)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1304,7 +1304,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_conflict_epi32&amp;expand=1242)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_conflict_epi32&amp;expand=1242)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1314,7 +1314,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_conflict_epi32&amp;expand=1243)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_conflict_epi32&amp;expand=1243)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1325,7 +1325,7 @@
 
 <span class="doccomment">/// Test each 32-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_conflict_epi32&amp;expand=1244)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_conflict_epi32&amp;expand=1244)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictd))]
@@ -1337,7 +1337,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_conflict_epi64&amp;expand=1257)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_conflict_epi64&amp;expand=1257)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1347,7 +1347,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_conflict_epi64&amp;expand=1258)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_conflict_epi64&amp;expand=1258)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1358,7 +1358,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_conflict_epi64&amp;expand=1259)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_conflict_epi64&amp;expand=1259)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1370,7 +1370,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_conflict_epi64&amp;expand=1254)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_conflict_epi64&amp;expand=1254)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1380,7 +1380,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_conflict_epi64&amp;expand=1255)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_conflict_epi64&amp;expand=1255)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1391,7 +1391,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_conflict_epi64&amp;expand=1256)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_conflict_epi64&amp;expand=1256)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1403,7 +1403,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit. Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_conflict_epi64&amp;expand=1251)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_conflict_epi64&amp;expand=1251)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1413,7 +1413,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using writemask k (elements are copied from src when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_conflict_epi64&amp;expand=1252)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_conflict_epi64&amp;expand=1252)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1424,7 +1424,7 @@
 
 <span class="doccomment">/// Test each 64-bit element of a for equality with all other elements in a closer to the least significant bit using zeromask k (elements are zeroed out when the corresponding mask bit is not set). Each element&#39;s comparison forms a zero extended bit vector in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_conflict_epi64&amp;expand=1253)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_conflict_epi64&amp;expand=1253)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vpconflictq))]
@@ -1436,7 +1436,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_lzcnt_epi32&amp;expand=3491)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_lzcnt_epi32&amp;expand=3491)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1446,7 +1446,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_lzcnt_epi32&amp;expand=3492)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_lzcnt_epi32&amp;expand=3492)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1457,7 +1457,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_lzcnt_epi32&amp;expand=3493)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_lzcnt_epi32&amp;expand=3493)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1469,7 +1469,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_lzcnt_epi32&amp;expand=3488)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_lzcnt_epi32&amp;expand=3488)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1479,7 +1479,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_lzcnt_epi32&amp;expand=3489)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_lzcnt_epi32&amp;expand=3489)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1490,7 +1490,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_lzcnt_epi32&amp;expand=3490)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_lzcnt_epi32&amp;expand=3490)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1502,7 +1502,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_lzcnt_epi32&amp;expand=3485)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_lzcnt_epi32&amp;expand=3485)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1512,7 +1512,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_lzcnt_epi32&amp;expand=3486)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_lzcnt_epi32&amp;expand=3486)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1523,7 +1523,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 32-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_lzcnt_epi32&amp;expand=3487)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_lzcnt_epi32&amp;expand=3487)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntd))]
@@ -1535,7 +1535,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_lzcnt_epi64&amp;expand=3500)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_lzcnt_epi64&amp;expand=3500)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1545,7 +1545,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_mask_lzcnt_epi64&amp;expand=3501)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_mask_lzcnt_epi64&amp;expand=3501)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1556,7 +1556,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm512_maskz_lzcnt_epi64&amp;expand=3502)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm512_maskz_lzcnt_epi64&amp;expand=3502)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1568,7 +1568,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_lzcnt_epi64&amp;expand=3497)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_lzcnt_epi64&amp;expand=3497)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1578,7 +1578,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_mask_lzcnt_epi64&amp;expand=3498)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_mask_lzcnt_epi64&amp;expand=3498)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1589,7 +1589,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_maskz_lzcnt_epi64&amp;expand=3499)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm256_maskz_lzcnt_epi64&amp;expand=3499)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1601,7 +1601,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst.
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_lzcnt_epi64&amp;expand=3494)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_lzcnt_epi64&amp;expand=3494)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1611,7 +1611,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using writemask k (elements are copied from src when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mask_lzcnt_epi64&amp;expand=3495)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_mask_lzcnt_epi64&amp;expand=3495)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -1622,7 +1622,7 @@
 
 <span class="doccomment">/// Counts the number of leading zero bits in each packed 64-bit integer in a, and store the results in dst using zeromask k (elements are zeroed out when the corresponding mask bit is not set).
 ///
-/// [Intel&#39;s documentation](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_maskz_lzcnt_epi64&amp;expand=3496)
+/// [Intel&#39;s documentation](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskz_lzcnt_epi64&amp;expand=3496)
 </span><span class="attr">#[inline]
 #[target_feature(enable = <span class="string">&quot;avx512cd,avx512vl&quot;</span>)]
 #[cfg_attr(test, assert_instr(vplzcntq))]
@@ -2338,5 +2338,4 @@
         assert_eq_m128i(r, e);
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

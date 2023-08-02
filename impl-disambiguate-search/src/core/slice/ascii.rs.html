@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/ascii.rs`."><title>ascii.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/ascii.rs`."><title>ascii.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -326,7 +326,64 @@
 <a href="#326" id="326">326</a>
 <a href="#327" id="327">327</a>
 <a href="#328" id="328">328</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Operations on ASCII `[u8]`.
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Operations on ASCII `[u8]`.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::ascii;
 <span class="kw">use </span><span class="kw">crate</span>::fmt::{<span class="self">self</span>, Write};
@@ -338,10 +395,41 @@
 </span><span class="kw">impl </span>[u8] {
     <span class="doccomment">/// Checks if all bytes in this slice are within the ASCII range.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;ascii_methods_on_intrinsics&quot;</span>, since = <span class="string">&quot;1.23.0&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_is_ascii&quot;</span>, issue = <span class="string">&quot;111090&quot;</span>)]
     #[must_use]
     #[inline]
-    </span><span class="kw">pub fn </span>is_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    </span><span class="kw">pub const fn </span>is_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         is_ascii(<span class="self">self</span>)
+    }
+
+    <span class="doccomment">/// If this slice [`is_ascii`](Self::is_ascii), returns it as a slice of
+    /// [ASCII characters](`ascii::Char`), otherwise returns `None`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;ascii_char&quot;</span>, issue = <span class="string">&quot;110998&quot;</span>)]
+    #[must_use]
+    #[inline]
+    </span><span class="kw">pub const fn </span>as_ascii(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[ascii::Char]&gt; {
+        <span class="kw">if </span><span class="self">self</span>.is_ascii() {
+            <span class="comment">// SAFETY: Just checked that it&#39;s ASCII
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.as_ascii_unchecked() })
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
+    }
+
+    <span class="doccomment">/// Converts this slice of bytes into a slice of ASCII characters,
+    /// without checking whether they&#39;re valid.
+    ///
+    /// # Safety
+    ///
+    /// Every byte in the slice must be in `0..=127`, or else this is UB.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;ascii_char&quot;</span>, issue = <span class="string">&quot;110998&quot;</span>)]
+    #[must_use]
+    #[inline]
+    </span><span class="kw">pub const unsafe fn </span>as_ascii_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[ascii::Char] {
+        <span class="kw">let </span>byte_ptr: <span class="kw-2">*const </span>[u8] = <span class="self">self</span>;
+        <span class="kw">let </span>ascii_ptr = byte_ptr <span class="kw">as </span><span class="kw-2">*const </span>[ascii::Char];
+        <span class="comment">// SAFETY: The caller promised all the bytes are ASCII
+        </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>ascii_ptr }
     }
 
     <span class="doccomment">/// Checks that two slices are an ASCII case-insensitive match.
@@ -560,10 +648,28 @@
 <span class="doccomment">/// Returns `true` if any byte in the word `v` is nonascii (&gt;= 128). Snarfed
 /// from `../str/mod.rs`, which does something similar for utf8 validation.
 </span><span class="attr">#[inline]
-</span><span class="kw">fn </span>contains_nonascii(v: usize) -&gt; bool {
+</span><span class="kw">const fn </span>contains_nonascii(v: usize) -&gt; bool {
     <span class="kw">const </span>NONASCII_MASK: usize = usize::repeat_u8(<span class="number">0x80</span>);
     (NONASCII_MASK &amp; v) != <span class="number">0
 </span>}
+
+<span class="doccomment">/// ASCII test *without* the chunk-at-a-time optimizations.
+///
+/// This is carefully structured to produce nice small code -- it&#39;s smaller in
+/// `-O` than what the &quot;obvious&quot; ways produces under `-C opt-level=s`.  If you
+/// touch it, be sure to run (and update if needed) the assembly test.
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;str_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+#[doc(hidden)]
+#[inline]
+</span><span class="kw">pub const fn </span>is_ascii_simple(<span class="kw-2">mut </span>bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; bool {
+    <span class="kw">while let </span>[rest @ .., last] = bytes {
+        <span class="kw">if </span>!last.is_ascii() {
+            <span class="kw">break</span>;
+        }
+        bytes = rest;
+    }
+    bytes.is_empty()
+}
 
 <span class="doccomment">/// Optimized ASCII test that will use usize-at-a-time operations instead of
 /// byte-at-a-time operations (when possible).
@@ -578,7 +684,7 @@
 /// If any of these loads produces something for which `contains_nonascii`
 /// (above) returns true, then we know the answer is false.
 </span><span class="attr">#[inline]
-</span><span class="kw">fn </span>is_ascii(s: <span class="kw-2">&amp;</span>[u8]) -&gt; bool {
+</span><span class="kw">const fn </span>is_ascii(s: <span class="kw-2">&amp;</span>[u8]) -&gt; bool {
     <span class="kw">const </span>USIZE_SIZE: usize = mem::size_of::&lt;usize&gt;();
 
     <span class="kw">let </span>len = s.len();
@@ -590,7 +696,7 @@
     // We also do this for architectures where `size_of::&lt;usize&gt;()` isn&#39;t
     // sufficient alignment for `usize`, because it&#39;s a weird edge case.
     </span><span class="kw">if </span>len &lt; USIZE_SIZE || len &lt; align_offset || USIZE_SIZE &lt; mem::align_of::&lt;usize&gt;() {
-        <span class="kw">return </span>s.iter().all(|b| b.is_ascii());
+        <span class="kw">return </span>is_ascii_simple(s);
     }
 
     <span class="comment">// We always read the first word unaligned, which means `align_offset` is
@@ -619,18 +725,26 @@
     <span class="comment">// Paranoia check about alignment, since we&#39;re about to do a bunch of
     // unaligned loads. In practice this should be impossible barring a bug in
     // `align_offset` though.
-    </span><span class="macro">debug_assert_eq!</span>(word_ptr.addr() % mem::align_of::&lt;usize&gt;(), <span class="number">0</span>);
+    // While this method is allowed to spuriously fail in CTFE, if it doesn&#39;t
+    // have alignment information it should have given a `usize::MAX` for
+    // `align_offset` earlier, sending things through the scalar path instead of
+    // this one, so this check should pass if it&#39;s reachable.
+    </span><span class="macro">debug_assert!</span>(word_ptr.is_aligned_to(mem::align_of::&lt;usize&gt;()));
 
     <span class="comment">// Read subsequent words until the last aligned word, excluding the last
     // aligned word by itself to be done in tail check later, to ensure that
     // tail is always one `usize` at most to extra branch `byte_pos == len`.
     </span><span class="kw">while </span>byte_pos &lt; len - USIZE_SIZE {
-        <span class="macro">debug_assert!</span>(
-            <span class="comment">// Sanity check that the read is in bounds
-            </span>(word_ptr.addr() + USIZE_SIZE) &lt;= start.addr().wrapping_add(len) &amp;&amp;
-            <span class="comment">// And that our assumptions about `byte_pos` hold.
-            </span>(word_ptr.addr() - start.addr()) == byte_pos
-        );
+        <span class="comment">// Sanity check that the read is in bounds
+        </span><span class="macro">debug_assert!</span>(byte_pos + USIZE_SIZE &lt;= len);
+        <span class="comment">// And that our assumptions about `byte_pos` hold.
+        </span><span class="macro">debug_assert!</span>(<span class="macro">matches!</span>(
+            word_ptr.cast::&lt;u8&gt;().guaranteed_eq(start.wrapping_add(byte_pos)),
+            <span class="comment">// These are from the same allocation, so will hopefully always be
+            // known to match even in CTFE, but if it refuses to compare them
+            // that&#39;s ok since it&#39;s just a debug check anyway.
+            </span><span class="prelude-val">None </span>| <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+        ));
 
         <span class="comment">// SAFETY: We know `word_ptr` is properly aligned (because of
         // `align_offset`), and we know that we have enough bytes between `word_ptr` and the end
@@ -654,5 +768,4 @@
 
     !contains_nonascii(last_word)
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

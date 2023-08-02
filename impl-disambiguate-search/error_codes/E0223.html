@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -148,28 +173,29 @@
                         <h1 id="error-code-e0223"><a class="header" href="#error-code-e0223">Error code E0223</a></h1>
 <p>An attempt was made to retrieve an associated type, but the type was ambiguous.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0223">trait MyTrait {type X; }
+<pre><pre class="playground"><code class="language-rust compile_fail E0223">trait Trait { type X; }
 
 fn main() {
-    let foo: MyTrait::X;
+    let foo: Trait::X;
 }</code></pre></pre>
-<p>The problem here is that we're attempting to take the type of X from MyTrait.
-Unfortunately, the type of X is not defined, because it's only made concrete in
-implementations of the trait. A working version of this code might look like:</p>
-<pre><pre class="playground"><code class="language-rust">trait MyTrait {type X; }
-struct MyStruct;
+<p>The problem here is that we're attempting to take the associated type of <code>X</code>
+from <code>Trait</code>. Unfortunately, the type of <code>X</code> is not defined, because it's only
+made concrete in implementations of the trait. A working version of this code
+might look like:</p>
+<pre><pre class="playground"><code class="language-rust">trait Trait { type X; }
 
-impl MyTrait for MyStruct {
+struct Struct;
+impl Trait for Struct {
     type X = u32;
 }
 
 fn main() {
-    let foo: &lt;MyStruct as MyTrait&gt;::X;
+    let foo: &lt;Struct as Trait&gt;::X;
 }</code></pre></pre>
-<p>This syntax specifies that we want the X type from MyTrait, as made concrete in
-MyStruct. The reason that we cannot simply use <code>MyStruct::X</code> is that MyStruct
-might implement two different traits with identically-named associated types.
-This syntax allows disambiguation between the two.</p>
+<p>This syntax specifies that we want the associated type <code>X</code> from <code>Struct</code>'s
+implementation of <code>Trait</code>.</p>
+<p>Due to internal limitations of the current compiler implementation we cannot
+simply use <code>Struct::X</code>.</p>
 
                     </main>
 
@@ -220,5 +246,6 @@ This syntax allows disambiguation between the two.</p>
         <script src="error-index.js"></script>
 
 
+    </div>
     </body>
 </html>

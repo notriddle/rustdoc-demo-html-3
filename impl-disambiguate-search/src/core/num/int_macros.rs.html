@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/int_macros.rs`."><title>int_macros.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/int_macros.rs`."><title>int_macros.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2852,7 +2852,48 @@
 <a href="#2852" id="2852">2852</a>
 <a href="#2853" id="2853">2853</a>
 <a href="#2854" id="2854">2854</a>
-</pre><pre class="rust"><code><span class="macro">macro_rules! </span>int_impl {
+<a href="#2855" id="2855">2855</a>
+<a href="#2856" id="2856">2856</a>
+<a href="#2857" id="2857">2857</a>
+<a href="#2858" id="2858">2858</a>
+<a href="#2859" id="2859">2859</a>
+<a href="#2860" id="2860">2860</a>
+<a href="#2861" id="2861">2861</a>
+<a href="#2862" id="2862">2862</a>
+<a href="#2863" id="2863">2863</a>
+<a href="#2864" id="2864">2864</a>
+<a href="#2865" id="2865">2865</a>
+<a href="#2866" id="2866">2866</a>
+<a href="#2867" id="2867">2867</a>
+<a href="#2868" id="2868">2868</a>
+<a href="#2869" id="2869">2869</a>
+<a href="#2870" id="2870">2870</a>
+<a href="#2871" id="2871">2871</a>
+<a href="#2872" id="2872">2872</a>
+<a href="#2873" id="2873">2873</a>
+<a href="#2874" id="2874">2874</a>
+<a href="#2875" id="2875">2875</a>
+<a href="#2876" id="2876">2876</a>
+<a href="#2877" id="2877">2877</a>
+<a href="#2878" id="2878">2878</a>
+<a href="#2879" id="2879">2879</a>
+<a href="#2880" id="2880">2880</a>
+<a href="#2881" id="2881">2881</a>
+<a href="#2882" id="2882">2882</a>
+<a href="#2883" id="2883">2883</a>
+<a href="#2884" id="2884">2884</a>
+<a href="#2885" id="2885">2885</a>
+<a href="#2886" id="2886">2886</a>
+<a href="#2887" id="2887">2887</a>
+<a href="#2888" id="2888">2888</a>
+<a href="#2889" id="2889">2889</a>
+<a href="#2890" id="2890">2890</a>
+<a href="#2891" id="2891">2891</a>
+<a href="#2892" id="2892">2892</a>
+<a href="#2893" id="2893">2893</a>
+<a href="#2894" id="2894">2894</a>
+<a href="#2895" id="2895">2895</a>
+</pre></div><pre class="rust"><code><span class="macro">macro_rules! </span>int_impl {
     (
         <span class="self">Self </span>= <span class="macro-nonterminal">$SelfT</span>:ty,
         ActualT = <span class="macro-nonterminal">$ActualT</span>:ident,
@@ -3639,7 +3680,7 @@
             <span class="comment">// SAFETY: the caller must uphold the safety contract for
             // `unchecked_shl`.
             // Any legal shift amount is losslessly representable in the self type.
-            </span><span class="kw">unsafe </span>{ intrinsics::unchecked_shl(<span class="self">self</span>, rhs.try_into().ok().unwrap_unchecked()) }
+            </span><span class="kw">unsafe </span>{ intrinsics::unchecked_shl(<span class="self">self</span>, <span class="macro">conv_rhs_for_unchecked_shift!</span>(<span class="macro-nonterminal">$SelfT</span>, rhs)) }
         }
 
         <span class="doccomment">/// Checked shift right. Computes `self &gt;&gt; rhs`, returning `None` if `rhs` is
@@ -3687,7 +3728,7 @@
             <span class="comment">// SAFETY: the caller must uphold the safety contract for
             // `unchecked_shr`.
             // Any legal shift amount is losslessly representable in the self type.
-            </span><span class="kw">unsafe </span>{ intrinsics::unchecked_shr(<span class="self">self</span>, rhs.try_into().ok().unwrap_unchecked()) }
+            </span><span class="kw">unsafe </span>{ intrinsics::unchecked_shr(<span class="self">self</span>, <span class="macro">conv_rhs_for_unchecked_shift!</span>(<span class="macro-nonterminal">$SelfT</span>, rhs)) }
         }
 
         <span class="doccomment">/// Checked absolute value. Computes `self.abs()`, returning `None` if
@@ -5186,6 +5227,44 @@
             }
         }
 
+        <span class="doccomment">/// Calculates the middle point of `self` and `rhs`.
+        ///
+        /// `midpoint(a, b)` is `(a + b) &gt;&gt; 1` as if it were performed in a
+        /// sufficiently-large signed integral type. This implies that the result is
+        /// always rounded towards negative infinity and that no overflow will ever occur.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// #![feature(num_midpoint)]
+        </span><span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(0&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$SelfT</span>), <span class="string">&quot;.midpoint(4), 2);&quot;</span>)]
+        #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!(0&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$SelfT</span>), <span class="string">&quot;.midpoint(-1), -1);&quot;</span>)]
+        #[doc = <span class="macro">concat!</span>(<span class="string">&quot;assert_eq!((-1&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$SelfT</span>), <span class="string">&quot;).midpoint(0), -1);&quot;</span>)]
+        </span><span class="doccomment">/// ```
+        </span><span class="attr">#[unstable(feature = <span class="string">&quot;num_midpoint&quot;</span>, issue = <span class="string">&quot;110840&quot;</span>)]
+        #[rustc_const_unstable(feature = <span class="string">&quot;const_num_midpoint&quot;</span>, issue = <span class="string">&quot;110840&quot;</span>)]
+        #[rustc_allow_const_fn_unstable(const_num_midpoint)]
+        #[must_use = <span class="string">&quot;this returns the result of the operation, \
+                      without modifying the original&quot;</span>]
+        #[inline]
+        </span><span class="kw">pub const fn </span>midpoint(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+            <span class="kw">const </span>U: <span class="macro-nonterminal">$UnsignedT </span>= &lt;<span class="macro-nonterminal">$SelfT</span>&gt;::MIN.unsigned_abs();
+
+            <span class="comment">// Map an $SelfT to an $UnsignedT
+            // ex: i8 [-128; 127] to [0; 255]
+            </span><span class="kw">const fn </span>map(a: <span class="macro-nonterminal">$SelfT</span>) -&gt; <span class="macro-nonterminal">$UnsignedT </span>{
+                (a <span class="kw">as </span><span class="macro-nonterminal">$UnsignedT</span>) ^ U
+            }
+
+            <span class="comment">// Map an $UnsignedT to an $SelfT
+            // ex: u8 [0; 255] to [-128; 127]
+            </span><span class="kw">const fn </span>demap(a: <span class="macro-nonterminal">$UnsignedT</span>) -&gt; <span class="macro-nonterminal">$SelfT </span>{
+                (a ^ U) <span class="kw">as </span><span class="macro-nonterminal">$SelfT
+            </span>}
+
+            demap(&lt;<span class="macro-nonterminal">$UnsignedT</span>&gt;::midpoint(map(<span class="self">self</span>), map(rhs)))
+        }
+
         <span class="doccomment">/// Returns the logarithm of the number with respect to an arbitrary base,
         /// rounded down.
         ///
@@ -5457,14 +5536,17 @@
         #[must_use = <span class="string">&quot;this returns the result of the operation, \
                       without modifying the original&quot;</span>]
         #[inline(always)]
-        #[rustc_allow_const_fn_unstable(const_cmp)]
         </span><span class="kw">pub const fn </span>signum(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
             <span class="comment">// Picking the right way to phrase this is complicated
             // (&lt;https://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign&gt;)
             // so delegate it to `Ord` which is already producing -1/0/+1
             // exactly like we need and can be the place to deal with the complexity.
-            </span><span class="self">self</span>.cmp(<span class="kw-2">&amp;</span><span class="number">0</span>) <span class="kw">as _
-        </span>}
+
+            // FIXME(const-hack): replace with cmp
+            </span><span class="kw">if </span><span class="self">self </span>&lt; <span class="number">0 </span>{ -<span class="number">1 </span>}
+            <span class="kw">else if </span><span class="self">self </span>== <span class="number">0 </span>{ <span class="number">0 </span>}
+            <span class="kw">else </span>{ <span class="number">1 </span>}
+        }
 
         <span class="doccomment">/// Returns `true` if `self` is positive and `false` if the number is zero or
         /// negative.
@@ -5706,5 +5788,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

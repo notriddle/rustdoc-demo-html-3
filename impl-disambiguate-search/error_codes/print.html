@@ -34,6 +34,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -71,10 +72,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -87,11 +90,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -992,7 +1017,7 @@ fn main(){
     let Foo { a: x, b: y } = x; // ok!
 }</code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0026"><a class="header" href="#error-code-e0026">Error code E0026</a></h1>
-<p>A struct pattern attempted to extract a non-existent field from a struct.</p>
+<p>A struct pattern attempted to extract a nonexistent field from a struct.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0026"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2089,9 +2114,9 @@ struct Good(u32, u32, u32, u32); // ok!
 constant expression that had to be evaluated. Attempting to divide by 0
 or causing an integer overflow are two ways to induce this error.</p>
 <p>Ensure that the expressions given can be evaluated as the desired integer type.</p>
-<p>See the <a href="https://doc.rust-lang.org/reference/items/enumerations.html#custom-discriminant-values-for-field-less-enumerations">Custom Discriminants</a> section of the Reference
-for more information about setting custom integer types on fieldless enums
-using the <a href="https://doc.rust-lang.org/reference/type-layout.html#reprc-enums"><code>repr</code> attribute</a>.</p>
+<p>See the <a href="https://doc.rust-lang.org/reference/items/enumerations.html#discriminants">Discriminants</a> section of the Reference for more information about
+setting custom integer types on enums using the
+<a href="https://doc.rust-lang.org/reference/type-layout.html#representations"><code>repr</code> attribute</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0081"><a class="header" href="#error-code-e0081">Error code E0081</a></h1>
 <p>A discriminant value is present more than once.</p>
 <p>Erroneous code example:</p>
@@ -2756,7 +2781,7 @@ fn my_start(argc: isize, argv: *const *const u8) -&gt; isize {
 }
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0133"><a class="header" href="#error-code-e0133">Error code E0133</a></h1>
-<p>Unsafe code was used outside of an unsafe function or block.</p>
+<p>Unsafe code was used outside of an unsafe block.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0133">unsafe fn f() { return; } // This is the unsafe code
 
@@ -2778,6 +2803,20 @@ fn main() {
     unsafe { f(); } // ok!
 }</code></pre></pre>
 <p>See the <a href="https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html">unsafe section</a> of the Book for more details.</p>
+<h4 id="unsafe-code-in-functions"><a class="header" href="#unsafe-code-in-functions">Unsafe code in functions</a></h4>
+<p>Unsafe code is currently accepted in unsafe functions, but that is being phased
+out in favor of requiring unsafe blocks here too.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>unsafe fn f() { return; }
+
+unsafe fn g() {
+    f(); // Is accepted, but no longer recommended
+    unsafe { f(); } // Recommended way to write this
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Linting against this is controlled via the <code>unsafe_op_in_unsafe_fn</code> lint, which
+is <code>allow</code> by default but will be upgraded to <code>warn</code> in a future edition.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0136"><a class="header" href="#error-code-e0136">Error code E0136</a></h1>
 <h4 id="note-this-error-code-is-no-longer-emitted-by-the-compiler-12"><a class="header" href="#note-this-error-code-is-no-longer-emitted-by-the-compiler-12">Note: this error code is no longer emitted by the compiler.</a></h4>
 <p>More than one <code>main</code> function was found.</p>
@@ -3870,7 +3909,7 @@ struct Foo&lt;'a, T&gt; { // error: deliberate error to display type's variance
 <p>This error is deliberately triggered with the <code>#[rustc_variance]</code> attribute
 (<code>#![feature(rustc_attrs)]</code> must be enabled) and helps to show you the variance
 of the type's generic parameters. You can read more about variance and
-subtyping in <a href="https://doc.rust-lang.org/nomicon/subtyping.html">this section of the Rustnomicon</a>. For a more in depth look at
+subtyping in <a href="https://doc.rust-lang.org/nomicon/subtyping.html">this section of the Rustonomicon</a>. For a more in depth look at
 variance (including a more complete list of common variances) see
 <a href="https://doc.rust-lang.org/reference/subtyping.html#variance">this section of the Reference</a>. For information on how variance is implemented
 in the compiler, see <a href="https://rustc-dev-guide.rust-lang.org/variance.html">this section of <code>rustc-dev-guide</code></a>.</p>
@@ -4187,28 +4226,29 @@ fn foo&lt;CAR, COLOR&gt;(
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0223"><a class="header" href="#error-code-e0223">Error code E0223</a></h1>
 <p>An attempt was made to retrieve an associated type, but the type was ambiguous.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0223">trait MyTrait {type X; }
+<pre><pre class="playground"><code class="language-rust compile_fail E0223">trait Trait { type X; }
 
 fn main() {
-    let foo: MyTrait::X;
+    let foo: Trait::X;
 }</code></pre></pre>
-<p>The problem here is that we're attempting to take the type of X from MyTrait.
-Unfortunately, the type of X is not defined, because it's only made concrete in
-implementations of the trait. A working version of this code might look like:</p>
-<pre><pre class="playground"><code class="language-rust">trait MyTrait {type X; }
-struct MyStruct;
+<p>The problem here is that we're attempting to take the associated type of <code>X</code>
+from <code>Trait</code>. Unfortunately, the type of <code>X</code> is not defined, because it's only
+made concrete in implementations of the trait. A working version of this code
+might look like:</p>
+<pre><pre class="playground"><code class="language-rust">trait Trait { type X; }
 
-impl MyTrait for MyStruct {
+struct Struct;
+impl Trait for Struct {
     type X = u32;
 }
 
 fn main() {
-    let foo: &lt;MyStruct as MyTrait&gt;::X;
+    let foo: &lt;Struct as Trait&gt;::X;
 }</code></pre></pre>
-<p>This syntax specifies that we want the X type from MyTrait, as made concrete in
-MyStruct. The reason that we cannot simply use <code>MyStruct::X</code> is that MyStruct
-might implement two different traits with identically-named associated types.
-This syntax allows disambiguation between the two.</p>
+<p>This syntax specifies that we want the associated type <code>X</code> from <code>Struct</code>'s
+implementation of <code>Trait</code>.</p>
+<p>Due to internal limitations of the current compiler implementation we cannot
+simply use <code>Struct::X</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0224"><a class="header" href="#error-code-e0224">Error code E0224</a></h1>
 <p>A trait object was declared with no traits.</p>
 <p>Erroneous code example:</p>
@@ -5389,7 +5429,7 @@ outlive <code>'anon</code> in <code>no_restriction()</code>.</p>
 <p>If <code>no_restriction()</code> were to use <code>&amp;T</code> instead of <code>&amp;()</code> as an argument, the
 compiler would have added an implied bound, causing this to compile.</p>
 <p>This error can be resolved by explicitly naming the elided lifetime for <code>x</code> and
-then explicily requiring that the generic parameter <code>T</code> outlives that lifetime:</p>
+then explicitly requiring that the generic parameter <code>T</code> outlives that lifetime:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn no_restriction&lt;'a, T: 'a&gt;(x: &amp;'a ()) -&gt; &amp;'a () {
@@ -6634,6 +6674,8 @@ trait SecondTrait : FirstTrait {
 <span class="boring">}</span></code></pre></pre>
 <p>The previous example contains a circular dependency between two traits:
 <code>FirstTrait</code> depends on <code>SecondTrait</code> which itself depends on <code>FirstTrait</code>.</p>
+<p>See https://rustc-dev-guide.rust-lang.org/overview.html#queries and
+https://rustc-dev-guide.rust-lang.org/query.html for more information.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0392"><a class="header" href="#error-code-e0392">Error code E0392</a></h1>
 <p>A type or lifetime parameter has been declared but is not actually used.</p>
 <p>Erroneous code example:</p>
@@ -7799,7 +7841,9 @@ unnecessary. Example:</p>
 }
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0449"><a class="header" href="#error-code-e0449">Error code E0449</a></h1>
-<p>A visibility qualifier was used when it was unnecessary.</p>
+<p>A visibility qualifier was used where one is not permitted. Visibility
+qualifiers are not permitted on enum variants, trait items, impl blocks, and
+extern blocks, as they already share the visibility of the parent item.</p>
 <p>Erroneous code examples:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0449"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -7809,14 +7853,17 @@ trait Foo {
     fn foo();
 }
 
-pub impl Bar {} // error: unnecessary visibility qualifier
+enum Baz {
+    pub Qux, // error: visibility qualifiers are not permitted here
+}
 
-pub impl Foo for Bar { // error: unnecessary visibility qualifier
-    pub fn foo() {} // error: unnecessary visibility qualifier
+pub impl Bar {} // error: visibility qualifiers are not permitted here
+
+pub impl Foo for Bar { // error: visibility qualifiers are not permitted here
+    pub fn foo() {} // error: visibility qualifiers are not permitted here
 }
 <span class="boring">}</span></code></pre></pre>
-<p>To fix this error, please remove the visibility qualifier when it is not
-required. Example:</p>
+<p>To fix this error, simply remove the visibility qualifier. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Bar;
@@ -7825,12 +7872,18 @@ trait Foo {
     fn foo();
 }
 
+enum Baz {
+    // Enum variants share the visibility of the enum they are in, so
+    // `pub` is not allowed here
+    Qux,
+}
+
 // Directly implemented methods share the visibility of the type itself,
-// so `pub` is unnecessary here
+// so `pub` is not allowed here
 impl Bar {}
 
-// Trait methods share the visibility of the trait, so `pub` is
-// unnecessary in either case
+// Trait methods share the visibility of the trait, so `pub` is not
+// allowed in either case
 impl Foo for Bar {
     fn foo() {}
 }
@@ -7957,7 +8010,7 @@ extern &quot;C&quot; {}
 of the Reference.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0457"><a class="header" href="#error-code-e0457">Error code E0457</a></h1>
 <p>Plugin <code>..</code> only found in rlib format, but must be available in dylib format.</p>
-<p>Erroronous code example:</p>
+<p>Erroneous code example:</p>
 <p><code>rlib-plugin.rs</code></p>
 <pre><code class="language-rust ignore (needs-linkage-with-other-tests)">#![crate_type = &quot;rlib&quot;]
 #![feature(rustc_private)]
@@ -10870,7 +10923,7 @@ let _: &lt;u8 as Age&gt;::Empire; // ok!
     fn hello() -&gt; &lt;Self as Hello&gt;::You; // error!
 }
 <span class="boring">}</span></code></pre></pre>
-<p>In this example, we tried to use the non-existent associated type <code>You</code> of the
+<p>In this example, we tried to use the nonexistent associated type <code>You</code> of the
 <code>Hello</code> trait. To fix this error, use an existing associated type:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -11529,7 +11582,7 @@ trait. Example:</p>
 println!(&quot;{}&quot;, v[2]);
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0609"><a class="header" href="#error-code-e0609">Error code E0609</a></h1>
-<p>Attempted to access a non-existent field in a struct.</p>
+<p>Attempted to access a nonexistent field in a struct.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0609"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -12849,7 +12902,8 @@ struct ForceAlign32;
 
 #[repr(transparent)]
 struct Wrapper(f32, ForceAlign32); // error: zero-sized field in transparent
-                                   //        struct has alignment larger than 1
+                                   //        struct has alignment of 32, which
+                                   //        is larger than 1
 <span class="boring">}</span></code></pre></pre>
 <p>A transparent struct, enum, or union is supposed to be represented exactly like
 the piece of data it contains. Zero-sized fields with different alignment
@@ -13599,8 +13653,8 @@ block_on(future);
 <span class="boring">}</span></code></pre></pre>
 <p>Specify desired lifetime of parameter <code>content</code> or indicate the anonymous
 lifetime like <code>content: Content&lt;'_&gt;</code>. The anonymous lifetime tells the Rust
-compiler that <code>content</code> is only needed until create function is done with
-it's execution.</p>
+compiler that <code>content</code> is only needed until the <code>create</code> function is done with
+its execution.</p>
 <p>The <code>implicit elision</code> meaning the omission of suggested lifetime that is
 <code>pub async fn create&lt;'a&gt;(content: Content&lt;'a&gt;) {}</code> is not allowed here as
 lifetime of the <code>content</code> can differ from current context:</p>
@@ -13932,14 +13986,18 @@ impl Drop for A {
 
 struct B&lt;const X: A&gt;; // error!
 <span class="boring">}</span></code></pre></pre>
-<p>Only structural-match types (that is, types that derive <code>PartialEq</code> and <code>Eq</code>)
-may be used as the types of const generic parameters.</p>
-<p>To fix the previous code example, we derive <code>PartialEq</code> and <code>Eq</code>:</p>
+<p>Only structural-match types, which are types that derive <code>PartialEq</code> and <code>Eq</code>
+and implement <code>ConstParamTy</code>, may be used as the types of const generic
+parameters.</p>
+<p>To fix the previous code example, we derive <code>PartialEq</code>, <code>Eq</code>, and
+<code>ConstParamTy</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(adt_const_params)]
 
 <span class="boring">fn main() {
-</span>#[derive(PartialEq, Eq)] // We derive both traits here.
+</span>use std::marker::ConstParamTy;
+
+#[derive(PartialEq, Eq, ConstParamTy)] // We derive both traits here.
 struct A;
 
 struct B&lt;const X: A&gt;; // ok!
@@ -14631,10 +14689,11 @@ names and binding them to new identifiers:</p>
 </span>fn foo&lt;T, const N: usize&gt;() {}
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0771"><a class="header" href="#error-code-e0771">Error code E0771</a></h1>
+<h4 id="note-this-error-code-is-no-longer-emitted-by-the-compiler-70"><a class="header" href="#note-this-error-code-is-no-longer-emitted-by-the-compiler-70">Note: this error code is no longer emitted by the compiler</a></h4>
 <p>A non-<code>'static</code> lifetime was used in a const generic. This is currently not
 allowed.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0771"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust compile_fail E0770"><span class="boring">#![allow(unused)]
 </span>#![feature(adt_const_params)]
 
 <span class="boring">fn main() {
@@ -14650,7 +14709,7 @@ allowed.</p>
 <span class="boring">}</span></code></pre></pre>
 <p>For more information, see <a href="https://github.com/rust-lang/rust/issues/74052">GitHub issue #74052</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0772"><a class="header" href="#error-code-e0772">Error code E0772</a></h1>
-<h4 id="note-this-error-code-is-no-longer-emitted-by-the-compiler-70"><a class="header" href="#note-this-error-code-is-no-longer-emitted-by-the-compiler-70">Note: this error code is no longer emitted by the compiler.</a></h4>
+<h4 id="note-this-error-code-is-no-longer-emitted-by-the-compiler-71"><a class="header" href="#note-this-error-code-is-no-longer-emitted-by-the-compiler-71">Note: this error code is no longer emitted by the compiler.</a></h4>
 <p>A trait object has some specific lifetime <code>'1</code>, but it was used in a way that
 requires it to have a <code>'static</code> lifetime.</p>
 <p>Example of erroneous code:</p>
@@ -15331,9 +15390,9 @@ let bar_fn3 = bar::&lt;Bar&gt;; // OK
 where <code>'a</code> is universally quantified and <code>'b</code> is substituted by a specific
 lifetime. It is not allowed to explicitly specify early-bound lifetime
 arguments when late-bound lifetime parameters are present (as for <code>bar_fn2</code>,
-see issue #42868: https://github.com/rust-lang/rust/issues/42868), although the
-types that are constrained by early-bound parameters can be specified (as for
-<code>bar_fn3</code>).</p>
+see <a href="https://github.com/rust-lang/rust/issues/42868">issue #42868</a>), although
+the types that are constrained by early-bound parameters can be specified (as
+for <code>bar_fn3</code>).</p>
 
                     </main>
 
@@ -15377,5 +15436,6 @@ types that are constrained by early-bound parameters can be specified (as for
         });
         </script>
 
+    </div>
     </body>
 </html>

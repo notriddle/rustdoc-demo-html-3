@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/array/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/array/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -935,33 +935,7 @@
 <a href="#935" id="935">935</a>
 <a href="#936" id="936">936</a>
 <a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Utilities for the array primitive type.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Utilities for the array primitive type.
 //!
 //! *[See also the array primitive type](array).*
 
@@ -980,6 +954,7 @@
 };
 <span class="kw">use </span><span class="kw">crate</span>::slice::{Iter, IterMut};
 
+<span class="kw">mod </span>ascii;
 <span class="kw">mod </span>drain;
 <span class="kw">mod </span>equality;
 <span class="kw">mod </span>iter;
@@ -1111,8 +1086,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;try_from_slice_error&quot;</span>, since = <span class="string">&quot;1.36.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl const </span>From&lt;Infallible&gt; <span class="kw">for </span>TryFromSliceError {
+</span><span class="kw">impl </span>From&lt;Infallible&gt; <span class="kw">for </span>TryFromSliceError {
     <span class="kw">fn </span>from(x: Infallible) -&gt; TryFromSliceError {
         <span class="kw">match </span>x {}
     }
@@ -1135,16 +1109,14 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;array_borrow&quot;</span>, since = <span class="string">&quot;1.4.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_borrow&quot;</span>, issue = <span class="string">&quot;91522&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, <span class="kw">const </span>N: usize&gt; <span class="kw">const </span>Borrow&lt;[T]&gt; <span class="kw">for </span>[T; N] {
+</span><span class="kw">impl</span>&lt;T, <span class="kw">const </span>N: usize&gt; Borrow&lt;[T]&gt; <span class="kw">for </span>[T; N] {
     <span class="kw">fn </span>borrow(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[T] {
         <span class="self">self
     </span>}
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;array_borrow&quot;</span>, since = <span class="string">&quot;1.4.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_borrow&quot;</span>, issue = <span class="string">&quot;91522&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, <span class="kw">const </span>N: usize&gt; <span class="kw">const </span>BorrowMut&lt;[T]&gt; <span class="kw">for </span>[T; N] {
+</span><span class="kw">impl</span>&lt;T, <span class="kw">const </span>N: usize&gt; BorrowMut&lt;[T]&gt; <span class="kw">for </span>[T; N] {
     <span class="kw">fn </span>borrow_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[T] {
         <span class="self">self
     </span>}
@@ -1169,7 +1141,8 @@
 {
     <span class="kw">type </span>Error = TryFromSliceError;
 
-    <span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;[T; N], TryFromSliceError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;[T; N], TryFromSliceError&gt; {
         &lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt;::try_from(slice).map(|r| <span class="kw-2">*</span>r)
     }
 }
@@ -1193,7 +1166,8 @@
 {
     <span class="kw">type </span>Error = TryFromSliceError;
 
-    <span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;mut </span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;[T; N], TryFromSliceError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;mut </span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;[T; N], TryFromSliceError&gt; {
         &lt;<span class="self">Self</span>&gt;::try_from(<span class="kw-2">&amp;*</span>slice)
     }
 }
@@ -1214,7 +1188,8 @@
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, <span class="kw">const </span>N: usize&gt; TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[T]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[T; N] {
     <span class="kw">type </span>Error = TryFromSliceError;
 
-    <span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;</span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>[T; N], TryFromSliceError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[T; N], TryFromSliceError&gt; {
         <span class="kw">if </span>slice.len() == N {
             <span class="kw">let </span>ptr = slice.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>[T; N];
             <span class="comment">// SAFETY: ok because we just checked that the length fits
@@ -1241,7 +1216,8 @@
 </span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, <span class="kw">const </span>N: usize&gt; TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[T]&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[T; N] {
     <span class="kw">type </span>Error = TryFromSliceError;
 
-    <span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;mut </span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;mut </span>[T; N], TryFromSliceError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(slice: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[T]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[T; N], TryFromSliceError&gt; {
         <span class="kw">if </span>slice.len() == N {
             <span class="kw">let </span>ptr = slice.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>[T; N];
             <span class="comment">// SAFETY: ok because we just checked that the length fits
@@ -1256,7 +1232,6 @@
 /// as required by the `Borrow` implementation.
 ///
 /// ```
-/// #![feature(build_hasher_simple_hash_one)]
 /// use std::hash::BuildHasher;
 ///
 /// let b = std::collections::hash_map::RandomState::new();
@@ -1299,10 +1274,9 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;index_trait_on_arrays&quot;</span>, since = <span class="string">&quot;1.50.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, I, <span class="kw">const </span>N: usize&gt; <span class="kw">const </span>Index&lt;I&gt; <span class="kw">for </span>[T; N]
+</span><span class="kw">impl</span>&lt;T, I, <span class="kw">const </span>N: usize&gt; Index&lt;I&gt; <span class="kw">for </span>[T; N]
 <span class="kw">where
-    </span>[T]: ~<span class="kw">const </span>Index&lt;I&gt;,
+    </span>[T]: Index&lt;I&gt;,
 {
     <span class="kw">type </span>Output = &lt;[T] <span class="kw">as </span>Index&lt;I&gt;&gt;::Output;
 
@@ -1313,10 +1287,9 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;index_trait_on_arrays&quot;</span>, since = <span class="string">&quot;1.50.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, I, <span class="kw">const </span>N: usize&gt; <span class="kw">const </span>IndexMut&lt;I&gt; <span class="kw">for </span>[T; N]
+</span><span class="kw">impl</span>&lt;T, I, <span class="kw">const </span>N: usize&gt; IndexMut&lt;I&gt; <span class="kw">for </span>[T; N]
 <span class="kw">where
-    </span>[T]: ~<span class="kw">const </span>IndexMut&lt;I&gt;,
+    </span>[T]: IndexMut&lt;I&gt;,
 {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: I) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Output {
@@ -1398,8 +1371,7 @@
 </span><span class="macro">macro_rules! </span>array_impl_default {
     {<span class="macro-nonterminal">$n</span>:expr, <span class="macro-nonterminal">$t</span>:ident $(<span class="macro-nonterminal">$ts</span>:ident)<span class="kw-2">*</span>} =&gt; {
         <span class="attr">#[stable(since = <span class="string">&quot;1.4.0&quot;</span>, feature = <span class="string">&quot;array_default&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-        </span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span>[T; <span class="macro-nonterminal">$n</span>] <span class="kw">where </span>T: ~<span class="kw">const </span>Default {
+        </span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>[T; <span class="macro-nonterminal">$n</span>] <span class="kw">where </span>T: Default {
             <span class="kw">fn </span>default() -&gt; [T; <span class="macro-nonterminal">$n</span>] {
                 [<span class="macro-nonterminal">$t::default</span>(), $(<span class="macro-nonterminal">$ts::default</span>()),<span class="kw-2">*</span>]
             }
@@ -1408,8 +1380,7 @@
     };
     {<span class="macro-nonterminal">$n</span>:expr,} =&gt; {
         <span class="attr">#[stable(since = <span class="string">&quot;1.4.0&quot;</span>, feature = <span class="string">&quot;array_default&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-        </span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span>[T; <span class="macro-nonterminal">$n</span>] {
+        </span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>[T; <span class="macro-nonterminal">$n</span>] {
             <span class="kw">fn </span>default() -&gt; [T; <span class="macro-nonterminal">$n</span>] { [] }
         }
     };
@@ -1502,29 +1473,6 @@
         R::Residual: Residual&lt;[R::Output; N]&gt;,
     {
         drain_array_with(<span class="self">self</span>, |iter| try_from_trusted_iterator(iter.map(f)))
-    }
-
-    <span class="doccomment">/// &#39;Zips up&#39; two arrays into a single array of pairs.
-    ///
-    /// `zip()` returns a new array where every element is a tuple where the
-    /// first element comes from the first array, and the second element comes
-    /// from the second array. In other words, it zips two arrays together,
-    /// into a single one.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// #![feature(array_zip)]
-    /// let x = [1, 2, 3];
-    /// let y = [4, 5, 6];
-    /// let z = x.zip(y);
-    /// assert_eq!(z, [(1, 4), (2, 5), (3, 6)]);
-    /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;array_zip&quot;</span>, issue = <span class="string">&quot;80094&quot;</span>)]
-    </span><span class="kw">pub fn </span>zip&lt;U&gt;(<span class="self">self</span>, rhs: [U; N]) -&gt; [(T, U); N] {
-        drain_array_with(<span class="self">self</span>, |lhs| {
-            drain_array_with(rhs, |rhs| from_trusted_iterator(<span class="kw">crate</span>::iter::zip(lhs, rhs)))
-        })
     }
 
     <span class="doccomment">/// Returns a slice containing the entire array. Equivalent to `&amp;s[..]`.
@@ -1914,7 +1862,7 @@
             // so we need to defuse the guard instead of using `?`.
             </span><span class="kw">let </span>initialized = guard.initialized;
             mem::forget(guard);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(initialized)
+            <span class="kw">return </span><span class="prelude-val">Err</span>(initialized);
         };
 
         <span class="comment">// SAFETY: The loop condition ensures we have space to push the item
@@ -1924,5 +1872,4 @@
     mem::forget(guard);
     <span class="prelude-val">Ok</span>(())
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

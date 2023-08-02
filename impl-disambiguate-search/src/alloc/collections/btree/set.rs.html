@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/btree/set.rs`."><title>set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/collections/btree/set.rs`."><title>set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../alloc/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1791,16 +1791,36 @@
 <a href="#1791" id="1791">1791</a>
 <a href="#1792" id="1792">1792</a>
 <a href="#1793" id="1793">1793</a>
-</pre><pre class="rust"><code><span class="comment">// This is pretty much entirely stolen from TreeSet, since BTreeMap has an identical interface
-// to TreeMap
-
-</span><span class="kw">use </span><span class="kw">crate</span>::vec::Vec;
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vec::Vec;
 <span class="kw">use </span>core::borrow::Borrow;
 <span class="kw">use </span>core::cmp::Ordering::{<span class="self">self</span>, Equal, Greater, Less};
 <span class="kw">use </span>core::cmp::{max, min};
 <span class="kw">use </span>core::fmt::{<span class="self">self</span>, Debug};
 <span class="kw">use </span>core::hash::{Hash, Hasher};
-<span class="kw">use </span>core::iter::{FromIterator, FusedIterator, Peekable};
+<span class="kw">use </span>core::iter::{FusedIterator, Peekable};
 <span class="kw">use </span>core::mem::ManuallyDrop;
 <span class="kw">use </span>core::ops::{BitAnd, BitOr, BitXor, RangeBounds, Sub};
 
@@ -1811,9 +1831,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::alloc::{Allocator, Global};
 
-<span class="comment">// FIXME(conventions): implement bounded iterators
-
-</span><span class="doccomment">/// An ordered set based on a B-Tree.
+<span class="doccomment">/// An ordered set based on a B-Tree.
 ///
 /// See [`BTreeMap`]&#39;s documentation for a detailed discussion of this collection&#39;s performance
 /// benefits and drawbacks.
@@ -1828,7 +1846,6 @@
 /// Iterators returned by [`BTreeSet::iter`] produce their items in order, and take worst-case
 /// logarithmic and amortized constant time per item returned.
 ///
-/// [`Ord`]: core::cmp::Ord
 /// [`Cell`]: core::cell::Cell
 /// [`RefCell`]: core::cell::RefCell
 ///
@@ -1945,7 +1962,6 @@
 /// (provided by the [`IntoIterator`] trait). See its documentation for more.
 ///
 /// [`into_iter`]: BTreeSet#method.into_iter
-/// [`IntoIterator`]: core::iter::IntoIterator
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[derive(Debug)]
 </span><span class="kw">pub struct </span>IntoIter&lt;
@@ -2799,7 +2815,7 @@
         </span>T: Ord,
         F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
     {
-        <span class="self">self</span>.drain_filter(|v| !f(v));
+        <span class="self">self</span>.extract_if(|v| !f(v)).for_each(drop);
     }
 
     <span class="doccomment">/// Moves all elements from `other` into `self`, leaving `other` empty.
@@ -2884,55 +2900,39 @@
     /// yielded. If the closure returns `false`, or panics, the element remains
     /// in the set and will not be yielded.
     ///
-    /// If the iterator is only partially consumed or not consumed at all, each
-    /// of the remaining elements is still subjected to the closure and removed
-    /// and dropped if it returns `true`.
+    /// If the returned `ExtractIf` is not exhausted, e.g. because it is dropped without iterating
+    /// or the iteration short-circuits, then the remaining elements will be retained.
+    /// Use [`retain`] with a negated predicate if you do not need the returned iterator.
     ///
-    /// It is unspecified how many more elements will be subjected to the
-    /// closure if a panic occurs in the closure, or if a panic occurs while
-    /// dropping an element, or if the `DrainFilter` itself is leaked.
-    ///
+    /// [`retain`]: BTreeSet::retain
     /// # Examples
     ///
     /// Splitting a set into even and odd values, reusing the original set:
     ///
     /// ```
-    /// #![feature(btree_drain_filter)]
+    /// #![feature(btree_extract_if)]
     /// use std::collections::BTreeSet;
     ///
     /// let mut set: BTreeSet&lt;i32&gt; = (0..8).collect();
-    /// let evens: BTreeSet&lt;_&gt; = set.drain_filter(|v| v % 2 == 0).collect();
+    /// let evens: BTreeSet&lt;_&gt; = set.extract_if(|v| v % 2 == 0).collect();
     /// let odds = set;
     /// assert_eq!(evens.into_iter().collect::&lt;Vec&lt;_&gt;&gt;(), vec![0, 2, 4, 6]);
     /// assert_eq!(odds.into_iter().collect::&lt;Vec&lt;_&gt;&gt;(), vec![1, 3, 5, 7]);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-    </span><span class="kw">pub fn </span>drain_filter&lt;<span class="lifetime">&#39;a</span>, F&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, pred: F) -&gt; DrainFilter&lt;<span class="lifetime">&#39;a</span>, T, F, A&gt;
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+    </span><span class="kw">pub fn </span>extract_if&lt;<span class="lifetime">&#39;a</span>, F&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, pred: F) -&gt; ExtractIf&lt;<span class="lifetime">&#39;a</span>, T, F, A&gt;
     <span class="kw">where
         </span>T: Ord,
         F: <span class="lifetime">&#39;a </span>+ FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
     {
-        <span class="kw">let </span>(inner, alloc) = <span class="self">self</span>.map.drain_filter_inner();
-        DrainFilter { pred, inner, alloc }
+        <span class="kw">let </span>(inner, alloc) = <span class="self">self</span>.map.extract_if_inner();
+        ExtractIf { pred, inner, alloc }
     }
 
     <span class="doccomment">/// Gets an iterator that visits the elements in the `BTreeSet` in ascending
     /// order.
     ///
     /// # Examples
-    ///
-    /// ```
-    /// use std::collections::BTreeSet;
-    ///
-    /// let set = BTreeSet::from([1, 2, 3]);
-    /// let mut set_iter = set.iter();
-    /// assert_eq!(set_iter.next(), Some(&amp;1));
-    /// assert_eq!(set_iter.next(), Some(&amp;2));
-    /// assert_eq!(set_iter.next(), Some(&amp;3));
-    /// assert_eq!(set_iter.next(), None);
-    /// ```
-    ///
-    /// Values returned by the iterator are returned in ascending order:
     ///
     /// ```
     /// use std::collections::BTreeSet;
@@ -3075,9 +3075,10 @@
     }
 }
 
-<span class="doccomment">/// An iterator produced by calling `drain_filter` on BTreeSet.
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">pub struct </span>DrainFilter&lt;
+<span class="doccomment">/// An iterator produced by calling `extract_if` on BTreeSet.
+</span><span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+#[must_use = <span class="string">&quot;iterators are lazy and do nothing unless consumed&quot;</span>]
+</span><span class="kw">pub struct </span>ExtractIf&lt;
     <span class="lifetime">&#39;a</span>,
     T,
     F,
@@ -3087,34 +3088,24 @@
     F: <span class="lifetime">&#39;a </span>+ FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
 {
     pred: F,
-    inner: <span class="kw">super</span>::map::DrainFilterInner&lt;<span class="lifetime">&#39;a</span>, T, SetValZST&gt;,
+    inner: <span class="kw">super</span>::map::ExtractIfInner&lt;<span class="lifetime">&#39;a</span>, T, SetValZST&gt;,
     <span class="doccomment">/// The BTreeMap will outlive this IntoIter so we don&#39;t care about drop order for `alloc`.
     </span>alloc: A,
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, F, A: Allocator + Clone&gt; Drop <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
-<span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
-{
-    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.for_each(drop);
-    }
-}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, F, A: Allocator + Clone&gt; fmt::Debug <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T, F, A: Allocator + Clone&gt; fmt::Debug <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
 <span class="kw">where
     </span>T: fmt::Debug,
     F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
 {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_tuple(<span class="string">&quot;DrainFilter&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.peek().map(|(k, <span class="kw">_</span>)| k)).finish()
+        f.debug_tuple(<span class="string">&quot;ExtractIf&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.peek().map(|(k, <span class="kw">_</span>)| k)).finish()
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, F, A: Allocator + Clone&gt; Iterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T, F, A: Allocator + Clone&gt; Iterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt;
 <span class="kw">where
     </span>F: <span class="lifetime">&#39;a </span>+ FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool,
 {
@@ -3131,11 +3122,8 @@
     }
 }
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;btree_drain_filter&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T, F, A: Allocator + Clone&gt; FusedIterator <span class="kw">for </span>DrainFilter&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt; <span class="kw">where
-    </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool
-{
-}
+<span class="attr">#[unstable(feature = <span class="string">&quot;btree_extract_if&quot;</span>, issue = <span class="string">&quot;70530&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T, F, A: Allocator + Clone&gt; FusedIterator <span class="kw">for </span>ExtractIf&lt;<span class="lifetime">&#39;_</span>, T, F, A&gt; <span class="kw">where </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; bool {}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T: Ord, A: Allocator + Clone&gt; Extend&lt;T&gt; <span class="kw">for </span>BTreeSet&lt;T, A&gt; {
@@ -3301,11 +3289,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T: Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T: Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -3337,6 +3331,21 @@
         <span class="self">self</span>.iter.size_hint()
     }
 }
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="doccomment">/// Creates an empty `btree_set::Iter`.
+    ///
+    /// ```
+    /// # use std::collections::btree_set;
+    /// let iter: btree_set::Iter&lt;&#39;_, u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Iter { iter: Default::default() }
+    }
+}
+
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T, A: Allocator + Clone&gt; DoubleEndedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {
     <span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
@@ -3352,6 +3361,23 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T, A: Allocator + Clone&gt; FusedIterator <span class="kw">for </span>IntoIter&lt;T, A&gt; {}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T, A&gt; Default <span class="kw">for </span>IntoIter&lt;T, A&gt;
+<span class="kw">where
+    </span>A: Allocator + Default + Clone,
+{
+    <span class="doccomment">/// Creates an empty `btree_set::IntoIter`.
+    ///
+    /// ```
+    /// # use std::collections::btree_set;
+    /// let iter: btree_set::IntoIter&lt;u8&gt; = Default::default();
+    /// assert_eq!(iter.len(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        IntoIter { iter: Default::default() }
+    }
+}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;btree_range&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T&gt; Clone <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;_</span>, T&gt; {
@@ -3372,11 +3398,17 @@
         <span class="self">self</span>.next_back()
     }
 
-    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; {
+    <span class="kw">fn </span>min(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T: Ord,
+    {
         <span class="self">self</span>.next()
     }
 
-    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt; {
+    <span class="kw">fn </span>max(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T&gt;
+    <span class="kw">where
+        </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T: Ord,
+    {
         <span class="self">self</span>.next_back()
     }
 }
@@ -3390,6 +3422,20 @@
 
 <span class="attr">#[stable(feature = <span class="string">&quot;fused&quot;</span>, since = <span class="string">&quot;1.26.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T&gt; FusedIterator <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+
+<span class="attr">#[stable(feature = <span class="string">&quot;default_iters&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>Range&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="doccomment">/// Creates an empty `btree_set::Range`.
+    ///
+    /// ```
+    /// # use std::collections::btree_set;
+    /// let iter: btree_set::Range&lt;&#39;_, u8&gt; = Default::default();
+    /// assert_eq!(iter.count(), 0);
+    /// ```
+    </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Range { iter: Default::default() }
+    }
+}
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">impl</span>&lt;T, A: Allocator + Clone&gt; Clone <span class="kw">for </span>Difference&lt;<span class="lifetime">&#39;_</span>, T, A&gt; {
@@ -3584,5 +3630,4 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

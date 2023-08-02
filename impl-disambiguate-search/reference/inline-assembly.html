@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -81,16 +84,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="notation.html"><strong aria-hidden="true">1.</strong> Notation</a></li><li class="chapter-item expanded "><a href="lexical-structure.html"><strong aria-hidden="true">2.</strong> Lexical structure</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="input-format.html"><strong aria-hidden="true">2.1.</strong> Input format</a></li><li class="chapter-item expanded "><a href="keywords.html"><strong aria-hidden="true">2.2.</strong> Keywords</a></li><li class="chapter-item expanded "><a href="identifiers.html"><strong aria-hidden="true">2.3.</strong> Identifiers</a></li><li class="chapter-item expanded "><a href="comments.html"><strong aria-hidden="true">2.4.</strong> Comments</a></li><li class="chapter-item expanded "><a href="whitespace.html"><strong aria-hidden="true">2.5.</strong> Whitespace</a></li><li class="chapter-item expanded "><a href="tokens.html"><strong aria-hidden="true">2.6.</strong> Tokens</a></li></ol></li><li class="chapter-item expanded "><a href="macros.html"><strong aria-hidden="true">3.</strong> Macros</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macros-by-example.html"><strong aria-hidden="true">3.1.</strong> Macros By Example</a></li><li class="chapter-item expanded "><a href="procedural-macros.html"><strong aria-hidden="true">3.2.</strong> Procedural Macros</a></li></ol></li><li class="chapter-item expanded "><a href="crates-and-source-files.html"><strong aria-hidden="true">4.</strong> Crates and source files</a></li><li class="chapter-item expanded "><a href="conditional-compilation.html"><strong aria-hidden="true">5.</strong> Conditional compilation</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">6.</strong> Items</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="items/modules.html"><strong aria-hidden="true">6.1.</strong> Modules</a></li><li class="chapter-item expanded "><a href="items/extern-crates.html"><strong aria-hidden="true">6.2.</strong> Extern crates</a></li><li class="chapter-item expanded "><a href="items/use-declarations.html"><strong aria-hidden="true">6.3.</strong> Use declarations</a></li><li class="chapter-item expanded "><a href="items/functions.html"><strong aria-hidden="true">6.4.</strong> Functions</a></li><li class="chapter-item expanded "><a href="items/type-aliases.html"><strong aria-hidden="true">6.5.</strong> Type aliases</a></li><li class="chapter-item expanded "><a href="items/structs.html"><strong aria-hidden="true">6.6.</strong> Structs</a></li><li class="chapter-item expanded "><a href="items/enumerations.html"><strong aria-hidden="true">6.7.</strong> Enumerations</a></li><li class="chapter-item expanded "><a href="items/unions.html"><strong aria-hidden="true">6.8.</strong> Unions</a></li><li class="chapter-item expanded "><a href="items/constant-items.html"><strong aria-hidden="true">6.9.</strong> Constant items</a></li><li class="chapter-item expanded "><a href="items/static-items.html"><strong aria-hidden="true">6.10.</strong> Static items</a></li><li class="chapter-item expanded "><a href="items/traits.html"><strong aria-hidden="true">6.11.</strong> Traits</a></li><li class="chapter-item expanded "><a href="items/implementations.html"><strong aria-hidden="true">6.12.</strong> Implementations</a></li><li class="chapter-item expanded "><a href="items/external-blocks.html"><strong aria-hidden="true">6.13.</strong> External blocks</a></li><li class="chapter-item expanded "><a href="items/generics.html"><strong aria-hidden="true">6.14.</strong> Generic parameters</a></li><li class="chapter-item expanded "><a href="items/associated-items.html"><strong aria-hidden="true">6.15.</strong> Associated Items</a></li></ol></li><li class="chapter-item expanded "><a href="attributes.html"><strong aria-hidden="true">7.</strong> Attributes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attributes/testing.html"><strong aria-hidden="true">7.1.</strong> Testing</a></li><li class="chapter-item expanded "><a href="attributes/derive.html"><strong aria-hidden="true">7.2.</strong> Derive</a></li><li class="chapter-item expanded "><a href="attributes/diagnostics.html"><strong aria-hidden="true">7.3.</strong> Diagnostics</a></li><li class="chapter-item expanded "><a href="attributes/codegen.html"><strong aria-hidden="true">7.4.</strong> Code generation</a></li><li class="chapter-item expanded "><a href="attributes/limits.html"><strong aria-hidden="true">7.5.</strong> Limits</a></li><li class="chapter-item expanded "><a href="attributes/type_system.html"><strong aria-hidden="true">7.6.</strong> Type System</a></li></ol></li><li class="chapter-item expanded "><a href="statements-and-expressions.html"><strong aria-hidden="true">8.</strong> Statements and expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">8.1.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">8.2.</strong> Expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="expressions/literal-expr.html"><strong aria-hidden="true">8.2.1.</strong> Literal expressions</a></li><li class="chapter-item expanded "><a href="expressions/path-expr.html"><strong aria-hidden="true">8.2.2.</strong> Path expressions</a></li><li class="chapter-item expanded "><a href="expressions/block-expr.html"><strong aria-hidden="true">8.2.3.</strong> Block expressions</a></li><li class="chapter-item expanded "><a href="expressions/operator-expr.html"><strong aria-hidden="true">8.2.4.</strong> Operator expressions</a></li><li class="chapter-item expanded "><a href="expressions/grouped-expr.html"><strong aria-hidden="true">8.2.5.</strong> Grouped expressions</a></li><li class="chapter-item expanded "><a href="expressions/array-expr.html"><strong aria-hidden="true">8.2.6.</strong> Array and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/tuple-expr.html"><strong aria-hidden="true">8.2.7.</strong> Tuple and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/struct-expr.html"><strong aria-hidden="true">8.2.8.</strong> Struct expressions</a></li><li class="chapter-item expanded "><a href="expressions/call-expr.html"><strong aria-hidden="true">8.2.9.</strong> Call expressions</a></li><li class="chapter-item expanded "><a href="expressions/method-call-expr.html"><strong aria-hidden="true">8.2.10.</strong> Method call expressions</a></li><li class="chapter-item expanded "><a href="expressions/field-expr.html"><strong aria-hidden="true">8.2.11.</strong> Field access expressions</a></li><li class="chapter-item expanded "><a href="expressions/closure-expr.html"><strong aria-hidden="true">8.2.12.</strong> Closure expressions</a></li><li class="chapter-item expanded "><a href="expressions/loop-expr.html"><strong aria-hidden="true">8.2.13.</strong> Loop expressions</a></li><li class="chapter-item expanded "><a href="expressions/range-expr.html"><strong aria-hidden="true">8.2.14.</strong> Range expressions</a></li><li class="chapter-item expanded "><a href="expressions/if-expr.html"><strong aria-hidden="true">8.2.15.</strong> If and if let expressions</a></li><li class="chapter-item expanded "><a href="expressions/match-expr.html"><strong aria-hidden="true">8.2.16.</strong> Match expressions</a></li><li class="chapter-item expanded "><a href="expressions/return-expr.html"><strong aria-hidden="true">8.2.17.</strong> Return expressions</a></li><li class="chapter-item expanded "><a href="expressions/await-expr.html"><strong aria-hidden="true">8.2.18.</strong> Await expressions</a></li><li class="chapter-item expanded "><a href="expressions/underscore-expr.html"><strong aria-hidden="true">8.2.19.</strong> Underscore expressions</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="patterns.html"><strong aria-hidden="true">9.</strong> Patterns</a></li><li class="chapter-item expanded "><a href="type-system.html"><strong aria-hidden="true">10.</strong> Type system</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">10.1.</strong> Types</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types/boolean.html"><strong aria-hidden="true">10.1.1.</strong> Boolean type</a></li><li class="chapter-item expanded "><a href="types/numeric.html"><strong aria-hidden="true">10.1.2.</strong> Numeric types</a></li><li class="chapter-item expanded "><a href="types/textual.html"><strong aria-hidden="true">10.1.3.</strong> Textual types</a></li><li class="chapter-item expanded "><a href="types/never.html"><strong aria-hidden="true">10.1.4.</strong> Never type</a></li><li class="chapter-item expanded "><a href="types/tuple.html"><strong aria-hidden="true">10.1.5.</strong> Tuple types</a></li><li class="chapter-item expanded "><a href="types/array.html"><strong aria-hidden="true">10.1.6.</strong> Array types</a></li><li class="chapter-item expanded "><a href="types/slice.html"><strong aria-hidden="true">10.1.7.</strong> Slice types</a></li><li class="chapter-item expanded "><a href="types/struct.html"><strong aria-hidden="true">10.1.8.</strong> Struct types</a></li><li class="chapter-item expanded "><a href="types/enum.html"><strong aria-hidden="true">10.1.9.</strong> Enumerated types</a></li><li class="chapter-item expanded "><a href="types/union.html"><strong aria-hidden="true">10.1.10.</strong> Union types</a></li><li class="chapter-item expanded "><a href="types/function-item.html"><strong aria-hidden="true">10.1.11.</strong> Function item types</a></li><li class="chapter-item expanded "><a href="types/closure.html"><strong aria-hidden="true">10.1.12.</strong> Closure types</a></li><li class="chapter-item expanded "><a href="types/pointer.html"><strong aria-hidden="true">10.1.13.</strong> Pointer types</a></li><li class="chapter-item expanded "><a href="types/function-pointer.html"><strong aria-hidden="true">10.1.14.</strong> Function pointer types</a></li><li class="chapter-item expanded "><a href="types/trait-object.html"><strong aria-hidden="true">10.1.15.</strong> Trait object types</a></li><li class="chapter-item expanded "><a href="types/impl-trait.html"><strong aria-hidden="true">10.1.16.</strong> Impl trait type</a></li><li class="chapter-item expanded "><a href="types/parameters.html"><strong aria-hidden="true">10.1.17.</strong> Type parameters</a></li><li class="chapter-item expanded "><a href="types/inferred.html"><strong aria-hidden="true">10.1.18.</strong> Inferred type</a></li></ol></li><li class="chapter-item expanded "><a href="dynamically-sized-types.html"><strong aria-hidden="true">10.2.</strong> Dynamically Sized Types</a></li><li class="chapter-item expanded "><a href="type-layout.html"><strong aria-hidden="true">10.3.</strong> Type layout</a></li><li class="chapter-item expanded "><a href="interior-mutability.html"><strong aria-hidden="true">10.4.</strong> Interior mutability</a></li><li class="chapter-item expanded "><a href="subtyping.html"><strong aria-hidden="true">10.5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="trait-bounds.html"><strong aria-hidden="true">10.6.</strong> Trait and lifetime bounds</a></li><li class="chapter-item expanded "><a href="type-coercions.html"><strong aria-hidden="true">10.7.</strong> Type coercions</a></li><li class="chapter-item expanded "><a href="destructors.html"><strong aria-hidden="true">10.8.</strong> Destructors</a></li><li class="chapter-item expanded "><a href="lifetime-elision.html"><strong aria-hidden="true">10.9.</strong> Lifetime elision</a></li></ol></li><li class="chapter-item expanded "><a href="special-types-and-traits.html"><strong aria-hidden="true">11.</strong> Special types and traits</a></li><li class="chapter-item expanded "><a href="names.html"><strong aria-hidden="true">12.</strong> Names</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="names/namespaces.html"><strong aria-hidden="true">12.1.</strong> Namespaces</a></li><li class="chapter-item expanded "><a href="names/scopes.html"><strong aria-hidden="true">12.2.</strong> Scopes</a></li><li class="chapter-item expanded "><a href="names/preludes.html"><strong aria-hidden="true">12.3.</strong> Preludes</a></li><li class="chapter-item expanded "><a href="paths.html"><strong aria-hidden="true">12.4.</strong> Paths</a></li><li class="chapter-item expanded "><a href="names/name-resolution.html"><strong aria-hidden="true">12.5.</strong> Name resolution</a></li><li class="chapter-item expanded "><a href="visibility-and-privacy.html"><strong aria-hidden="true">12.6.</strong> Visibility and privacy</a></li></ol></li><li class="chapter-item expanded "><a href="memory-model.html"><strong aria-hidden="true">13.</strong> Memory model</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="memory-allocation-and-lifetime.html"><strong aria-hidden="true">13.1.</strong> Memory allocation and lifetime</a></li><li class="chapter-item expanded "><a href="variables.html"><strong aria-hidden="true">13.2.</strong> Variables</a></li></ol></li><li class="chapter-item expanded "><a href="linkage.html"><strong aria-hidden="true">14.</strong> Linkage</a></li><li class="chapter-item expanded "><a href="inline-assembly.html" class="active"><strong aria-hidden="true">15.</strong> Inline assembly</a></li><li class="chapter-item expanded "><a href="unsafety.html"><strong aria-hidden="true">16.</strong> Unsafety</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="unsafe-keyword.html"><strong aria-hidden="true">16.1.</strong> The unsafe keyword</a></li><li class="chapter-item expanded "><a href="behavior-considered-undefined.html"><strong aria-hidden="true">16.2.</strong> Behavior considered undefined</a></li><li class="chapter-item expanded "><a href="behavior-not-considered-unsafe.html"><strong aria-hidden="true">16.3.</strong> Behavior not considered unsafe</a></li></ol></li><li class="chapter-item expanded "><a href="const_eval.html"><strong aria-hidden="true">17.</strong> Constant Evaluation</a></li><li class="chapter-item expanded "><a href="abi.html"><strong aria-hidden="true">18.</strong> Application Binary Interface</a></li><li class="chapter-item expanded "><a href="runtime.html"><strong aria-hidden="true">19.</strong> The Rust runtime</a></li><li class="chapter-item expanded "><a href="appendices.html"><strong aria-hidden="true">20.</strong> Appendices</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro-ambiguity.html"><strong aria-hidden="true">20.1.</strong> Macro Follow-Set Ambiguity Formal Specification</a></li><li class="chapter-item expanded "><a href="influences.html"><strong aria-hidden="true">20.2.</strong> Influences</a></li><li class="chapter-item expanded "><a href="glossary.html"><strong aria-hidden="true">20.3.</strong> Glossary</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="notation.html"><strong aria-hidden="true">1.</strong> Notation</a></li><li class="chapter-item expanded "><a href="lexical-structure.html"><strong aria-hidden="true">2.</strong> Lexical structure</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="input-format.html"><strong aria-hidden="true">2.1.</strong> Input format</a></li><li class="chapter-item expanded "><a href="keywords.html"><strong aria-hidden="true">2.2.</strong> Keywords</a></li><li class="chapter-item expanded "><a href="identifiers.html"><strong aria-hidden="true">2.3.</strong> Identifiers</a></li><li class="chapter-item expanded "><a href="comments.html"><strong aria-hidden="true">2.4.</strong> Comments</a></li><li class="chapter-item expanded "><a href="whitespace.html"><strong aria-hidden="true">2.5.</strong> Whitespace</a></li><li class="chapter-item expanded "><a href="tokens.html"><strong aria-hidden="true">2.6.</strong> Tokens</a></li></ol></li><li class="chapter-item expanded "><a href="macros.html"><strong aria-hidden="true">3.</strong> Macros</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macros-by-example.html"><strong aria-hidden="true">3.1.</strong> Macros By Example</a></li><li class="chapter-item expanded "><a href="procedural-macros.html"><strong aria-hidden="true">3.2.</strong> Procedural Macros</a></li></ol></li><li class="chapter-item expanded "><a href="crates-and-source-files.html"><strong aria-hidden="true">4.</strong> Crates and source files</a></li><li class="chapter-item expanded "><a href="conditional-compilation.html"><strong aria-hidden="true">5.</strong> Conditional compilation</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">6.</strong> Items</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="items/modules.html"><strong aria-hidden="true">6.1.</strong> Modules</a></li><li class="chapter-item expanded "><a href="items/extern-crates.html"><strong aria-hidden="true">6.2.</strong> Extern crates</a></li><li class="chapter-item expanded "><a href="items/use-declarations.html"><strong aria-hidden="true">6.3.</strong> Use declarations</a></li><li class="chapter-item expanded "><a href="items/functions.html"><strong aria-hidden="true">6.4.</strong> Functions</a></li><li class="chapter-item expanded "><a href="items/type-aliases.html"><strong aria-hidden="true">6.5.</strong> Type aliases</a></li><li class="chapter-item expanded "><a href="items/structs.html"><strong aria-hidden="true">6.6.</strong> Structs</a></li><li class="chapter-item expanded "><a href="items/enumerations.html"><strong aria-hidden="true">6.7.</strong> Enumerations</a></li><li class="chapter-item expanded "><a href="items/unions.html"><strong aria-hidden="true">6.8.</strong> Unions</a></li><li class="chapter-item expanded "><a href="items/constant-items.html"><strong aria-hidden="true">6.9.</strong> Constant items</a></li><li class="chapter-item expanded "><a href="items/static-items.html"><strong aria-hidden="true">6.10.</strong> Static items</a></li><li class="chapter-item expanded "><a href="items/traits.html"><strong aria-hidden="true">6.11.</strong> Traits</a></li><li class="chapter-item expanded "><a href="items/implementations.html"><strong aria-hidden="true">6.12.</strong> Implementations</a></li><li class="chapter-item expanded "><a href="items/external-blocks.html"><strong aria-hidden="true">6.13.</strong> External blocks</a></li><li class="chapter-item expanded "><a href="items/generics.html"><strong aria-hidden="true">6.14.</strong> Generic parameters</a></li><li class="chapter-item expanded "><a href="items/associated-items.html"><strong aria-hidden="true">6.15.</strong> Associated Items</a></li></ol></li><li class="chapter-item expanded "><a href="attributes.html"><strong aria-hidden="true">7.</strong> Attributes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attributes/testing.html"><strong aria-hidden="true">7.1.</strong> Testing</a></li><li class="chapter-item expanded "><a href="attributes/derive.html"><strong aria-hidden="true">7.2.</strong> Derive</a></li><li class="chapter-item expanded "><a href="attributes/diagnostics.html"><strong aria-hidden="true">7.3.</strong> Diagnostics</a></li><li class="chapter-item expanded "><a href="attributes/codegen.html"><strong aria-hidden="true">7.4.</strong> Code generation</a></li><li class="chapter-item expanded "><a href="attributes/limits.html"><strong aria-hidden="true">7.5.</strong> Limits</a></li><li class="chapter-item expanded "><a href="attributes/type_system.html"><strong aria-hidden="true">7.6.</strong> Type System</a></li><li class="chapter-item expanded "><a href="attributes/debugger.html"><strong aria-hidden="true">7.7.</strong> Debugger</a></li></ol></li><li class="chapter-item expanded "><a href="statements-and-expressions.html"><strong aria-hidden="true">8.</strong> Statements and expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">8.1.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">8.2.</strong> Expressions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="expressions/literal-expr.html"><strong aria-hidden="true">8.2.1.</strong> Literal expressions</a></li><li class="chapter-item expanded "><a href="expressions/path-expr.html"><strong aria-hidden="true">8.2.2.</strong> Path expressions</a></li><li class="chapter-item expanded "><a href="expressions/block-expr.html"><strong aria-hidden="true">8.2.3.</strong> Block expressions</a></li><li class="chapter-item expanded "><a href="expressions/operator-expr.html"><strong aria-hidden="true">8.2.4.</strong> Operator expressions</a></li><li class="chapter-item expanded "><a href="expressions/grouped-expr.html"><strong aria-hidden="true">8.2.5.</strong> Grouped expressions</a></li><li class="chapter-item expanded "><a href="expressions/array-expr.html"><strong aria-hidden="true">8.2.6.</strong> Array and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/tuple-expr.html"><strong aria-hidden="true">8.2.7.</strong> Tuple and index expressions</a></li><li class="chapter-item expanded "><a href="expressions/struct-expr.html"><strong aria-hidden="true">8.2.8.</strong> Struct expressions</a></li><li class="chapter-item expanded "><a href="expressions/call-expr.html"><strong aria-hidden="true">8.2.9.</strong> Call expressions</a></li><li class="chapter-item expanded "><a href="expressions/method-call-expr.html"><strong aria-hidden="true">8.2.10.</strong> Method call expressions</a></li><li class="chapter-item expanded "><a href="expressions/field-expr.html"><strong aria-hidden="true">8.2.11.</strong> Field access expressions</a></li><li class="chapter-item expanded "><a href="expressions/closure-expr.html"><strong aria-hidden="true">8.2.12.</strong> Closure expressions</a></li><li class="chapter-item expanded "><a href="expressions/loop-expr.html"><strong aria-hidden="true">8.2.13.</strong> Loop expressions</a></li><li class="chapter-item expanded "><a href="expressions/range-expr.html"><strong aria-hidden="true">8.2.14.</strong> Range expressions</a></li><li class="chapter-item expanded "><a href="expressions/if-expr.html"><strong aria-hidden="true">8.2.15.</strong> If and if let expressions</a></li><li class="chapter-item expanded "><a href="expressions/match-expr.html"><strong aria-hidden="true">8.2.16.</strong> Match expressions</a></li><li class="chapter-item expanded "><a href="expressions/return-expr.html"><strong aria-hidden="true">8.2.17.</strong> Return expressions</a></li><li class="chapter-item expanded "><a href="expressions/await-expr.html"><strong aria-hidden="true">8.2.18.</strong> Await expressions</a></li><li class="chapter-item expanded "><a href="expressions/underscore-expr.html"><strong aria-hidden="true">8.2.19.</strong> Underscore expressions</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="patterns.html"><strong aria-hidden="true">9.</strong> Patterns</a></li><li class="chapter-item expanded "><a href="type-system.html"><strong aria-hidden="true">10.</strong> Type system</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">10.1.</strong> Types</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="types/boolean.html"><strong aria-hidden="true">10.1.1.</strong> Boolean type</a></li><li class="chapter-item expanded "><a href="types/numeric.html"><strong aria-hidden="true">10.1.2.</strong> Numeric types</a></li><li class="chapter-item expanded "><a href="types/textual.html"><strong aria-hidden="true">10.1.3.</strong> Textual types</a></li><li class="chapter-item expanded "><a href="types/never.html"><strong aria-hidden="true">10.1.4.</strong> Never type</a></li><li class="chapter-item expanded "><a href="types/tuple.html"><strong aria-hidden="true">10.1.5.</strong> Tuple types</a></li><li class="chapter-item expanded "><a href="types/array.html"><strong aria-hidden="true">10.1.6.</strong> Array types</a></li><li class="chapter-item expanded "><a href="types/slice.html"><strong aria-hidden="true">10.1.7.</strong> Slice types</a></li><li class="chapter-item expanded "><a href="types/struct.html"><strong aria-hidden="true">10.1.8.</strong> Struct types</a></li><li class="chapter-item expanded "><a href="types/enum.html"><strong aria-hidden="true">10.1.9.</strong> Enumerated types</a></li><li class="chapter-item expanded "><a href="types/union.html"><strong aria-hidden="true">10.1.10.</strong> Union types</a></li><li class="chapter-item expanded "><a href="types/function-item.html"><strong aria-hidden="true">10.1.11.</strong> Function item types</a></li><li class="chapter-item expanded "><a href="types/closure.html"><strong aria-hidden="true">10.1.12.</strong> Closure types</a></li><li class="chapter-item expanded "><a href="types/pointer.html"><strong aria-hidden="true">10.1.13.</strong> Pointer types</a></li><li class="chapter-item expanded "><a href="types/function-pointer.html"><strong aria-hidden="true">10.1.14.</strong> Function pointer types</a></li><li class="chapter-item expanded "><a href="types/trait-object.html"><strong aria-hidden="true">10.1.15.</strong> Trait object types</a></li><li class="chapter-item expanded "><a href="types/impl-trait.html"><strong aria-hidden="true">10.1.16.</strong> Impl trait type</a></li><li class="chapter-item expanded "><a href="types/parameters.html"><strong aria-hidden="true">10.1.17.</strong> Type parameters</a></li><li class="chapter-item expanded "><a href="types/inferred.html"><strong aria-hidden="true">10.1.18.</strong> Inferred type</a></li></ol></li><li class="chapter-item expanded "><a href="dynamically-sized-types.html"><strong aria-hidden="true">10.2.</strong> Dynamically Sized Types</a></li><li class="chapter-item expanded "><a href="type-layout.html"><strong aria-hidden="true">10.3.</strong> Type layout</a></li><li class="chapter-item expanded "><a href="interior-mutability.html"><strong aria-hidden="true">10.4.</strong> Interior mutability</a></li><li class="chapter-item expanded "><a href="subtyping.html"><strong aria-hidden="true">10.5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="trait-bounds.html"><strong aria-hidden="true">10.6.</strong> Trait and lifetime bounds</a></li><li class="chapter-item expanded "><a href="type-coercions.html"><strong aria-hidden="true">10.7.</strong> Type coercions</a></li><li class="chapter-item expanded "><a href="destructors.html"><strong aria-hidden="true">10.8.</strong> Destructors</a></li><li class="chapter-item expanded "><a href="lifetime-elision.html"><strong aria-hidden="true">10.9.</strong> Lifetime elision</a></li></ol></li><li class="chapter-item expanded "><a href="special-types-and-traits.html"><strong aria-hidden="true">11.</strong> Special types and traits</a></li><li class="chapter-item expanded "><a href="names.html"><strong aria-hidden="true">12.</strong> Names</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="names/namespaces.html"><strong aria-hidden="true">12.1.</strong> Namespaces</a></li><li class="chapter-item expanded "><a href="names/scopes.html"><strong aria-hidden="true">12.2.</strong> Scopes</a></li><li class="chapter-item expanded "><a href="names/preludes.html"><strong aria-hidden="true">12.3.</strong> Preludes</a></li><li class="chapter-item expanded "><a href="paths.html"><strong aria-hidden="true">12.4.</strong> Paths</a></li><li class="chapter-item expanded "><a href="names/name-resolution.html"><strong aria-hidden="true">12.5.</strong> Name resolution</a></li><li class="chapter-item expanded "><a href="visibility-and-privacy.html"><strong aria-hidden="true">12.6.</strong> Visibility and privacy</a></li></ol></li><li class="chapter-item expanded "><a href="memory-model.html"><strong aria-hidden="true">13.</strong> Memory model</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="memory-allocation-and-lifetime.html"><strong aria-hidden="true">13.1.</strong> Memory allocation and lifetime</a></li><li class="chapter-item expanded "><a href="variables.html"><strong aria-hidden="true">13.2.</strong> Variables</a></li></ol></li><li class="chapter-item expanded "><a href="linkage.html"><strong aria-hidden="true">14.</strong> Linkage</a></li><li class="chapter-item expanded "><a href="inline-assembly.html" class="active"><strong aria-hidden="true">15.</strong> Inline assembly</a></li><li class="chapter-item expanded "><a href="unsafety.html"><strong aria-hidden="true">16.</strong> Unsafety</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="unsafe-keyword.html"><strong aria-hidden="true">16.1.</strong> The unsafe keyword</a></li><li class="chapter-item expanded "><a href="behavior-considered-undefined.html"><strong aria-hidden="true">16.2.</strong> Behavior considered undefined</a></li><li class="chapter-item expanded "><a href="behavior-not-considered-unsafe.html"><strong aria-hidden="true">16.3.</strong> Behavior not considered unsafe</a></li></ol></li><li class="chapter-item expanded "><a href="const_eval.html"><strong aria-hidden="true">17.</strong> Constant Evaluation</a></li><li class="chapter-item expanded "><a href="abi.html"><strong aria-hidden="true">18.</strong> Application Binary Interface</a></li><li class="chapter-item expanded "><a href="runtime.html"><strong aria-hidden="true">19.</strong> The Rust runtime</a></li><li class="chapter-item expanded "><a href="appendices.html"><strong aria-hidden="true">20.</strong> Appendices</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro-ambiguity.html"><strong aria-hidden="true">20.1.</strong> Macro Follow-Set Ambiguity Formal Specification</a></li><li class="chapter-item expanded "><a href="influences.html"><strong aria-hidden="true">20.2.</strong> Influences</a></li><li class="chapter-item expanded "><a href="glossary.html"><strong aria-hidden="true">20.3.</strong> Glossary</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -157,11 +182,13 @@ It can be used to embed handwritten assembly in the assembly output generated by
 <li>ARM</li>
 <li>AArch64</li>
 <li>RISC-V</li>
+<li>LoongArch</li>
 </ul>
 <p>The compiler will emit an error if <code>asm!</code> is used on an unsupported target.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
+</span><span class="boring">#[cfg(target_arch = &quot;x86_64&quot;)] {
 </span>use std::arch::asm;
 
 // Multiply x by 6 using shifts and adds
@@ -177,20 +204,21 @@ unsafe {
     );
 }
 assert_eq!(x, 4 * 6);
-<span class="boring">}</span></code></pre></pre>
+<span class="boring">}
+</span><span class="boring">}</span></code></pre></pre>
 <h2 id="syntax"><a class="header" href="#syntax">Syntax</a></h2>
 <p>The following ABNF specifies the general syntax:</p>
 <pre><code class="language-text">format_string := STRING_LITERAL / RAW_STRING_LITERAL
 dir_spec := &quot;in&quot; / &quot;out&quot; / &quot;lateout&quot; / &quot;inout&quot; / &quot;inlateout&quot;
 reg_spec := &lt;register class&gt; / &quot;\&quot;&quot; &lt;explicit register&gt; &quot;\&quot;&quot;
 operand_expr := expr / &quot;_&quot; / expr &quot;=&gt;&quot; expr / expr &quot;=&gt;&quot; &quot;_&quot;
-reg_operand := dir_spec &quot;(&quot; reg_spec &quot;)&quot; operand_expr
-operand := reg_operand
+reg_operand := [ident &quot;=&quot;] dir_spec &quot;(&quot; reg_spec &quot;)&quot; operand_expr
 clobber_abi := &quot;clobber_abi(&quot; &lt;abi&gt; *(&quot;,&quot; &lt;abi&gt;) [&quot;,&quot;] &quot;)&quot;
 option := &quot;pure&quot; / &quot;nomem&quot; / &quot;readonly&quot; / &quot;preserves_flags&quot; / &quot;noreturn&quot; / &quot;nostack&quot; / &quot;att_syntax&quot; / &quot;raw&quot;
 options := &quot;options(&quot; option *(&quot;,&quot; option) [&quot;,&quot;] &quot;)&quot;
-asm := &quot;asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; [ident &quot;=&quot;] operand) *(&quot;,&quot; clobber_abi) *(&quot;,&quot; options) [&quot;,&quot;] &quot;)&quot;
-global_asm := &quot;global_asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; [ident &quot;=&quot;] operand) *(&quot;,&quot; options) [&quot;,&quot;] &quot;)&quot;
+operand := reg_operand / clobber_abi / options
+asm := &quot;asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; operand) [&quot;,&quot;] &quot;)&quot;
+global_asm := &quot;global_asm!(&quot; format_string *(&quot;,&quot; format_string) *(&quot;,&quot; operand) [&quot;,&quot;] &quot;)&quot;
 </code></pre>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
 <p>Inline assembly can be used in one of two ways.</p>
@@ -206,8 +234,7 @@ However, implicit named arguments (introduced by <a href="https://github.com/rus
 <p>An <code>asm!</code> invocation may have one or more template string arguments; an <code>asm!</code> with multiple template string arguments is treated as if all the strings were concatenated with a <code>\n</code> between them.
 The expected usage is for each template string argument to correspond to a line of assembly code.
 All template string arguments must appear before any other arguments.</p>
-<p>As with format strings, named arguments must appear after positional arguments.
-Explicit <a href="#register-operands">register operands</a> must appear at the end of the operand list, after named arguments if any.</p>
+<p>As with format strings, positional arguments must appear before named arguments and explicit <a href="#register-operands">register operands</a>.</p>
 <p>Explicit register operands cannot be used by placeholders in the template string.
 All other named and positional operands must appear at least once in the template string, otherwise a compiler error is generated.</p>
 <p>The exact assembly code syntax is target-specific and opaque to the compiler except for the way operands are substituted into the template string to form the code passed to the assembler.</p>
@@ -324,6 +351,8 @@ This includes architecture-specific vector types defined in <code>std::arch</cod
 <tr><td>RISC-V</td><td><code>reg</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[9-15]</code>, <code>x[16-31]</code> (non-RV32E)</td><td><code>r</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f[0-31]</code></td><td><code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td><code>v[0-31]</code></td><td>Only clobbers</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$r[23,30]</code></td><td><code>r</code></td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td><code>$f[0-31]</code></td><td><code>f</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -368,6 +397,8 @@ The availability of supported types for a particular register class may depend o
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f</code></td><td><code>f32</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>d</code></td><td><code>f64</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td>N/A</td><td>Only clobbers</td></tr>
+<tr><td>LoongArch64</td><td><code>reg</code></td><td>None</td><td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>f32</code>, <code>f64</code></td></tr>
+<tr><td>LoongArch64</td><td><code>freg</code></td><td>None</td><td><code>f32</code>, <code>f64</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -426,14 +457,26 @@ Here is the list of all supported register aliases:</p>
 <tr><td>RISC-V</td><td><code>f[10-17]</code></td><td><code>fa[0-7]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[18-27]</code></td><td><code>fs[2-11]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[28-31]</code></td><td><code>ft[8-11]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code></td><td><code>$zero</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r1</code></td><td><code>$ra</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code></td><td><code>$tp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r3</code></td><td><code>$sp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[4-11]</code></td><td><code>$a[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[12-20]</code></td><td><code>$t[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td></td></tr>
+<tr><td>LoongArch</td><td><code>$r22</code></td><td><code>$fp</code>, <code>$s9</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[23-31]</code></td><td><code>$s[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[0-7]</code></td><td><code>$fa[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[8-23]</code></td><td><code>$ft[0-15]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[24-31]</code></td><td><code>$fs[0-7]</code></td></tr>
 </tbody></table>
 </div>
 <p>Some registers cannot be used for input or output operands:</p>
 <div class="table-wrapper"><table><thead><tr><th>Architecture</th><th>Unsupported register</th><th>Reason</th></tr></thead><tbody>
 <tr><td>All</td><td><code>sp</code></td><td>The stack pointer must be restored to its original value at the end of an asm code block.</td></tr>
-<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
+<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V), <code>$fp</code> (LoongArch)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
 <tr><td>ARM</td><td><code>r7</code> or <code>r11</code></td><td>On ARM the frame pointer can be either <code>r7</code> or <code>r11</code> depending on the target. The frame pointer cannot be used as an input or output.</td></tr>
-<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
+<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V), <code>$s8</code> (LoongArch)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
 <tr><td>x86</td><td><code>ip</code></td><td>This is the program counter, not a real register.</td></tr>
 <tr><td>AArch64</td><td><code>xzr</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>AArch64</td><td><code>x18</code></td><td>This is an OS-reserved register on some AArch64 targets.</td></tr>
@@ -441,6 +484,9 @@ Here is the list of all supported register aliases:</p>
 <tr><td>ARM</td><td><code>r9</code></td><td>This is an OS-reserved register on some ARM targets.</td></tr>
 <tr><td>RISC-V</td><td><code>x0</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>RISC-V</td><td><code>gp</code>, <code>tp</code></td><td>These registers are reserved and cannot be used as inputs or outputs.</td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code> or <code>$zero</code></td><td>This is a constant zero register which can't be modified.</td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code> or <code>$tp</code></td><td>This is reserved for TLS.</td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td>This is reserved by the ABI.</td></tr>
 </tbody></table>
 </div>
 <p>The frame pointer and base pointer registers are reserved for internal use by LLVM. While <code>asm!</code> statements cannot explicitly specify the use of reserved registers, in some cases LLVM will allocate one of these reserved registers for <code>reg</code> operands. Assembly code making use of reserved registers should be careful since <code>reg</code> operands may use the same registers.</p>
@@ -483,6 +529,8 @@ Only one modifier is allowed per template placeholder.</p>
 <tr><td>ARM</td><td><code>qreg</code></td><td><code>e</code> / <code>f</code></td><td><code>d0</code> / <code>d1</code></td><td><code>e</code> / <code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>reg</code></td><td>None</td><td><code>x1</code></td><td>None</td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td>None</td><td><code>f0</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td>None</td><td><code>$r1</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td>None</td><td><code>$f0</code></td><td>None</td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -512,6 +560,7 @@ The following ABIs can be used with <code>clobber_abi</code>:</p>
 <tr><td>AArch64</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x[0-17]</code>, <code>x18</code>*, <code>x30</code>, <code>v[0-31]</code>, <code>p[0-15]</code>, <code>ffr</code></td></tr>
 <tr><td>ARM</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code>, <code>&quot;aapcs&quot;</code></td><td><code>r[0-3]</code>, <code>r12</code>, <code>r14</code>, <code>s[0-15]</code>, <code>d[0-7]</code>, <code>d[16-31]</code></td></tr>
 <tr><td>RISC-V</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[10-17]</code>, <code>x[28-31]</code>, <code>f[0-7]</code>, <code>f[10-17]</code>, <code>f[28-31]</code>, <code>v[0-31]</code></td></tr>
+<tr><td>LoongArch</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$f[0-23]</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -635,6 +684,11 @@ Behavior is also undefined if two executions of the <code>asm!</code> code with 
 <li>Vector extension state (<code>vtype</code>, <code>vl</code>, <code>vcsr</code>).</li>
 </ul>
 </li>
+<li>LoongArch
+<ul>
+<li>Floating-point condition flags in <code>$fcc[0-7]</code>.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>On x86, the direction flag (DF in <code>EFLAGS</code>) is clear on entry to an asm block and must be clear on exit.
@@ -673,6 +727,27 @@ The compiler is allowed to instantiate multiple copies of the <code>asm!</code> 
 <blockquote>
 <p><strong>Note</strong>: As a general rule, the flags covered by <code>preserves_flags</code> are those which are <em>not</em> preserved when performing a function call.</p>
 </blockquote>
+<h3 id="correctness-and-validity"><a class="header" href="#correctness-and-validity">Correctness and Validity</a></h3>
+<p>In addition to all of the previous rules, the string argument to <code>asm!</code> must ultimately become—
+after all other arguments are evaluated, formatting is performed, and operands are translated—
+assembly that is both syntactically correct and semantically valid for the target architecture.
+The formatting rules allow the compiler to generate assembly with correct syntax.
+Rules concerning operands permit valid translation of Rust operands into and out of <code>asm!</code>.
+Adherence to these rules is necessary, but not sufficient, for the final expanded assembly to be
+both correct and valid. For instance:</p>
+<ul>
+<li>arguments may be placed in positions which are syntactically incorrect after formatting</li>
+<li>an instruction may be correctly written, but given architecturally invalid operands</li>
+<li>an architecturally unspecified instruction may be assembled into unspecified code</li>
+<li>a set of instructions, each correct and valid, may cause undefined behavior if placed in immediate succession</li>
+</ul>
+<p>As a result, these rules are <em>non-exhaustive</em>. The compiler is not required to check the
+correctness and validity of the initial string nor the final assembly that is generated.
+The assembler may check for correctness and validity but is not required to do so.
+When using <code>asm!</code>, a typographical error may be sufficient to make a program unsound,
+and the rules for assembly may include thousands of pages of architectural reference manuals.
+Programmers should exercise appropriate care, as invoking this <code>unsafe</code> capability comes with
+assuming the responsibility of not violating rules of both the compiler or the architecture.</p>
 <h3 id="directives-support"><a class="header" href="#directives-support">Directives Support</a></h3>
 <p>Inline assembly supports a subset of the directives supported by both GNU AS and LLVM's internal assembler, given as follows.
 The result of using other directives is assembler-specific (and may cause an error, or may be accepted as-is).</p>
@@ -683,12 +758,9 @@ The result of using other directives is assembler-specific (and may cause an err
 <li><code>.4byte</code></li>
 <li><code>.8byte</code></li>
 <li><code>.align</code></li>
+<li><code>.alt_entry</code></li>
 <li><code>.ascii</code></li>
 <li><code>.asciz</code></li>
-<li><code>.alt_entry</code></li>
-<li><code>.balign</code></li>
-<li><code>.balignl</code></li>
-<li><code>.balignw</code></li>
 <li><code>.balign</code></li>
 <li><code>.balignl</code></li>
 <li><code>.balignw</code></li>
@@ -704,17 +776,17 @@ The result of using other directives is assembler-specific (and may cause an err
 <li><code>.eqv</code></li>
 <li><code>.fill</code></li>
 <li><code>.float</code></li>
-<li><code>.globl</code></li>
 <li><code>.global</code></li>
-<li><code>.lcomm</code></li>
+<li><code>.globl</code></li>
 <li><code>.inst</code></li>
+<li><code>.lcomm</code></li>
 <li><code>.long</code></li>
 <li><code>.octa</code></li>
 <li><code>.option</code></li>
-<li><code>.private_extern</code></li>
 <li><code>.p2align</code></li>
-<li><code>.pushsection</code></li>
 <li><code>.popsection</code></li>
+<li><code>.private_extern</code></li>
+<li><code>.pushsection</code></li>
 <li><code>.quad</code></li>
 <li><code>.scl</code></li>
 <li><code>.section</code></li>
@@ -838,5 +910,6 @@ The result of using other directives is assembler-specific (and may cause an err
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

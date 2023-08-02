@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/intrinsics/mir.rs`."><title>mir.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/intrinsics/mir.rs`."><title>mir.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -546,7 +546,31 @@
 <a href="#546" id="546">546</a>
 <a href="#547" id="547">547</a>
 <a href="#548" id="548">548</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Rustc internal tooling for hand-writing MIR.
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Rustc internal tooling for hand-writing MIR.
 //!
 //! If for some reasons you are not writing rustc tests and have found yourself considering using
 //! this feature, turn back. This is *exceptionally* unstable. There is no attempt at all to make
@@ -563,7 +587,6 @@
 //! ```rust
 //! #![feature(core_intrinsics, custom_mir)]
 //!
-//! extern crate core;
 //! use core::intrinsics::mir::*;
 //!
 //! #[custom_mir(dialect = &quot;built&quot;)]
@@ -597,6 +620,8 @@
 //!
 //! The input to the [`mir!`] macro is:
 //!
+//!  - An optional return type annotation in the form of `type RET = ...;`. This may be required
+//!    if the compiler cannot infer the type of RET.
 //!  - A possibly empty list of local declarations. Locals can also be declared inline on
 //!    assignments via `let`. Type inference generally works. Shadowing does not.
 //!  - A list of basic blocks. The first of these is the start block and is where execution begins.
@@ -611,7 +636,6 @@
 //! ```rust
 //! #![feature(core_intrinsics, custom_mir)]
 //!
-//! extern crate core;
 //! use core::intrinsics::mir::*;
 //!
 //! #[custom_mir(dialect = &quot;built&quot;)]
@@ -668,6 +692,18 @@
 //!         }
 //!
 //!         ret = {
+//!             Return()
+//!         }
+//!     )
+//! }
+//!
+//! #[custom_mir(dialect = &quot;runtime&quot;, phase = &quot;optimized&quot;)]
+//! fn annotated_return_type() -&gt; (i32, bool) {
+//!     mir!(
+//!         type RET = (i32, bool);
+//!         {
+//!             RET.0 = 1;
+//!             RET.1 = true;
 //!             Return()
 //!         }
 //!     )
@@ -764,8 +800,9 @@
 //!
 //!  - Operands implicitly convert to `Use` rvalues.
 //!  - `&amp;`, `&amp;mut`, `addr_of!`, and `addr_of_mut!` all work to create their associated rvalue.
-//!  - [`Discriminant`] and [`Len`] have associated functions.
+//!  - [`Discriminant`], [`Len`], and [`CopyForDeref`] have associated functions.
 //!  - Unary and binary operations use their normal Rust syntax - `a * b`, `!c`, etc.
+//!  - The binary operation `Offset` can be created via [`Offset`].
 //!  - Checked binary operations are represented by wrapping the associated binop in [`Checked`].
 //!  - Array repetition syntax (`[foo; 10]`) creates the associated rvalue.
 //!
@@ -780,7 +817,7 @@
 //!     - The exception is the last arm, which must be `_ =&gt; basic_block` and corresponds to the
 //!       otherwise branch.
 //!  - [`Call`] has an associated function as well. The third argument of this function is a normal
-//!    function call expresion, for example `my_other_function(a, 5)`.
+//!    function call expression, for example `my_other_function(a, 5)`.
 //!
 
 </span><span class="attr">#![unstable(
@@ -798,6 +835,7 @@
 <span class="macro">macro_rules! </span>define {
     (<span class="macro-nonterminal">$name</span>:literal, $( <span class="attr">#[ <span class="macro-nonterminal">$meta</span>:meta ] </span>)* <span class="kw">fn </span>$(<span class="macro-nonterminal">$sig</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="attr">#[rustc_diagnostic_item = <span class="macro-nonterminal">$name</span>]
+        #[inline]
         </span>$( <span class="attr">#[ <span class="macro-nonterminal">$meta </span>] </span>)*
         <span class="kw">pub fn </span>$(<span class="macro-nonterminal">$sig</span>)* { <span class="macro">panic!</span>() }
     }
@@ -813,6 +851,7 @@
 <span class="macro">define!</span>(<span class="string">&quot;mir_deinit&quot;</span>, <span class="kw">fn </span>Deinit&lt;T&gt;(place: T));
 <span class="macro">define!</span>(<span class="string">&quot;mir_checked&quot;</span>, <span class="kw">fn </span>Checked&lt;T&gt;(binop: T) -&gt; (T, bool));
 <span class="macro">define!</span>(<span class="string">&quot;mir_len&quot;</span>, <span class="kw">fn </span>Len&lt;T&gt;(place: T) -&gt; usize);
+<span class="macro">define!</span>(<span class="string">&quot;mir_copy_for_deref&quot;</span>, <span class="kw">fn </span>CopyForDeref&lt;T&gt;(place: T) -&gt; T);
 <span class="macro">define!</span>(<span class="string">&quot;mir_retag&quot;</span>, <span class="kw">fn </span>Retag&lt;T&gt;(place: T));
 <span class="macro">define!</span>(<span class="string">&quot;mir_move&quot;</span>, <span class="kw">fn </span>Move&lt;T&gt;(place: T) -&gt; T);
 <span class="macro">define!</span>(<span class="string">&quot;mir_static&quot;</span>, <span class="kw">fn </span>Static&lt;T&gt;(s: T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>T);
@@ -823,6 +862,7 @@
     </span><span class="kw">fn </span>Discriminant&lt;T&gt;(place: T) -&gt; &lt;T <span class="kw">as </span>::core::marker::DiscriminantKind&gt;::Discriminant
 );
 <span class="macro">define!</span>(<span class="string">&quot;mir_set_discriminant&quot;</span>, <span class="kw">fn </span>SetDiscriminant&lt;T&gt;(place: T, index: u32));
+<span class="macro">define!</span>(<span class="string">&quot;mir_offset&quot;</span>, <span class="kw">fn </span>Offset&lt;T, U&gt;(ptr: T, count: U) -&gt; T);
 <span class="macro">define!</span>(
     <span class="string">&quot;mir_field&quot;</span>,
     <span class="doccomment">/// Access the field with the given index of some place.
@@ -849,7 +889,6 @@
     /// ```rust
     /// #![feature(custom_mir, core_intrinsics)]
     ///
-    /// extern crate core;
     /// use core::intrinsics::mir::*;
     ///
     /// #[custom_mir(dialect = &quot;built&quot;)]
@@ -878,6 +917,14 @@
     </span><span class="kw">fn </span>Variant&lt;T&gt;(place: T, index: u32) -&gt; ()
 );
 <span class="macro">define!</span>(
+    <span class="string">&quot;mir_cast_transmute&quot;</span>,
+    <span class="doccomment">/// Emits a `CastKind::Transmute` cast.
+    ///
+    /// Needed to test the UB when `sizeof(T) != sizeof(U)`, which can&#39;t be
+    /// generated via the normal `mem::transmute`.
+    </span><span class="kw">fn </span>CastTransmute&lt;T, U&gt;(operand: T) -&gt; U
+);
+<span class="macro">define!</span>(
     <span class="string">&quot;mir_make_place&quot;</span>,
     <span class="attr">#[doc(hidden)]
     </span><span class="kw">fn </span>__internal_make_place&lt;T&gt;(place: T) -&gt; <span class="kw-2">*mut </span>T
@@ -890,7 +937,8 @@
 </span><span class="attr">#[rustc_macro_transparency = <span class="string">&quot;transparent&quot;</span>]
 </span><span class="kw">pub macro </span>mir {
     (
-        $(<span class="kw">let </span><span class="macro-nonterminal">$local_decl</span>:ident $(: <span class="macro-nonterminal">$local_decl_ty</span>:ty)<span class="question-mark">? </span>;)*
+        $(<span class="kw">type </span>RET = <span class="macro-nonterminal">$ret_ty</span>:ty ;)<span class="question-mark">?
+        </span>$(<span class="kw">let </span><span class="macro-nonterminal">$local_decl</span>:ident $(: <span class="macro-nonterminal">$local_decl_ty</span>:ty)<span class="question-mark">? </span>;)*
 
         {
             $(<span class="macro-nonterminal">$entry</span>:tt)*
@@ -910,7 +958,7 @@
         {
             <span class="comment">// Now all locals
             </span><span class="attr">#[allow(non_snake_case)]
-            </span><span class="kw">let </span>RET;
+            </span><span class="kw">let </span>RET $(: <span class="macro-nonterminal">$ret_ty</span>)<span class="question-mark">?</span>;
             $(
                 <span class="kw">let </span><span class="macro-nonterminal">$local_decl </span>$(: <span class="macro-nonterminal">$local_decl_ty</span>)<span class="question-mark">? </span>;
             )*
@@ -1094,5 +1142,4 @@
         </span>}
     },
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -80,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html" class="active"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.3.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.4.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html" class="active"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="read-documentation/in-doc-settings.html"><strong aria-hidden="true">3.1.</strong> In-doc settings</a></li></ol></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/re-exports.html"><strong aria-hidden="true">4.3.</strong> Re-exports</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.4.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.5.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -182,7 +207,7 @@ including automatic and blanket implementations that <code>rustdoc</code> knows 
 <p>Subheadings, variants, fields, and many other things in this documentation
 are anchors and can be clicked on and deep-linked to,
 which is a great way to communicate exactly what you're talking about.
-The typograpical character &quot;§&quot; appears next to lines with anchors on them
+The typographical character &quot;§&quot; appears next to lines with anchors on them
 when hovered or given keyboard focus.</p>
 <h2 id="the-navigation-bar"><a class="header" href="#the-navigation-bar">The Navigation Bar</a></h2>
 <p>For example, when looking at documentation for the crate root,
@@ -200,7 +225,7 @@ interface, help screen, and options.</p>
 <p>Typing in the search bar instantly searches the available documentation for
 the string entered with a fuzzy matching algorithm that is tolerant of minor
 typos.</p>
-<p>By default, the search results give are &quot;In Names&quot;,
+<p>By default, the search results given are &quot;In Names&quot;,
 meaning that the fuzzy match is made against the names of items.
 Matching names are shown on the left, and the first few words of their
 descriptions are given on the right.
@@ -210,14 +235,37 @@ By clicking an item, you will navigate to its particular documentation.</p>
 functions, and &quot;In Return Types&quot; shows matches in the return types of functions.
 Both are very useful when looking for a function whose name you can't quite
 bring to mind when you know the type you have or want.</p>
-<p>When typing in the search bar, you can prefix your search term with a type
-followed by a colon (such as <code>mod:</code>) to restrict the results to just that
-kind of item. (The available items are listed in the help popup.)</p>
-<p>Searching for <code>println!</code> will search for a macro named <code>println</code>, just like
+<p>Names in the search interface can be prefixed with an item type followed by a
+colon (such as <code>mod:</code>) to restrict the results to just that kind of item. Also,
+searching for <code>println!</code> will search for a macro named <code>println</code>, just like
 searching for <code>macro:println</code> does.</p>
-<h3 id="changing-displayed-theme"><a class="header" href="#changing-displayed-theme">Changing displayed theme</a></h3>
-<p>You can change the displayed theme by opening the settings menu (the gear
-icon in the upper right) and then pick a new one from there.</p>
+<p>Function signature searches can query generics, wrapped in angle brackets, and
+traits are normalized like types in the search engine. For example, a function
+with the signature <code>fn my_function&lt;I: Iterator&lt;Item=u32&gt;&gt;(input: I) -&gt; usize</code>
+can be matched with the following queries:</p>
+<ul>
+<li><code>Iterator&lt;u32&gt; -&gt; usize</code></li>
+<li><code>trait:Iterator&lt;primitive:u32&gt; -&gt; primitive:usize</code></li>
+<li><code>Iterator -&gt; usize</code></li>
+</ul>
+<p>Generics and function parameters are order-agnostic, but sensitive to nesting
+and number of matches. For example, a function with the signature
+<code>fn read_all(&amp;mut self: impl Read) -&gt; Result&lt;Vec&lt;u8&gt;, Error&gt;</code>
+will match these queries:</p>
+<ul>
+<li><code>Read -&gt; Result&lt;Vec&lt;u8&gt;, Error&gt;</code></li>
+<li><code>Read -&gt; Result&lt;Error, Vec&gt;</code></li>
+<li><code>Read -&gt; Result&lt;Vec&lt;u8&gt;&gt;</code></li>
+</ul>
+<p>But it <em>does not</em> match <code>Result&lt;Vec, u8&gt;</code> or <code>Result&lt;u8&lt;Vec&gt;&gt;</code>.</p>
+<p>Function signature searches also support arrays and slices. The explicit name
+<code>primitive:slice&lt;u8&gt;</code> and <code>primitive:array&lt;u8&gt;</code> can be used to match a slice
+or array of bytes, while square brackets <code>[u8]</code> will match either one. Empty
+square brackets, <code>[]</code>, will match any slice regardless of what it contains.</p>
+<p>Paths are supported as well, you can look for <code>Vec::new</code> or <code>Option::Some</code> or
+even <code>module::module_child::another_child::struct::field</code>. Whitespace characters
+are considered the same as <code>::</code>, so if you write <code>Vec    new</code>, it will be
+considered the same as <code>Vec::new</code>.</p>
 <h3 id="shortcuts"><a class="header" href="#shortcuts">Shortcuts</a></h3>
 <p>Pressing <code>S</code> while focused elsewhere on the page will move focus to the
 search bar, and pressing <code>?</code> shows the help screen,
@@ -237,7 +285,7 @@ and collapse all sections in the document.</p>
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="how-to-write-documentation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="read-documentation/in-doc-settings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -251,7 +299,7 @@ and collapse all sections in the document.</p>
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="how-to-write-documentation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="read-documentation/in-doc-settings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -277,5 +325,6 @@ and collapse all sections in the document.</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

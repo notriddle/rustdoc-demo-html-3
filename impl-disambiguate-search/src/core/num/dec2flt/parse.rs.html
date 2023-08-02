@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/dec2flt/parse.rs`."><title>parse.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files1.70.0.js"></script><script defer src="../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/dec2flt/parse.rs`."><title>parse.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -231,9 +231,19 @@
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Functions to parse floating-point numbers.
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Functions to parse floating-point numbers.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::num::dec2flt::common::{is_8digits, AsciiStr, ByteSlice};
+</span><span class="kw">use </span><span class="kw">crate</span>::num::dec2flt::common::{is_8digits, ByteSlice};
 <span class="kw">use </span><span class="kw">crate</span>::num::dec2flt::float::RawFloat;
 <span class="kw">use </span><span class="kw">crate</span>::num::dec2flt::number::Number;
 
@@ -259,24 +269,39 @@
 }
 
 <span class="doccomment">/// Parse digits until a non-digit character is found.
-</span><span class="kw">fn </span>try_parse_digits(s: <span class="kw-2">&amp;mut </span>AsciiStr&lt;<span class="lifetime">&#39;_</span>&gt;, x: <span class="kw-2">&amp;mut </span>u64) {
+</span><span class="kw">fn </span>try_parse_digits(<span class="kw-2">mut </span>s: <span class="kw-2">&amp;</span>[u8], <span class="kw-2">mut </span>x: u64) -&gt; (<span class="kw-2">&amp;</span>[u8], u64) {
     <span class="comment">// may cause overflows, to be handled later
-    </span>s.parse_digits(|digit| {
-        <span class="kw-2">*</span>x = x.wrapping_mul(<span class="number">10</span>).wrapping_add(digit <span class="kw">as _</span>);
+
+    </span><span class="kw">while </span>s.len() &gt;= <span class="number">8 </span>{
+        <span class="kw">let </span>num = s.read_u64();
+        <span class="kw">if </span>is_8digits(num) {
+            x = x.wrapping_mul(<span class="number">1_0000_0000</span>).wrapping_add(parse_8digits(num));
+            s = <span class="kw-2">&amp;</span>s[<span class="number">8</span>..];
+        } <span class="kw">else </span>{
+            <span class="kw">break</span>;
+        }
+    }
+
+    s = s.parse_digits(|digit| {
+        x = x.wrapping_mul(<span class="number">10</span>).wrapping_add(digit <span class="kw">as _</span>);
     });
+
+    (s, x)
 }
 
 <span class="doccomment">/// Parse up to 19 digits (the max that can be stored in a 64-bit integer).
-</span><span class="kw">fn </span>try_parse_19digits(s: <span class="kw-2">&amp;mut </span>AsciiStr&lt;<span class="lifetime">&#39;_</span>&gt;, x: <span class="kw-2">&amp;mut </span>u64) {
+</span><span class="kw">fn </span>try_parse_19digits(s_ref: <span class="kw-2">&amp;mut &amp;</span>[u8], x: <span class="kw-2">&amp;mut </span>u64) {
+    <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw-2">*</span>s_ref;
+
     <span class="kw">while </span><span class="kw-2">*</span>x &lt; MIN_19DIGIT_INT {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = s.as_ref().first() {
+        <span class="comment">// FIXME: Can&#39;t use s.split_first() here yet,
+        // see https://github.com/rust-lang/rust/issues/109328
+        </span><span class="kw">if let </span>[c, s_next @ ..] = s {
             <span class="kw">let </span>digit = c.wrapping_sub(<span class="string">b&#39;0&#39;</span>);
+
             <span class="kw">if </span>digit &lt; <span class="number">10 </span>{
                 <span class="kw-2">*</span>x = (<span class="kw-2">*</span>x * <span class="number">10</span>) + digit <span class="kw">as </span>u64; <span class="comment">// no overflows here
-                // SAFETY: cannot be empty
-                </span><span class="kw">unsafe </span>{
-                    s.step();
-                }
+                </span>s = s_next;
             } <span class="kw">else </span>{
                 <span class="kw">break</span>;
             }
@@ -284,46 +309,26 @@
             <span class="kw">break</span>;
         }
     }
-}
 
-<span class="doccomment">/// Try to parse 8 digits at a time, using an optimized algorithm.
-</span><span class="kw">fn </span>try_parse_8digits(s: <span class="kw-2">&amp;mut </span>AsciiStr&lt;<span class="lifetime">&#39;_</span>&gt;, x: <span class="kw-2">&amp;mut </span>u64) {
-    <span class="comment">// may cause overflows, to be handled later
-    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(v) = s.read_u64() {
-        <span class="kw">if </span>is_8digits(v) {
-            <span class="kw-2">*</span>x = x.wrapping_mul(<span class="number">1_0000_0000</span>).wrapping_add(parse_8digits(v));
-            <span class="comment">// SAFETY: already ensured the buffer was &gt;= 8 bytes in read_u64.
-            </span><span class="kw">unsafe </span>{
-                s.step_by(<span class="number">8</span>);
-            }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = s.read_u64() {
-                <span class="kw">if </span>is_8digits(v) {
-                    <span class="kw-2">*</span>x = x.wrapping_mul(<span class="number">1_0000_0000</span>).wrapping_add(parse_8digits(v));
-                    <span class="comment">// SAFETY: already ensured the buffer was &gt;= 8 bytes in try_read_u64.
-                    </span><span class="kw">unsafe </span>{
-                        s.step_by(<span class="number">8</span>);
-                    }
-                }
-            }
-        }
-    }
+    <span class="kw-2">*</span>s_ref = s;
 }
 
 <span class="doccomment">/// Parse the scientific notation component of a float.
-</span><span class="kw">fn </span>parse_scientific(s: <span class="kw-2">&amp;mut </span>AsciiStr&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;i64&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>exponent = <span class="number">0_i64</span>;
+</span><span class="kw">fn </span>parse_scientific(s_ref: <span class="kw-2">&amp;mut &amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;i64&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>exponent = <span class="number">0i64</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>negative = <span class="bool-val">false</span>;
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>c) = s.as_ref().get(<span class="number">0</span>) {
+
+    <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw-2">*</span>s_ref;
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>c, s_next)) = s.split_first() {
         negative = c == <span class="string">b&#39;-&#39;</span>;
         <span class="kw">if </span>c == <span class="string">b&#39;-&#39; </span>|| c == <span class="string">b&#39;+&#39; </span>{
-            <span class="comment">// SAFETY: s cannot be empty
-            </span><span class="kw">unsafe </span>{
-                s.step();
-            }
+            s = s_next;
         }
     }
-    <span class="kw">if </span>s.first_isdigit() {
-        s.parse_digits(|digit| {
+
+    <span class="kw">if </span><span class="macro">matches!</span>(s.first(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>x) <span class="kw">if </span>x.is_ascii_digit()) {
+        <span class="kw-2">*</span>s_ref = s.parse_digits(|digit| {
             <span class="comment">// no overflows here, saturate well before overflow
             </span><span class="kw">if </span>exponent &lt; <span class="number">0x10000 </span>{
                 exponent = <span class="number">10 </span>* exponent + digit <span class="kw">as </span>i64;
@@ -331,6 +336,7 @@
         });
         <span class="kw">if </span>negative { <span class="prelude-val">Some</span>(-exponent) } <span class="kw">else </span>{ <span class="prelude-val">Some</span>(exponent) }
     } <span class="kw">else </span>{
+        <span class="kw-2">*</span>s_ref = s;
         <span class="prelude-val">None
     </span>}
 }
@@ -339,28 +345,29 @@
 ///
 /// This creates a representation of the float as the
 /// significant digits and the decimal exponent.
-</span><span class="kw">fn </span>parse_partial_number(s: <span class="kw-2">&amp;</span>[u8], negative: bool) -&gt; <span class="prelude-ty">Option</span>&lt;(Number, usize)&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>s = AsciiStr::new(s);
-    <span class="kw">let </span>start = s;
+</span><span class="kw">fn </span>parse_partial_number(<span class="kw-2">mut </span>s: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;(Number, usize)&gt; {
     <span class="macro">debug_assert!</span>(!s.is_empty());
 
     <span class="comment">// parse initial digits before dot
     </span><span class="kw">let </span><span class="kw-2">mut </span>mantissa = <span class="number">0_u64</span>;
-    <span class="kw">let </span>digits_start = s;
-    try_parse_digits(<span class="kw-2">&amp;mut </span>s, <span class="kw-2">&amp;mut </span>mantissa);
-    <span class="kw">let </span><span class="kw-2">mut </span>n_digits = s.offset_from(<span class="kw-2">&amp;</span>digits_start);
+    <span class="kw">let </span>start = s;
+    <span class="kw">let </span>tmp = try_parse_digits(s, mantissa);
+    s = tmp.<span class="number">0</span>;
+    mantissa = tmp.<span class="number">1</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>n_digits = s.offset_from(start);
 
     <span class="comment">// handle dot with the following digits
     </span><span class="kw">let </span><span class="kw-2">mut </span>n_after_dot = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>exponent = <span class="number">0_i64</span>;
     <span class="kw">let </span>int_end = s;
-    <span class="kw">if </span>s.first_is(<span class="string">b&#39;.&#39;</span>) {
-        <span class="comment">// SAFETY: s cannot be empty due to first_is
-        </span><span class="kw">unsafe </span>{ s.step() };
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span><span class="string">b&#39;.&#39;</span>, s_next)) = s.split_first() {
+        s = s_next;
         <span class="kw">let </span>before = s;
-        try_parse_8digits(<span class="kw-2">&amp;mut </span>s, <span class="kw-2">&amp;mut </span>mantissa);
-        try_parse_digits(<span class="kw-2">&amp;mut </span>s, <span class="kw-2">&amp;mut </span>mantissa);
-        n_after_dot = s.offset_from(<span class="kw-2">&amp;</span>before);
+        <span class="kw">let </span>tmp = try_parse_digits(s, mantissa);
+        s = tmp.<span class="number">0</span>;
+        mantissa = tmp.<span class="number">1</span>;
+        n_after_dot = s.offset_from(before);
         exponent = -n_after_dot <span class="kw">as </span>i64;
     }
 
@@ -371,98 +378,110 @@
 
     <span class="comment">// handle scientific format
     </span><span class="kw">let </span><span class="kw-2">mut </span>exp_number = <span class="number">0_i64</span>;
-    <span class="kw">if </span>s.first_is2(<span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;E&#39;</span>) {
-        <span class="comment">// SAFETY: s cannot be empty
-        </span><span class="kw">unsafe </span>{
-            s.step();
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>c, s_next)) = s.split_first() {
+        <span class="kw">if </span>c == <span class="string">b&#39;e&#39; </span>|| c == <span class="string">b&#39;E&#39; </span>{
+            s = s_next;
+            <span class="comment">// If None, we have no trailing digits after exponent, or an invalid float.
+            </span>exp_number = parse_scientific(<span class="kw-2">&amp;mut </span>s)<span class="question-mark">?</span>;
+            exponent += exp_number;
         }
-        <span class="comment">// If None, we have no trailing digits after exponent, or an invalid float.
-        </span>exp_number = parse_scientific(<span class="kw-2">&amp;mut </span>s)<span class="question-mark">?</span>;
-        exponent += exp_number;
     }
 
-    <span class="kw">let </span>len = s.offset_from(<span class="kw-2">&amp;</span>start) <span class="kw">as _</span>;
+    <span class="kw">let </span>len = s.offset_from(start) <span class="kw">as _</span>;
 
     <span class="comment">// handle uncommon case with many digits
     </span><span class="kw">if </span>n_digits &lt;= <span class="number">19 </span>{
-        <span class="kw">return </span><span class="prelude-val">Some</span>((Number { exponent, mantissa, negative, many_digits: <span class="bool-val">false </span>}, len));
+        <span class="kw">return </span><span class="prelude-val">Some</span>((Number { exponent, mantissa, negative: <span class="bool-val">false</span>, many_digits: <span class="bool-val">false </span>}, len));
     }
 
     n_digits -= <span class="number">19</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>many_digits = <span class="bool-val">false</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>p = digits_start;
-    <span class="kw">while </span>p.first_is2(<span class="string">b&#39;0&#39;</span>, <span class="string">b&#39;.&#39;</span>) {
-        <span class="comment">// SAFETY: p cannot be empty due to first_is2
-        </span><span class="kw">unsafe </span>{
-            <span class="comment">// &#39;0&#39; = b&#39;.&#39; + 2
-            </span>n_digits -= p.first_unchecked().saturating_sub(<span class="string">b&#39;0&#39; </span>- <span class="number">1</span>) <span class="kw">as </span>isize;
-            p.step();
+    <span class="kw">let </span><span class="kw-2">mut </span>p = start;
+    <span class="kw">while let </span><span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>c, p_next)) = p.split_first() {
+        <span class="kw">if </span>c == <span class="string">b&#39;.&#39; </span>|| c == <span class="string">b&#39;0&#39; </span>{
+            n_digits -= c.saturating_sub(<span class="string">b&#39;0&#39; </span>- <span class="number">1</span>) <span class="kw">as </span>isize;
+            p = p_next;
+        } <span class="kw">else </span>{
+            <span class="kw">break</span>;
         }
     }
     <span class="kw">if </span>n_digits &gt; <span class="number">0 </span>{
         <span class="comment">// at this point we have more than 19 significant digits, let&#39;s try again
         </span>many_digits = <span class="bool-val">true</span>;
         mantissa = <span class="number">0</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>s = digits_start;
+        <span class="kw">let </span><span class="kw-2">mut </span>s = start;
         try_parse_19digits(<span class="kw-2">&amp;mut </span>s, <span class="kw-2">&amp;mut </span>mantissa);
         exponent = <span class="kw">if </span>mantissa &gt;= MIN_19DIGIT_INT {
             <span class="comment">// big int
-            </span>int_end.offset_from(<span class="kw-2">&amp;</span>s)
+            </span>int_end.offset_from(s)
         } <span class="kw">else </span>{
-            <span class="comment">// SAFETY: the next byte must be present and be &#39;.&#39;
-            // We know this is true because we had more than 19
-            // digits previously, so we overflowed a 64-bit integer,
-            // but parsing only the integral digits produced less
-            // than 19 digits. That means we must have a decimal
-            // point, and at least 1 fractional digit.
-            </span><span class="kw">unsafe </span>{ s.step() };
+            s = <span class="kw-2">&amp;</span>s[<span class="number">1</span>..];
             <span class="kw">let </span>before = s;
             try_parse_19digits(<span class="kw-2">&amp;mut </span>s, <span class="kw-2">&amp;mut </span>mantissa);
-            -s.offset_from(<span class="kw-2">&amp;</span>before)
+            -s.offset_from(before)
         } <span class="kw">as </span>i64;
         <span class="comment">// add back the explicit part
         </span>exponent += exp_number;
     }
 
-    <span class="prelude-val">Some</span>((Number { exponent, mantissa, negative, many_digits }, len))
+    <span class="prelude-val">Some</span>((Number { exponent, mantissa, negative: <span class="bool-val">false</span>, many_digits }, len))
 }
 
-<span class="doccomment">/// Try to parse a non-special floating point number.
-</span><span class="kw">pub fn </span>parse_number(s: <span class="kw-2">&amp;</span>[u8], negative: bool) -&gt; <span class="prelude-ty">Option</span>&lt;Number&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((float, rest)) = parse_partial_number(s, negative) {
+<span class="doccomment">/// Try to parse a non-special floating point number,
+/// as well as two slices with integer and fractional parts
+/// and the parsed exponent.
+</span><span class="kw">pub fn </span>parse_number(s: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;Number&gt; {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((float, rest)) = parse_partial_number(s) {
         <span class="kw">if </span>rest == s.len() {
             <span class="kw">return </span><span class="prelude-val">Some</span>(float);
-        }
-    }
-    <span class="prelude-val">None
-</span>}
-
-<span class="doccomment">/// Parse a partial representation of a special, non-finite float.
-</span><span class="kw">fn </span>parse_partial_inf_nan&lt;F: RawFloat&gt;(s: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Option</span>&lt;(F, usize)&gt; {
-    <span class="kw">fn </span>parse_inf_rest(s: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
-        <span class="kw">if </span>s.len() &gt;= <span class="number">8 </span>&amp;&amp; s[<span class="number">3</span>..].as_ref().starts_with_ignore_case(<span class="string">b&quot;inity&quot;</span>) { <span class="number">8 </span>} <span class="kw">else </span>{ <span class="number">3 </span>}
-    }
-    <span class="kw">if </span>s.len() &gt;= <span class="number">3 </span>{
-        <span class="kw">if </span>s.starts_with_ignore_case(<span class="string">b&quot;nan&quot;</span>) {
-            <span class="kw">return </span><span class="prelude-val">Some</span>((F::NAN, <span class="number">3</span>));
-        } <span class="kw">else if </span>s.starts_with_ignore_case(<span class="string">b&quot;inf&quot;</span>) {
-            <span class="kw">return </span><span class="prelude-val">Some</span>((F::INFINITY, parse_inf_rest(s)));
         }
     }
     <span class="prelude-val">None
 </span>}
 
 <span class="doccomment">/// Try to parse a special, non-finite float.
-</span><span class="kw">pub fn </span>parse_inf_nan&lt;F: RawFloat&gt;(s: <span class="kw-2">&amp;</span>[u8], negative: bool) -&gt; <span class="prelude-ty">Option</span>&lt;F&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw-2">mut </span>float, rest)) = parse_partial_inf_nan::&lt;F&gt;(s) {
-        <span class="kw">if </span>rest == s.len() {
-            <span class="kw">if </span>negative {
-                float = -float;
-            }
-            <span class="kw">return </span><span class="prelude-val">Some</span>(float);
-        }
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_inf_nan&lt;F: RawFloat&gt;(s: <span class="kw-2">&amp;</span>[u8], negative: bool) -&gt; <span class="prelude-ty">Option</span>&lt;F&gt; {
+    <span class="comment">// Since a valid string has at most the length 8, we can load
+    // all relevant characters into a u64 and work from there.
+    // This also generates much better code.
+
+    </span><span class="kw">let </span><span class="kw-2">mut </span>register;
+    <span class="kw">let </span>len: usize;
+
+    <span class="comment">// All valid strings are either of length 8 or 3.
+    </span><span class="kw">if </span>s.len() == <span class="number">8 </span>{
+        register = s.read_u64();
+        len = <span class="number">8</span>;
+    } <span class="kw">else if </span>s.len() == <span class="number">3 </span>{
+        <span class="kw">let </span>a = s[<span class="number">0</span>] <span class="kw">as </span>u64;
+        <span class="kw">let </span>b = s[<span class="number">1</span>] <span class="kw">as </span>u64;
+        <span class="kw">let </span>c = s[<span class="number">2</span>] <span class="kw">as </span>u64;
+        register = (c &lt;&lt; <span class="number">16</span>) | (b &lt;&lt; <span class="number">8</span>) | a;
+        len = <span class="number">3</span>;
+    } <span class="kw">else </span>{
+        <span class="kw">return </span><span class="prelude-val">None</span>;
     }
-    <span class="prelude-val">None
-</span>}
-</code></pre></div>
-</section></main></body></html>
+
+    <span class="comment">// Clear out the bits which turn ASCII uppercase characters into
+    // lowercase characters. The resulting string is all uppercase.
+    // What happens to other characters is irrelevant.
+    </span>register &amp;= <span class="number">0xDFDFDFDFDFDFDFDF</span>;
+
+    <span class="comment">// u64 values corresponding to relevant cases
+    </span><span class="kw">const </span>INF_3: u64 = <span class="number">0x464E49</span>; <span class="comment">// &quot;INF&quot;
+    </span><span class="kw">const </span>INF_8: u64 = <span class="number">0x5954494E49464E49</span>; <span class="comment">// &quot;INFINITY&quot;
+    </span><span class="kw">const </span>NAN: u64 = <span class="number">0x4E414E</span>; <span class="comment">// &quot;NAN&quot;
+
+    // Match register value to constant to parse string.
+    // Also match on the string length to catch edge cases
+    // like &quot;inf\0\0\0\0\0&quot;.
+    </span><span class="kw">let </span>float = <span class="kw">match </span>(register, len) {
+        (INF_3, <span class="number">3</span>) =&gt; F::INFINITY,
+        (INF_8, <span class="number">8</span>) =&gt; F::INFINITY,
+        (NAN, <span class="number">3</span>) =&gt; F::NAN,
+        <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
+    };
+
+    <span class="kw">if </span>negative { <span class="prelude-val">Some</span>(-float) } <span class="kw">else </span>{ <span class="prelude-val">Some</span>(float) }
+}
+</code></pre></div></section></main></body></html>

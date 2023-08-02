@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ops/arith.rs`."><title>arith.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ops/arith.rs`."><title>arith.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -997,31 +997,7 @@
 <a href="#997" id="997">997</a>
 <a href="#998" id="998">998</a>
 <a href="#999" id="999">999</a>
-<a href="#1000" id="1000">1000</a>
-<a href="#1001" id="1001">1001</a>
-<a href="#1002" id="1002">1002</a>
-<a href="#1003" id="1003">1003</a>
-<a href="#1004" id="1004">1004</a>
-<a href="#1005" id="1005">1005</a>
-<a href="#1006" id="1006">1006</a>
-<a href="#1007" id="1007">1007</a>
-<a href="#1008" id="1008">1008</a>
-<a href="#1009" id="1009">1009</a>
-<a href="#1010" id="1010">1010</a>
-<a href="#1011" id="1011">1011</a>
-<a href="#1012" id="1012">1012</a>
-<a href="#1013" id="1013">1013</a>
-<a href="#1014" id="1014">1014</a>
-<a href="#1015" id="1015">1015</a>
-<a href="#1016" id="1016">1016</a>
-<a href="#1017" id="1017">1017</a>
-<a href="#1018" id="1018">1018</a>
-<a href="#1019" id="1019">1019</a>
-<a href="#1020" id="1020">1020</a>
-<a href="#1021" id="1021">1021</a>
-<a href="#1022" id="1022">1022</a>
-<a href="#1023" id="1023">1023</a>
-</pre><pre class="rust"><code><span class="doccomment">/// The addition operator `+`.
+</pre></div><pre class="rust"><code><span class="doccomment">/// The addition operator `+`.
 ///
 /// Note that `Rhs` is `Self` by default, but this is not mandatory. For
 /// example, [`std::time::SystemTime`] implements `Add&lt;Duration&gt;`, which permits
@@ -1096,7 +1072,6 @@
     append_const_msg
 )]
 #[doc(alias = <span class="string">&quot;+&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Add&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// The resulting type after applying the `+` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1118,8 +1093,7 @@
 <span class="macro">macro_rules! </span>add_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Add <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Add <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
@@ -1127,7 +1101,7 @@
             </span><span class="kw">fn </span>add(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>+ other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Add, add <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Add, add <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1206,7 +1180,6 @@
     append_const_msg
 )]
 #[doc(alias = <span class="string">&quot;-&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Sub&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// The resulting type after applying the `-` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1228,8 +1201,7 @@
 <span class="macro">macro_rules! </span>sub_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Sub <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Sub <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
@@ -1237,7 +1209,7 @@
             </span><span class="kw">fn </span>sub(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>- other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Sub, sub <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Sub, sub <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1337,7 +1309,6 @@
     label = <span class="string">&quot;no implementation for `{Self} * {Rhs}`&quot;
 </span>)]
 #[doc(alias = <span class="string">&quot;*&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Mul&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// The resulting type after applying the `*` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1359,8 +1330,7 @@
 <span class="macro">macro_rules! </span>mul_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Mul <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Mul <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
@@ -1368,7 +1338,7 @@
             </span><span class="kw">fn </span>mul(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>* other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Mul, mul <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Mul, mul <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1472,7 +1442,6 @@
     label = <span class="string">&quot;no implementation for `{Self} / {Rhs}`&quot;
 </span>)]
 #[doc(alias = <span class="string">&quot;/&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Div&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// The resulting type after applying the `/` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1500,15 +1469,14 @@
         ///
         </span><span class="attr">#[doc = <span class="macro-nonterminal">$panic</span>]
         #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Div <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Div <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>div(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>/ other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Div, div <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Div, div <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)<span class="kw-2">*</span>)
 }
 
@@ -1520,15 +1488,14 @@
 <span class="macro">macro_rules! </span>div_impl_float {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Div <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Div <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>div(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>/ other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Div, div <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Div, div <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1549,7 +1516,7 @@
 /// use std::ops::Rem;
 ///
 /// #[derive(PartialEq, Debug)]
-/// struct SplitSlice&lt;&#39;a, T: &#39;a&gt; {
+/// struct SplitSlice&lt;&#39;a, T&gt; {
 ///     slice: &amp;&#39;a [T],
 /// }
 ///
@@ -1576,7 +1543,6 @@
     label = <span class="string">&quot;no implementation for `{Self} % {Rhs}`&quot;
 </span>)]
 #[doc(alias = <span class="string">&quot;%&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Rem&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// The resulting type after applying the `%` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1604,15 +1570,14 @@
         ///
         </span><span class="attr">#[doc = <span class="macro-nonterminal">$panic</span>]
         #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Rem <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Rem <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>rem(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>% other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Rem, rem <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Rem, rem <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)<span class="kw-2">*</span>)
 }
 
@@ -1639,15 +1604,14 @@
         /// assert_eq!(x % y, remainder);
         /// ```
         </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Rem <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Rem <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>rem(<span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) -&gt; <span class="macro-nonterminal">$t </span>{ <span class="self">self </span>% other }
         }
 
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Rem, rem <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Rem, rem <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1692,7 +1656,6 @@
 </span><span class="attr">#[lang = <span class="string">&quot;neg&quot;</span>]
 #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 #[doc(alias = <span class="string">&quot;-&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>Neg {
     <span class="doccomment">/// The resulting type after applying the `-` operator.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -1715,8 +1678,7 @@
 <span class="macro">macro_rules! </span>neg_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Neg <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>Neg <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="kw">type </span>Output = <span class="macro-nonterminal">$t</span>;
 
             <span class="attr">#[inline]
@@ -1724,7 +1686,7 @@
             </span><span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$t </span>{ -<span class="self">self </span>}
         }
 
-        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl const </span>Neg, neg <span class="kw">for </span><span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl </span>Neg, neg <span class="kw">for </span><span class="macro-nonterminal">$t </span>}
     )<span class="kw-2">*</span>)
 }
 
@@ -1767,7 +1729,6 @@
 </span>)]
 #[doc(alias = <span class="string">&quot;+&quot;</span>)]
 #[doc(alias = <span class="string">&quot;+=&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>AddAssign&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Performs the `+=` operation.
     ///
@@ -1785,14 +1746,13 @@
 <span class="macro">macro_rules! </span>add_assign_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)+) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>AddAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>AddAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="attr">#[inline]
             #[rustc_inherit_overflow_checks]
             </span><span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) { <span class="kw-2">*</span><span class="self">self </span>+= other }
         }
 
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>AddAssign, add_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>AddAssign, add_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )+)
 }
 
@@ -1835,7 +1795,6 @@
 </span>)]
 #[doc(alias = <span class="string">&quot;-&quot;</span>)]
 #[doc(alias = <span class="string">&quot;-=&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>SubAssign&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Performs the `-=` operation.
     ///
@@ -1853,14 +1812,13 @@
 <span class="macro">macro_rules! </span>sub_assign_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)+) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>SubAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>SubAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="attr">#[inline]
             #[rustc_inherit_overflow_checks]
             </span><span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) { <span class="kw-2">*</span><span class="self">self </span>-= other }
         }
 
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>SubAssign, sub_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>SubAssign, sub_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )+)
 }
 
@@ -1894,7 +1852,6 @@
 </span>)]
 #[doc(alias = <span class="string">&quot;*&quot;</span>)]
 #[doc(alias = <span class="string">&quot;*=&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>MulAssign&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Performs the `*=` operation.
     ///
@@ -1912,14 +1869,13 @@
 <span class="macro">macro_rules! </span>mul_assign_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)+) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>MulAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>MulAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="attr">#[inline]
             #[rustc_inherit_overflow_checks]
             </span><span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) { <span class="kw-2">*</span><span class="self">self </span><span class="kw-2">*</span>= other }
         }
 
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>MulAssign, mul_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>MulAssign, mul_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )+)
 }
 
@@ -1953,7 +1909,6 @@
 </span>)]
 #[doc(alias = <span class="string">&quot;/&quot;</span>)]
 #[doc(alias = <span class="string">&quot;/=&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>DivAssign&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Performs the `/=` operation.
     ///
@@ -1971,13 +1926,12 @@
 <span class="macro">macro_rules! </span>div_assign_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)+) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>DivAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>DivAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) { <span class="kw-2">*</span><span class="self">self </span>/= other }
         }
 
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>DivAssign, div_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>DivAssign, div_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )+)
 }
 
@@ -2015,7 +1969,6 @@
 </span>)]
 #[doc(alias = <span class="string">&quot;%&quot;</span>)]
 #[doc(alias = <span class="string">&quot;%=&quot;</span>)]
-#[const_trait]
 </span><span class="kw">pub trait </span>RemAssign&lt;Rhs = <span class="self">Self</span>&gt; {
     <span class="doccomment">/// Performs the `%=` operation.
     ///
@@ -2033,16 +1986,14 @@
 <span class="macro">macro_rules! </span>rem_assign_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)+) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>RemAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+        </span><span class="kw">impl </span>RemAssign <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>rem_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) { <span class="kw-2">*</span><span class="self">self </span>%= other }
         }
 
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>RemAssign, rem_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>RemAssign, rem_assign <span class="kw">for </span><span class="macro-nonterminal">$t</span>, <span class="macro-nonterminal">$t </span>}
     )+)
 }
 
 <span class="macro">rem_assign_impl! </span>{ usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

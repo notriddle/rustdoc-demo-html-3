@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/ffi/os_str.rs`."><title>os_str.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/ffi/os_str.rs`."><title>os_str.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1446,7 +1446,145 @@
 <a href="#1446" id="1446">1446</a>
 <a href="#1447" id="1447">1447</a>
 <a href="#1448" id="1448">1448</a>
-</pre><pre class="rust"><code><span class="attr">#[cfg(test)]
+<a href="#1449" id="1449">1449</a>
+<a href="#1450" id="1450">1450</a>
+<a href="#1451" id="1451">1451</a>
+<a href="#1452" id="1452">1452</a>
+<a href="#1453" id="1453">1453</a>
+<a href="#1454" id="1454">1454</a>
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
+<a href="#1493" id="1493">1493</a>
+<a href="#1494" id="1494">1494</a>
+<a href="#1495" id="1495">1495</a>
+<a href="#1496" id="1496">1496</a>
+<a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a>
+<a href="#1537" id="1537">1537</a>
+<a href="#1538" id="1538">1538</a>
+<a href="#1539" id="1539">1539</a>
+<a href="#1540" id="1540">1540</a>
+<a href="#1541" id="1541">1541</a>
+<a href="#1542" id="1542">1542</a>
+<a href="#1543" id="1543">1543</a>
+<a href="#1544" id="1544">1544</a>
+<a href="#1545" id="1545">1545</a>
+<a href="#1546" id="1546">1546</a>
+<a href="#1547" id="1547">1547</a>
+<a href="#1548" id="1548">1548</a>
+<a href="#1549" id="1549">1549</a>
+<a href="#1550" id="1550">1550</a>
+<a href="#1551" id="1551">1551</a>
+<a href="#1552" id="1552">1552</a>
+<a href="#1553" id="1553">1553</a>
+<a href="#1554" id="1554">1554</a>
+<a href="#1555" id="1555">1555</a>
+<a href="#1556" id="1556">1556</a>
+<a href="#1557" id="1557">1557</a>
+<a href="#1558" id="1558">1558</a>
+<a href="#1559" id="1559">1559</a>
+<a href="#1560" id="1560">1560</a>
+<a href="#1561" id="1561">1561</a>
+<a href="#1562" id="1562">1562</a>
+<a href="#1563" id="1563">1563</a>
+<a href="#1564" id="1564">1564</a>
+<a href="#1565" id="1565">1565</a>
+<a href="#1566" id="1566">1566</a>
+<a href="#1567" id="1567">1567</a>
+<a href="#1568" id="1568">1568</a>
+<a href="#1569" id="1569">1569</a>
+<a href="#1570" id="1570">1570</a>
+<a href="#1571" id="1571">1571</a>
+<a href="#1572" id="1572">1572</a>
+<a href="#1573" id="1573">1573</a>
+<a href="#1574" id="1574">1574</a>
+<a href="#1575" id="1575">1575</a>
+<a href="#1576" id="1576">1576</a>
+<a href="#1577" id="1577">1577</a>
+<a href="#1578" id="1578">1578</a>
+<a href="#1579" id="1579">1579</a>
+<a href="#1580" id="1580">1580</a>
+<a href="#1581" id="1581">1581</a>
+<a href="#1582" id="1582">1582</a>
+<a href="#1583" id="1583">1583</a>
+<a href="#1584" id="1584">1584</a>
+<a href="#1585" id="1585">1585</a>
+<a href="#1586" id="1586">1586</a>
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests;
 
 <span class="kw">use </span><span class="kw">crate</span>::borrow::{Borrow, Cow};
@@ -1454,7 +1592,6 @@
 <span class="kw">use </span><span class="kw">crate</span>::collections::TryReserveError;
 <span class="kw">use </span><span class="kw">crate</span>::fmt;
 <span class="kw">use </span><span class="kw">crate</span>::hash::{Hash, Hasher};
-<span class="kw">use </span><span class="kw">crate</span>::iter::Extend;
 <span class="kw">use </span><span class="kw">crate</span>::ops;
 <span class="kw">use </span><span class="kw">crate</span>::rc::Rc;
 <span class="kw">use </span><span class="kw">crate</span>::str::FromStr;
@@ -1590,6 +1727,51 @@
         OsString { inner: Buf::from_string(String::new()) }
     }
 
+    <span class="doccomment">/// Converts bytes to an `OsString` without checking that the bytes contains
+    /// valid [`OsStr`]-encoded data.
+    ///
+    /// The byte encoding is an unspecified, platform-specific, self-synchronizing superset of UTF-8.
+    /// By being a self-synchronizing superset of UTF-8, this encoding is also a superset of 7-bit
+    /// ASCII.
+    ///
+    /// See the [module&#39;s toplevel documentation about conversions][conversions] for safe,
+    /// cross-platform [conversions] from/to native representations.
+    ///
+    /// # Safety
+    ///
+    /// As the encoding is unspecified, callers must pass in bytes that originated as a mixture of
+    /// validated UTF-8 and bytes from [`OsStr::as_os_str_bytes`] from within the same rust version
+    /// built for the same target platform.  For example, reconstructing an `OsString` from bytes sent
+    /// over the network or stored in a file will likely violate these safety rules.
+    ///
+    /// Due to the encoding being self-synchronizing, the bytes from [`OsStr::as_os_str_bytes`] can be
+    /// split either immediately before or immediately after any valid non-empty UTF-8 substring.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// #![feature(os_str_bytes)]
+    ///
+    /// use std::ffi::OsStr;
+    ///
+    /// let os_str = OsStr::new(&quot;Mary had a little lamb&quot;);
+    /// let bytes = os_str.as_os_str_bytes();
+    /// let words = bytes.split(|b| *b == b&#39; &#39;);
+    /// let words: Vec&lt;&amp;OsStr&gt; = words.map(|word| {
+    ///     // SAFETY:
+    ///     // - Each `word` only contains content that originated from `OsStr::as_os_str_bytes`
+    ///     // - Only split with ASCII whitespace which is a non-empty UTF-8 substring
+    ///     unsafe { OsStr::from_os_str_bytes_unchecked(word) }
+    /// }).collect();
+    /// ```
+    ///
+    /// [conversions]: super#conversions
+    </span><span class="attr">#[inline]
+    #[unstable(feature = <span class="string">&quot;os_str_bytes&quot;</span>, issue = <span class="string">&quot;111544&quot;</span>)]
+    </span><span class="kw">pub unsafe fn </span>from_os_str_bytes_unchecked(bytes: Vec&lt;u8&gt;) -&gt; <span class="self">Self </span>{
+        OsString { inner: Buf::from_os_str_bytes_unchecked(bytes) }
+    }
+
     <span class="doccomment">/// Converts to an [`OsStr`] slice.
     ///
     /// # Examples
@@ -1607,6 +1789,26 @@
     </span><span class="kw">pub fn </span>as_os_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>OsStr {
         <span class="self">self
     </span>}
+
+    <span class="doccomment">/// Converts the `OsString` into a byte slice.  To convert the byte slice back into an
+    /// `OsString`, use the [`OsStr::from_os_str_bytes_unchecked`] function.
+    ///
+    /// The byte encoding is an unspecified, platform-specific, self-synchronizing superset of UTF-8.
+    /// By being a self-synchronizing superset of UTF-8, this encoding is also a superset of 7-bit
+    /// ASCII.
+    ///
+    /// Note: As the encoding is unspecified, any sub-slice of bytes that is not valid UTF-8 should
+    /// be treated as opaque and only comparable within the same rust version built for the same
+    /// target platform.  For example, sending the bytes over the network or storing it in a file
+    /// will likely result in incompatible data.  See [`OsString`] for more encoding details
+    /// and [`std::ffi`] for platform-specific, specified conversions.
+    ///
+    /// [`std::ffi`]: crate::ffi
+    </span><span class="attr">#[inline]
+    #[unstable(feature = <span class="string">&quot;os_str_bytes&quot;</span>, issue = <span class="string">&quot;111544&quot;</span>)]
+    </span><span class="kw">pub fn </span>into_os_str_bytes(<span class="self">self</span>) -&gt; Vec&lt;u8&gt; {
+        <span class="self">self</span>.inner.into_os_str_bytes()
+    }
 
     <span class="doccomment">/// Converts the `OsString` into a [`String`] if it contains valid Unicode data.
     ///
@@ -2116,6 +2318,51 @@
         s.as_ref()
     }
 
+    <span class="doccomment">/// Converts a slice of bytes to an OS string slice without checking that the string contains
+    /// valid `OsStr`-encoded data.
+    ///
+    /// The byte encoding is an unspecified, platform-specific, self-synchronizing superset of UTF-8.
+    /// By being a self-synchronizing superset of UTF-8, this encoding is also a superset of 7-bit
+    /// ASCII.
+    ///
+    /// See the [module&#39;s toplevel documentation about conversions][conversions] for safe,
+    /// cross-platform [conversions] from/to native representations.
+    ///
+    /// # Safety
+    ///
+    /// As the encoding is unspecified, callers must pass in bytes that originated as a mixture of
+    /// validated UTF-8 and bytes from [`OsStr::as_os_str_bytes`] from within the same rust version
+    /// built for the same target platform.  For example, reconstructing an `OsStr` from bytes sent
+    /// over the network or stored in a file will likely violate these safety rules.
+    ///
+    /// Due to the encoding being self-synchronizing, the bytes from [`OsStr::as_os_str_bytes`] can be
+    /// split either immediately before or immediately after any valid non-empty UTF-8 substring.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// #![feature(os_str_bytes)]
+    ///
+    /// use std::ffi::OsStr;
+    ///
+    /// let os_str = OsStr::new(&quot;Mary had a little lamb&quot;);
+    /// let bytes = os_str.as_os_str_bytes();
+    /// let words = bytes.split(|b| *b == b&#39; &#39;);
+    /// let words: Vec&lt;&amp;OsStr&gt; = words.map(|word| {
+    ///     // SAFETY:
+    ///     // - Each `word` only contains content that originated from `OsStr::as_os_str_bytes`
+    ///     // - Only split with ASCII whitespace which is a non-empty UTF-8 substring
+    ///     unsafe { OsStr::from_os_str_bytes_unchecked(word) }
+    /// }).collect();
+    /// ```
+    ///
+    /// [conversions]: super#conversions
+    </span><span class="attr">#[inline]
+    #[unstable(feature = <span class="string">&quot;os_str_bytes&quot;</span>, issue = <span class="string">&quot;111544&quot;</span>)]
+    </span><span class="kw">pub unsafe fn </span>from_os_str_bytes_unchecked(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="self">Self </span>{
+        <span class="self">Self</span>::from_inner(Slice::from_os_str_bytes_unchecked(bytes))
+    }
+
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from_inner(inner: <span class="kw-2">&amp;</span>Slice) -&gt; <span class="kw-2">&amp;</span>OsStr {
         <span class="comment">// SAFETY: OsStr is just a wrapper of Slice,
@@ -2149,7 +2396,7 @@
                   without modifying the original&quot;</span>]
     #[inline]
     </span><span class="kw">pub fn </span>to_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
-        <span class="self">self</span>.inner.to_str()
+        <span class="self">self</span>.inner.to_str().ok()
     }
 
     <span class="doccomment">/// Converts an `OsStr` to a &lt;code&gt;[Cow]&lt;[str]&gt;&lt;/code&gt;.
@@ -2286,13 +2533,24 @@
         OsString { inner: Buf::from_box(boxed) }
     }
 
-    <span class="doccomment">/// Gets the underlying byte representation.
+    <span class="doccomment">/// Converts an OS string slice to a byte slice.  To convert the byte slice back into an OS
+    /// string slice, use the [`OsStr::from_os_str_bytes_unchecked`] function.
     ///
-    /// Note: it is *crucial* that this API is not externally public, to avoid
-    /// revealing the internal, platform-specific encodings.
+    /// The byte encoding is an unspecified, platform-specific, self-synchronizing superset of UTF-8.
+    /// By being a self-synchronizing superset of UTF-8, this encoding is also a superset of 7-bit
+    /// ASCII.
+    ///
+    /// Note: As the encoding is unspecified, any sub-slice of bytes that is not valid UTF-8 should
+    /// be treated as opaque and only comparable within the same rust version built for the same
+    /// target platform.  For example, sending the slice over the network or storing it in a file
+    /// will likely result in incompatible byte slices.  See [`OsString`] for more encoding details
+    /// and [`std::ffi`] for platform-specific, specified conversions.
+    ///
+    /// [`std::ffi`]: crate::ffi
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.inner <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*const </span>[u8]) }
+    #[unstable(feature = <span class="string">&quot;os_str_bytes&quot;</span>, issue = <span class="string">&quot;111544&quot;</span>)]
+    </span><span class="kw">pub fn </span>as_os_str_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
+        <span class="self">self</span>.inner.as_os_str_bytes()
     }
 
     <span class="doccomment">/// Converts this string to its ASCII lower case equivalent in-place.
@@ -2558,6 +2816,24 @@
     }
 }
 
+<span class="attr">#[stable(feature = <span class="string">&quot;str_tryfrom_osstr_impl&quot;</span>, since = <span class="string">&quot;1.72.0&quot;</span>)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
+    <span class="kw">type </span>Error = <span class="kw">crate</span>::str::Utf8Error;
+
+    <span class="doccomment">/// Tries to convert an `&amp;OsStr` to a `&amp;str`.
+    ///
+    /// ```
+    /// use std::ffi::OsStr;
+    ///
+    /// let os_str = OsStr::new(&quot;foo&quot;);
+    /// let as_str = &lt;&amp;str&gt;::try_from(os_str).unwrap();
+    /// assert_eq!(as_str, &quot;foo&quot;);
+    /// ```
+    </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+        value.inner.to_str()
+    }
+}
+
 <span class="attr">#[stable(feature = <span class="string">&quot;box_default_extra&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
 </span><span class="kw">impl </span>Default <span class="kw">for </span>Box&lt;OsStr&gt; {
     <span class="attr">#[inline]
@@ -2580,7 +2856,7 @@
 </span><span class="kw">impl </span>PartialEq <span class="kw">for </span>OsStr {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; bool {
-        <span class="self">self</span>.bytes().eq(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().eq(other.as_os_str_bytes())
     }
 }
 
@@ -2607,23 +2883,23 @@
 </span><span class="kw">impl </span>PartialOrd <span class="kw">for </span>OsStr {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; <span class="prelude-ty">Option</span>&lt;cmp::Ordering&gt; {
-        <span class="self">self</span>.bytes().partial_cmp(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().partial_cmp(other.as_os_str_bytes())
     }
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; bool {
-        <span class="self">self</span>.bytes().lt(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().lt(other.as_os_str_bytes())
     }
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>le(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; bool {
-        <span class="self">self</span>.bytes().le(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().le(other.as_os_str_bytes())
     }
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; bool {
-        <span class="self">self</span>.bytes().gt(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().gt(other.as_os_str_bytes())
     }
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>ge(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; bool {
-        <span class="self">self</span>.bytes().ge(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().ge(other.as_os_str_bytes())
     }
 }
 
@@ -2642,7 +2918,7 @@
 </span><span class="kw">impl </span>Ord <span class="kw">for </span>OsStr {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>OsStr) -&gt; cmp::Ordering {
-        <span class="self">self</span>.bytes().cmp(other.bytes())
+        <span class="self">self</span>.as_os_str_bytes().cmp(other.as_os_str_bytes())
     }
 }
 
@@ -2692,7 +2968,7 @@
 </span><span class="kw">impl </span>Hash <span class="kw">for </span>OsStr {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
-        <span class="self">self</span>.bytes().hash(state)
+        <span class="self">self</span>.as_os_str_bytes().hash(state)
     }
 }
 
@@ -2894,5 +3170,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/slice/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -4505,7 +4505,236 @@
 <a href="#4505" id="4505">4505</a>
 <a href="#4506" id="4506">4506</a>
 <a href="#4507" id="4507">4507</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Slice management and manipulation.
+<a href="#4508" id="4508">4508</a>
+<a href="#4509" id="4509">4509</a>
+<a href="#4510" id="4510">4510</a>
+<a href="#4511" id="4511">4511</a>
+<a href="#4512" id="4512">4512</a>
+<a href="#4513" id="4513">4513</a>
+<a href="#4514" id="4514">4514</a>
+<a href="#4515" id="4515">4515</a>
+<a href="#4516" id="4516">4516</a>
+<a href="#4517" id="4517">4517</a>
+<a href="#4518" id="4518">4518</a>
+<a href="#4519" id="4519">4519</a>
+<a href="#4520" id="4520">4520</a>
+<a href="#4521" id="4521">4521</a>
+<a href="#4522" id="4522">4522</a>
+<a href="#4523" id="4523">4523</a>
+<a href="#4524" id="4524">4524</a>
+<a href="#4525" id="4525">4525</a>
+<a href="#4526" id="4526">4526</a>
+<a href="#4527" id="4527">4527</a>
+<a href="#4528" id="4528">4528</a>
+<a href="#4529" id="4529">4529</a>
+<a href="#4530" id="4530">4530</a>
+<a href="#4531" id="4531">4531</a>
+<a href="#4532" id="4532">4532</a>
+<a href="#4533" id="4533">4533</a>
+<a href="#4534" id="4534">4534</a>
+<a href="#4535" id="4535">4535</a>
+<a href="#4536" id="4536">4536</a>
+<a href="#4537" id="4537">4537</a>
+<a href="#4538" id="4538">4538</a>
+<a href="#4539" id="4539">4539</a>
+<a href="#4540" id="4540">4540</a>
+<a href="#4541" id="4541">4541</a>
+<a href="#4542" id="4542">4542</a>
+<a href="#4543" id="4543">4543</a>
+<a href="#4544" id="4544">4544</a>
+<a href="#4545" id="4545">4545</a>
+<a href="#4546" id="4546">4546</a>
+<a href="#4547" id="4547">4547</a>
+<a href="#4548" id="4548">4548</a>
+<a href="#4549" id="4549">4549</a>
+<a href="#4550" id="4550">4550</a>
+<a href="#4551" id="4551">4551</a>
+<a href="#4552" id="4552">4552</a>
+<a href="#4553" id="4553">4553</a>
+<a href="#4554" id="4554">4554</a>
+<a href="#4555" id="4555">4555</a>
+<a href="#4556" id="4556">4556</a>
+<a href="#4557" id="4557">4557</a>
+<a href="#4558" id="4558">4558</a>
+<a href="#4559" id="4559">4559</a>
+<a href="#4560" id="4560">4560</a>
+<a href="#4561" id="4561">4561</a>
+<a href="#4562" id="4562">4562</a>
+<a href="#4563" id="4563">4563</a>
+<a href="#4564" id="4564">4564</a>
+<a href="#4565" id="4565">4565</a>
+<a href="#4566" id="4566">4566</a>
+<a href="#4567" id="4567">4567</a>
+<a href="#4568" id="4568">4568</a>
+<a href="#4569" id="4569">4569</a>
+<a href="#4570" id="4570">4570</a>
+<a href="#4571" id="4571">4571</a>
+<a href="#4572" id="4572">4572</a>
+<a href="#4573" id="4573">4573</a>
+<a href="#4574" id="4574">4574</a>
+<a href="#4575" id="4575">4575</a>
+<a href="#4576" id="4576">4576</a>
+<a href="#4577" id="4577">4577</a>
+<a href="#4578" id="4578">4578</a>
+<a href="#4579" id="4579">4579</a>
+<a href="#4580" id="4580">4580</a>
+<a href="#4581" id="4581">4581</a>
+<a href="#4582" id="4582">4582</a>
+<a href="#4583" id="4583">4583</a>
+<a href="#4584" id="4584">4584</a>
+<a href="#4585" id="4585">4585</a>
+<a href="#4586" id="4586">4586</a>
+<a href="#4587" id="4587">4587</a>
+<a href="#4588" id="4588">4588</a>
+<a href="#4589" id="4589">4589</a>
+<a href="#4590" id="4590">4590</a>
+<a href="#4591" id="4591">4591</a>
+<a href="#4592" id="4592">4592</a>
+<a href="#4593" id="4593">4593</a>
+<a href="#4594" id="4594">4594</a>
+<a href="#4595" id="4595">4595</a>
+<a href="#4596" id="4596">4596</a>
+<a href="#4597" id="4597">4597</a>
+<a href="#4598" id="4598">4598</a>
+<a href="#4599" id="4599">4599</a>
+<a href="#4600" id="4600">4600</a>
+<a href="#4601" id="4601">4601</a>
+<a href="#4602" id="4602">4602</a>
+<a href="#4603" id="4603">4603</a>
+<a href="#4604" id="4604">4604</a>
+<a href="#4605" id="4605">4605</a>
+<a href="#4606" id="4606">4606</a>
+<a href="#4607" id="4607">4607</a>
+<a href="#4608" id="4608">4608</a>
+<a href="#4609" id="4609">4609</a>
+<a href="#4610" id="4610">4610</a>
+<a href="#4611" id="4611">4611</a>
+<a href="#4612" id="4612">4612</a>
+<a href="#4613" id="4613">4613</a>
+<a href="#4614" id="4614">4614</a>
+<a href="#4615" id="4615">4615</a>
+<a href="#4616" id="4616">4616</a>
+<a href="#4617" id="4617">4617</a>
+<a href="#4618" id="4618">4618</a>
+<a href="#4619" id="4619">4619</a>
+<a href="#4620" id="4620">4620</a>
+<a href="#4621" id="4621">4621</a>
+<a href="#4622" id="4622">4622</a>
+<a href="#4623" id="4623">4623</a>
+<a href="#4624" id="4624">4624</a>
+<a href="#4625" id="4625">4625</a>
+<a href="#4626" id="4626">4626</a>
+<a href="#4627" id="4627">4627</a>
+<a href="#4628" id="4628">4628</a>
+<a href="#4629" id="4629">4629</a>
+<a href="#4630" id="4630">4630</a>
+<a href="#4631" id="4631">4631</a>
+<a href="#4632" id="4632">4632</a>
+<a href="#4633" id="4633">4633</a>
+<a href="#4634" id="4634">4634</a>
+<a href="#4635" id="4635">4635</a>
+<a href="#4636" id="4636">4636</a>
+<a href="#4637" id="4637">4637</a>
+<a href="#4638" id="4638">4638</a>
+<a href="#4639" id="4639">4639</a>
+<a href="#4640" id="4640">4640</a>
+<a href="#4641" id="4641">4641</a>
+<a href="#4642" id="4642">4642</a>
+<a href="#4643" id="4643">4643</a>
+<a href="#4644" id="4644">4644</a>
+<a href="#4645" id="4645">4645</a>
+<a href="#4646" id="4646">4646</a>
+<a href="#4647" id="4647">4647</a>
+<a href="#4648" id="4648">4648</a>
+<a href="#4649" id="4649">4649</a>
+<a href="#4650" id="4650">4650</a>
+<a href="#4651" id="4651">4651</a>
+<a href="#4652" id="4652">4652</a>
+<a href="#4653" id="4653">4653</a>
+<a href="#4654" id="4654">4654</a>
+<a href="#4655" id="4655">4655</a>
+<a href="#4656" id="4656">4656</a>
+<a href="#4657" id="4657">4657</a>
+<a href="#4658" id="4658">4658</a>
+<a href="#4659" id="4659">4659</a>
+<a href="#4660" id="4660">4660</a>
+<a href="#4661" id="4661">4661</a>
+<a href="#4662" id="4662">4662</a>
+<a href="#4663" id="4663">4663</a>
+<a href="#4664" id="4664">4664</a>
+<a href="#4665" id="4665">4665</a>
+<a href="#4666" id="4666">4666</a>
+<a href="#4667" id="4667">4667</a>
+<a href="#4668" id="4668">4668</a>
+<a href="#4669" id="4669">4669</a>
+<a href="#4670" id="4670">4670</a>
+<a href="#4671" id="4671">4671</a>
+<a href="#4672" id="4672">4672</a>
+<a href="#4673" id="4673">4673</a>
+<a href="#4674" id="4674">4674</a>
+<a href="#4675" id="4675">4675</a>
+<a href="#4676" id="4676">4676</a>
+<a href="#4677" id="4677">4677</a>
+<a href="#4678" id="4678">4678</a>
+<a href="#4679" id="4679">4679</a>
+<a href="#4680" id="4680">4680</a>
+<a href="#4681" id="4681">4681</a>
+<a href="#4682" id="4682">4682</a>
+<a href="#4683" id="4683">4683</a>
+<a href="#4684" id="4684">4684</a>
+<a href="#4685" id="4685">4685</a>
+<a href="#4686" id="4686">4686</a>
+<a href="#4687" id="4687">4687</a>
+<a href="#4688" id="4688">4688</a>
+<a href="#4689" id="4689">4689</a>
+<a href="#4690" id="4690">4690</a>
+<a href="#4691" id="4691">4691</a>
+<a href="#4692" id="4692">4692</a>
+<a href="#4693" id="4693">4693</a>
+<a href="#4694" id="4694">4694</a>
+<a href="#4695" id="4695">4695</a>
+<a href="#4696" id="4696">4696</a>
+<a href="#4697" id="4697">4697</a>
+<a href="#4698" id="4698">4698</a>
+<a href="#4699" id="4699">4699</a>
+<a href="#4700" id="4700">4700</a>
+<a href="#4701" id="4701">4701</a>
+<a href="#4702" id="4702">4702</a>
+<a href="#4703" id="4703">4703</a>
+<a href="#4704" id="4704">4704</a>
+<a href="#4705" id="4705">4705</a>
+<a href="#4706" id="4706">4706</a>
+<a href="#4707" id="4707">4707</a>
+<a href="#4708" id="4708">4708</a>
+<a href="#4709" id="4709">4709</a>
+<a href="#4710" id="4710">4710</a>
+<a href="#4711" id="4711">4711</a>
+<a href="#4712" id="4712">4712</a>
+<a href="#4713" id="4713">4713</a>
+<a href="#4714" id="4714">4714</a>
+<a href="#4715" id="4715">4715</a>
+<a href="#4716" id="4716">4716</a>
+<a href="#4717" id="4717">4717</a>
+<a href="#4718" id="4718">4718</a>
+<a href="#4719" id="4719">4719</a>
+<a href="#4720" id="4720">4720</a>
+<a href="#4721" id="4721">4721</a>
+<a href="#4722" id="4722">4722</a>
+<a href="#4723" id="4723">4723</a>
+<a href="#4724" id="4724">4724</a>
+<a href="#4725" id="4725">4725</a>
+<a href="#4726" id="4726">4726</a>
+<a href="#4727" id="4727">4727</a>
+<a href="#4728" id="4728">4728</a>
+<a href="#4729" id="4729">4729</a>
+<a href="#4730" id="4730">4730</a>
+<a href="#4731" id="4731">4731</a>
+<a href="#4732" id="4732">4732</a>
+<a href="#4733" id="4733">4733</a>
+<a href="#4734" id="4734">4734</a>
+<a href="#4735" id="4735">4735</a>
+<a href="#4736" id="4736">4736</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Slice management and manipulation.
 //!
 //! For more details see [`std::slice`].
 //!
@@ -4545,11 +4774,16 @@
 
 <span class="kw">mod </span>ascii;
 <span class="kw">mod </span>cmp;
-<span class="kw">mod </span>index;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>index;
 <span class="kw">mod </span>iter;
 <span class="kw">mod </span>raw;
 <span class="kw">mod </span>rotate;
+<span class="kw">mod </span>select;
 <span class="kw">mod </span>specialize;
+
+<span class="attr">#[unstable(feature = <span class="string">&quot;str_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
+#[doc(hidden)]
+</span><span class="kw">pub use </span>ascii::is_ascii_simple;
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
 </span><span class="kw">pub use </span>iter::{Chunks, ChunksMut, Windows};
@@ -4822,6 +5056,264 @@
         <span class="kw">if let </span>[.., last] = <span class="self">self </span>{ <span class="prelude-val">Some</span>(last) } <span class="kw">else </span>{ <span class="prelude-val">None </span>}
     }
 
+    <span class="doccomment">/// Returns the first `N` elements of the slice, or `None` if it has fewer than `N` elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let u = [10, 40, 30];
+    /// assert_eq!(Some(&amp;[10, 40]), u.first_chunk::&lt;2&gt;());
+    ///
+    /// let v: &amp;[i32] = &amp;[10];
+    /// assert_eq!(None, v.first_chunk::&lt;2&gt;());
+    ///
+    /// let w: &amp;[i32] = &amp;[];
+    /// assert_eq!(Some(&amp;[]), w.first_chunk::&lt;0&gt;());
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>first_chunk&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[T; N]&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   and do not let the reference outlive the slice.
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(<span class="self">self</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>[T; N]) })
+        }
+    }
+
+    <span class="doccomment">/// Returns a mutable reference to the first `N` elements of the slice,
+    /// or `None` if it has fewer than `N` elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;mut [0, 1, 2];
+    ///
+    /// if let Some(first) = x.first_chunk_mut::&lt;2&gt;() {
+    ///     first[0] = 5;
+    ///     first[1] = 4;
+    /// }
+    /// assert_eq!(x, &amp;[5, 4, 2]);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>first_chunk_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>[T; N]&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   do not let the reference outlive the slice,
+            //   and require exclusive access to the entire slice to mutate the chunk.
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(<span class="self">self</span>.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>[T; N]) })
+        }
+    }
+
+    <span class="doccomment">/// Returns the first `N` elements of the slice and the remainder,
+    /// or `None` if it has fewer than `N` elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;[0, 1, 2];
+    ///
+    /// if let Some((first, elements)) = x.split_first_chunk::&lt;2&gt;() {
+    ///     assert_eq!(first, &amp;[0, 1]);
+    ///     assert_eq!(elements, &amp;[2]);
+    /// }
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>split_first_chunk&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span>[T; N], <span class="kw-2">&amp;</span>[T])&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the split.
+            </span><span class="kw">let </span>(first, tail) = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_unchecked(N) };
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   and do not let the references outlive the slice.
+            </span><span class="prelude-val">Some</span>((<span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(first.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>[T; N]) }, tail))
+        }
+    }
+
+    <span class="doccomment">/// Returns a mutable reference to the first `N` elements of the slice and the remainder,
+    /// or `None` if it has fewer than `N` elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;mut [0, 1, 2];
+    ///
+    /// if let Some((first, elements)) = x.split_first_chunk_mut::&lt;2&gt;() {
+    ///     first[0] = 3;
+    ///     first[1] = 4;
+    ///     elements[0] = 5;
+    /// }
+    /// assert_eq!(x, &amp;[3, 4, 5]);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>split_first_chunk_mut&lt;<span class="kw">const </span>N: usize&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;mut </span>[T; N], <span class="kw-2">&amp;mut </span>[T])&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the split.
+            </span><span class="kw">let </span>(first, tail) = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_mut_unchecked(N) };
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   do not let the reference outlive the slice,
+            //   and enforce exclusive mutability of the chunk by the split.
+            </span><span class="prelude-val">Some</span>((<span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(first.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>[T; N]) }, tail))
+        }
+    }
+
+    <span class="doccomment">/// Returns the last `N` elements of the slice and the remainder,
+    /// or `None` if it has fewer than `N` elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;[0, 1, 2];
+    ///
+    /// if let Some((last, elements)) = x.split_last_chunk::&lt;2&gt;() {
+    ///     assert_eq!(last, &amp;[1, 2]);
+    ///     assert_eq!(elements, &amp;[0]);
+    /// }
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>split_last_chunk&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span>[T; N], <span class="kw-2">&amp;</span>[T])&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the split.
+            </span><span class="kw">let </span>(init, last) = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_unchecked(<span class="self">self</span>.len() - N) };
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   and do not let the references outlive the slice.
+            </span><span class="prelude-val">Some</span>((<span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(last.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>[T; N]) }, init))
+        }
+    }
+
+    <span class="doccomment">/// Returns the last and all the rest of the elements of the slice, or `None` if it is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;mut [0, 1, 2];
+    ///
+    /// if let Some((last, elements)) = x.split_last_chunk_mut::&lt;2&gt;() {
+    ///     last[0] = 3;
+    ///     last[1] = 4;
+    ///     elements[0] = 5;
+    /// }
+    /// assert_eq!(x, &amp;[5, 3, 4]);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>split_last_chunk_mut&lt;<span class="kw">const </span>N: usize&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;mut </span>[T; N], <span class="kw-2">&amp;mut </span>[T])&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the split.
+            </span><span class="kw">let </span>(init, last) = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_mut_unchecked(<span class="self">self</span>.len() - N) };
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   do not let the reference outlive the slice,
+            //   and enforce exclusive mutability of the chunk by the split.
+            </span><span class="prelude-val">Some</span>((<span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(last.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>[T; N]) }, init))
+        }
+    }
+
+    <span class="doccomment">/// Returns the last element of the slice, or `None` if it is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let u = [10, 40, 30];
+    /// assert_eq!(Some(&amp;[40, 30]), u.last_chunk::&lt;2&gt;());
+    ///
+    /// let v: &amp;[i32] = &amp;[10];
+    /// assert_eq!(None, v.last_chunk::&lt;2&gt;());
+    ///
+    /// let w: &amp;[i32] = &amp;[];
+    /// assert_eq!(Some(&amp;[]), w.last_chunk::&lt;0&gt;());
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>last_chunk&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[T; N]&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the slice.
+            // FIXME: Without const traits, we need this instead of `get_unchecked`.
+            </span><span class="kw">let </span>last = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_unchecked(<span class="self">self</span>.len() - N).<span class="number">1 </span>};
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   and do not let the references outlive the slice.
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(last.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>[T; N]) })
+        }
+    }
+
+    <span class="doccomment">/// Returns a mutable pointer to the last item in the slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(slice_first_last_chunk)]
+    ///
+    /// let x = &amp;mut [0, 1, 2];
+    ///
+    /// if let Some(last) = x.last_chunk_mut::&lt;2&gt;() {
+    ///     last[0] = 10;
+    ///     last[1] = 20;
+    /// }
+    /// assert_eq!(x, &amp;[0, 10, 20]);
+    /// ```
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;slice_first_last_chunk&quot;</span>, issue = <span class="string">&quot;111774&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub const fn </span>last_chunk_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>[T; N]&gt; {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; N {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="comment">// SAFETY: We manually verified the bounds of the slice.
+            // FIXME: Without const traits, we need this instead of `get_unchecked`.
+            </span><span class="kw">let </span>last = <span class="kw">unsafe </span>{ <span class="self">self</span>.split_at_mut_unchecked(<span class="self">self</span>.len() - N).<span class="number">1 </span>};
+
+            <span class="comment">// SAFETY: We explicitly check for the correct number of elements,
+            //   do not let the reference outlive the slice,
+            //   and require exclusive access to the entire slice to mutate the chunk.
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(last.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>[T; N]) })
+        }
+    }
+
     <span class="doccomment">/// Returns a reference to an element or subslice depending on the type of
     /// index.
     ///
@@ -4840,12 +5332,11 @@
     /// assert_eq!(None, v.get(0..4));
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub const fn </span>get&lt;I&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, index: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>I::Output&gt;
+    </span><span class="kw">pub fn </span>get&lt;I&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, index: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>I::Output&gt;
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;<span class="self">Self</span>&gt;,
+        </span>I: SliceIndex&lt;<span class="self">Self</span>&gt;,
     {
         index.get(<span class="self">self</span>)
     }
@@ -4866,12 +5357,11 @@
     /// assert_eq!(x, &amp;[0, 42, 2]);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub const fn </span>get_mut&lt;I&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>I::Output&gt;
+    </span><span class="kw">pub fn </span>get_mut&lt;I&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: I) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>I::Output&gt;
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;<span class="self">Self</span>&gt;,
+        </span>I: SliceIndex&lt;<span class="self">Self</span>&gt;,
     {
         index.get_mut(<span class="self">self</span>)
     }
@@ -4899,12 +5389,11 @@
     /// }
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked&lt;I&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, index: I) -&gt; <span class="kw-2">&amp;</span>I::Output
+    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;I&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, index: I) -&gt; <span class="kw-2">&amp;</span>I::Output
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;<span class="self">Self</span>&gt;,
+        </span>I: SliceIndex&lt;<span class="self">Self</span>&gt;,
     {
         <span class="comment">// SAFETY: the caller must uphold most of the safety requirements for `get_unchecked`;
         // the slice is dereferenceable because `self` is a safe reference.
@@ -4937,12 +5426,11 @@
     /// assert_eq!(x, &amp;[1, 13, 4]);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked_mut&lt;I&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: I) -&gt; <span class="kw-2">&amp;mut </span>I::Output
+    </span><span class="kw">pub unsafe fn </span>get_unchecked_mut&lt;I&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: I) -&gt; <span class="kw-2">&amp;mut </span>I::Output
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;<span class="self">Self</span>&gt;,
+        </span>I: SliceIndex&lt;<span class="self">Self</span>&gt;,
     {
         <span class="comment">// SAFETY: the caller must uphold the safety requirements for `get_unchecked_mut`;
         // the slice is dereferenceable because `self` is a safe reference.
@@ -5099,6 +5587,8 @@
 
     <span class="doccomment">/// Swaps two elements in the slice.
     ///
+    /// If `a` equals to `b`, it&#39;s guaranteed that elements won&#39;t change value.
+    ///
     /// # Arguments
     ///
     /// * a - The index of the first element
@@ -5185,9 +5675,8 @@
     /// assert!(v == [3, 2, 1]);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_reverse&quot;</span>, issue = <span class="string">&quot;100784&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const fn </span>reverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>reverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>half_len = <span class="self">self</span>.len() / <span class="number">2</span>;
         <span class="kw">let </span>Range { start, end } = <span class="self">self</span>.as_mut_ptr_range();
 
@@ -5210,7 +5699,7 @@
         </span>revswap(front_half, back_half, half_len);
 
         <span class="attr">#[inline]
-        </span><span class="kw">const fn </span>revswap&lt;T&gt;(a: <span class="kw-2">&amp;mut </span>[T], b: <span class="kw-2">&amp;mut </span>[T], n: usize) {
+        </span><span class="kw">fn </span>revswap&lt;T&gt;(a: <span class="kw-2">&amp;mut </span>[T], b: <span class="kw-2">&amp;mut </span>[T], n: usize) {
             <span class="macro">debug_assert!</span>(a.len() == n);
             <span class="macro">debug_assert!</span>(b.len() == n);
 
@@ -5503,7 +5992,7 @@
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_as_chunks&quot;</span>, issue = <span class="string">&quot;74985&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub unsafe fn </span>as_chunks_unchecked&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[[T; N]] {
+    </span><span class="kw">pub const unsafe fn </span>as_chunks_unchecked&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[[T; N]] {
         <span class="kw">let </span>this = <span class="self">self</span>;
         <span class="comment">// SAFETY: Caller must guarantee that `N` is nonzero and exactly divides the slice length
         </span><span class="kw">let </span>new_len = <span class="kw">unsafe </span>{
@@ -5551,7 +6040,7 @@
     #[inline]
     #[track_caller]
     #[must_use]
-    </span><span class="kw">pub fn </span>as_chunks&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;</span>[[T; N]], <span class="kw-2">&amp;</span>[T]) {
+    </span><span class="kw">pub const fn </span>as_chunks&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;</span>[[T; N]], <span class="kw-2">&amp;</span>[T]) {
         <span class="macro">assert!</span>(N != <span class="number">0</span>, <span class="string">&quot;chunk size must be non-zero&quot;</span>);
         <span class="kw">let </span>len = <span class="self">self</span>.len() / N;
         <span class="kw">let </span>(multiple_of_n, remainder) = <span class="self">self</span>.split_at(len * N);
@@ -5583,7 +6072,7 @@
     #[inline]
     #[track_caller]
     #[must_use]
-    </span><span class="kw">pub fn </span>as_rchunks&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;</span>[T], <span class="kw-2">&amp;</span>[[T; N]]) {
+    </span><span class="kw">pub const fn </span>as_rchunks&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;</span>[T], <span class="kw-2">&amp;</span>[[T; N]]) {
         <span class="macro">assert!</span>(N != <span class="number">0</span>, <span class="string">&quot;chunk size must be non-zero&quot;</span>);
         <span class="kw">let </span>len = <span class="self">self</span>.len() / N;
         <span class="kw">let </span>(remainder, multiple_of_n) = <span class="self">self</span>.split_at(<span class="self">self</span>.len() - len * N);
@@ -5660,7 +6149,7 @@
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_as_chunks&quot;</span>, issue = <span class="string">&quot;74985&quot;</span>)]
     #[inline]
     #[must_use]
-    </span><span class="kw">pub unsafe fn </span>as_chunks_unchecked_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[[T; N]] {
+    </span><span class="kw">pub const unsafe fn </span>as_chunks_unchecked_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[[T; N]] {
         <span class="kw">let </span>this = <span class="kw-2">&amp;*</span><span class="self">self</span>;
         <span class="comment">// SAFETY: Caller must guarantee that `N` is nonzero and exactly divides the slice length
         </span><span class="kw">let </span>new_len = <span class="kw">unsafe </span>{
@@ -5703,7 +6192,7 @@
     #[inline]
     #[track_caller]
     #[must_use]
-    </span><span class="kw">pub fn </span>as_chunks_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>[[T; N]], <span class="kw-2">&amp;mut </span>[T]) {
+    </span><span class="kw">pub const fn </span>as_chunks_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>[[T; N]], <span class="kw-2">&amp;mut </span>[T]) {
         <span class="macro">assert!</span>(N != <span class="number">0</span>, <span class="string">&quot;chunk size must be non-zero&quot;</span>);
         <span class="kw">let </span>len = <span class="self">self</span>.len() / N;
         <span class="kw">let </span>(multiple_of_n, remainder) = <span class="self">self</span>.split_at_mut(len * N);
@@ -5741,7 +6230,7 @@
     #[inline]
     #[track_caller]
     #[must_use]
-    </span><span class="kw">pub fn </span>as_rchunks_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>[T], <span class="kw-2">&amp;mut </span>[[T; N]]) {
+    </span><span class="kw">pub const fn </span>as_rchunks_mut&lt;<span class="kw">const </span>N: usize&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>[T], <span class="kw-2">&amp;mut </span>[[T; N]]) {
         <span class="macro">assert!</span>(N != <span class="number">0</span>, <span class="string">&quot;chunk size must be non-zero&quot;</span>);
         <span class="kw">let </span>len = <span class="self">self</span>.len() / N;
         <span class="kw">let </span>(remainder, multiple_of_n) = <span class="self">self</span>.split_at_mut(<span class="self">self</span>.len() - len * N);
@@ -6103,7 +6592,8 @@
     /// }
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_split_at_not_mut&quot;</span>, issue = <span class="string">&quot;101158&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;const_slice_split_at_not_mut&quot;</span>, since = <span class="string">&quot;1.71.0&quot;</span>)]
+    #[rustc_allow_const_fn_unstable(slice_split_at_unchecked)]
     #[inline]
     #[track_caller]
     #[must_use]
@@ -6894,7 +7384,8 @@
     </span>}
 
     <span class="doccomment">/// Binary searches this slice for a given element.
-    /// This behaves similarly to [`contains`] if this slice is sorted.
+    /// If the slice is not sorted, the returned result is unspecified and
+    /// meaningless.
     ///
     /// If the value is found then [`Result::Ok`] is returned, containing the
     /// index of the matching element. If there are multiple matches, then any
@@ -6906,7 +7397,6 @@
     ///
     /// See also [`binary_search_by`], [`binary_search_by_key`], and [`partition_point`].
     ///
-    /// [`contains`]: slice::contains
     /// [`binary_search_by`]: slice::binary_search_by
     /// [`binary_search_by_key`]: slice::binary_search_by_key
     /// [`partition_point`]: slice::partition_point
@@ -6969,12 +7459,13 @@
     }
 
     <span class="doccomment">/// Binary searches this slice with a comparator function.
-    /// This behaves similarly to [`contains`] if this slice is sorted.
     ///
-    /// The comparator function should implement an order consistent
-    /// with the sort order of the underlying slice, returning an
-    /// order code that indicates whether its argument is `Less`,
-    /// `Equal` or `Greater` the desired target.
+    /// The comparator function should return an order code that indicates
+    /// whether its argument is `Less`, `Equal` or `Greater` the desired
+    /// target.
+    /// If the slice is not sorted or if the comparator function does not
+    /// implement an order consistent with the sort order of the underlying
+    /// slice, the returned result is unspecified and meaningless.
     ///
     /// If the value is found then [`Result::Ok`] is returned, containing the
     /// index of the matching element. If there are multiple matches, then any
@@ -6986,7 +7477,6 @@
     ///
     /// See also [`binary_search`], [`binary_search_by_key`], and [`partition_point`].
     ///
-    /// [`contains`]: slice::contains
     /// [`binary_search`]: slice::binary_search
     /// [`binary_search_by_key`]: slice::binary_search_by_key
     /// [`partition_point`]: slice::partition_point
@@ -7055,10 +7545,11 @@
     }
 
     <span class="doccomment">/// Binary searches this slice with a key extraction function.
-    /// This behaves similarly to [`contains`] if this slice is sorted.
     ///
     /// Assumes that the slice is sorted by the key, for instance with
     /// [`sort_by_key`] using the same key extraction function.
+    /// If the slice is not sorted by the key, the returned result is
+    /// unspecified and meaningless.
     ///
     /// If the value is found then [`Result::Ok`] is returned, containing the
     /// index of the matching element. If there are multiple matches, then any
@@ -7070,7 +7561,6 @@
     ///
     /// See also [`binary_search`], [`binary_search_by`], and [`partition_point`].
     ///
-    /// [`contains`]: slice::contains
     /// [`sort_by_key`]: slice::sort_by_key
     /// [`binary_search`]: slice::binary_search
     /// [`binary_search_by`]: slice::binary_search_by
@@ -7203,7 +7693,7 @@
     /// elements.
     ///
     /// This sort is unstable (i.e., may reorder equal elements), in-place
-    /// (i.e., does not allocate), and *O*(m \* *n* \* log(*n*)) worst-case, where the key function is
+    /// (i.e., does not allocate), and *O*(*m* \* *n* \* log(*n*)) worst-case, where the key function is
     /// *O*(*m*).
     ///
     /// # Current implementation
@@ -7243,7 +7733,7 @@
     /// This reordering has the additional property that any value at position `i &lt; index` will be
     /// less than or equal to any value at a position `j &gt; index`. Additionally, this reordering is
     /// unstable (i.e. any number of equal elements may end up at position `index`), in-place
-    /// (i.e. does not allocate), and *O*(*n*) on average. The worst-case performance is *O*(*n* log *n*).
+    /// (i.e. does not allocate), and runs in *O*(*n*) time.
     /// This function is also known as &quot;kth element&quot; in other libraries.
     ///
     /// It returns a triplet of the following from the reordered slice:
@@ -7253,8 +7743,9 @@
     ///
     /// # Current implementation
     ///
-    /// The current algorithm is based on the quickselect portion of the same quicksort algorithm
-    /// used for [`sort_unstable`].
+    /// The current algorithm is an introselect implementation based on Pattern Defeating Quicksort, which is also
+    /// the basis for [`sort_unstable`]. The fallback algorithm is Median of Medians using Tukey&#39;s Ninther for
+    /// pivot selection, which guarantees linear runtime for all inputs.
     ///
     /// [`sort_unstable`]: slice::sort_unstable
     ///
@@ -7283,7 +7774,7 @@
     <span class="kw">where
         </span>T: Ord,
     {
-        sort::partition_at_index(<span class="self">self</span>, index, T::lt)
+        select::partition_at_index(<span class="self">self</span>, index, T::lt)
     }
 
     <span class="doccomment">/// Reorder the slice with a comparator function such that the element at `index` is at its
@@ -7292,9 +7783,8 @@
     /// This reordering has the additional property that any value at position `i &lt; index` will be
     /// less than or equal to any value at a position `j &gt; index` using the comparator function.
     /// Additionally, this reordering is unstable (i.e. any number of equal elements may end up at
-    /// position `index`), in-place (i.e. does not allocate), and *O*(*n*) on average.
-    /// The worst-case performance is *O*(*n* log *n*). This function is also known as
-    /// &quot;kth element&quot; in other libraries.
+    /// position `index`), in-place (i.e. does not allocate), and runs in *O*(*n*) time.
+    /// This function is also known as &quot;kth element&quot; in other libraries.
     ///
     /// It returns a triplet of the following from
     /// the slice reordered according to the provided comparator function: the subslice prior to
@@ -7304,8 +7794,9 @@
     ///
     /// # Current implementation
     ///
-    /// The current algorithm is based on the quickselect portion of the same quicksort algorithm
-    /// used for [`sort_unstable`].
+    /// The current algorithm is an introselect implementation based on Pattern Defeating Quicksort, which is also
+    /// the basis for [`sort_unstable`]. The fallback algorithm is Median of Medians using Tukey&#39;s Ninther for
+    /// pivot selection, which guarantees linear runtime for all inputs.
     ///
     /// [`sort_unstable`]: slice::sort_unstable
     ///
@@ -7338,7 +7829,7 @@
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span>T, <span class="kw-2">&amp;</span>T) -&gt; Ordering,
     {
-        sort::partition_at_index(<span class="self">self</span>, index, |a: <span class="kw-2">&amp;</span>T, b: <span class="kw-2">&amp;</span>T| compare(a, b) == Less)
+        select::partition_at_index(<span class="self">self</span>, index, |a: <span class="kw-2">&amp;</span>T, b: <span class="kw-2">&amp;</span>T| compare(a, b) == Less)
     }
 
     <span class="doccomment">/// Reorder the slice with a key extraction function such that the element at `index` is at its
@@ -7347,8 +7838,7 @@
     /// This reordering has the additional property that any value at position `i &lt; index` will be
     /// less than or equal to any value at a position `j &gt; index` using the key extraction function.
     /// Additionally, this reordering is unstable (i.e. any number of equal elements may end up at
-    /// position `index`), in-place (i.e. does not allocate), and *O*(*n*) on average.
-    /// The worst-case performance is *O*(*n* log *n*).
+    /// position `index`), in-place (i.e. does not allocate), and runs in *O*(*n*) time.
     /// This function is also known as &quot;kth element&quot; in other libraries.
     ///
     /// It returns a triplet of the following from
@@ -7359,8 +7849,9 @@
     ///
     /// # Current implementation
     ///
-    /// The current algorithm is based on the quickselect portion of the same quicksort algorithm
-    /// used for [`sort_unstable`].
+    /// The current algorithm is an introselect implementation based on Pattern Defeating Quicksort, which is also
+    /// the basis for [`sort_unstable`]. The fallback algorithm is Median of Medians using Tukey&#39;s Ninther for
+    /// pivot selection, which guarantees linear runtime for all inputs.
     ///
     /// [`sort_unstable`]: slice::sort_unstable
     ///
@@ -7394,7 +7885,7 @@
         </span>F: FnMut(<span class="kw-2">&amp;</span>T) -&gt; K,
         K: Ord,
     {
-        sort::partition_at_index(<span class="self">self</span>, index, |a: <span class="kw-2">&amp;</span>T, b: <span class="kw-2">&amp;</span>T| f(a).lt(<span class="kw-2">&amp;</span>f(b)))
+        select::partition_at_index(<span class="self">self</span>, index, |a: <span class="kw-2">&amp;</span>T, b: <span class="kw-2">&amp;</span>T| f(a).lt(<span class="kw-2">&amp;</span>f(b)))
     }
 
     <span class="doccomment">/// Moves all consecutive repeated elements to the end of the slice according to the
@@ -7986,44 +8477,13 @@
         // Ts = size_of::&lt;U&gt; / gcd(size_of::&lt;T&gt;, size_of::&lt;U&gt;)
         //
         // Luckily since all this is constant-evaluated... performance here matters not!
-        </span><span class="attr">#[inline]
-        </span><span class="kw">fn </span>gcd(a: usize, b: usize) -&gt; usize {
-            <span class="kw">use </span><span class="kw">crate</span>::intrinsics;
-            <span class="comment">// iterative stein’s algorithm
-            // We should still make this `const fn` (and revert to recursive algorithm if we do)
-            // because relying on llvm to consteval all this is… well, it makes me uncomfortable.
-
-            // SAFETY: `a` and `b` are checked to be non-zero values.
-            </span><span class="kw">let </span>(ctz_a, <span class="kw-2">mut </span>ctz_b) = <span class="kw">unsafe </span>{
-                <span class="kw">if </span>a == <span class="number">0 </span>{
-                    <span class="kw">return </span>b;
-                }
-                <span class="kw">if </span>b == <span class="number">0 </span>{
-                    <span class="kw">return </span>a;
-                }
-                (intrinsics::cttz_nonzero(a), intrinsics::cttz_nonzero(b))
-            };
-            <span class="kw">let </span>k = ctz_a.min(ctz_b);
-            <span class="kw">let </span><span class="kw-2">mut </span>a = a &gt;&gt; ctz_a;
-            <span class="kw">let </span><span class="kw-2">mut </span>b = b;
-            <span class="kw">loop </span>{
-                <span class="comment">// remove all factors of 2 from b
-                </span>b &gt;&gt;= ctz_b;
-                <span class="kw">if </span>a &gt; b {
-                    mem::swap(<span class="kw-2">&amp;mut </span>a, <span class="kw-2">&amp;mut </span>b);
-                }
-                b = b - a;
-                <span class="comment">// SAFETY: `b` is checked to be non-zero.
-                </span><span class="kw">unsafe </span>{
-                    <span class="kw">if </span>b == <span class="number">0 </span>{
-                        <span class="kw">break</span>;
-                    }
-                    ctz_b = intrinsics::cttz_nonzero(b);
-                }
-            }
-            a &lt;&lt; k
+        </span><span class="kw">const fn </span>gcd(a: usize, b: usize) -&gt; usize {
+            <span class="kw">if </span>b == <span class="number">0 </span>{ a } <span class="kw">else </span>{ gcd(b, a % b) }
         }
-        <span class="kw">let </span>gcd: usize = gcd(mem::size_of::&lt;T&gt;(), mem::size_of::&lt;U&gt;());
+
+        <span class="comment">// Explicitly wrap the function call in a const block so it gets
+        // constant-evaluated even in debug mode.
+        </span><span class="kw">let </span>gcd: usize = <span class="kw">const </span>{ gcd(mem::size_of::&lt;T&gt;(), mem::size_of::&lt;U&gt;()) };
         <span class="kw">let </span>ts: usize = mem::size_of::&lt;U&gt;() / gcd;
         <span class="kw">let </span>us: usize = mem::size_of::&lt;T&gt;() / gcd;
 
@@ -8329,7 +8789,7 @@
     <span class="kw">where
         </span>F: FnMut(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt;,
     {
-        <span class="self">self</span>.iter().is_sorted_by(|a, b| compare(<span class="kw-2">*</span>a, <span class="kw-2">*</span>b))
+        <span class="self">self</span>.array_windows().all(|[a, b]| compare(a, b).map_or(<span class="bool-val">false</span>, Ordering::is_le))
     }
 
     <span class="doccomment">/// Checks if the elements of this slice are sorted using the given key extraction function.
@@ -8769,7 +9229,7 @@
     /// assert!(empty_slice_of_arrays.flatten().is_empty());
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_flatten&quot;</span>, issue = <span class="string">&quot;95629&quot;</span>)]
-    </span><span class="kw">pub fn </span>flatten(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[T] {
+    </span><span class="kw">pub const fn </span>flatten(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[T] {
         <span class="kw">let </span>len = <span class="kw">if </span>T::IS_ZST {
             <span class="self">self</span>.len().checked_mul(N).expect(<span class="string">&quot;slice len overflow&quot;</span>)
         } <span class="kw">else </span>{
@@ -8911,8 +9371,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span><span class="kw-2">&amp;</span>[T] {
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span><span class="kw-2">&amp;</span>[T] {
     <span class="doccomment">/// Creates an empty slice.
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="kw-2">&amp;</span>[]
@@ -8920,8 +9379,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;mut_slice_default&quot;</span>, since = <span class="string">&quot;1.5.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_default_impls&quot;</span>, issue = <span class="string">&quot;87864&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>Default <span class="kw">for </span><span class="kw-2">&amp;mut </span>[T] {
+</span><span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span><span class="kw-2">&amp;mut </span>[T] {
     <span class="doccomment">/// Creates a mutable empty slice.
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="kw-2">&amp;mut </span>[]
@@ -8965,7 +9423,7 @@
 /// This will do `binomial(N + 1, 2) = N * (N + 1) / 2 = 0, 1, 3, 6, 10, ..`
 /// comparison operations.
 </span><span class="kw">fn </span>get_many_check_valid&lt;<span class="kw">const </span>N: usize&gt;(indices: <span class="kw-2">&amp;</span>[usize; N], len: usize) -&gt; bool {
-    <span class="comment">// NB: The optimzer should inline the loops into a sequence
+    <span class="comment">// NB: The optimizer should inline the loops into a sequence
     // of instructions without additional branching.
     </span><span class="kw">let </span><span class="kw-2">mut </span>valid = <span class="bool-val">true</span>;
     <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>idx) <span class="kw">in </span>indices.iter().enumerate() {
@@ -9012,5 +9470,4 @@
         fmt::Display::fmt(<span class="string">&quot;an index is out of bounds or appeared multiple times in the array&quot;</span>, f)
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -33,6 +33,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -70,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -86,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -162,7 +187,7 @@ be implemented at all!</p>
 Drop, Rust will prevent you from e.g. moving fields out of self. For most types,
 this is totally fine.</p>
 <p>For instance, a custom implementation of <code>Box</code> might write <code>Drop</code> like this:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">#![feature(ptr_internals, allocator_api)]
+<pre><pre class="playground"><code class="language-rust edition2021">#![feature(ptr_internals, allocator_api)]
 
 use std::alloc::{Allocator, Global, GlobalAlloc, Layout};
 use std::mem;
@@ -184,7 +209,7 @@ impl&lt;T&gt; Drop for Box&lt;T&gt; {
 a <a href="phantom-data.html">Unique</a> that has no actual <code>Drop</code> implementation. Similarly nothing can
 use-after-free the <code>ptr</code> because when drop exits, it becomes inaccessible.</p>
 <p>However this wouldn't work:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">#![feature(allocator_api, ptr_internals)]
+<pre><pre class="playground"><code class="language-rust edition2021">#![feature(allocator_api, ptr_internals)]
 
 use std::alloc::{Allocator, Global, GlobalAlloc, Layout};
 use std::ptr::{drop_in_place, Unique, NonNull};
@@ -220,7 +245,7 @@ happily proceed to tell the box to Drop itself and everything will blow up with
 use-after-frees and double-frees.</p>
 <p>Note that the recursive drop behavior applies to all structs and enums
 regardless of whether they implement Drop. Therefore something like</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Boxy&lt;T&gt; {
     data1: Box&lt;T&gt;,
@@ -232,7 +257,7 @@ regardless of whether they implement Drop. Therefore something like</p>
 dropped, even though it itself doesn't implement Drop. We say that such a type
 <em>needs Drop</em>, even though it is not itself Drop.</p>
 <p>Similarly,</p>
-<pre><pre class="playground"><code class="language-rust edition2018"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>enum Link {
     Next(Box&lt;Link&gt;),
@@ -247,7 +272,7 @@ certainly many valid use cases for needing to do trickier things with
 destructors.</p>
 <p>The classic safe solution to overriding recursive drop and allowing moving out
 of Self during <code>drop</code> is to use an Option:</p>
-<pre><pre class="playground"><code class="language-rust edition2018">#![feature(allocator_api, ptr_internals)]
+<pre><pre class="playground"><code class="language-rust edition2021">#![feature(allocator_api, ptr_internals)]
 
 use std::alloc::{Allocator, GlobalAlloc, Global, Layout};
 use std::ptr::{drop_in_place, Unique, NonNull};
@@ -339,5 +364,6 @@ a field shouldn't be automatically dropped.</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

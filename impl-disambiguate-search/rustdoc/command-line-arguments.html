@@ -32,6 +32,7 @@
 
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -69,10 +70,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -80,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html" class="active"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.3.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.4.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="what-is-rustdoc.html"><strong aria-hidden="true">1.</strong> What is rustdoc?</a></li><li class="chapter-item expanded "><a href="command-line-arguments.html" class="active"><strong aria-hidden="true">2.</strong> Command-line arguments</a></li><li class="chapter-item expanded "><a href="how-to-read-rustdoc.html"><strong aria-hidden="true">3.</strong> How to read rustdoc output</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="read-documentation/in-doc-settings.html"><strong aria-hidden="true">3.1.</strong> In-doc settings</a></li></ol></li><li class="chapter-item expanded "><a href="how-to-write-documentation.html"><strong aria-hidden="true">4.</strong> How to write documentation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="write-documentation/what-to-include.html"><strong aria-hidden="true">4.1.</strong> What to include (and exclude)</a></li><li class="chapter-item expanded "><a href="write-documentation/the-doc-attribute.html"><strong aria-hidden="true">4.2.</strong> The #[doc] attribute</a></li><li class="chapter-item expanded "><a href="write-documentation/re-exports.html"><strong aria-hidden="true">4.3.</strong> Re-exports</a></li><li class="chapter-item expanded "><a href="write-documentation/linking-to-items-by-name.html"><strong aria-hidden="true">4.4.</strong> Linking to items by name</a></li><li class="chapter-item expanded "><a href="write-documentation/documentation-tests.html"><strong aria-hidden="true">4.5.</strong> Documentation tests</a></li></ol></li><li class="chapter-item expanded "><a href="lints.html"><strong aria-hidden="true">5.</strong> Rustdoc-specific lints</a></li><li class="chapter-item expanded "><a href="scraped-examples.html"><strong aria-hidden="true">6.</strong> Scraped examples</a></li><li class="chapter-item expanded "><a href="advanced-features.html"><strong aria-hidden="true">7.</strong> Advanced features</a></li><li class="chapter-item expanded "><a href="unstable-features.html"><strong aria-hidden="true">8.</strong> Unstable features</a></li><li class="chapter-item expanded "><a href="deprecated-features.html"><strong aria-hidden="true">9.</strong> Deprecated features</a></li><li class="chapter-item expanded "><a href="references.html"><strong aria-hidden="true">10.</strong> References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -258,12 +283,19 @@ get the full list.</p>
 </code></pre>
 <p>This flag will run your code examples as tests. For more, see <a href="write-documentation/documentation-tests.html">the chapter
 on documentation tests</a>.</p>
-<p>See also <code>--test-args</code>.</p>
+<p>See also <code>--test-args</code> and <code>--test-run-directory</code>.</p>
 <h2 id="--test-args-pass-options-to-test-runner"><a class="header" href="#--test-args-pass-options-to-test-runner"><code>--test-args</code>: pass options to test runner</a></h2>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs --test --test-args ignored
 </code></pre>
 <p>This flag will pass options to the test runner when running documentation tests.
+For more, see <a href="write-documentation/documentation-tests.html">the chapter on documentation tests</a>.</p>
+<p>See also <code>--test</code>.</p>
+<h2 id="--test-run-directory-run-code-examples-in-a-specific-directory"><a class="header" href="#--test-run-directory-run-code-examples-in-a-specific-directory"><code>--test-run-directory</code>: run code examples in a specific directory</a></h2>
+<p>Using this flag looks like this:</p>
+<pre><code class="language-bash">$ rustdoc src/lib.rs --test --test-run-directory=/path/to/working/directory
+</code></pre>
+<p>This flag will run your code examples in the specified working directory.
 For more, see <a href="write-documentation/documentation-tests.html">the chapter on documentation tests</a>.</p>
 <p>See also <code>--test</code>.</p>
 <h2 id="--target-generate-documentation-for-the-specified-target-triple"><a class="header" href="#--target-generate-documentation-for-the-specified-target-triple"><code>--target</code>: generate documentation for the specified target triple</a></h2>
@@ -338,9 +370,7 @@ generated.</p>
 $ rustdoc src/lib.rs --extend-css extra.css
 </code></pre>
 <p>With this flag, the contents of the files you pass are included at the bottom
-of Rustdoc's <code>theme.css</code> file.</p>
-<p>While this flag is stable, the contents of <code>theme.css</code> are not, so be careful!
-Updates may break your theme extensions.</p>
+of the <code>theme.css</code> file.</p>
 <h2 id="--sysroot-override-the-system-root"><a class="header" href="#--sysroot-override-the-system-root"><code>--sysroot</code>: override the system root</a></h2>
 <p>Using this flag looks like this:</p>
 <pre><code class="language-bash">$ rustdoc src/lib.rs --sysroot /path/to/sysroot
@@ -448,5 +478,6 @@ Otherwise, it assumes that the input file is Rust.</p>
         <!-- Custom JS scripts -->
 
 
+    </div>
     </body>
 </html>

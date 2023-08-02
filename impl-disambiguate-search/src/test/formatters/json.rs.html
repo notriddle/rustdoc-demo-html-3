@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/test/src/formatters/json.rs`."><title>json.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="test" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../test/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/test/src/formatters/json.rs`."><title>json.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="test" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../test/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -283,31 +283,7 @@
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::{borrow::Cow, io, io::prelude::Write};
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{borrow::Cow, io, io::prelude::Write};
 
 <span class="kw">use </span><span class="kw">super</span>::OutputFormatter;
 <span class="kw">use crate</span>::{
@@ -327,14 +303,10 @@
     }
 
     <span class="kw">fn </span>writeln_message(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; io::Result&lt;()&gt; {
-        <span class="macro">assert!</span>(!s.contains(<span class="string">&#39;\n&#39;</span>));
-
-        <span class="self">self</span>.out.write_all(s.as_ref())<span class="question-mark">?</span>;
-        <span class="self">self</span>.out.write_all(<span class="string">b&quot;\n&quot;</span>)
-    }
-
-    <span class="kw">fn </span>write_message(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; io::Result&lt;()&gt; {
-        <span class="macro">assert!</span>(!s.contains(<span class="string">&#39;\n&#39;</span>));
+        <span class="comment">// self.out will take a lock, but that lock is released when write_all returns. This
+        // results in a race condition and json output may not end with a new line. We avoid this
+        // by issuing `write_all` calls line-by-line.
+        </span><span class="macro">assert_eq!</span>(s.chars().last(), <span class="prelude-val">Some</span>(<span class="string">&#39;\n&#39;</span>));
 
         <span class="self">self</span>.out.write_all(s.as_ref())
     }
@@ -343,34 +315,35 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         ty: <span class="kw-2">&amp;</span>str,
         name: <span class="kw-2">&amp;</span>str,
-        evt: <span class="kw-2">&amp;</span>str,
+        event: <span class="kw-2">&amp;</span>str,
         exec_time: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>time::TestExecTime&gt;,
         stdout: <span class="prelude-ty">Option</span>&lt;Cow&lt;<span class="lifetime">&#39;_</span>, str&gt;&gt;,
         extra: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
     ) -&gt; io::Result&lt;()&gt; {
         <span class="comment">// A doc test&#39;s name includes a filename which must be escaped for correct json.
-        </span><span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;{}&quot;, &quot;name&quot;: &quot;{}&quot;, &quot;event&quot;: &quot;{}&quot;&quot;#</span>,
-            ty,
-            EscapedString(name),
-            evt
-        ))<span class="question-mark">?</span>;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(exec_time) = exec_time {
-            <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r#&quot;, &quot;exec_time&quot;: {}&quot;#</span>, exec_time.<span class="number">0</span>.as_secs_f64()))<span class="question-mark">?</span>;
-        }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(stdout) = stdout {
-            <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r#&quot;, &quot;stdout&quot;: &quot;{}&quot;&quot;#</span>, EscapedString(stdout)))<span class="question-mark">?</span>;
-        }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(extra) = extra {
-            <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r#&quot;, {extra}&quot;#</span>))<span class="question-mark">?</span>;
-        }
-        <span class="self">self</span>.writeln_message(<span class="string">&quot; }&quot;</span>)
+        </span><span class="kw">let </span>name = EscapedString(name);
+        <span class="kw">let </span>exec_time_json = <span class="kw">if let </span><span class="prelude-val">Some</span>(exec_time) = exec_time {
+            <span class="macro">format!</span>(<span class="string">r#&quot;, &quot;exec_time&quot;: {}&quot;#</span>, exec_time.<span class="number">0</span>.as_secs_f64())
+        } <span class="kw">else </span>{
+            String::from(<span class="string">&quot;&quot;</span>)
+        };
+        <span class="kw">let </span>stdout_json = <span class="kw">if let </span><span class="prelude-val">Some</span>(stdout) = stdout {
+            <span class="macro">format!</span>(<span class="string">r#&quot;, &quot;stdout&quot;: &quot;{}&quot;&quot;#</span>, EscapedString(stdout))
+        } <span class="kw">else </span>{
+            String::from(<span class="string">&quot;&quot;</span>)
+        };
+        <span class="kw">let </span>extra_json =
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(extra) = extra { <span class="macro">format!</span>(<span class="string">r#&quot;, {extra}&quot;#</span>) } <span class="kw">else </span>{ String::from(<span class="string">&quot;&quot;</span>) };
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
+
+        <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+                <span class="string">r#&quot;{{ &quot;type&quot;: &quot;{ty}&quot;, &quot;name&quot;: &quot;{name}&quot;, &quot;event&quot;: &quot;{event}&quot;{exec_time_json}{stdout_json}{extra_json} }}{newline}&quot;#</span>))
     }
 }
 
 <span class="kw">impl</span>&lt;T: Write&gt; OutputFormatter <span class="kw">for </span>JsonFormatter&lt;T&gt; {
     <span class="kw">fn </span>write_discovery_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
-        <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;discovery&quot; }}&quot;#</span>))
+        <span class="self">self</span>.writeln_message(<span class="macro">concat!</span>(<span class="string">r#&quot;{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;discovery&quot; }&quot;#</span>, <span class="string">&quot;\n&quot;</span>))
     }
 
     <span class="kw">fn </span>write_test_discovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: <span class="kw-2">&amp;</span>TestDesc, test_type: <span class="kw-2">&amp;</span>str) -&gt; io::Result&lt;()&gt; {
@@ -378,45 +351,32 @@
             name,
             ignore,
             ignore_message,
-            <span class="attr">#[cfg(not(bootstrap))]
-            </span>source_file,
-            <span class="attr">#[cfg(not(bootstrap))]
-            </span>start_line,
-            <span class="attr">#[cfg(not(bootstrap))]
-            </span>start_col,
-            <span class="attr">#[cfg(not(bootstrap))]
-            </span>end_line,
-            <span class="attr">#[cfg(not(bootstrap))]
-            </span>end_col,
+            source_file,
+            start_line,
+            start_col,
+            end_line,
+            end_col,
             ..
         } = desc;
 
-        <span class="attr">#[cfg(bootstrap)]
-        </span><span class="kw">let </span>source_file = <span class="string">&quot;&quot;</span>;
-        <span class="attr">#[cfg(bootstrap)]
-        </span><span class="kw">let </span>start_line = <span class="number">0</span>;
-        <span class="attr">#[cfg(bootstrap)]
-        </span><span class="kw">let </span>start_col = <span class="number">0</span>;
-        <span class="attr">#[cfg(bootstrap)]
-        </span><span class="kw">let </span>end_line = <span class="number">0</span>;
-        <span class="attr">#[cfg(bootstrap)]
-        </span><span class="kw">let </span>end_col = <span class="number">0</span>;
+        <span class="kw">let </span>name = EscapedString(name.as_slice());
+        <span class="kw">let </span>ignore_message = ignore_message.unwrap_or(<span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span>source_path = EscapedString(source_file);
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
 
         <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;{test_type}&quot;, &quot;event&quot;: &quot;discovered&quot;, &quot;name&quot;: &quot;{}&quot;, &quot;ignore&quot;: {ignore}, &quot;ignore_message&quot;: &quot;{}&quot;, &quot;source_path&quot;: &quot;{}&quot;, &quot;start_line&quot;: {start_line}, &quot;start_col&quot;: {start_col}, &quot;end_line&quot;: {end_line}, &quot;end_col&quot;: {end_col} }}&quot;#</span>,
-            EscapedString(name.as_slice()),
-            ignore_message.unwrap_or(<span class="string">&quot;&quot;</span>),
-            EscapedString(source_file),
-        ))
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;{test_type}&quot;, &quot;event&quot;: &quot;discovered&quot;, &quot;name&quot;: &quot;{name}&quot;, &quot;ignore&quot;: {ignore}, &quot;ignore_message&quot;: &quot;{ignore_message}&quot;, &quot;source_path&quot;: &quot;{source_path}&quot;, &quot;start_line&quot;: {start_line}, &quot;start_col&quot;: {start_col}, &quot;end_line&quot;: {end_line}, &quot;end_col&quot;: {end_col} }}{newline}&quot;#
+        </span>))
     }
 
     <span class="kw">fn </span>write_discovery_finish(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;</span>ConsoleTestDiscoveryState) -&gt; io::Result&lt;()&gt; {
         <span class="kw">let </span>ConsoleTestDiscoveryState { tests, benchmarks, ignored, .. } = state;
 
         <span class="kw">let </span>total = tests + benchmarks;
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
         <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;completed&quot;, &quot;tests&quot;: {tests}, &quot;benchmarks&quot;: {benchmarks}, &quot;total&quot;: {total}, &quot;ignored&quot;: {ignored} }}&quot;#
-        </span>))
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;completed&quot;, &quot;tests&quot;: {tests}, &quot;benchmarks&quot;: {benchmarks}, &quot;total&quot;: {total}, &quot;ignored&quot;: {ignored} }}{newline}&quot;#
+            </span>))
     }
 
     <span class="kw">fn </span>write_run_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>, test_count: usize, shuffle_seed: <span class="prelude-ty">Option</span>&lt;u64&gt;) -&gt; io::Result&lt;()&gt; {
@@ -425,16 +385,18 @@
         } <span class="kw">else </span>{
             String::new()
         };
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
         <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;started&quot;, &quot;test_count&quot;: {test_count}{shuffle_seed_json} }}&quot;#
-        </span>))
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;started&quot;, &quot;test_count&quot;: {test_count}{shuffle_seed_json} }}{newline}&quot;#
+            </span>))
     }
 
     <span class="kw">fn </span>write_test_start(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: <span class="kw-2">&amp;</span>TestDesc) -&gt; io::Result&lt;()&gt; {
+        <span class="kw">let </span>name = EscapedString(desc.name.as_slice());
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
         <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;test&quot;, &quot;event&quot;: &quot;started&quot;, &quot;name&quot;: &quot;{}&quot; }}&quot;#</span>,
-            EscapedString(desc.name.as_slice())
-        ))
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;test&quot;, &quot;event&quot;: &quot;started&quot;, &quot;name&quot;: &quot;{name}&quot; }}{newline}&quot;#
+        </span>))
     }
 
     <span class="kw">fn </span>write_result(
@@ -498,53 +460,43 @@
                 } <span class="kw">else </span>{
                     <span class="macro">format!</span>(<span class="string">r#&quot;, &quot;mib_per_second&quot;: {}&quot;#</span>, bs.mb_s)
                 };
+                <span class="kw">let </span>name = EscapedString(desc.name.as_slice());
 
-                <span class="kw">let </span>line = <span class="macro">format!</span>(
+                <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
                     <span class="string">&quot;{{ \&quot;type\&quot;: \&quot;bench\&quot;, \
-                     \&quot;name\&quot;: \&quot;{}\&quot;, \
-                     \&quot;median\&quot;: {}, \
-                     \&quot;deviation\&quot;: {}{} }}&quot;</span>,
-                    EscapedString(desc.name.as_slice()),
-                    median,
-                    deviation,
-                    mbps
-                );
-
-                <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span>line)
+                     \&quot;name\&quot;: \&quot;{name}\&quot;, \
+                     \&quot;median\&quot;: {median}, \
+                     \&quot;deviation\&quot;: {deviation}{mbps} }}\n&quot;</span>,
+                ))
             }
         }
     }
 
     <span class="kw">fn </span>write_timeout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: <span class="kw-2">&amp;</span>TestDesc) -&gt; io::Result&lt;()&gt; {
+        <span class="kw">let </span>name = EscapedString(desc.name.as_slice());
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
         <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;test&quot;, &quot;event&quot;: &quot;timeout&quot;, &quot;name&quot;: &quot;{}&quot; }}&quot;#</span>,
-            EscapedString(desc.name.as_slice())
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;test&quot;, &quot;event&quot;: &quot;timeout&quot;, &quot;name&quot;: &quot;{name}&quot; }}{newline}&quot;#</span>,
         ))
     }
 
     <span class="kw">fn </span>write_run_finish(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;</span>ConsoleTestState) -&gt; io::Result&lt;bool&gt; {
-        <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">&quot;{{ \&quot;type\&quot;: \&quot;suite\&quot;, \
-             \&quot;event\&quot;: \&quot;{}\&quot;, \
-             \&quot;passed\&quot;: {}, \
-             \&quot;failed\&quot;: {}, \
-             \&quot;ignored\&quot;: {}, \
-             \&quot;measured\&quot;: {}, \
-             \&quot;filtered_out\&quot;: {}&quot;</span>,
-            <span class="kw">if </span>state.failed == <span class="number">0 </span>{ <span class="string">&quot;ok&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;failed&quot; </span>},
-            state.passed,
-            state.failed,
-            state.ignored,
-            state.measured,
-            state.filtered_out,
-        ))<span class="question-mark">?</span>;
+        <span class="kw">let </span>event = <span class="kw">if </span>state.failed == <span class="number">0 </span>{ <span class="string">&quot;ok&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;failed&quot; </span>};
+        <span class="kw">let </span>passed = state.passed;
+        <span class="kw">let </span>failed = state.failed;
+        <span class="kw">let </span>ignored = state.ignored;
+        <span class="kw">let </span>measured = state.measured;
+        <span class="kw">let </span>filtered_out = state.filtered_out;
+        <span class="kw">let </span>exec_time_json = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>exec_time) = state.exec_time {
+            <span class="macro">format!</span>(<span class="string">r#&quot;, &quot;exec_time&quot;: {}&quot;#</span>, exec_time.<span class="number">0</span>.as_secs_f64())
+        } <span class="kw">else </span>{
+            String::from(<span class="string">&quot;&quot;</span>)
+        };
+        <span class="kw">let </span>newline = <span class="string">&quot;\n&quot;</span>;
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>exec_time) = state.exec_time {
-            <span class="kw">let </span>time_str = <span class="macro">format!</span>(<span class="string">&quot;, \&quot;exec_time\&quot;: {}&quot;</span>, exec_time.<span class="number">0</span>.as_secs_f64());
-            <span class="self">self</span>.write_message(<span class="kw-2">&amp;</span>time_str)<span class="question-mark">?</span>;
-        }
-
-        <span class="self">self</span>.writeln_message(<span class="string">&quot; }&quot;</span>)<span class="question-mark">?</span>;
+        <span class="self">self</span>.writeln_message(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+            <span class="string">r#&quot;{{ &quot;type&quot;: &quot;suite&quot;, &quot;event&quot;: &quot;{event}&quot;, &quot;passed&quot;: {passed}, &quot;failed&quot;: {failed}, &quot;ignored&quot;: {ignored}, &quot;measured&quot;: {measured}, &quot;filtered_out&quot;: {filtered_out}{exec_time_json} }}{newline}&quot;#
+        </span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(state.failed == <span class="number">0</span>)
     }
@@ -616,5 +568,4 @@
         <span class="prelude-val">Ok</span>(())
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/wasm32/simd128.rs`."><title>simd128.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../../../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../source-files1.70.0.js"></script><script defer src="../../../../../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/../../stdarch/crates/core_arch/src/wasm32/simd128.rs`."><title>simd128.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../../../" data-static-root-path="../../../../../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../../../src-files1.73.0.js"></script><script defer src="../../../../../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../core/index.html"><img class="rust-logo" src="../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -6100,41 +6100,7 @@
 <a href="#6100" id="6100">6100</a>
 <a href="#6101" id="6101">6101</a>
 <a href="#6102" id="6102">6102</a>
-<a href="#6103" id="6103">6103</a>
-<a href="#6104" id="6104">6104</a>
-<a href="#6105" id="6105">6105</a>
-<a href="#6106" id="6106">6106</a>
-<a href="#6107" id="6107">6107</a>
-<a href="#6108" id="6108">6108</a>
-<a href="#6109" id="6109">6109</a>
-<a href="#6110" id="6110">6110</a>
-<a href="#6111" id="6111">6111</a>
-<a href="#6112" id="6112">6112</a>
-<a href="#6113" id="6113">6113</a>
-<a href="#6114" id="6114">6114</a>
-<a href="#6115" id="6115">6115</a>
-<a href="#6116" id="6116">6116</a>
-<a href="#6117" id="6117">6117</a>
-<a href="#6118" id="6118">6118</a>
-<a href="#6119" id="6119">6119</a>
-<a href="#6120" id="6120">6120</a>
-<a href="#6121" id="6121">6121</a>
-<a href="#6122" id="6122">6122</a>
-<a href="#6123" id="6123">6123</a>
-<a href="#6124" id="6124">6124</a>
-<a href="#6125" id="6125">6125</a>
-<a href="#6126" id="6126">6126</a>
-<a href="#6127" id="6127">6127</a>
-<a href="#6128" id="6128">6128</a>
-<a href="#6129" id="6129">6129</a>
-<a href="#6130" id="6130">6130</a>
-<a href="#6131" id="6131">6131</a>
-<a href="#6132" id="6132">6132</a>
-<a href="#6133" id="6133">6133</a>
-<a href="#6134" id="6134">6134</a>
-<a href="#6135" id="6135">6135</a>
-<a href="#6136" id="6136">6136</a>
-</pre><pre class="rust"><code><span class="doccomment">//! This module implements the [WebAssembly `SIMD128` ISA].
+</pre></div><pre class="rust"><code><span class="doccomment">//! This module implements the [WebAssembly `SIMD128` ISA].
 //!
 //! [WebAssembly `SIMD128` ISA]:
 //! https://github.com/WebAssembly/simd/blob/master/proposals/simd/SIMD.md
@@ -6182,7 +6148,7 @@
         <span class="kw">impl </span>v128 {
             $(
                 <span class="attr">#[inline(always)]
-                </span><span class="kw">fn </span><span class="macro-nonterminal">$name</span>(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$ty </span>{
+                </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span><span class="macro-nonterminal">$name</span>(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$ty </span>{
                     <span class="kw">unsafe </span>{ mem::transmute(<span class="self">self</span>) }
                 }
             )*
@@ -6191,7 +6157,7 @@
             <span class="kw">impl </span><span class="macro-nonterminal">$ty </span>{
                 <span class="attr">#[inline(always)]
                 #[rustc_const_stable(feature = <span class="string">&quot;wasm_simd_const&quot;</span>, since = <span class="string">&quot;1.56.0&quot;</span>)]
-                </span><span class="kw">const fn </span>v128(<span class="self">self</span>) -&gt; v128 {
+                </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const fn </span>v128(<span class="self">self</span>) -&gt; v128 {
                     <span class="kw">unsafe </span>{ mem::transmute(<span class="self">self</span>) }
                 }
             }
@@ -7073,47 +7039,30 @@
     a: v128,
     b: v128,
 ) -&gt; v128 {
-    <span class="macro">static_assert!</span>(I0: usize <span class="kw">where </span>I0 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I1: usize <span class="kw">where </span>I1 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I2: usize <span class="kw">where </span>I2 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I3: usize <span class="kw">where </span>I3 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I4: usize <span class="kw">where </span>I4 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I5: usize <span class="kw">where </span>I5 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I6: usize <span class="kw">where </span>I6 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I7: usize <span class="kw">where </span>I7 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I8: usize <span class="kw">where </span>I8 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I9: usize <span class="kw">where </span>I9 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I10: usize <span class="kw">where </span>I10 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I11: usize <span class="kw">where </span>I11 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I12: usize <span class="kw">where </span>I12 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I13: usize <span class="kw">where </span>I13 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I14: usize <span class="kw">where </span>I14 &lt; <span class="number">32</span>);
-    <span class="macro">static_assert!</span>(I15: usize <span class="kw">where </span>I15 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I0 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I1 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I2 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I3 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I4 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I5 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I6 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I7 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I8 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I9 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I10 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I11 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I12 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I13 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I14 &lt; <span class="number">32</span>);
+    <span class="macro">static_assert!</span>(I15 &lt; <span class="number">32</span>);
     <span class="kw">let </span>shuf: simd::u8x16 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle16!</span>(
+        <span class="macro">simd_shuffle!</span>(
             a.as_u8x16(),
             b.as_u8x16(),
-            &lt;
-                <span class="kw">const </span>I0: usize,
-                <span class="kw">const </span>I1: usize,
-                <span class="kw">const </span>I2: usize,
-                <span class="kw">const </span>I3: usize,
-                <span class="kw">const </span>I4: usize,
-                <span class="kw">const </span>I5: usize,
-                <span class="kw">const </span>I6: usize,
-                <span class="kw">const </span>I7: usize,
-                <span class="kw">const </span>I8: usize,
-                <span class="kw">const </span>I9: usize,
-                <span class="kw">const </span>I10: usize,
-                <span class="kw">const </span>I11: usize,
-                <span class="kw">const </span>I12: usize,
-                <span class="kw">const </span>I13: usize,
-                <span class="kw">const </span>I14: usize,
-                <span class="kw">const </span>I15: usize,
-            &gt; [
-                I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32, I4 <span class="kw">as </span>u32, I5 <span class="kw">as </span>u32, I6 <span class="kw">as </span>u32, I7 <span class="kw">as </span>u32,
-                I8 <span class="kw">as </span>u32, I9 <span class="kw">as </span>u32, I10 <span class="kw">as </span>u32, I11 <span class="kw">as </span>u32, I12 <span class="kw">as </span>u32, I13 <span class="kw">as </span>u32, I14 <span class="kw">as </span>u32,
-                I15 <span class="kw">as </span>u32,
+            [
+                I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32, I4 <span class="kw">as </span>u32, I5 <span class="kw">as </span>u32, I6 <span class="kw">as </span>u32,
+                I7 <span class="kw">as </span>u32, I8 <span class="kw">as </span>u32, I9 <span class="kw">as </span>u32, I10 <span class="kw">as </span>u32, I11 <span class="kw">as </span>u32, I12 <span class="kw">as </span>u32, I13 <span class="kw">as </span>u32,
+                I14 <span class="kw">as </span>u32, I15 <span class="kw">as </span>u32,
             ],
         )
     };
@@ -7160,29 +7109,21 @@
     a: v128,
     b: v128,
 ) -&gt; v128 {
-    <span class="macro">static_assert!</span>(I0: usize <span class="kw">where </span>I0 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I1: usize <span class="kw">where </span>I1 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I2: usize <span class="kw">where </span>I2 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I3: usize <span class="kw">where </span>I3 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I4: usize <span class="kw">where </span>I4 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I5: usize <span class="kw">where </span>I5 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I6: usize <span class="kw">where </span>I6 &lt; <span class="number">16</span>);
-    <span class="macro">static_assert!</span>(I7: usize <span class="kw">where </span>I7 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I0 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I1 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I2 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I3 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I4 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I5 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I6 &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(I7 &lt; <span class="number">16</span>);
     <span class="kw">let </span>shuf: simd::u16x8 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle8!</span>(
+        <span class="macro">simd_shuffle!</span>(
             a.as_u16x8(),
             b.as_u16x8(),
-            &lt;
-                <span class="kw">const </span>I0: usize,
-                <span class="kw">const </span>I1: usize,
-                <span class="kw">const </span>I2: usize,
-                <span class="kw">const </span>I3: usize,
-                <span class="kw">const </span>I4: usize,
-                <span class="kw">const </span>I5: usize,
-                <span class="kw">const </span>I6: usize,
-                <span class="kw">const </span>I7: usize,
-            &gt; [
-                I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32, I4 <span class="kw">as </span>u32, I5 <span class="kw">as </span>u32, I6 <span class="kw">as </span>u32, I7 <span class="kw">as </span>u32,
+            [
+                I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32, I4 <span class="kw">as </span>u32, I5 <span class="kw">as </span>u32, I6 <span class="kw">as </span>u32,
+                I7 <span class="kw">as </span>u32,
             ],
         )
     };
@@ -7208,15 +7149,15 @@
     a: v128,
     b: v128,
 ) -&gt; v128 {
-    <span class="macro">static_assert!</span>(I0: usize <span class="kw">where </span>I0 &lt; <span class="number">8</span>);
-    <span class="macro">static_assert!</span>(I1: usize <span class="kw">where </span>I1 &lt; <span class="number">8</span>);
-    <span class="macro">static_assert!</span>(I2: usize <span class="kw">where </span>I2 &lt; <span class="number">8</span>);
-    <span class="macro">static_assert!</span>(I3: usize <span class="kw">where </span>I3 &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(I0 &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(I1 &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(I2 &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(I3 &lt; <span class="number">8</span>);
     <span class="kw">let </span>shuf: simd::u32x4 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle4!</span>(
+        <span class="macro">simd_shuffle!</span>(
             a.as_u32x4(),
             b.as_u32x4(),
-            &lt;<span class="kw">const </span>I0: usize, <span class="kw">const </span>I1: usize, <span class="kw">const </span>I2: usize, <span class="kw">const </span>I3: usize&gt; [I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32],
+            [I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32, I2 <span class="kw">as </span>u32, I3 <span class="kw">as </span>u32],
         )
     };
     shuf.v128()
@@ -7238,15 +7179,10 @@
 #[doc(alias(<span class="string">&quot;i8x16.shuffle&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_shuffle&lt;<span class="kw">const </span>I0: usize, <span class="kw">const </span>I1: usize&gt;(a: v128, b: v128) -&gt; v128 {
-    <span class="macro">static_assert!</span>(I0: usize <span class="kw">where </span>I0 &lt; <span class="number">4</span>);
-    <span class="macro">static_assert!</span>(I1: usize <span class="kw">where </span>I1 &lt; <span class="number">4</span>);
-    <span class="kw">let </span>shuf: simd::u64x2 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle2!</span>(
-            a.as_u64x2(),
-            b.as_u64x2(),
-            &lt;<span class="kw">const </span>I0: usize, <span class="kw">const </span>I1: usize&gt; [I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32],
-        )
-    };
+    <span class="macro">static_assert!</span>(I0 &lt; <span class="number">4</span>);
+    <span class="macro">static_assert!</span>(I1 &lt; <span class="number">4</span>);
+    <span class="kw">let </span>shuf: simd::u64x2 =
+        <span class="kw">unsafe </span>{ <span class="macro">simd_shuffle!</span>(a.as_u64x2(), b.as_u64x2(), [I0 <span class="kw">as </span>u32, I1 <span class="kw">as </span>u32]) };
     shuf.v128()
 }
 
@@ -7263,7 +7199,7 @@
 #[doc(alias(<span class="string">&quot;i8x16.extract_lane_s&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i8x16_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; i8 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">16</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_i8x16(), N <span class="kw">as </span>u32) }
 }
 
@@ -7277,7 +7213,7 @@
 #[doc(alias(<span class="string">&quot;i8x16.extract_lane_u&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>u8x16_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; u8 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">16</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_u8x16(), N <span class="kw">as </span>u32) }
 }
 
@@ -7291,7 +7227,7 @@
 #[doc(alias(<span class="string">&quot;i8x16.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i8x16_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: i8) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">16</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_i8x16(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7305,7 +7241,7 @@
 #[doc(alias(<span class="string">&quot;i8x16.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>u8x16_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: u8) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">16</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">16</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_u8x16(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7319,7 +7255,7 @@
 #[doc(alias(<span class="string">&quot;i16x8.extract_lane_s&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; i16 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">8</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_i16x8(), N <span class="kw">as </span>u32) }
 }
 
@@ -7333,7 +7269,7 @@
 #[doc(alias(<span class="string">&quot;i16x8.extract_lane_u&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>u16x8_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; u16 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">8</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_u16x8(), N <span class="kw">as </span>u32) }
 }
 
@@ -7347,7 +7283,7 @@
 #[doc(alias(<span class="string">&quot;i16x8.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: i16) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">8</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_i16x8(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7361,7 +7297,7 @@
 #[doc(alias(<span class="string">&quot;i16x8.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>u16x8_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: u16) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">8</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">8</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_u16x8(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7375,7 +7311,7 @@
 #[doc(alias(<span class="string">&quot;i32x4.extract_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; i32 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">4</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">4</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_i32x4(), N <span class="kw">as </span>u32) }
 }
 
@@ -7401,7 +7337,7 @@
 #[doc(alias(<span class="string">&quot;i32x4.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: i32) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">4</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">4</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_i32x4(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7427,7 +7363,7 @@
 #[doc(alias(<span class="string">&quot;i64x2.extract_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; i64 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">2</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">2</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_i64x2(), N <span class="kw">as </span>u32) }
 }
 
@@ -7453,7 +7389,7 @@
 #[doc(alias(<span class="string">&quot;i64x2.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: i64) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">2</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">2</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_i64x2(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7479,7 +7415,7 @@
 #[doc(alias(<span class="string">&quot;f32x4.extract_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f32x4_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; f32 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">4</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">4</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_f32x4(), N <span class="kw">as </span>u32) }
 }
 
@@ -7493,7 +7429,7 @@
 #[doc(alias(<span class="string">&quot;f32x4.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f32x4_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: f32) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">4</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">4</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_f32x4(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -7507,7 +7443,7 @@
 #[doc(alias(<span class="string">&quot;f64x2.extract_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f64x2_extract_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128) -&gt; f64 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">2</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">2</span>);
     <span class="kw">unsafe </span>{ simd_extract(a.as_f64x2(), N <span class="kw">as </span>u32) }
 }
 
@@ -7521,7 +7457,7 @@
 #[doc(alias(<span class="string">&quot;f64x2.replace_lane&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f64x2_replace_lane&lt;<span class="kw">const </span>N: usize&gt;(a: v128, val: f64) -&gt; v128 {
-    <span class="macro">static_assert!</span>(N: usize <span class="kw">where </span>N &lt; <span class="number">2</span>);
+    <span class="macro">static_assert!</span>(N &lt; <span class="number">2</span>);
     <span class="kw">unsafe </span>{ simd_insert(a.as_f64x2(), N <span class="kw">as </span>u32, val).v128() }
 }
 
@@ -8485,11 +8421,7 @@
 #[doc(alias(<span class="string">&quot;i8x16.bitmask&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i8x16_bitmask(a: v128) -&gt; u16 {
-    <span class="comment">// FIXME(https://bugs.llvm.org/show_bug.cgi?id=50507) - this produces an
-    // extraneous `i32.and` instruction against a mask of 65535 when converting
-    // from the native intrinsic&#39;s i32 return value to our desired u16. This
-    // shouldn&#39;t be necessary, though, but requires upstream LLVM changes.
-    </span><span class="kw">unsafe </span>{ llvm_bitmask_i8x16(a.as_i8x16()) <span class="kw">as </span>u16 }
+    <span class="kw">unsafe </span>{ llvm_bitmask_i8x16(a.as_i8x16()) <span class="kw">as </span>u16 }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
@@ -8822,7 +8754,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extend_low_i8x16(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i8x16(),
             a.as_i8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
@@ -8840,7 +8772,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extend_high_i8x16(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i8x16(),
             a.as_i8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
@@ -8858,7 +8790,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extend_low_u8x16(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u8x16(),
             a.as_u8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
@@ -8879,7 +8811,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extend_high_u8x16(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u8x16(),
             a.as_u8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
@@ -9092,12 +9024,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extmul_low_i8x16(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i8x16(),
             a.as_i8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i8x16(),
             b.as_i8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
@@ -9117,12 +9049,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extmul_high_i8x16(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i8x16(),
             a.as_i8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i8x8, simd::i16x8&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i8x16(),
             b.as_i8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
@@ -9142,12 +9074,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extmul_low_u8x16(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u8x16(),
             a.as_u8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u8x16(),
             b.as_u8x16(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>],
@@ -9170,12 +9102,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i16x8_extmul_high_u8x16(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u8x16(),
             a.as_u8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle8!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u8x8, simd::u16x8&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u8x16(),
             b.as_u8x16(),
             [<span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>],
@@ -9272,7 +9204,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extend_low_i16x8(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i16x8(),
             a.as_i16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
@@ -9290,7 +9222,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extend_high_i16x8(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i16x8(),
             a.as_i16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
@@ -9308,7 +9240,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extend_low_u16x8(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u16x8(),
             a.as_u16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
@@ -9329,7 +9261,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extend_high_u16x8(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u16x8(),
             a.as_u16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
@@ -9499,12 +9431,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extmul_low_i16x8(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i16x8(),
             a.as_i16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i16x8(),
             b.as_i16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
@@ -9524,12 +9456,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extmul_high_i16x8(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i16x8(),
             a.as_i16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i16x4, simd::i32x4&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i16x8(),
             b.as_i16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
@@ -9549,12 +9481,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extmul_low_u16x8(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u16x8(),
             a.as_u16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u16x8(),
             b.as_u16x8(),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
@@ -9577,12 +9509,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_extmul_high_u16x8(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u16x8(),
             a.as_u16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u16x4, simd::u32x4&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u16x8(),
             b.as_u16x8(),
             [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]
@@ -9596,8 +9528,8 @@
 
 <span class="doccomment">/// Lane-wise wrapping absolute value.
 </span><span class="attr">#[inline]
-</span><span class="comment">// #[cfg_attr(test, assert_instr(i64x2.abs))] // FIXME llvm
-</span><span class="attr">#[target_feature(enable = <span class="string">&quot;simd128&quot;</span>)]
+#[cfg_attr(test, assert_instr(i64x2.abs))]
+#[target_feature(enable = <span class="string">&quot;simd128&quot;</span>)]
 #[doc(alias(<span class="string">&quot;i64x2.abs&quot;</span>))]
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_abs(a: v128) -&gt; v128 {
@@ -9654,7 +9586,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extend_low_i32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
+        simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
             .v128()
     }
 }
@@ -9668,7 +9600,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extend_high_i32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">2</span>, <span class="number">3</span>]))
+        simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">2</span>, <span class="number">3</span>]))
             .v128()
     }
 }
@@ -9682,7 +9614,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extend_low_u32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
+        simd_cast::&lt;simd::u32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
             .v128()
     }
 }
@@ -9699,7 +9631,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extend_high_u32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">2</span>, <span class="number">3</span>]))
+        simd_cast::&lt;simd::u32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">2</span>, <span class="number">3</span>]))
             .v128()
     }
 }
@@ -9801,12 +9733,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extmul_low_i32x4(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i32x4(),
             a.as_i32x4(),
             [<span class="number">0</span>, <span class="number">1</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i32x4(),
             b.as_i32x4(),
             [<span class="number">0</span>, <span class="number">1</span>]
@@ -9826,12 +9758,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extmul_high_i32x4(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_i32x4(),
             a.as_i32x4(),
             [<span class="number">2</span>, <span class="number">3</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::i32x2, simd::i64x2&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_i32x4(),
             b.as_i32x4(),
             [<span class="number">2</span>, <span class="number">3</span>]
@@ -9851,12 +9783,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extmul_low_u32x4(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u32x4(),
             a.as_u32x4(),
             [<span class="number">0</span>, <span class="number">1</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u32x4(),
             b.as_u32x4(),
             [<span class="number">0</span>, <span class="number">1</span>]
@@ -9879,12 +9811,12 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i64x2_extmul_high_u32x4(a: v128, b: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>lhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_u32x4(),
             a.as_u32x4(),
             [<span class="number">2</span>, <span class="number">3</span>]
         ));
-        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle2!</span>(
+        <span class="kw">let </span>rhs = simd_cast::&lt;simd::u32x2, simd::u64x2&gt;(<span class="macro">simd_shuffle!</span>(
             b.as_u32x4(),
             b.as_u32x4(),
             [<span class="number">2</span>, <span class="number">3</span>]
@@ -10311,7 +10243,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>i32x4_trunc_sat_f64x2_zero(a: v128) -&gt; v128 {
     <span class="kw">let </span>ret: simd::i32x4 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle4!</span>(
+        <span class="macro">simd_shuffle!</span>(
             llvm_i32x2_trunc_sat_f64x2_s(a.as_f64x2()),
             simd::i32x2::splat(<span class="number">0</span>),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
@@ -10335,7 +10267,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>u32x4_trunc_sat_f64x2_zero(a: v128) -&gt; v128 {
     <span class="kw">let </span>ret: simd::i32x4 = <span class="kw">unsafe </span>{
-        <span class="macro">simd_shuffle4!</span>(
+        <span class="macro">simd_shuffle!</span>(
             llvm_i32x2_trunc_sat_f64x2_u(a.as_f64x2()),
             simd::i32x2::splat(<span class="number">0</span>),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
@@ -10352,7 +10284,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f64x2_convert_low_i32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::i32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">0</span>, <span class="number">1</span>],))
+        simd_cast::&lt;simd::i32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_i32x4(), a.as_i32x4(), [<span class="number">0</span>, <span class="number">1</span>],))
             .v128()
     }
 }
@@ -10365,7 +10297,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f64x2_convert_low_u32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::u32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">0</span>, <span class="number">1</span>],))
+        simd_cast::&lt;simd::u32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_u32x4(), a.as_u32x4(), [<span class="number">0</span>, <span class="number">1</span>],))
             .v128()
     }
 }
@@ -10382,7 +10314,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f32x4_demote_f64x2_zero(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::f64x4, simd::f32x4&gt;(<span class="macro">simd_shuffle4!</span>(
+        simd_cast::&lt;simd::f64x4, simd::f32x4&gt;(<span class="macro">simd_shuffle!</span>(
             a.as_f64x2(),
             simd::f64x2::splat(<span class="number">0.0</span>),
             [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
@@ -10400,7 +10332,7 @@
 #[stable(feature = <span class="string">&quot;wasm_simd&quot;</span>, since = <span class="string">&quot;1.54.0&quot;</span>)]
 </span><span class="kw">pub fn </span>f64x2_promote_low_f32x4(a: v128) -&gt; v128 {
     <span class="kw">unsafe </span>{
-        simd_cast::&lt;simd::f32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle2!</span>(a.as_f32x4(), a.as_f32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
+        simd_cast::&lt;simd::f32x2, simd::f64x2&gt;(<span class="macro">simd_shuffle!</span>(a.as_f32x4(), a.as_f32x4(), [<span class="number">0</span>, <span class="number">1</span>]))
             .v128()
     }
 }
@@ -10889,7 +10821,7 @@
                         <span class="kw">let </span>v2_v128: v128 = mem::transmute(v2);
                         <span class="kw">let </span>v3_v128 = <span class="kw">super</span>::<span class="macro-nonterminal">$f</span>(v1_v128, v2_v128);
                         <span class="kw">let </span><span class="kw-2">mut </span>v3 = [$(<span class="macro-nonterminal">$vec1</span>)<span class="kw-2">*</span>];
-                        drop(v3);
+                        <span class="kw">let </span>_ignore = v3;
                         v3 = mem::transmute(v3_v128);
 
                         <span class="kw">for </span>(i, actual) <span class="kw">in </span>v3.iter().enumerate() {
@@ -10916,7 +10848,7 @@
                         <span class="kw">let </span>v1_v128: v128 = mem::transmute(v1);
                         <span class="kw">let </span>v2_v128 = <span class="kw">super</span>::<span class="macro-nonterminal">$f</span>(v1_v128);
                         <span class="kw">let </span><span class="kw-2">mut </span>v2 = [$(<span class="macro-nonterminal">$vec1</span>)<span class="kw-2">*</span>];
-                        drop(v2);
+                        <span class="kw">let </span>_ignore = v2;
                         v2 = mem::transmute(v2_v128);
 
                         <span class="kw">for </span>(i, actual) <span class="kw">in </span>v2.iter().enumerate() {
@@ -12270,5 +12202,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

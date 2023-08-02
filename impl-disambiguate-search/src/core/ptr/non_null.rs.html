@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ptr/non_null.rs`."><title>non_null.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/ptr/non_null.rs`."><title>non_null.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -795,7 +795,37 @@
 <a href="#795" id="795">795</a>
 <a href="#796" id="796">796</a>
 <a href="#797" id="797">797</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::cmp::Ordering;
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::cmp::Ordering;
 <span class="kw">use </span><span class="kw">crate</span>::convert::From;
 <span class="kw">use </span><span class="kw">crate</span>::fmt;
 <span class="kw">use </span><span class="kw">crate</span>::hash;
@@ -1164,13 +1194,14 @@
     ///
     /// [the module documentation]: crate::ptr#safety
     </span><span class="attr">#[stable(feature = <span class="string">&quot;nonnull&quot;</span>, since = <span class="string">&quot;1.25.0&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_ptr_as_ref&quot;</span>, issue = <span class="string">&quot;91822&quot;</span>)]
+    #[rustc_const_stable(feature = <span class="string">&quot;const_nonnull_as_ref&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
     #[must_use]
     #[inline(always)]
     </span><span class="kw">pub const unsafe fn </span>as_ref&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
         <span class="comment">// SAFETY: the caller must guarantee that `self` meets all the
         // requirements for a reference.
-        </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span><span class="self">self</span>.as_ptr() }
+        // `cast_const` avoids a mutable raw pointer deref.
+        </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span><span class="self">self</span>.as_ptr().cast_const() }
     }
 
     <span class="doccomment">/// Returns a unique reference to the value. If the value may be uninitialized, [`as_uninit_mut`]
@@ -1246,6 +1277,43 @@
         <span class="comment">// SAFETY: `self` is a `NonNull` pointer which is necessarily non-null
         </span><span class="kw">unsafe </span>{ NonNull::new_unchecked(<span class="self">self</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>U) }
     }
+
+    <span class="doccomment">/// See [`pointer::add`] for semantics and safety requirements.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const unsafe fn </span>add(<span class="self">self</span>, delta: usize) -&gt; <span class="self">Self
+    </span><span class="kw">where
+        </span>T: Sized,
+    {
+        <span class="comment">// SAFETY: We require that the delta stays in-bounds of the object, and
+        // thus it cannot become null, as that would require wrapping the
+        // address space, which no legal objects are allowed to do.
+        // And the caller promised the `delta` is sound to add.
+        </span><span class="kw">unsafe </span>{ NonNull { pointer: <span class="self">self</span>.pointer.add(delta) } }
+    }
+
+    <span class="doccomment">/// See [`pointer::sub`] for semantics and safety requirements.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const unsafe fn </span>sub(<span class="self">self</span>, delta: usize) -&gt; <span class="self">Self
+    </span><span class="kw">where
+        </span>T: Sized,
+    {
+        <span class="comment">// SAFETY: We require that the delta stays in-bounds of the object, and
+        // thus it cannot become null, as no legal objects can be allocated
+        // in such as way that the null address is part of them.
+        // And the caller promised the `delta` is sound to subtract.
+        </span><span class="kw">unsafe </span>{ NonNull { pointer: <span class="self">self</span>.pointer.sub(delta) } }
+    }
+
+    <span class="doccomment">/// See [`pointer::sub_ptr`] for semantics and safety requirements.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const unsafe fn </span>sub_ptr(<span class="self">self</span>, subtrahend: <span class="self">Self</span>) -&gt; usize
+    <span class="kw">where
+        </span>T: Sized,
+    {
+        <span class="comment">// SAFETY: The caller promised that this is safe to do, and
+        // the non-nullness is irrelevant to the operation.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.pointer.sub_ptr(subtrahend.pointer) }
+    }
 }
 
 <span class="kw">impl</span>&lt;T&gt; NonNull&lt;[T]&gt; {
@@ -1259,8 +1327,6 @@
     /// # Examples
     ///
     /// ```rust
-    /// #![feature(nonnull_slice_from_raw_parts)]
-    ///
     /// use std::ptr::NonNull;
     ///
     /// // create a slice pointer when starting out with a pointer to the first element
@@ -1272,8 +1338,8 @@
     ///
     /// (Note that this example artificially demonstrates a use of this method,
     /// but `let slice = NonNull::from(&amp;x[..]);` would be a better way to write code like this.)
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;nonnull_slice_from_raw_parts&quot;</span>, issue = <span class="string">&quot;71941&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_nonnull_slice_from_raw_parts&quot;</span>, issue = <span class="string">&quot;71941&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;nonnull_slice_from_raw_parts&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
+    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_from_raw_parts_mut&quot;</span>, issue = <span class="string">&quot;67456&quot;</span>)]
     #[must_use]
     #[inline]
     </span><span class="kw">pub const fn </span>slice_from_raw_parts(data: NonNull&lt;T&gt;, len: usize) -&gt; <span class="self">Self </span>{
@@ -1291,7 +1357,6 @@
     /// # Examples
     ///
     /// ```rust
-    /// #![feature(nonnull_slice_from_raw_parts)]
     /// use std::ptr::NonNull;
     ///
     /// let slice: NonNull&lt;[i8]&gt; = NonNull::slice_from_raw_parts(NonNull::dangling(), 3);
@@ -1311,7 +1376,7 @@
     /// # Examples
     ///
     /// ```rust
-    /// #![feature(slice_ptr_get, nonnull_slice_from_raw_parts)]
+    /// #![feature(slice_ptr_get)]
     /// use std::ptr::NonNull;
     ///
     /// let slice: NonNull&lt;[i8]&gt; = NonNull::slice_from_raw_parts(NonNull::dangling(), 3);
@@ -1331,7 +1396,7 @@
     /// # Examples
     ///
     /// ```rust
-    /// #![feature(slice_ptr_get, nonnull_slice_from_raw_parts)]
+    /// #![feature(slice_ptr_get)]
     /// use std::ptr::NonNull;
     ///
     /// let slice: NonNull&lt;[i8]&gt; = NonNull::slice_from_raw_parts(NonNull::dangling(), 3);
@@ -1465,7 +1530,7 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(slice_ptr_get, nonnull_slice_from_raw_parts)]
+    /// #![feature(slice_ptr_get)]
     /// use std::ptr::NonNull;
     ///
     /// let x = &amp;mut [1, 2, 4];
@@ -1476,11 +1541,10 @@
     /// }
     /// ```
     </span><span class="attr">#[unstable(feature = <span class="string">&quot;slice_ptr_get&quot;</span>, issue = <span class="string">&quot;74265&quot;</span>)]
-    #[rustc_const_unstable(feature = <span class="string">&quot;const_slice_index&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
     #[inline]
-    </span><span class="kw">pub const unsafe fn </span>get_unchecked_mut&lt;I&gt;(<span class="self">self</span>, index: I) -&gt; NonNull&lt;I::Output&gt;
+    </span><span class="kw">pub unsafe fn </span>get_unchecked_mut&lt;I&gt;(<span class="self">self</span>, index: I) -&gt; NonNull&lt;I::Output&gt;
     <span class="kw">where
-        </span>I: ~<span class="kw">const </span>SliceIndex&lt;[T]&gt;,
+        </span>I: SliceIndex&lt;[T]&gt;,
     {
         <span class="comment">// SAFETY: the caller ensures that `self` is dereferenceable and `index` in-bounds.
         // As a consequence, the resulting pointer cannot be null.
@@ -1489,8 +1553,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;nonnull&quot;</span>, since = <span class="string">&quot;1.25.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_clone&quot;</span>, issue = <span class="string">&quot;91805&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>Clone <span class="kw">for </span>NonNull&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>NonNull&lt;T&gt; {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw-2">*</span><span class="self">self
@@ -1556,8 +1619,7 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;ptr_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>From&lt;Unique&lt;T&gt;&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; From&lt;Unique&lt;T&gt;&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from(unique: Unique&lt;T&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// SAFETY: A Unique pointer cannot be null, so the conditions for
@@ -1567,8 +1629,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;nonnull&quot;</span>, since = <span class="string">&quot;1.25.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>From&lt;<span class="kw-2">&amp;mut </span>T&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; From&lt;<span class="kw-2">&amp;mut </span>T&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
     <span class="doccomment">/// Converts a `&amp;mut T` to a `NonNull&lt;T&gt;`.
     ///
     /// This conversion is safe and infallible since references cannot be null.
@@ -1580,8 +1641,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;nonnull&quot;</span>, since = <span class="string">&quot;1.25.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; <span class="kw">const </span>From&lt;<span class="kw-2">&amp;</span>T&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; From&lt;<span class="kw-2">&amp;</span>T&gt; <span class="kw">for </span>NonNull&lt;T&gt; {
     <span class="doccomment">/// Converts a `&amp;T` to a `NonNull&lt;T&gt;`.
     ///
     /// This conversion is safe and infallible since references cannot be null.
@@ -1592,5 +1652,4 @@
         </span><span class="kw">unsafe </span>{ NonNull { pointer: reference <span class="kw">as </span><span class="kw-2">*const </span>T } }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

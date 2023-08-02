@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2853,7 +2853,23 @@
 <a href="#2853" id="2853">2853</a>
 <a href="#2854" id="2854">2854</a>
 <a href="#2855" id="2855">2855</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Traits, helpers, and type definitions for core I/O functionality.
+<a href="#2856" id="2856">2856</a>
+<a href="#2857" id="2857">2857</a>
+<a href="#2858" id="2858">2858</a>
+<a href="#2859" id="2859">2859</a>
+<a href="#2860" id="2860">2860</a>
+<a href="#2861" id="2861">2861</a>
+<a href="#2862" id="2862">2862</a>
+<a href="#2863" id="2863">2863</a>
+<a href="#2864" id="2864">2864</a>
+<a href="#2865" id="2865">2865</a>
+<a href="#2866" id="2866">2866</a>
+<a href="#2867" id="2867">2867</a>
+<a href="#2868" id="2868">2868</a>
+<a href="#2869" id="2869">2869</a>
+<a href="#2870" id="2870">2870</a>
+<a href="#2871" id="2871">2871</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Traits, helpers, and type definitions for core I/O functionality.
 //!
 //! The `std::io` module contains a number of common things you&#39;ll need
 //! when doing input and output. The most core part of this module is
@@ -3108,7 +3124,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::cmp;
 <span class="kw">use </span><span class="kw">crate</span>::fmt;
-<span class="kw">use </span><span class="kw">crate</span>::mem::replace;
+<span class="kw">use </span><span class="kw">crate</span>::mem::take;
 <span class="kw">use </span><span class="kw">crate</span>::ops::{Deref, DerefMut};
 <span class="kw">use </span><span class="kw">crate</span>::slice;
 <span class="kw">use </span><span class="kw">crate</span>::str;
@@ -3123,7 +3139,7 @@
 <span class="attr">#[unstable(feature = <span class="string">&quot;internal_output_capture&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
 #[doc(no_inline, hidden)]
 </span><span class="kw">pub use </span><span class="self">self</span>::stdio::set_output_capture;
-<span class="attr">#[unstable(feature = <span class="string">&quot;is_terminal&quot;</span>, issue = <span class="string">&quot;98070&quot;</span>)]
+<span class="attr">#[stable(feature = <span class="string">&quot;is_terminal&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
 </span><span class="kw">pub use </span><span class="self">self</span>::stdio::IsTerminal;
 <span class="attr">#[unstable(feature = <span class="string">&quot;print_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
 </span><span class="kw">pub use </span><span class="self">self</span>::stdio::{_eprint, _print};
@@ -3212,9 +3228,17 @@
 // of data to return. Simply tacking on an extra DEFAULT_BUF_SIZE space every
 // time is 4,500 times (!) slower than a default reservation size of 32 if the
 // reader has a very small amount of data to return.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>default_read_to_end&lt;R: Read + <span class="question-mark">?</span>Sized&gt;(r: <span class="kw-2">&amp;mut </span>R, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>default_read_to_end&lt;R: Read + <span class="question-mark">?</span>Sized&gt;(
+    r: <span class="kw-2">&amp;mut </span>R,
+    buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
+    size_hint: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
     <span class="kw">let </span>start_len = buf.len();
     <span class="kw">let </span>start_cap = buf.capacity();
+    <span class="comment">// Optionally limit the maximum bytes read on each iteration.
+    // This adds an arbitrary fiddle factor to allow for more data than we expect.
+    </span><span class="kw">let </span>max_read_size =
+        size_hint.and_then(|s| s.checked_add(<span class="number">1024</span>)<span class="question-mark">?</span>.checked_next_multiple_of(DEFAULT_BUF_SIZE));
 
     <span class="kw">let </span><span class="kw-2">mut </span>initialized = <span class="number">0</span>; <span class="comment">// Extra initialized bytes from previous loop iteration
     </span><span class="kw">loop </span>{
@@ -3222,7 +3246,12 @@
             buf.reserve(<span class="number">32</span>); <span class="comment">// buf is full, need more space
         </span>}
 
-        <span class="kw">let </span><span class="kw-2">mut </span>read_buf: BorrowedBuf&lt;<span class="lifetime">&#39;_</span>&gt; = buf.spare_capacity_mut().into();
+        <span class="kw">let </span><span class="kw-2">mut </span>spare = buf.spare_capacity_mut();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(size) = max_read_size {
+            <span class="kw">let </span>len = cmp::min(spare.len(), size);
+            spare = <span class="kw-2">&amp;mut </span>spare[..len]
+        }
+        <span class="kw">let </span><span class="kw-2">mut </span>read_buf: BorrowedBuf&lt;<span class="lifetime">&#39;_</span>&gt; = spare.into();
 
         <span class="comment">// SAFETY: These bytes were initialized but not filled in the previous loop
         </span><span class="kw">unsafe </span>{
@@ -3274,6 +3303,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>default_read_to_string&lt;R: Read + <span class="question-mark">?</span>Sized&gt;(
     r: <span class="kw-2">&amp;mut </span>R,
     buf: <span class="kw-2">&amp;mut </span>String,
+    size_hint: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
     <span class="comment">// Note that we do *not* call `r.read_to_end()` here. We are passing
     // `&amp;mut Vec&lt;u8&gt;` (the raw contents of `buf`) into the `read_to_end`
@@ -3284,7 +3314,7 @@
     // To prevent extraneously checking the UTF-8-ness of the entire buffer
     // we pass it to our hardcoded `default_read_to_end` implementation which
     // we know is guaranteed to only read data into the end of the buffer.
-    </span><span class="kw">unsafe </span>{ append_to_string(buf, |b| default_read_to_end(r, b)) }
+    </span><span class="kw">unsafe </span>{ append_to_string(buf, |b| default_read_to_end(r, b, size_hint)) }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>default_read_vectored&lt;F&gt;(read: F, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut&lt;<span class="lifetime">&#39;_</span>&gt;]) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt;
@@ -3434,7 +3464,8 @@
     /// This may happen for example because fewer bytes are actually available right now
     /// (e. g. being close to end-of-file) or because read() was interrupted by a signal.
     ///
-    /// As this trait is safe to implement, callers cannot rely on `n &lt;= buf.len()` for safety.
+    /// As this trait is safe to implement, callers in unsafe code cannot rely on
+    /// `n &lt;= buf.len()` for safety.
     /// Extra care needs to be taken when `unsafe` functions are used to access the read bytes.
     /// Callers have to ensure that no unchecked out-of-bounds accesses are possible even if
     /// `n &gt; buf.len()`.
@@ -3444,8 +3475,8 @@
     /// contents of `buf` being true. It is recommended that *implementations*
     /// only write data to `buf` instead of reading its contents.
     ///
-    /// Correspondingly, however, *callers* of this method must not assume any guarantees
-    /// about how the implementation uses `buf`. The trait is safe to implement,
+    /// Correspondingly, however, *callers* of this method in unsafe code must not assume
+    /// any guarantees about how the implementation uses `buf`. The trait is safe to implement,
     /// so it is possible that the code that&#39;s supposed to write to the buffer might also read
     /// from it. It is your responsibility to make sure that `buf` is initialized
     /// before calling `read`. Calling `read` with an uninitialized `buf` (of the kind one
@@ -3564,7 +3595,7 @@
     /// [`std::fs::read`]: crate::fs::read
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">fn </span>read_to_end(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
-        default_read_to_end(<span class="self">self</span>, buf)
+        default_read_to_end(<span class="self">self</span>, buf, <span class="prelude-val">None</span>)
     }
 
     <span class="doccomment">/// Read all bytes until EOF in this source, appending them to `buf`.
@@ -3607,7 +3638,7 @@
     /// [`std::fs::read_to_string`]: crate::fs::read_to_string
     </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     </span><span class="kw">fn </span>read_to_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>String) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
-        default_read_to_string(<span class="self">self</span>, buf)
+        default_read_to_string(<span class="self">self</span>, buf, <span class="prelude-val">None</span>)
     }
 
     <span class="doccomment">/// Read the exact number of bytes required to fill `buf`.
@@ -4041,7 +4072,7 @@
             }
         }
 
-        <span class="kw-2">*</span>bufs = <span class="kw-2">&amp;mut </span>replace(bufs, <span class="kw-2">&amp;mut </span>[])[remove..];
+        <span class="kw-2">*</span>bufs = <span class="kw-2">&amp;mut </span>take(bufs)[remove..];
         <span class="kw">if </span>bufs.is_empty() {
             <span class="macro">assert!</span>(n == accumulated_len, <span class="string">&quot;advancing io slices beyond their length&quot;</span>);
         } <span class="kw">else </span>{
@@ -4184,7 +4215,7 @@
             }
         }
 
-        <span class="kw-2">*</span>bufs = <span class="kw-2">&amp;mut </span>replace(bufs, <span class="kw-2">&amp;mut </span>[])[remove..];
+        <span class="kw-2">*</span>bufs = <span class="kw-2">&amp;mut </span>take(bufs)[remove..];
         <span class="kw">if </span>bufs.is_empty() {
             <span class="macro">assert!</span>(n == accumulated_len, <span class="string">&quot;advancing io slices beyond their length&quot;</span>);
         } <span class="kw">else </span>{
@@ -4256,17 +4287,18 @@
     ///
     /// This function will attempt to write the entire contents of `buf`, but
     /// the entire write might not succeed, or the write may also generate an
-    /// error. A call to `write` represents *at most one* attempt to write to
+    /// error. Typically, a call to `write` represents one attempt to write to
     /// any wrapped object.
     ///
     /// Calls to `write` are not guaranteed to block waiting for data to be
     /// written, and a write which would otherwise block can be indicated through
     /// an [`Err`] variant.
     ///
-    /// If the return value is [`Ok(n)`] then it must be guaranteed that
-    /// `n &lt;= buf.len()`. A return value of `0` typically means that the
-    /// underlying object is no longer able to accept bytes and will likely not
-    /// be able to in the future as well, or that the buffer provided is empty.
+    /// If this method consumed `n &gt; 0` bytes of `buf` it must return [`Ok(n)`].
+    /// If the return value is `Ok(n)` then `n` must satisfy `n &lt;= buf.len()`.
+    /// Unless `buf` is empty, this function shouldn’t return `Ok(0)` since the
+    /// caller may interpret that as an error.  To indicate lack of space,
+    /// implementors should return [`ErrorKind::StorageFull`] error instead.
     ///
     /// # Errors
     ///
@@ -5594,7 +5626,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; SizeHint <span class="kw">for </span>T {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; SizeHint <span class="kw">for </span>T {
     <span class="attr">#[inline]
     </span>default <span class="kw">fn </span>lower_bound(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="number">0
@@ -5708,5 +5740,4 @@
         }
     }
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cell.rs`."><title>cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files1.70.0.js"></script><script defer src="../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cell.rs`."><title>cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2218,7 +2218,69 @@
 <a href="#2218" id="2218">2218</a>
 <a href="#2219" id="2219">2219</a>
 <a href="#2220" id="2220">2220</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Shareable mutable containers.
+<a href="#2221" id="2221">2221</a>
+<a href="#2222" id="2222">2222</a>
+<a href="#2223" id="2223">2223</a>
+<a href="#2224" id="2224">2224</a>
+<a href="#2225" id="2225">2225</a>
+<a href="#2226" id="2226">2226</a>
+<a href="#2227" id="2227">2227</a>
+<a href="#2228" id="2228">2228</a>
+<a href="#2229" id="2229">2229</a>
+<a href="#2230" id="2230">2230</a>
+<a href="#2231" id="2231">2231</a>
+<a href="#2232" id="2232">2232</a>
+<a href="#2233" id="2233">2233</a>
+<a href="#2234" id="2234">2234</a>
+<a href="#2235" id="2235">2235</a>
+<a href="#2236" id="2236">2236</a>
+<a href="#2237" id="2237">2237</a>
+<a href="#2238" id="2238">2238</a>
+<a href="#2239" id="2239">2239</a>
+<a href="#2240" id="2240">2240</a>
+<a href="#2241" id="2241">2241</a>
+<a href="#2242" id="2242">2242</a>
+<a href="#2243" id="2243">2243</a>
+<a href="#2244" id="2244">2244</a>
+<a href="#2245" id="2245">2245</a>
+<a href="#2246" id="2246">2246</a>
+<a href="#2247" id="2247">2247</a>
+<a href="#2248" id="2248">2248</a>
+<a href="#2249" id="2249">2249</a>
+<a href="#2250" id="2250">2250</a>
+<a href="#2251" id="2251">2251</a>
+<a href="#2252" id="2252">2252</a>
+<a href="#2253" id="2253">2253</a>
+<a href="#2254" id="2254">2254</a>
+<a href="#2255" id="2255">2255</a>
+<a href="#2256" id="2256">2256</a>
+<a href="#2257" id="2257">2257</a>
+<a href="#2258" id="2258">2258</a>
+<a href="#2259" id="2259">2259</a>
+<a href="#2260" id="2260">2260</a>
+<a href="#2261" id="2261">2261</a>
+<a href="#2262" id="2262">2262</a>
+<a href="#2263" id="2263">2263</a>
+<a href="#2264" id="2264">2264</a>
+<a href="#2265" id="2265">2265</a>
+<a href="#2266" id="2266">2266</a>
+<a href="#2267" id="2267">2267</a>
+<a href="#2268" id="2268">2268</a>
+<a href="#2269" id="2269">2269</a>
+<a href="#2270" id="2270">2270</a>
+<a href="#2271" id="2271">2271</a>
+<a href="#2272" id="2272">2272</a>
+<a href="#2273" id="2273">2273</a>
+<a href="#2274" id="2274">2274</a>
+<a href="#2275" id="2275">2275</a>
+<a href="#2276" id="2276">2276</a>
+<a href="#2277" id="2277">2277</a>
+<a href="#2278" id="2278">2278</a>
+<a href="#2279" id="2279">2279</a>
+<a href="#2280" id="2280">2280</a>
+<a href="#2281" id="2281">2281</a>
+<a href="#2282" id="2282">2282</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Shareable mutable containers.
 //!
 //! Rust memory safety is based on this rule: Given an object `T`, it is only possible to
 //! have one of the following:
@@ -2231,36 +2293,77 @@
 //! mutate it.
 //!
 //! Shareable mutable containers exist to permit mutability in a controlled manner, even in the
-//! presence of aliasing. Both [`Cell&lt;T&gt;`] and [`RefCell&lt;T&gt;`] allow doing this in a single-threaded
-//! way. However, neither `Cell&lt;T&gt;` nor `RefCell&lt;T&gt;` are thread safe (they do not implement
-//! [`Sync`]). If you need to do aliasing and mutation between multiple threads it is possible to
-//! use [`Mutex&lt;T&gt;`], [`RwLock&lt;T&gt;`] or [`atomic`] types.
+//! presence of aliasing. [`Cell&lt;T&gt;`], [`RefCell&lt;T&gt;`], and [`OnceCell&lt;T&gt;`] allow doing this in
+//! a single-threaded way—they do not implement [`Sync`]. (If you need to do aliasing and
+//! mutation among multiple threads, [`Mutex&lt;T&gt;`], [`RwLock&lt;T&gt;`], [`OnceLock&lt;T&gt;`] or [`atomic`]
+//! types are the correct data structures to do so).
 //!
-//! Values of the `Cell&lt;T&gt;` and `RefCell&lt;T&gt;` types may be mutated through shared references (i.e.
-//! the common `&amp;T` type), whereas most Rust types can only be mutated through unique (`&amp;mut T`)
-//! references. We say that `Cell&lt;T&gt;` and `RefCell&lt;T&gt;` provide &#39;interior mutability&#39;, in contrast
-//! with typical Rust types that exhibit &#39;inherited mutability&#39;.
+//! Values of the `Cell&lt;T&gt;`, `RefCell&lt;T&gt;`, and `OnceCell&lt;T&gt;` types may be mutated through shared
+//! references (i.e. the common `&amp;T` type), whereas most Rust types can only be mutated through
+//! unique (`&amp;mut T`) references. We say these cell types provide &#39;interior mutability&#39;
+//! (mutable via `&amp;T`), in contrast with typical Rust types that exhibit &#39;inherited mutability&#39;
+//! (mutable only via `&amp;mut T`).
 //!
-//! Cell types come in two flavors: `Cell&lt;T&gt;` and `RefCell&lt;T&gt;`. `Cell&lt;T&gt;` implements interior
-//! mutability by moving values in and out of the `Cell&lt;T&gt;`. To use references instead of values,
-//! one must use the `RefCell&lt;T&gt;` type, acquiring a write lock before mutating. `Cell&lt;T&gt;` provides
-//! methods to retrieve and change the current interior value:
+//! Cell types come in three flavors: `Cell&lt;T&gt;`, `RefCell&lt;T&gt;`, and `OnceCell&lt;T&gt;`. Each provides
+//! a different way of providing safe interior mutability.
+//!
+//! ## `Cell&lt;T&gt;`
+//!
+//! [`Cell&lt;T&gt;`] implements interior mutability by moving values in and out of the cell. That is, an
+//! `&amp;mut T` to the inner value can never be obtained, and the value itself cannot be directly
+//! obtained without replacing it with something else. Both of these rules ensure that there is
+//! never more than one reference pointing to the inner value. This type provides the following
+//! methods:
 //!
 //!  - For types that implement [`Copy`], the [`get`](Cell::get) method retrieves the current
-//!    interior value.
+//!    interior value by duplicating it.
 //!  - For types that implement [`Default`], the [`take`](Cell::take) method replaces the current
 //!    interior value with [`Default::default()`] and returns the replaced value.
-//!  - For all types, the [`replace`](Cell::replace) method replaces the current interior value and
-//!    returns the replaced value and the [`into_inner`](Cell::into_inner) method consumes the
-//!    `Cell&lt;T&gt;` and returns the interior value. Additionally, the [`set`](Cell::set) method
-//!    replaces the interior value, dropping the replaced value.
+//!  - All types have:
+//!    - [`replace`](Cell::replace): replaces the current interior value and returns the replaced
+//!      value.
+//!    - [`into_inner`](Cell::into_inner): this method consumes the `Cell&lt;T&gt;` and returns the
+//!      interior value.
+//!    - [`set`](Cell::set): this method replaces the interior value, dropping the replaced value.
 //!
-//! `RefCell&lt;T&gt;` uses Rust&#39;s lifetimes to implement &#39;dynamic borrowing&#39;, a process whereby one can
+//! `Cell&lt;T&gt;` is typically used for more simple types where copying or moving values isn&#39;t too
+//! resource intensive (e.g. numbers), and should usually be preferred over other cell types when
+//! possible. For larger and non-copy types, `RefCell` provides some advantages.
+//!
+//! ## `RefCell&lt;T&gt;`
+//!
+//! [`RefCell&lt;T&gt;`] uses Rust&#39;s lifetimes to implement &quot;dynamic borrowing&quot;, a process whereby one can
 //! claim temporary, exclusive, mutable access to the inner value. Borrows for `RefCell&lt;T&gt;`s are
-//! tracked &#39;at runtime&#39;, unlike Rust&#39;s native reference types which are entirely tracked
-//! statically, at compile time. Because `RefCell&lt;T&gt;` borrows are dynamic it is possible to attempt
-//! to borrow a value that is already mutably borrowed; when this happens it results in thread
-//! panic.
+//! tracked at _runtime_, unlike Rust&#39;s native reference types which are entirely tracked
+//! statically, at compile time.
+//!
+//! An immutable reference to a `RefCell`&#39;s inner value (`&amp;T`) can be obtained with
+//! [`borrow`](`RefCell::borrow`), and a mutable borrow (`&amp;mut T`) can be obtained with
+//! [`borrow_mut`](`RefCell::borrow_mut`). When these functions are called, they first verify that
+//! Rust&#39;s borrow rules will be satisfied: any number of immutable borrows are allowed or a
+//! single mutable borrow is allowed, but never both. If a borrow is attempted that would violate
+//! these rules, the thread will panic.
+//!
+//! The corresponding [`Sync`] version of `RefCell&lt;T&gt;` is [`RwLock&lt;T&gt;`].
+//!
+//! ## `OnceCell&lt;T&gt;`
+//!
+//! [`OnceCell&lt;T&gt;`] is somewhat of a hybrid of `Cell` and `RefCell` that works for values that
+//! typically only need to be set once. This means that a reference `&amp;T` can be obtained without
+//! moving or copying the inner value (unlike `Cell`) but also without runtime checks (unlike
+//! `RefCell`). However, its value can also not be updated once set unless you have a mutable
+//! reference to the `OnceCell`.
+//!
+//! `OnceCell` provides the following methods:
+//!
+//! - [`get`](OnceCell::get): obtain a reference to the inner value
+//! - [`set`](OnceCell::set): set the inner value if it is unset (returns a `Result`)
+//! - [`get_or_init`](OnceCell::get_or_init): return the inner value, initializing it if needed
+//! - [`get_mut`](OnceCell::get_mut): provide a mutable reference to the inner value, only available
+//!   if you have a mutable reference to the cell itself.
+//!
+//! The corresponding [`Sync`] version of `OnceCell&lt;T&gt;` is [`OnceLock&lt;T&gt;`].
+//!
 //!
 //! # When to choose interior mutability
 //!
@@ -2294,7 +2397,7 @@
 //!     let shared_map: Rc&lt;RefCell&lt;_&gt;&gt; = Rc::new(RefCell::new(HashMap::new()));
 //!     // Create a new block to limit the scope of the dynamic borrow
 //!     {
-//!         let mut map: RefMut&lt;_&gt; = shared_map.borrow_mut();
+//!         let mut map: RefMut&lt;&#39;_, _&gt; = shared_map.borrow_mut();
 //!         map.insert(&quot;africa&quot;, 92388);
 //!         map.insert(&quot;kyoto&quot;, 11837);
 //!         map.insert(&quot;piccadilly&quot;, 11826);
@@ -2408,6 +2511,8 @@
 //! [`Rc&lt;T&gt;`]: ../../std/rc/struct.Rc.html
 //! [`RwLock&lt;T&gt;`]: ../../std/sync/struct.RwLock.html
 //! [`Mutex&lt;T&gt;`]: ../../std/sync/struct.Mutex.html
+//! [`OnceLock&lt;T&gt;`]: ../../std/sync/struct.OnceLock.html
+//! [`Sync`]: ../../std/marker/trait.Sync.html
 //! [`atomic`]: crate::sync::atomic
 
 </span><span class="attr">#![stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
@@ -2422,9 +2527,9 @@
 <span class="kw">mod </span>lazy;
 <span class="kw">mod </span>once;
 
-<span class="attr">#[unstable(feature = <span class="string">&quot;once_cell&quot;</span>, issue = <span class="string">&quot;74465&quot;</span>)]
+<span class="attr">#[unstable(feature = <span class="string">&quot;lazy_cell&quot;</span>, issue = <span class="string">&quot;109736&quot;</span>)]
 </span><span class="kw">pub use </span>lazy::LazyCell;
-<span class="attr">#[unstable(feature = <span class="string">&quot;once_cell&quot;</span>, issue = <span class="string">&quot;74465&quot;</span>)]
+<span class="attr">#[stable(feature = <span class="string">&quot;once_cell&quot;</span>, since = <span class="string">&quot;1.70.0&quot;</span>)]
 </span><span class="kw">pub use </span>once::OnceCell;
 
 <span class="doccomment">/// A mutable memory location.
@@ -2547,8 +2652,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;cell_from&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>From&lt;T&gt; <span class="kw">for </span>Cell&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>Cell&lt;T&gt; {
     <span class="doccomment">/// Creates a new `Cell&lt;T&gt;` containing the given value.
     </span><span class="kw">fn </span>from(t: T) -&gt; Cell&lt;T&gt; {
         Cell::new(t)
@@ -2639,7 +2743,7 @@
         </span>mem::replace(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span><span class="self">self</span>.value.get() }, val)
     }
 
-    <span class="doccomment">/// Unwraps the value.
+    <span class="doccomment">/// Unwraps the value, consuming the cell.
     ///
     /// # Examples
     ///
@@ -3495,8 +3599,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;cell_from&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>From&lt;T&gt; <span class="kw">for </span>RefCell&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>RefCell&lt;T&gt; {
     <span class="doccomment">/// Creates a new `RefCell&lt;T&gt;` containing the given value.
     </span><span class="kw">fn </span>from(t: T) -&gt; RefCell&lt;T&gt; {
         RefCell::new(t)
@@ -3553,7 +3656,7 @@
         <span class="macro">debug_assert!</span>(is_reading(borrow));
         <span class="comment">// Prevent the borrow counter from overflowing into
         // a writing borrow.
-        </span><span class="macro">assert!</span>(borrow != isize::MAX);
+        </span><span class="macro">assert!</span>(borrow != BorrowFlag::MAX);
         <span class="self">self</span>.borrow.set(borrow + <span class="number">1</span>);
         BorrowRef { borrow: <span class="self">self</span>.borrow }
     }
@@ -3614,8 +3717,8 @@
     /// use std::cell::{RefCell, Ref};
     ///
     /// let c = RefCell::new((5, &#39;b&#39;));
-    /// let b1: Ref&lt;(u32, char)&gt; = c.borrow();
-    /// let b2: Ref&lt;u32&gt; = Ref::map(b1, |t| &amp;t.0);
+    /// let b1: Ref&lt;&#39;_, (u32, char)&gt; = c.borrow();
+    /// let b2: Ref&lt;&#39;_, u32&gt; = Ref::map(b1, |t| &amp;t.0);
     /// assert_eq!(*b2, 5)
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;cell_map&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
@@ -3643,8 +3746,8 @@
     /// use std::cell::{RefCell, Ref};
     ///
     /// let c = RefCell::new(vec![1, 2, 3]);
-    /// let b1: Ref&lt;Vec&lt;u32&gt;&gt; = c.borrow();
-    /// let b2: Result&lt;Ref&lt;u32&gt;, _&gt; = Ref::filter_map(b1, |v| v.get(1));
+    /// let b1: Ref&lt;&#39;_, Vec&lt;u32&gt;&gt; = c.borrow();
+    /// let b2: Result&lt;Ref&lt;&#39;_, u32&gt;, _&gt; = Ref::filter_map(b1, |v| v.get(1));
     /// assert_eq!(*b2.unwrap(), 2);
     /// ```
     </span><span class="attr">#[stable(feature = <span class="string">&quot;cell_filter_map&quot;</span>, since = <span class="string">&quot;1.63.0&quot;</span>)]
@@ -3756,8 +3859,8 @@
     ///
     /// let c = RefCell::new((5, &#39;b&#39;));
     /// {
-    ///     let b1: RefMut&lt;(u32, char)&gt; = c.borrow_mut();
-    ///     let mut b2: RefMut&lt;u32&gt; = RefMut::map(b1, |t| &amp;mut t.0);
+    ///     let b1: RefMut&lt;&#39;_, (u32, char)&gt; = c.borrow_mut();
+    ///     let mut b2: RefMut&lt;&#39;_, u32&gt; = RefMut::map(b1, |t| &amp;mut t.0);
     ///     assert_eq!(*b2, 5);
     ///     *b2 = 42;
     /// }
@@ -3791,8 +3894,8 @@
     /// let c = RefCell::new(vec![1, 2, 3]);
     ///
     /// {
-    ///     let b1: RefMut&lt;Vec&lt;u32&gt;&gt; = c.borrow_mut();
-    ///     let mut b2: Result&lt;RefMut&lt;u32&gt;, _&gt; = RefMut::filter_map(b1, |v| v.get_mut(1));
+    ///     let b1: RefMut&lt;&#39;_, Vec&lt;u32&gt;&gt; = c.borrow_mut();
+    ///     let mut b2: Result&lt;RefMut&lt;&#39;_, u32&gt;, _&gt; = RefMut::filter_map(b1, |v| v.get_mut(1));
     ///
     ///     if let Ok(mut b2) = b2 {
     ///         *b2 += 2;
@@ -3935,7 +4038,7 @@
         <span class="kw">let </span>borrow = <span class="self">self</span>.borrow.get();
         <span class="macro">debug_assert!</span>(is_writing(borrow));
         <span class="comment">// Prevent the borrow counter from underflowing.
-        </span><span class="macro">assert!</span>(borrow != isize::MIN);
+        </span><span class="macro">assert!</span>(borrow != BorrowFlag::MIN);
         <span class="self">self</span>.borrow.set(borrow - <span class="number">1</span>);
         BorrowRefMut { borrow: <span class="self">self</span>.borrow }
     }
@@ -3993,7 +4096,7 @@
 /// `UnsafeCell&lt;T&gt;` opts-out of the immutability guarantee for `&amp;T`: a shared reference
 /// `&amp;UnsafeCell&lt;T&gt;` may point to data that is being mutated. This is called &quot;interior mutability&quot;.
 ///
-/// All other types that allow internal mutability, such as `Cell&lt;T&gt;` and `RefCell&lt;T&gt;`, internally
+/// All other types that allow internal mutability, such as [`Cell&lt;T&gt;`] and [`RefCell&lt;T&gt;`], internally
 /// use `UnsafeCell` to wrap their data.
 ///
 /// Note that only the immutability guarantee for shared references is affected by `UnsafeCell`. The
@@ -4189,7 +4292,7 @@
         UnsafeCell { value }
     }
 
-    <span class="doccomment">/// Unwraps the value.
+    <span class="doccomment">/// Unwraps the value, consuming the cell.
     ///
     /// # Examples
     ///
@@ -4209,6 +4312,27 @@
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; UnsafeCell&lt;T&gt; {
+    <span class="doccomment">/// Converts from `&amp;mut T` to `&amp;mut UnsafeCell&lt;T&gt;`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #![feature(unsafe_cell_from_mut)]
+    /// use std::cell::UnsafeCell;
+    ///
+    /// let mut val = 42;
+    /// let uc = UnsafeCell::from_mut(&amp;mut val);
+    ///
+    /// *uc.get_mut() -= 1;
+    /// assert_eq!(*uc.get_mut(), 41);
+    /// ```
+    </span><span class="attr">#[inline(always)]
+    #[unstable(feature = <span class="string">&quot;unsafe_cell_from_mut&quot;</span>, issue = <span class="string">&quot;111645&quot;</span>)]
+    </span><span class="kw">pub const fn </span>from_mut(value: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="kw-2">&amp;mut </span>UnsafeCell&lt;T&gt; {
+        <span class="comment">// SAFETY: `UnsafeCell&lt;T&gt;` has the same memory layout as `T` due to #[repr(transparent)].
+        </span><span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span>(value <span class="kw">as </span><span class="kw-2">*mut </span>T <span class="kw">as </span><span class="kw-2">*mut </span>UnsafeCell&lt;T&gt;) }
+    }
+
     <span class="doccomment">/// Gets a mutable pointer to the wrapped value.
     ///
     /// This can be cast to a pointer of any kind.
@@ -4279,6 +4403,8 @@
     ///
     /// let m = MaybeUninit::&lt;UnsafeCell&lt;i32&gt;&gt;::uninit();
     /// unsafe { UnsafeCell::raw_get(m.as_ptr()).write(5); }
+    /// // avoid below which references to uninitialized data
+    /// // unsafe { UnsafeCell::get(&amp;*m.as_ptr()).write(5); }
     /// let uc = unsafe { m.assume_init() };
     ///
     /// assert_eq!(uc.into_inner(), 5);
@@ -4303,8 +4429,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;cell_from&quot;</span>, since = <span class="string">&quot;1.12.0&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>From&lt;T&gt; <span class="kw">for </span>UnsafeCell&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>UnsafeCell&lt;T&gt; {
     <span class="doccomment">/// Creates a new `UnsafeCell&lt;T&gt;` containing the given value.
     </span><span class="kw">fn </span>from(t: T) -&gt; UnsafeCell&lt;T&gt; {
         UnsafeCell::new(t)
@@ -4353,7 +4478,7 @@
         <span class="self">Self </span>{ value: UnsafeCell { value } }
     }
 
-    <span class="doccomment">/// Unwraps the value.
+    <span class="doccomment">/// Unwraps the value, consuming the cell.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub const fn </span>into_inner(<span class="self">self</span>) -&gt; T {
         <span class="self">self</span>.value.into_inner()
@@ -4403,8 +4528,7 @@
 }
 
 <span class="attr">#[unstable(feature = <span class="string">&quot;sync_unsafe_cell&quot;</span>, issue = <span class="string">&quot;95439&quot;</span>)]
-#[rustc_const_unstable(feature = <span class="string">&quot;const_convert&quot;</span>, issue = <span class="string">&quot;88674&quot;</span>)]
-</span><span class="kw">impl</span>&lt;T&gt; <span class="kw">const </span>From&lt;T&gt; <span class="kw">for </span>SyncUnsafeCell&lt;T&gt; {
+</span><span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>SyncUnsafeCell&lt;T&gt; {
     <span class="doccomment">/// Creates a new `SyncUnsafeCell&lt;T&gt;` containing the given value.
     </span><span class="kw">fn </span>from(t: T) -&gt; SyncUnsafeCell&lt;T&gt; {
         SyncUnsafeCell::new(t)
@@ -4438,5 +4562,4 @@
     <span class="kw">let _</span>: Cell&lt;<span class="kw-2">&amp;</span><span class="kw">dyn </span>Send&gt; = c;
     <span class="kw">let _</span>: RefCell&lt;<span class="kw-2">&amp;</span><span class="kw">dyn </span>Send&gt; = d;
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>

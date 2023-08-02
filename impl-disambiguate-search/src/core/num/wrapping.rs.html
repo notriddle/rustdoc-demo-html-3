@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/wrapping.rs`."><title>wrapping.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.70.0" data-rustdoc-version="1.70.0-dev" data-search-js="search-865544ced4509a71.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" data-theme-light-css="light-db279b6232be9c13.css" data-theme-dark-css="dark-cf923f49f397b216.css" data-theme-ayu-css="ayu-be46fdc453a55015.css" ></div><script src="../../../static.files/storage-9184409068f70b79.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files1.70.0.js"></script><script defer src="../../../static.files/main-244a1fd0acf0e418.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/num/wrapping.rs`."><title>wrapping.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../core/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1087,41 +1087,7 @@
 <a href="#1087" id="1087">1087</a>
 <a href="#1088" id="1088">1088</a>
 <a href="#1089" id="1089">1089</a>
-<a href="#1090" id="1090">1090</a>
-<a href="#1091" id="1091">1091</a>
-<a href="#1092" id="1092">1092</a>
-<a href="#1093" id="1093">1093</a>
-<a href="#1094" id="1094">1094</a>
-<a href="#1095" id="1095">1095</a>
-<a href="#1096" id="1096">1096</a>
-<a href="#1097" id="1097">1097</a>
-<a href="#1098" id="1098">1098</a>
-<a href="#1099" id="1099">1099</a>
-<a href="#1100" id="1100">1100</a>
-<a href="#1101" id="1101">1101</a>
-<a href="#1102" id="1102">1102</a>
-<a href="#1103" id="1103">1103</a>
-<a href="#1104" id="1104">1104</a>
-<a href="#1105" id="1105">1105</a>
-<a href="#1106" id="1106">1106</a>
-<a href="#1107" id="1107">1107</a>
-<a href="#1108" id="1108">1108</a>
-<a href="#1109" id="1109">1109</a>
-<a href="#1110" id="1110">1110</a>
-<a href="#1111" id="1111">1111</a>
-<a href="#1112" id="1112">1112</a>
-<a href="#1113" id="1113">1113</a>
-<a href="#1114" id="1114">1114</a>
-<a href="#1115" id="1115">1115</a>
-<a href="#1116" id="1116">1116</a>
-<a href="#1117" id="1117">1117</a>
-<a href="#1118" id="1118">1118</a>
-<a href="#1119" id="1119">1119</a>
-<a href="#1120" id="1120">1120</a>
-<a href="#1121" id="1121">1121</a>
-<a href="#1122" id="1122">1122</a>
-<a href="#1123" id="1123">1123</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Definitions of `Wrapping&lt;T&gt;`.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Definitions of `Wrapping&lt;T&gt;`.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::fmt;
 <span class="kw">use </span><span class="kw">crate</span>::ops::{Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign};
@@ -1210,8 +1176,7 @@
 </span><span class="macro">macro_rules! </span>sh_impl_signed {
     (<span class="macro-nonterminal">$t</span>:ident, <span class="macro-nonterminal">$f</span>:ident) =&gt; {
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Shl&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Shl&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1223,22 +1188,20 @@
                 }
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Shl, shl <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Shl, shl <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref_ops&quot;</span>, since = <span class="string">&quot;1.39.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>ShlAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>ShlAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>shl_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$f</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&lt;&lt; other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>ShlAssign, shl_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>ShlAssign, shl_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Shr&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Shr&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1250,26 +1213,24 @@
                 }
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Shr, shr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Shr, shr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref_ops&quot;</span>, since = <span class="string">&quot;1.39.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>ShrAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>ShrAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>shr_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$f</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&gt;&gt; other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>ShrAssign, shr_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>ShrAssign, shr_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
     };
 }
 
 <span class="macro">macro_rules! </span>sh_impl_unsigned {
     (<span class="macro-nonterminal">$t</span>:ident, <span class="macro-nonterminal">$f</span>:ident) =&gt; {
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Shl&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Shl&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1277,22 +1238,20 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_shl((other &amp; <span class="self">self</span>::shift_max::<span class="macro-nonterminal">$t </span><span class="kw">as </span><span class="macro-nonterminal">$f</span>) <span class="kw">as </span>u32))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Shl, shl <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Shl, shl <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref_ops&quot;</span>, since = <span class="string">&quot;1.39.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>ShlAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>ShlAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>shl_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$f</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&lt;&lt; other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>ShlAssign, shl_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>ShlAssign, shl_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Shr&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Shr&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1300,18 +1259,17 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_shr((other &amp; <span class="self">self</span>::shift_max::<span class="macro-nonterminal">$t </span><span class="kw">as </span><span class="macro-nonterminal">$f</span>) <span class="kw">as </span>u32))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Shr, shr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Shr, shr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f</span>,
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref_ops&quot;</span>, since = <span class="string">&quot;1.39.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>ShrAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>ShrAssign&lt;<span class="macro-nonterminal">$f</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>shr_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$f</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&gt;&gt; other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>ShrAssign, shr_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>ShrAssign, shr_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$f </span>}
     };
 }
 
@@ -1340,8 +1298,7 @@
 </span><span class="macro">macro_rules! </span>wrapping_impl {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Add <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Add <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1349,32 +1306,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_add(other.<span class="number">0</span>))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Add, add <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Add, add <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>AddAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>AddAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>+ other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>AddAssign, add_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>AddAssign, add_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>AddAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>AddAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>+ Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>AddAssign, add_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>AddAssign, add_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Sub <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Sub <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1382,32 +1336,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_sub(other.<span class="number">0</span>))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Sub, sub <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Sub, sub <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>SubAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>SubAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>- other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>SubAssign, sub_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>SubAssign, sub_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>SubAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>SubAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>- Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>SubAssign, sub_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>SubAssign, sub_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Mul <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Mul <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1419,28 +1370,25 @@
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>MulAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>MulAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>* other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>MulAssign, mul_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>MulAssign, mul_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>MulAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>MulAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>* Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>MulAssign, mul_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>MulAssign, mul_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_div&quot;</span>, since = <span class="string">&quot;1.3.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Div <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Div <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1448,32 +1396,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_div(other.<span class="number">0</span>))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Div, div <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Div, div <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>DivAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>DivAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>/ other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>DivAssign, div_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>DivAssign, div_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>DivAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>DivAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>/ Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>DivAssign, div_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>DivAssign, div_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_impls&quot;</span>, since = <span class="string">&quot;1.7.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Rem <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Rem <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1481,32 +1426,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0</span>.wrapping_rem(other.<span class="number">0</span>))
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>Rem, rem <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>Rem, rem <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>RemAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>RemAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>rem_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>% other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>RemAssign, rem_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>RemAssign, rem_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>RemAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>RemAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>rem_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>% Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>RemAssign, rem_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>RemAssign, rem_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Not <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Not <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1514,12 +1456,11 @@
                 Wrapping(!<span class="self">self</span>.<span class="number">0</span>)
             }
         }
-        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl const </span>Not, not <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl </span>Not, not <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitXor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitXor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1527,32 +1468,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0 </span>^ other.<span class="number">0</span>)
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>BitXor, bitxor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>BitXor, bitxor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitXorAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitXorAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitxor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>^ other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitXorAssign, bitxor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitXorAssign, bitxor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitXorAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitXorAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitxor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>^ Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitXorAssign, bitxor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitXorAssign, bitxor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitOr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitOr <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1560,32 +1498,29 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0 </span>| other.<span class="number">0</span>)
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>BitOr, bitor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>BitOr, bitor <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitOrAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitOrAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>| other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitOrAssign, bitor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitOrAssign, bitor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitOrAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitOrAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitor_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>| Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitOrAssign, bitor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitOrAssign, bitor_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitAnd <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitAnd <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;;
 
             <span class="attr">#[inline]
@@ -1593,39 +1528,36 @@
                 Wrapping(<span class="self">self</span>.<span class="number">0 </span>&amp; other.<span class="number">0</span>)
             }
         }
-        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl const </span>BitAnd, bitand <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_binop! </span>{ <span class="kw">impl </span>BitAnd, bitand <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;op_assign_traits&quot;</span>, since = <span class="string">&quot;1.8.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitAndAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitAndAssign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitand_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&amp; other;
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitAndAssign, bitand_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitAndAssign, bitand_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; }
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_int_assign_impl&quot;</span>, since = <span class="string">&quot;1.60.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>BitAndAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>BitAndAssign&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>bitand_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="macro-nonterminal">$t</span>) {
                 <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>&amp; Wrapping(other);
             }
         }
-        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl const </span>BitAndAssign, bitand_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
+        <span class="macro">forward_ref_op_assign! </span>{ <span class="kw">impl </span>BitAndAssign, bitand_assign <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;, <span class="macro-nonterminal">$t </span>}
 
         <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_neg&quot;</span>, since = <span class="string">&quot;1.10.0&quot;</span>)]
-        #[rustc_const_unstable(feature = <span class="string">&quot;const_ops&quot;</span>, issue = <span class="string">&quot;90080&quot;</span>)]
-        </span><span class="kw">impl const </span>Neg <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
+        </span><span class="kw">impl </span>Neg <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt; {
             <span class="kw">type </span>Output = <span class="self">Self</span>;
             <span class="attr">#[inline]
             </span><span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
                 Wrapping(<span class="number">0</span>) - <span class="self">self
             </span>}
         }
-        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl const </span>Neg, neg <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
+        <span class="macro">forward_ref_unop! </span>{ <span class="kw">impl </span>Neg, neg <span class="kw">for </span>Wrapping&lt;<span class="macro-nonterminal">$t</span>&gt;,
                 <span class="attr">#[stable(feature = <span class="string">&quot;wrapping_ref&quot;</span>, since = <span class="string">&quot;1.14.0&quot;</span>)] </span>}
 
     )<span class="kw-2">*</span>)
@@ -2244,5 +2176,4 @@
     <span class="kw">pub const </span>u128: u32 = i128;
     <span class="kw">pub use </span><span class="self">self</span>::platform::usize;
 }
-</code></pre></div>
-</section></main></body></html>
+</code></pre></div></section></main></body></html>
