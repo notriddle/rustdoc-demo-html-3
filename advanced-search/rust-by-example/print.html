@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -394,7 +416,7 @@ friendly fashion.</li>
 for these types. To print text for custom types, more steps are required.</p>
 <p>Implementing the <code>fmt::Display</code> trait automatically implements the
 <a href="https://doc.rust-lang.org/std/string/trait.ToString.html"><code>ToString</code></a> trait which allows us to <a href="hello/../conversion/string.html">convert</a> the type to <a href="hello/../std/str.html"><code>String</code></a>.</p>
-<p>In <em>line 46</em>, <code>#[allow(dead_code)]</code> is an <a href="hello/../attribute.html">attribute</a> which only apply to the module after it.</p>
+<p>In <em>line 43</em>, <code>#[allow(dead_code)]</code> is an <a href="hello/../attribute.html">attribute</a> which only apply to the module after it.</p>
 <h3 id="activities"><a class="header" href="#activities">Activities</a></h3>
 <ul>
 <li>Fix the issue in the above code (see FIXME) so that it runs without
@@ -699,8 +721,11 @@ so that the output displays as:</p>
 RGB (0, 3, 254) 0x0003FE
 RGB (0, 0, 0) 0x000000
 </code></pre>
-<p>Two hints if you get stuck:</p>
+<p>Three hints if you get stuck:</p>
 <ul>
+<li>The formula for calculating a color in the RGB color space is:
+<code>RGB = (R*65536)+(G*256)+B , (when R is RED, G is GREEN and B is BLUE)</code>.
+For more see <a href="https://www.rapidtables.com/web/color/RGB_Color.html#rgb-format">RGB color format &amp; calculation</a>.</li>
 <li>You <a href="https://doc.rust-lang.org/std/fmt/#named-parameters">may need to list each color more than once</a>.</li>
 <li>You can <a href="https://doc.rust-lang.org/std/fmt/#width">pad with zeros to a width of 2</a> with <code>:0&gt;2</code>.</li>
 </ul>
@@ -1502,7 +1527,7 @@ fn main() {
     // Unless it already fits, of course.
     println!(&quot; 128 as a i16 is: {}&quot;, 128 as i16);
 
-    // 128 as u8 -&gt; 128, whose value in 8-bit two's complement representation is:
+    // In boundary case 128 value in 8-bit two's complement representation is -128
     println!(&quot; 128 as a i8 is : {}&quot;, 128 as i8);
 
     // repeating the example above
@@ -1662,16 +1687,16 @@ necessary.</p>
 <p>Using the <code>Into</code> trait will typically require specification of the type to
 convert into as the compiler is unable to determine this most of the time.
 However this is a small trade-off considering we get the functionality for free.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::From;
+<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::Into;
 
 #[derive(Debug)]
 struct Number {
     value: i32,
 }
 
-impl From&lt;i32&gt; for Number {
-    fn from(item: i32) -&gt; Self {
-        Number { value: item }
+impl Into&lt;Number&gt; for i32 {
+    fn into(self) -&gt; Number {
+        Number { value: self }
     }
 }
 
@@ -1740,7 +1765,7 @@ fn main() {
     println!(&quot;{}&quot;, circle.to_string());
 }</code></pre></pre>
 <h2 id="parsing-a-string"><a class="header" href="#parsing-a-string">Parsing a String</a></h2>
-<p>One of the more common types to convert a string into is a number. The idiomatic
+<p>One of the more common types to convert a string into a number. The idiomatic
 approach to this is to use the <a href="https://doc.rust-lang.org/std/primitive.str.html#method.parse"><code>parse</code></a> function and either to arrange for
 type inference or to specify the type to parse using the 'turbofish' syntax.
 Both alternatives are shown in the following example.</p>
@@ -1868,7 +1893,7 @@ new one.</p>
 <p>It's possible to <code>break</code> or <code>continue</code> outer loops when dealing with nested
 loops. In these cases, the loops must be annotated with some <code>'label</code>, and the
 label must be passed to the <code>break</code>/<code>continue</code> statement.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(unreachable_code)]
+<pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(unreachable_code, unused_labels)]
 
 fn main() {
     'outer: loop {
@@ -2263,6 +2288,12 @@ differently from languages like C/C++.</p>
         // this will give an error: pattern does not mention field `x`
         //Foo { y } =&gt; println!(&quot;y = {}&quot;, y),
     }
+
+    let faa = Foo { x: (1, 2), y: 3 };
+
+    // You do not need a match block to destructure structs:
+    let Foo { x : x0, y: y0 } = faa;
+    println!(&quot;Outside: x0 = {x0:?}, y0 = {y0}&quot;);
 }</code></pre></pre>
 <h3 id="see-also-19"><a class="header" href="#see-also-19">See also:</a></h3>
 <p><a href="flow_control/match/destructuring/../../../custom_types/structs.html">Structs</a></p>
@@ -2454,13 +2485,13 @@ fn main() {
 <div style="break-before: page; page-break-before: always;"></div><h1 id="let-else"><a class="header" href="#let-else">let-else</a></h1>
 <blockquote>
 <p>🛈 stable since: rust 1.65</p>
+<p>🛈 you can target specific edition by compiling like this
+<code>rustc --edition=2021 main.rs</code></p>
 </blockquote>
 <p>With <code>let</code>-<code>else</code>, a refutable pattern can match and bind variables
 in the surrounding scope like a normal <code>let</code>, or else diverge (e.g. <code>break</code>,
 <code>return</code>, <code>panic!</code>) when the pattern doesn't match.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use std::str::FromStr;
+<pre><pre class="playground"><code class="language-rust edition2021">use std::str::FromStr;
 
 fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     let mut it = s.split(' ');
@@ -2473,8 +2504,9 @@ fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     (count, item)
 }
 
-assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
-<span class="boring">}</span></code></pre></pre>
+fn main() {
+    assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
+}</code></pre></pre>
 <p>The scope of name bindings is the main thing that makes this different from
 <code>match</code> or <code>if let</code>-<code>else</code> expressions. You could previously approximate these
 patterns with an unfortunate bit of repetition and an outer <code>let</code>:</p>
@@ -3125,9 +3157,9 @@ condition, it returns <code>None</code>. Its signature:</p>
     let array1 = [1, 2, 3];
     let array2 = [4, 5, 6];
 
-    // `iter()` for arrays yields `&amp;i32`
+    // `iter()` for arrays yields `&amp;&amp;i32`
     println!(&quot;Find 2 in array1: {:?}&quot;, array1.iter()     .find(|&amp;&amp;x| x == 2));
-    // `into_iter()` for arrays yields `i32`
+    // `into_iter()` for arrays yields `&amp;i32`
     println!(&quot;Find 2 in array2: {:?}&quot;, array2.into_iter().find(|&amp;x| x == 2));
 }</code></pre></pre>
 <p><code>Iterator::find</code> gives you a reference to the item. But if you want the <em>index</em> of the
@@ -6421,7 +6453,9 @@ Here, we explicitly call <code>panic</code> on our error condition:</p>
 fn main() {
     drink(&quot;water&quot;);
     drink(&quot;lemonade&quot;);
+    drink(&quot;still water&quot;);
 }</code></pre></pre>
+<p>The first call to <code>drink</code> works. The second panics and thus the third is never called.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="abort-and-unwind"><a class="header" href="#abort-and-unwind"><code>abort</code> and <code>unwind</code></a></h1>
 <p>The previous section illustrates the error handling mechanism <code>panic</code>.  Different code paths can be conditionally compiled based on the panic setting. The current values available are <code>unwind</code> and <code>abort</code>. </p>
 <p>Building on the prior lemonade example, we explicitly use the panic strategy to exercise different lines of code.</p>
@@ -6645,7 +6679,7 @@ in the nested <code>Option&lt;Option&lt;T&gt;&gt;</code>. Chaining multiple call
 then become confusing. That's where another combinator called <code>and_then()</code>, 
 known in some languages as flatmap, comes in.</p>
 <p><code>and_then()</code> calls its function input with the wrapped value and returns the result. If the <code>Option</code> is <code>None</code>, then it returns <code>None</code> instead.</p>
-<p>In the following example, <code>cookable_v2()</code> results in an <code>Option&lt;Food&gt;</code>. 
+<p>In the following example, <code>cookable_v3()</code> results in an <code>Option&lt;Food&gt;</code>. 
 Using <code>map()</code> instead of <code>and_then()</code> would have given an 
 <code>Option&lt;Option&lt;Food&gt;&gt;</code>, which is an invalid type for <code>eat()</code>.</p>
 <pre><pre class="playground"><code class="language-rust editable edition2021">#![allow(dead_code)]
@@ -6679,12 +6713,18 @@ fn cookable_v1(food: Food) -&gt; Option&lt;Food&gt; {
 }
 
 // This can conveniently be rewritten more compactly with `and_then()`:
-fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+fn cookable_v3(food: Food) -&gt; Option&lt;Food&gt; {
     have_recipe(food).and_then(have_ingredients)
 }
 
+// Otherwise we'd need to `flatten()` an `Option&lt;Option&lt;Food&gt;&gt;`
+// to get an `Option&lt;Food&gt;`:
+fn cookable_v2(food: Food) -&gt; Option&lt;Food&gt; {
+    have_recipe(food).map(have_ingredients).flatten()
+}
+
 fn eat(food: Food, day: Day) {
-    match cookable_v2(food) {
+    match cookable_v3(food) {
         Some(food) =&gt; println!(&quot;Yay! On {:?} we get to eat {:?}.&quot;, day, food),
         None       =&gt; println!(&quot;Oh no. We don't get to eat on {:?}?&quot;, day),
     }
@@ -6698,7 +6738,7 @@ fn main() {
     eat(sushi, Day::Wednesday);
 }</code></pre></pre>
 <h3 id="see-also-63"><a class="header" href="#see-also-63">See also:</a></h3>
-<p><a href="error/option_unwrap/../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a></p>
+<p><a href="error/option_unwrap/../../fn/closures.html">closures</a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option</code></a>, <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then()</code></a>, and <a href="https://doc.rust-lang.org/std/option/enum.Option.html#method.flatten"><code>Option::flatten()</code></a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unpacking-options-and-defaults"><a class="header" href="#unpacking-options-and-defaults">Unpacking options and defaults</a></h1>
 <p>There is more than one way to unpack an <code>Option</code> and fall back on a default if it is <code>None</code>. To choose the one that meets our needs, we need to consider the following:</p>
 <ul>
@@ -9768,7 +9808,8 @@ We need to tell the compiler about this since it may need to save and restore th
     // String is stored as ascii in ebx, edx, ecx in order
     // Because ebx is reserved, the asm needs to preserve the value of it.
     // So we push and pop it around the main asm.
-    // (in 64 bit mode for 64 bit processors, 32 bit processors would use ebx)
+    // 64 bit mode on 64 bit processors does not allow pushing/popping of
+    // 32 bit registers (like ebx), so we have to use the extended rbx register instead.
 
     unsafe {
         asm!(
@@ -9958,7 +9999,7 @@ assert_eq!(a, 8);
 <li><code>nostack</code> means that the asm code does not push any data onto the stack. This allows the compiler to use optimizations such as the stack red zone on x86-64 to avoid stack pointer adjustments.</li>
 </ul>
 <p>These allow the compiler to better optimize code using <code>asm!</code>, for example by eliminating pure <code>asm!</code> blocks whose outputs are not needed.</p>
-<p>See the <a href="unsafe/../../reference/inline-assembly.html">reference</a> for the full list of available options and their effects.</p>
+<p>See the <a href="https://doc.rust-lang.org/stable/reference/inline-assembly.html">reference</a> for the full list of available options and their effects.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h1>
 <p>The Rust language is fastly evolving, and because of this certain compatibility
 issues can arise, despite efforts to ensure forwards-compatibility wherever

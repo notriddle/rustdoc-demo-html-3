@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/os/unix/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.72.0" data-rustdoc-version="1.72.0-dev" data-search-js="search-a95087894126b0f6.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files1.72.0.js"></script><script defer src="../../../../static.files/main-762bcae8c0777c4b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/os/unix/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1050,6 +1050,32 @@
 <a href="#1050" id="1050">1050</a>
 <a href="#1051" id="1051">1051</a>
 <a href="#1052" id="1052">1052</a>
+<a href="#1053" id="1053">1053</a>
+<a href="#1054" id="1054">1054</a>
+<a href="#1055" id="1055">1055</a>
+<a href="#1056" id="1056">1056</a>
+<a href="#1057" id="1057">1057</a>
+<a href="#1058" id="1058">1058</a>
+<a href="#1059" id="1059">1059</a>
+<a href="#1060" id="1060">1060</a>
+<a href="#1061" id="1061">1061</a>
+<a href="#1062" id="1062">1062</a>
+<a href="#1063" id="1063">1063</a>
+<a href="#1064" id="1064">1064</a>
+<a href="#1065" id="1065">1065</a>
+<a href="#1066" id="1066">1066</a>
+<a href="#1067" id="1067">1067</a>
+<a href="#1068" id="1068">1068</a>
+<a href="#1069" id="1069">1069</a>
+<a href="#1070" id="1070">1070</a>
+<a href="#1071" id="1071">1071</a>
+<a href="#1072" id="1072">1072</a>
+<a href="#1073" id="1073">1073</a>
+<a href="#1074" id="1074">1074</a>
+<a href="#1075" id="1075">1075</a>
+<a href="#1076" id="1076">1076</a>
+<a href="#1077" id="1077">1077</a>
+<a href="#1078" id="1078">1078</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Unix-specific extensions to primitives in the [`std::fs`] module.
 //!
 //! [`std::fs`]: crate::fs
@@ -1201,7 +1227,36 @@
     /// Note that similar to [`File::write`], it is not an error to return a
     /// short write.
     ///
+    /// # Bug
+    /// On some systems, `write_at` utilises [`pwrite64`] to write to files.
+    /// However, this syscall has a [bug] where files opened with the `O_APPEND`
+    /// flag fail to respect the offset parameter, always appending to the end
+    /// of the file instead.
+    ///
+    /// It is possible to inadvertantly set this flag, like in the example below.
+    /// Therefore, it is important to be vigilant while changing options to mitigate
+    /// unexpected behaviour.
+    ///
+    /// ```no_run
+    /// use std::fs::File;
+    /// use std::io;
+    /// use std::os::unix::prelude::FileExt;
+    ///
+    /// fn main() -&gt; io::Result&lt;()&gt; {
+    ///     // Open a file with the append option (sets the `O_APPEND` flag)
+    ///     let file = File::options().append(true).open(&quot;foo.txt&quot;)?;
+    ///
+    ///     // We attempt to write at offset 10; instead appended to EOF
+    ///     file.write_at(b&quot;sushi&quot;, 10)?;
+    ///
+    ///     // foo.txt is 5 bytes long instead of 15
+    ///     Ok(())
+    /// }
+    /// ```
+    ///
     /// [`File::write`]: fs::File::write
+    /// [`pwrite64`]: https://man7.org/linux/man-pages/man2/pwrite.2.html
+    /// [bug]: https://man7.org/linux/man-pages/man2/pwrite.2.html#BUGS
     ///
     /// # Examples
     ///
@@ -1211,7 +1266,7 @@
     /// use std::os::unix::prelude::FileExt;
     ///
     /// fn main() -&gt; io::Result&lt;()&gt; {
-    ///     let file = File::open(&quot;foo.txt&quot;)?;
+    ///     let file = File::create(&quot;foo.txt&quot;)?;
     ///
     ///     // We now write at the offset 10.
     ///     file.write_at(b&quot;sushi&quot;, 10)?;
@@ -2023,7 +2078,6 @@
 /// # Examples
 ///
 /// ```no_run
-/// #![feature(unix_chown)]
 /// use std::os::unix::fs;
 ///
 /// fn main() -&gt; std::io::Result&lt;()&gt; {
@@ -2031,7 +2085,7 @@
 ///     Ok(())
 /// }
 /// ```
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;unix_chown&quot;</span>, issue = <span class="string">&quot;88989&quot;</span>)]
+</span><span class="attr">#[stable(feature = <span class="string">&quot;unix_chown&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
 </span><span class="kw">pub fn </span>chown&lt;P: AsRef&lt;Path&gt;&gt;(dir: P, uid: <span class="prelude-ty">Option</span>&lt;u32&gt;, gid: <span class="prelude-ty">Option</span>&lt;u32&gt;) -&gt; io::Result&lt;()&gt; {
     sys::fs::chown(dir.as_ref(), uid.unwrap_or(u32::MAX), gid.unwrap_or(u32::MAX))
 }
@@ -2043,7 +2097,6 @@
 /// # Examples
 ///
 /// ```no_run
-/// #![feature(unix_chown)]
 /// use std::os::unix::fs;
 ///
 /// fn main() -&gt; std::io::Result&lt;()&gt; {
@@ -2052,7 +2105,7 @@
 ///     Ok(())
 /// }
 /// ```
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;unix_chown&quot;</span>, issue = <span class="string">&quot;88989&quot;</span>)]
+</span><span class="attr">#[stable(feature = <span class="string">&quot;unix_chown&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
 </span><span class="kw">pub fn </span>fchown&lt;F: AsFd&gt;(fd: F, uid: <span class="prelude-ty">Option</span>&lt;u32&gt;, gid: <span class="prelude-ty">Option</span>&lt;u32&gt;) -&gt; io::Result&lt;()&gt; {
     sys::fs::fchown(fd.as_fd().as_raw_fd(), uid.unwrap_or(u32::MAX), gid.unwrap_or(u32::MAX))
 }
@@ -2065,7 +2118,6 @@
 /// # Examples
 ///
 /// ```no_run
-/// #![feature(unix_chown)]
 /// use std::os::unix::fs;
 ///
 /// fn main() -&gt; std::io::Result&lt;()&gt; {
@@ -2073,7 +2125,7 @@
 ///     Ok(())
 /// }
 /// ```
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;unix_chown&quot;</span>, issue = <span class="string">&quot;88989&quot;</span>)]
+</span><span class="attr">#[stable(feature = <span class="string">&quot;unix_chown&quot;</span>, since = <span class="string">&quot;CURRENT_RUSTC_VERSION&quot;</span>)]
 </span><span class="kw">pub fn </span>lchown&lt;P: AsRef&lt;Path&gt;&gt;(dir: P, uid: <span class="prelude-ty">Option</span>&lt;u32&gt;, gid: <span class="prelude-ty">Option</span>&lt;u32&gt;) -&gt; io::Result&lt;()&gt; {
     sys::fs::lchown(dir.as_ref(), uid.unwrap_or(u32::MAX), gid.unwrap_or(u32::MAX))
 }

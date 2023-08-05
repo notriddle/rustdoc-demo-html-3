@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -372,8 +394,8 @@ The operands of all of these operators are evaluated in <a href="../expressions.
 <tr><td><code>+</code></td><td>Addition</td><td></td><td>Addition</td><td><code>std::ops::Add</code></td><td><code>std::ops::AddAssign</code></td></tr>
 <tr><td><code>-</code></td><td>Subtraction</td><td></td><td>Subtraction</td><td><code>std::ops::Sub</code></td><td><code>std::ops::SubAssign</code></td></tr>
 <tr><td><code>*</code></td><td>Multiplication</td><td></td><td>Multiplication</td><td><code>std::ops::Mul</code></td><td><code>std::ops::MulAssign</code></td></tr>
-<tr><td><code>/</code></td><td>Division*</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
-<tr><td><code>%</code></td><td>Remainder**</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
+<tr><td><code>/</code></td><td>Division*†</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
+<tr><td><code>%</code></td><td>Remainder**†</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
 <tr><td><code>&amp;</code></td><td>Bitwise AND</td><td><a href="../types/boolean.html#logical-and">Logical AND</a></td><td></td><td><code>std::ops::BitAnd</code></td><td><code>std::ops::BitAndAssign</code></td></tr>
 <tr><td><code>|</code></td><td>Bitwise OR</td><td><a href="../types/boolean.html#logical-or">Logical OR</a></td><td></td><td><code>std::ops::BitOr</code></td><td><code>std::ops::BitOrAssign</code></td></tr>
 <tr><td><code>^</code></td><td>Bitwise XOR</td><td><a href="../types/boolean.html#logical-xor">Logical XOR</a></td><td></td><td><code>std::ops::BitXor</code></td><td><code>std::ops::BitXorAssign</code></td></tr>
@@ -385,6 +407,7 @@ The operands of all of these operators are evaluated in <a href="../expressions.
 <p>** Rust uses a remainder defined with <a href="https://en.wikipedia.org/wiki/Modulo_operation#Variants_of_the_definition">truncating division</a>. Given <code>remainder = dividend % divisor</code>, the remainder will have the same sign as the dividend.</p>
 <p>*** Arithmetic right shift on signed integer types, logical right shift on
 unsigned integer types.</p>
+<p>† For integer types, division by zero panics.</p>
 <p>Here are examples of these operators being used.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {

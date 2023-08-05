@@ -88,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -187,16 +209,16 @@ necessary.</p>
 <p>Using the <code>Into</code> trait will typically require specification of the type to
 convert into as the compiler is unable to determine this most of the time.
 However this is a small trade-off considering we get the functionality for free.</p>
-<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::From;
+<pre><pre class="playground"><code class="language-rust editable edition2021">use std::convert::Into;
 
 #[derive(Debug)]
 struct Number {
     value: i32,
 }
 
-impl From&lt;i32&gt; for Number {
-    fn from(item: i32) -&gt; Self {
-        Number { value: item }
+impl Into&lt;Number&gt; for i32 {
+    fn into(self) -&gt; Number {
+        Number { value: self }
     }
 }
 

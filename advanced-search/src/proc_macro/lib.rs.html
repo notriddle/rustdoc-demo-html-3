@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/proc_macro/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="proc_macro" data-themes="" data-resource-suffix="1.72.0" data-rustdoc-version="1.72.0-dev" data-search-js="search-a95087894126b0f6.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files1.72.0.js"></script><script defer src="../../static.files/main-762bcae8c0777c4b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../proc_macro/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/proc_macro/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="proc_macro" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../proc_macro/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1496,36 +1496,6 @@
 <a href="#1496" id="1496">1496</a>
 <a href="#1497" id="1497">1497</a>
 <a href="#1498" id="1498">1498</a>
-<a href="#1499" id="1499">1499</a>
-<a href="#1500" id="1500">1500</a>
-<a href="#1501" id="1501">1501</a>
-<a href="#1502" id="1502">1502</a>
-<a href="#1503" id="1503">1503</a>
-<a href="#1504" id="1504">1504</a>
-<a href="#1505" id="1505">1505</a>
-<a href="#1506" id="1506">1506</a>
-<a href="#1507" id="1507">1507</a>
-<a href="#1508" id="1508">1508</a>
-<a href="#1509" id="1509">1509</a>
-<a href="#1510" id="1510">1510</a>
-<a href="#1511" id="1511">1511</a>
-<a href="#1512" id="1512">1512</a>
-<a href="#1513" id="1513">1513</a>
-<a href="#1514" id="1514">1514</a>
-<a href="#1515" id="1515">1515</a>
-<a href="#1516" id="1516">1516</a>
-<a href="#1517" id="1517">1517</a>
-<a href="#1518" id="1518">1518</a>
-<a href="#1519" id="1519">1519</a>
-<a href="#1520" id="1520">1520</a>
-<a href="#1521" id="1521">1521</a>
-<a href="#1522" id="1522">1522</a>
-<a href="#1523" id="1523">1523</a>
-<a href="#1524" id="1524">1524</a>
-<a href="#1525" id="1525">1525</a>
-<a href="#1526" id="1526">1526</a>
-<a href="#1527" id="1527">1527</a>
-<a href="#1528" id="1528">1528</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! A support library for macro authors when defining new macros.
 //!
 //! This library, provided by the standard distribution, provides the types
@@ -1561,6 +1531,7 @@
 #![feature(min_specialization)]
 #![feature(strict_provenance)]
 #![recursion_limit = <span class="string">&quot;256&quot;</span>]
+#![cfg_attr(not(bootstrap), allow(internal_features))]
 
 #[unstable(feature = <span class="string">&quot;proc_macro_internals&quot;</span>, issue = <span class="string">&quot;27812&quot;</span>)]
 #[doc(hidden)]
@@ -1571,7 +1542,6 @@
 <span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_diagnostic&quot;</span>, issue = <span class="string">&quot;54140&quot;</span>)]
 </span><span class="kw">pub use </span>diagnostic::{Diagnostic, Level, MultiSpan};
 
-<span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::ops::{Range, RangeBounds};
 <span class="kw">use </span>std::path::PathBuf;
 <span class="kw">use </span>std::str::FromStr;
@@ -1706,7 +1676,8 @@
 
 <span class="comment">// N.B., the bridge only provides `to_string`, implement `fmt::Display`
 // based on it (the reverse of the usual relationship between the two).
-</span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
+</span><span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>TokenStream {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="self">self</span>.<span class="number">0</span>.as_ref().map(|t| t.to_string()).unwrap_or_default()
@@ -2022,28 +1993,32 @@
         <span class="self">self</span>.<span class="number">0</span>.byte_range()
     }
 
-    <span class="doccomment">/// Gets the starting line/column in the source file for this span.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-    </span><span class="kw">pub fn </span>start(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LineColumn {
-        <span class="self">self</span>.<span class="number">0</span>.start().add_1_to_column()
-    }
-
-    <span class="doccomment">/// Gets the ending line/column in the source file for this span.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-    </span><span class="kw">pub fn </span>end(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LineColumn {
-        <span class="self">self</span>.<span class="number">0</span>.end().add_1_to_column()
-    }
-
     <span class="doccomment">/// Creates an empty span pointing to directly before this span.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span_shrink&quot;</span>, issue = <span class="string">&quot;87552&quot;</span>)]
-    </span><span class="kw">pub fn </span>before(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Span {
-        Span(<span class="self">self</span>.<span class="number">0</span>.before())
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
+    </span><span class="kw">pub fn </span>start(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Span {
+        Span(<span class="self">self</span>.<span class="number">0</span>.start())
     }
 
     <span class="doccomment">/// Creates an empty span pointing to directly after this span.
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span_shrink&quot;</span>, issue = <span class="string">&quot;87552&quot;</span>)]
-    </span><span class="kw">pub fn </span>after(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Span {
-        Span(<span class="self">self</span>.<span class="number">0</span>.after())
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
+    </span><span class="kw">pub fn </span>end(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Span {
+        Span(<span class="self">self</span>.<span class="number">0</span>.end())
+    }
+
+    <span class="doccomment">/// The one-indexed line of the source file where the span starts.
+    ///
+    /// To obtain the line of the span&#39;s end, use `span.end().line()`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
+    </span><span class="kw">pub fn </span>line(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.<span class="number">0</span>.line()
+    }
+
+    <span class="doccomment">/// The one-indexed column of the source file where the span starts.
+    ///
+    /// To obtain the column of the span&#39;s end, use `span.end().column()`.
+    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
+    </span><span class="kw">pub fn </span>column(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.<span class="number">0</span>.column()
     }
 
     <span class="doccomment">/// Creates a new span encompassing `self` and `other`.
@@ -2111,44 +2086,6 @@
 </span><span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Span {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         <span class="self">self</span>.<span class="number">0</span>.fmt(f)
-    }
-}
-
-<span class="doccomment">/// A line-column pair representing the start or end of a `Span`.
-</span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-</span><span class="kw">pub struct </span>LineColumn {
-    <span class="doccomment">/// The 1-indexed line in the source file on which the span starts or ends (inclusive).
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-    </span><span class="kw">pub </span>line: usize,
-    <span class="doccomment">/// The 1-indexed column (number of bytes in UTF-8 encoding) in the source
-    /// file on which the span starts or ends (inclusive).
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-    </span><span class="kw">pub </span>column: usize,
-}
-
-<span class="kw">impl </span>LineColumn {
-    <span class="kw">fn </span>add_1_to_column(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        LineColumn { line: <span class="self">self</span>.line, column: <span class="self">self</span>.column + <span class="number">1 </span>}
-    }
-}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-</span><span class="kw">impl </span>!Send <span class="kw">for </span>LineColumn {}
-<span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-</span><span class="kw">impl </span>!Sync <span class="kw">for </span>LineColumn {}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-</span><span class="kw">impl </span>Ord <span class="kw">for </span>LineColumn {
-    <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
-        <span class="self">self</span>.line.cmp(<span class="kw-2">&amp;</span>other.line).then(<span class="self">self</span>.column.cmp(<span class="kw-2">&amp;</span>other.column))
-    }
-}
-
-<span class="attr">#[unstable(feature = <span class="string">&quot;proc_macro_span&quot;</span>, issue = <span class="string">&quot;54725&quot;</span>)]
-</span><span class="kw">impl </span>PartialOrd <span class="kw">for </span>LineColumn {
-    <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
-        <span class="prelude-val">Some</span>(<span class="self">self</span>.cmp(other))
     }
 }
 
@@ -2301,7 +2238,8 @@
 
 <span class="comment">// N.B., the bridge only provides `to_string`, implement `fmt::Display`
 // based on it (the reverse of the usual relationship between the two).
-</span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
+</span><span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>TokenTree {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
@@ -2435,7 +2373,8 @@
 
 <span class="comment">// N.B., the bridge only provides `to_string`, implement `fmt::Display`
 // based on it (the reverse of the usual relationship between the two).
-</span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
+</span><span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib&quot;</span>, since = <span class="string">&quot;1.15.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>Group {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         TokenStream::from(TokenTree::from(<span class="self">self</span>.clone())).to_string()
@@ -2544,7 +2483,8 @@
     }
 }
 
-<span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
+<span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>Punct {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="self">self</span>.as_char().to_string()
@@ -2646,9 +2586,8 @@
     }
 }
 
-<span class="doccomment">/// Converts the identifier to a string that should be losslessly convertible
-/// back into the same identifier.
-</span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
+<span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>Ident {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="self">self</span>.<span class="number">0</span>.sym.with(|sym| <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.is_raw { [<span class="string">&quot;r#&quot;</span>, sym].concat() } <span class="kw">else </span>{ sym.to_owned() })
@@ -2986,7 +2925,8 @@
     }
 }
 
-<span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
+<span class="attr">#[doc(hidden)]
+#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
 </span><span class="kw">impl </span>ToString <span class="kw">for </span>Literal {
     <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="self">self</span>.with_stringify_parts(|parts| parts.concat())

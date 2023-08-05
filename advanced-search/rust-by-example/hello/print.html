@@ -88,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -230,7 +252,7 @@ friendly fashion.</li>
 for these types. To print text for custom types, more steps are required.</p>
 <p>Implementing the <code>fmt::Display</code> trait automatically implements the
 <a href="https://doc.rust-lang.org/std/string/trait.ToString.html"><code>ToString</code></a> trait which allows us to <a href="../conversion/string.html">convert</a> the type to <a href="../std/str.html"><code>String</code></a>.</p>
-<p>In <em>line 46</em>, <code>#[allow(dead_code)]</code> is an <a href="../attribute.html">attribute</a> which only apply to the module after it.</p>
+<p>In <em>line 43</em>, <code>#[allow(dead_code)]</code> is an <a href="../attribute.html">attribute</a> which only apply to the module after it.</p>
 <h3 id="activities"><a class="header" href="#activities">Activities</a></h3>
 <ul>
 <li>Fix the issue in the above code (see FIXME) so that it runs without

@@ -93,11 +93,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -544,7 +566,7 @@ regex = { git = &quot;https://github.com/rust-lang/regex.git&quot; }
 <p>This package has a single dependency, on the <code>regex</code> library. We’ve stated in
 this case that we’re relying on a particular Git repository that lives on
 GitHub. Since we haven’t specified any other information, Cargo assumes that
-we intend to use the latest commit on the <code>master</code> branch to build our package.</p>
+we intend to use the latest commit on the default branch to build our package.</p>
 <p>Sound good? Well, there’s one problem: If you build this package today, and
 then you send a copy to me, and I build this package tomorrow, something bad
 could happen. There could be more commits to <code>regex</code> in the meantime, and my
@@ -944,7 +966,7 @@ time = &quot;0.1.12&quot;
 <p>The string <code>&quot;0.1.12&quot;</code> is a version requirement. Although it looks like a
 specific <em>version</em> of the <code>time</code> crate, it actually specifies a <em>range</em> of
 versions and allows <a href="https://semver.org">SemVer</a> compatible updates. An update is allowed if the new
-version number does not modify the left-most non-zero digit in the major, minor,
+version number does not modify the left-most non-zero number in the major, minor,
 patch grouping. In this case, if we ran <code>cargo update -p time</code>, cargo should
 update us to version <code>0.1.13</code> if it is the latest <code>0.1.z</code> release, but would not
 update us to <code>0.2.0</code>. If instead we had specified the version string as <code>1.0</code>,
@@ -1003,6 +1025,38 @@ exact version to depend on.</p>
 <h3 id="multiple-requirements"><a class="header" href="#multiple-requirements">Multiple requirements</a></h3>
 <p>As shown in the examples above, multiple version requirements can be
 separated with a comma, e.g., <code>&gt;= 1.2, &lt; 1.5</code>.</p>
+<blockquote>
+<p><strong>Recommendation:</strong> When in doubt, use the default version requirement operator.</p>
+<p>In rare circumstances, a package with a “public dependency”
+(re-exports the dependency or interoperates with it in its public API)
+that is compatible with multiple semver-incompatible versions
+(e.g. only uses a simple type that hasn’t changed between releases, like an <code>Id</code>)
+may support users choosing which version of the “public dependency” to use.
+In this case, a version requirement like <code>&quot;&gt;=0.4, &lt;2&quot;</code> may be of interest.
+<em>However</em> users of the package will likely run into errors and need to to
+manually select a version of the “public dependency” via <code>cargo update</code> if
+they also depend on it as Cargo might pick different versions of the “public
+dependency” when <a href="reference/resolver.html">resolving dependency versions</a>  (see
+<a href="https://github.com/rust-lang/cargo/issues/10599">#10599</a>).</p>
+<p>Avoid constraining the upper bound of a version to be anything less than the
+next semver incompatible version
+(e.g. avoid <code>&quot;&gt;=2.0, &lt;2.4&quot;</code>) as other packages in the dependency tree may
+require a newer version, leading to an unresolvable error (see #6584).
+Consider whether controlling the version in your <a href="reference/../guide/cargo-toml-vs-cargo-lock.html"><code>Cargo.lock</code></a> would be more
+appropriate.</p>
+<p>In some instances this won’t matter or the benefits might outweigh the cost, including:</p>
+<ul>
+<li>When no one else depends on your package e.g. it only has a <code>[[bin]]</code></li>
+<li>When depending on a pre-release package and wishing to avoid breaking
+changes then a fully specified <code>&quot;=1.2.3-alpha.3&quot;</code> might be warranted (see
+<a href="https://github.com/rust-lang/cargo/issues/2222">#2222</a>)</li>
+<li>When a library re-exports a proc-macro but the proc-macro generates code that
+calls into the re-exporting library then a fully specified <code>=1.2.3</code> might be
+warranted to ensure the proc-macro isn’t newer than the re-exporting library
+and generating code that uses parts of the API that don’t exist within the
+current version</li>
+</ul>
+</blockquote>
 <h3 id="specifying-dependencies-from-other-registries"><a class="header" href="#specifying-dependencies-from-other-registries">Specifying dependencies from other registries</a></h3>
 <p>To specify a dependency from a registry other than <a href="https://crates.io/">crates.io</a>, first the
 registry must be configured in a <code>.cargo/config.toml</code> file. See the <a href="reference/registries.html">registries
@@ -1593,9 +1647,11 @@ means that path overrides cannot be used to test out adding a dependency to a
 crate, instead <code>[patch]</code> must be used in that situation. As a result usage of a
 path override is typically isolated to quick bug fixes rather than larger
 changes.</p>
-<p>Note: using a local configuration to override paths will only work for crates
-that have been published to <a href="https://crates.io/">crates.io</a>. You cannot use this feature to tell
-Cargo how to find local unpublished crates.</p>
+<blockquote>
+<p><strong>Note</strong>: using a local configuration to override paths will only work for
+crates that have been published to <a href="https://crates.io/">crates.io</a>. You cannot use this feature
+to tell Cargo how to find local unpublished crates.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="the-manifest-format"><a class="header" href="#the-manifest-format">The Manifest Format</a></h2>
 <p>The <code>Cargo.toml</code> file for each package is called its <em>manifest</em>. It is written
 in the <a href="https://toml.io/">TOML</a> format. It contains metadata that is needed to compile the package. Checkout
@@ -1658,7 +1714,6 @@ the <code>cargo locate-project</code> section for more detail on how cargo finds
 <li><a href="reference/profiles.html"><code>[profile]</code></a> — Compiler settings and optimizations.</li>
 <li><a href="reference/workspaces.html"><code>[workspace]</code></a> — The workspace definition.</li>
 </ul>
-<p><a id="package-metadata"></a></p>
 <h3 id="the-package-section"><a class="header" href="#the-package-section">The <code>[package]</code> section</a></h3>
 <p>The first section in a <code>Cargo.toml</code> is <code>[package]</code>.</p>
 <pre><code class="language-toml">[package]
@@ -1702,7 +1757,6 @@ traits, fields, types, functions, methods or anything else.</li>
 resolve dependencies, and for guidelines on setting your own version. See the
 <a href="reference/semver.html">SemVer compatibility</a> chapter for more details on exactly what constitutes a
 breaking change.</p>
-<p><a id="the-authors-field-optional"></a></p>
 <h4 id="the-authors-field"><a class="header" href="#the-authors-field">The <code>authors</code> field</a></h4>
 <p>The optional <code>authors</code> field lists in an array the people or organizations that are considered
 the “authors” of the package. The exact meaning is open to interpretation — it
@@ -1721,7 +1775,6 @@ user interface.</p>
 field cannot be changed or removed in already-published versions of a
 package.</p>
 </blockquote>
-<p><a id="the-edition-field-optional"></a></p>
 <h4 id="the-edition-field"><a class="header" href="#the-edition-field">The <code>edition</code> field</a></h4>
 <p>The <code>edition</code> key is an optional key that affects which <a href="reference/../../edition-guide/index.html">Rust Edition</a> your package
 is compiled with. Setting the <code>edition</code> key in <code>[package]</code> will affect all
@@ -1767,7 +1820,6 @@ description = &quot;A short description of my package&quot;
 <blockquote>
 <p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> requires the <code>description</code> to be set.</p>
 </blockquote>
-<p><a id="the-documentation-field-optional"></a></p>
 <h4 id="the-documentation-field"><a class="header" href="#the-documentation-field">The <code>documentation</code> field</a></h4>
 <p>The <code>documentation</code> field specifies a URL to a website hosting the crate’s
 documentation. If no URL is specified in the manifest file, <a href="https://crates.io/">crates.io</a> will
@@ -1863,7 +1915,6 @@ belongs to.</p>
 match one of the strings available at <a href="https://crates.io/category_slugs">https://crates.io/category_slugs</a>, and
 must match exactly.</p>
 </blockquote>
-<p><a id="the-workspace--field-optional"></a></p>
 <h4 id="the-workspace-field"><a class="header" href="#the-workspace-field">The <code>workspace</code> field</a></h4>
 <p>The <code>workspace</code> field can be used to configure the workspace that this package
 will be a member of. If not specified this will be inferred as the first
@@ -1878,8 +1929,6 @@ table defined. That is, a crate cannot both be a root crate in a workspace
 (contain <code>[workspace]</code>) and also be a member crate of another workspace
 (contain <code>package.workspace</code>).</p>
 <p>For more information, see the <a href="reference/workspaces.html">workspaces chapter</a>.</p>
-<p><a id="package-build"></a>
-<a id="the-build-field-optional"></a></p>
 <h4 id="the-build-field"><a class="header" href="#the-build-field">The <code>build</code> field</a></h4>
 <p>The <code>build</code> field specifies a file in the package root which is a <a href="reference/build-scripts.html">build
 script</a> for building native code. More information can be found in the <a href="reference/build-scripts.html">build
@@ -1892,7 +1941,6 @@ build = &quot;build.rs&quot;
 <code>build.rs</code> in the root of the package. Use <code>build = &quot;custom_build_name.rs&quot;</code> to
 specify a path to a different file or <code>build = false</code> to disable automatic
 detection of the build script.</p>
-<p><a id="the-links-field-optional"></a></p>
 <h4 id="the-links-field"><a class="header" href="#the-links-field">The <code>links</code> field</a></h4>
 <p>The <code>links</code> field specifies the name of a native library that is being linked
 to. More information can be found in the <a href="reference/build-scripts.html#the-links-manifest-key"><code>links</code></a> section of the build
@@ -1903,7 +1951,6 @@ on Linux) may specify:</p>
 # ...
 links = &quot;git2&quot;
 </code></pre>
-<p><a id="the-exclude-and-include-fields-optional"></a></p>
 <h4 id="the-exclude-and-include-fields"><a class="header" href="#the-exclude-and-include-fields">The <code>exclude</code> and <code>include</code> fields</a></h4>
 <p>The <code>exclude</code> and <code>include</code> fields can be used to explicitly specify which
 files are included when packaging a project to be <a href="reference/publishing.html">published</a>,
@@ -1985,7 +2032,6 @@ track to determine if the target should be rebuilt. If the package has a
 <a href="reference/build-scripts.html">build script</a> that does not emit any <code>rerun-if-*</code> directives, then the
 include/exclude list is used for tracking if the build script should be re-run
 if any of those files change.</p>
-<p><a id="the-publish--field-optional"></a></p>
 <h4 id="the-publish-field"><a class="header" href="#the-publish-field">The <code>publish</code> field</a></h4>
 <p>The <code>publish</code> field can be used to prevent a package from being published to a
 package registry (like <em>crates.io</em>) by mistake, for instance to keep a package
@@ -2002,7 +2048,6 @@ publish = [&quot;some-registry-name&quot;]
 </code></pre>
 <p>If publish array contains a single registry, <code>cargo publish</code> command will use
 it when <code>--registry</code> flag is not specified.</p>
-<p><a id="the-metadata-table-optional"></a></p>
 <h4 id="the-metadata-table"><a class="header" href="#the-metadata-table">The <code>metadata</code> table</a></h4>
 <p>Cargo by default will warn about unused keys in <code>Cargo.toml</code> to assist in
 detecting typos and such. The <code>package.metadata</code> table, however, is completely
@@ -2092,6 +2137,17 @@ more detail.</p>
         "#the-patch-section": "overriding-dependencies.html#the-patch-section",
         "#using-patch-with-multiple-versions": "overriding-dependencies.html#using-patch-with-multiple-versions",
         "#the-replace-section": "overriding-dependencies.html#the-replace-section",
+        "#package-metadata": "manifest.html#the-package-section",
+        "#the-authors-field-optional": "manifest.html#the-authors-field",
+        "#the-edition-field-optional": "manifest.html#the-edition-field",
+        "#the-documentation-field-optional": "manifest.html#the-documentation-field",
+        "#the-workspace--field-optional": "manifest.html#the-workspace-field",
+        "#package-build": "manifest.html#the-build-field",
+        "#the-build-field-optional": "manifest.html#the-build-field",
+        "#the-links-field-optional": "manifest.html#the-links-field",
+        "#the-exclude-and-include-fields-optional": "manifest.html#the-exclude-and-include-fields",
+        "#the-publish--field-optional": "manifest.html#the-publish-field",
+        "#the-metadata-table-optional": "manifest.html#the-metadata-table",
     };
     var target = fragments[window.location.hash];
     if (target) {
@@ -2435,7 +2491,6 @@ name = &quot;hello_world&quot; # the name of the package
 version = &quot;0.1.0&quot;    # the current version, obeying semver
 authors = [&quot;Alice &lt;a@example.com&gt;&quot;, &quot;Bob &lt;b@example.com&gt;&quot;]
 </code></pre>
-<p><a id="virtual-manifest"></a></p>
 <h4 id="virtual-workspace"><a class="header" href="#virtual-workspace">Virtual workspace</a></h4>
 <p>Alternatively, a <code>Cargo.toml</code> file can be created with a <code>[workspace]</code> section
 but without a <a href="reference/manifest.html#the-package-section"><code>[package]</code> section</a>. This is called a <em>virtual
@@ -2444,13 +2499,19 @@ you want to keep all the packages organized in separate directories.</p>
 <pre><code class="language-toml"># [PROJECT_DIR]/Cargo.toml
 [workspace]
 members = [&quot;hello_world&quot;]
+resolver = &quot;2&quot;
 </code></pre>
 <pre><code class="language-toml"># [PROJECT_DIR]/hello_world/Cargo.toml
 [package]
 name = &quot;hello_world&quot; # the name of the package
 version = &quot;0.1.0&quot;    # the current version, obeying semver
+edition = &quot;2021&quot;     # the edition, will have no effect on a resolver used in the workspace
 authors = [&quot;Alice &lt;a@example.com&gt;&quot;, &quot;Bob &lt;b@example.com&gt;&quot;]
 </code></pre>
+<p>Note that in a virtual manifest the <a href="reference/resolver.html#resolver-versions"><code>resolver = &quot;2&quot;</code></a>
+should be specified manually. It is usually deduced from the <a href="reference/manifest.html#the-edition-field"><code>package.edition</code></a>
+field which is absent in virtual manifests and the edition field of a member
+won’t affect the resolver used by the workspace.</p>
 <h3 id="the-members-and-exclude-fields"><a class="header" href="#the-members-and-exclude-fields">The <code>members</code> and <code>exclude</code> fields</a></h3>
 <p>The <code>members</code> and <code>exclude</code> fields define which packages are members of
 the workspace:</p>
@@ -2580,6 +2641,19 @@ format for the content of either of these tables, it is suggested that
 external tools may wish to use them in a consistent fashion, such as referring
 to the data in <code>workspace.metadata</code> if data is missing from <code>package.metadata</code>,
 if that makes sense for the tool in question.</p>
+<script>
+(function() {
+    var fragments = {
+        "#virtual-manifest": "workspaces.html#virtual-workspace",
+    };
+    var target = fragments[window.location.hash];
+    if (target) {
+        var url = window.location.toString();
+        var base = url.substring(0, url.lastIndexOf('/'));
+        window.location.replace(base + "/" + target);
+    }
+})();
+</script>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="features"><a class="header" href="#features">Features</a></h2>
 <p>Cargo “features” provide a mechanism to express <a href="reference/../../reference/conditional-compilation.html">conditional compilation</a> and
 <a href="reference/features.html#optional-dependencies">optional dependencies</a>. A package defines a set of
@@ -3173,9 +3247,10 @@ enabled, a panic will occur on overflow.</p>
 <li><code>false</code>: disabled</li>
 </ul>
 <h4 id="lto"><a class="header" href="#lto">lto</a></h4>
-<p>The <code>lto</code> setting controls the <a href="reference/../../rustc/codegen-options/index.html#lto"><code>-C lto</code> flag</a> which controls LLVM’s <a href="https://llvm.org/docs/LinkTimeOptimization.html">link
-time optimizations</a>. LTO can produce better optimized code, using
-whole-program analysis, at the cost of longer linking time.</p>
+<p>The <code>lto</code> setting controls <code>rustc</code>’s <a href="reference/../../rustc/codegen-options/index.html#lto"><code>-C lto</code></a>, <a href="reference/../../rustc/codegen-options/index.html#linker-plugin-lto"><code>-C linker-plugin-lto</code></a>, and
+<a href="reference/../../rustc/codegen-options/index.html#embed-bitcode"><code>-C embed-bitcode</code></a> options, which control LLVM’s <a href="https://llvm.org/docs/LinkTimeOptimization.html">link time optimizations</a>.
+LTO can produce better optimized code, using whole-program analysis, at the cost
+of longer linking time.</p>
 <p>The valid options are:</p>
 <ul>
 <li><code>false</code>: Performs “thin local LTO” which performs “thin” LTO on the local
@@ -3188,7 +3263,9 @@ substantially less time to run while still achieving performance gains
 similar to “fat”.</li>
 <li><code>&quot;off&quot;</code>: Disables LTO.</li>
 </ul>
-<p>See also the <a href="reference/../../rustc/codegen-options/index.html#linker-plugin-lto"><code>-C linker-plugin-lto</code></a> <code>rustc</code> flag for cross-language LTO.</p>
+<p>See the <a href="reference/../../rustc/linker-plugin-lto.html">linker-plugin-lto chapter</a> if you are interested in cross-language LTO.
+This is not yet supported natively in Cargo, but can be performed via
+<code>RUSTFLAGS</code>.</p>
 <h4 id="panic"><a class="header" href="#panic">panic</a></h4>
 <p>The <code>panic</code> setting controls the <a href="reference/../../rustc/codegen-options/index.html#panic"><code>-C panic</code> flag</a> which controls which panic
 strategy to use.</p>
@@ -3523,6 +3600,7 @@ panic = 'unwind'         # The panic strategy.
 incremental = true       # Incremental compilation.
 codegen-units = 16       # Number of code generation units.
 rpath = false            # Sets the rpath linking option.
+strip = &quot;none&quot;           # Removes symbols or debuginfo.
 [profile.&lt;name&gt;.build-override]  # Overrides build-script settings.
 # Same keys for a normal profile.
 [profile.&lt;name&gt;.package.&lt;name&gt;]  # Override profile for a package.
@@ -4195,6 +4273,13 @@ the <a href="reference/profiles.html#overrides">overrides section</a> for more d
 <li>Environment: <code>CARGO_PROFILE_&lt;name&gt;_RPATH</code></li>
 </ul>
 <p>See <a href="reference/profiles.html#rpath">rpath</a>.</p>
+<h5 id="profilenamestrip"><a class="header" href="#profilenamestrip"><code>profile.&lt;name&gt;.strip</code></a></h5>
+<ul>
+<li>Type: string</li>
+<li>default: See profile docs.</li>
+<li>Environment: <code>CARGO_PROFILE_&lt;name&gt;_STRIP</code></li>
+</ul>
+<p>See <a href="reference/profiles.html#strip">strip</a>.</p>
 <h4 id="registries"><a class="header" href="#registries"><code>[registries]</code></a></h4>
 <p>The <code>[registries]</code> table is used for specifying additional <a href="reference/registries.html">registries</a>. It
 consists of a sub-table for each named registry.</p>
@@ -4561,6 +4646,7 @@ In summary, the supported environment variables are:</p>
 <li><code>CARGO_PROFILE_&lt;name&gt;_PANIC</code> — The panic strategy to use, see <a href="reference/config.html#profilenamepanic"><code>profile.&lt;name&gt;.panic</code></a>.</li>
 <li><code>CARGO_PROFILE_&lt;name&gt;_RPATH</code> — The rpath linking option, see <a href="reference/config.html#profilenamerpath"><code>profile.&lt;name&gt;.rpath</code></a>.</li>
 <li><code>CARGO_PROFILE_&lt;name&gt;_SPLIT_DEBUGINFO</code> — Controls debug file output behavior, see <a href="reference/config.html#profilenamesplit-debuginfo"><code>profile.&lt;name&gt;.split-debuginfo</code></a>.</li>
+<li><code>CARGO_PROFILE_&lt;name&gt;_STRIP</code> — Controls stripping of symbols and/or debuginfos, see <a href="reference/config.html#profilenamestrip"><code>profile.&lt;name&gt;.strip</code></a>.</li>
 <li><code>CARGO_REGISTRIES_&lt;name&gt;_INDEX</code> — URL of a registry index, see <a href="reference/config.html#registriesnameindex"><code>registries.&lt;name&gt;.index</code></a>.</li>
 <li><code>CARGO_REGISTRIES_&lt;name&gt;_TOKEN</code> — Authentication token of a registry, see <a href="reference/config.html#registriesnametoken"><code>registries.&lt;name&gt;.token</code></a>.</li>
 <li><code>CARGO_REGISTRY_DEFAULT</code> — Default registry for the <code>--registry</code> flag, see <a href="reference/config.html#registrydefault"><code>registry.default</code></a>.</li>
@@ -4783,7 +4869,7 @@ fn main() {
 chapter</a> shows a variety of examples on how to write
 scripts.</p>
 <blockquote>
-<p>Note: The <a href="reference/manifest.html#package-build"><code>package.build</code> manifest key</a> can be
+<p>Note: The <a href="reference/manifest.html#the-build-field"><code>package.build</code> manifest key</a> can be
 used to change the name of the build script, or disable it entirely.</p>
 </blockquote>
 <h3 id="life-cycle-of-a-build-script"><a class="header" href="#life-cycle-of-a-build-script">Life Cycle of a Build Script</a></h3>
@@ -4866,25 +4952,21 @@ terminal.</li>
 <li><a href="reference/build-scripts.html#the-links-manifest-key"><code>cargo:KEY=VALUE</code></a> — Metadata, used by <code>links</code>
 scripts.</li>
 </ul>
-<p><a id="rustc-link-arg"></a></p>
-<h4 id="cargorustc-link-argflag"><a class="header" href="#cargorustc-link-argflag"><code>cargo:rustc-link-arg=FLAG</code></a></h4>
+<h4 id="rustc-link-arg"><a class="header" href="#rustc-link-arg"><code>cargo:rustc-link-arg=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code>
 option</a> to the compiler, but only when building supported targets
 (benchmarks, binaries, <code>cdylib</code> crates, examples, and tests). Its usage is
 highly platform specific. It is useful to set the shared library version or
 linker script.</p>
-<p><a id="rustc-link-arg-bin"></a></p>
-<h4 id="cargorustc-link-arg-binbinflag"><a class="header" href="#cargorustc-link-arg-binbinflag"><code>cargo:rustc-link-arg-bin=BIN=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-bin"><a class="header" href="#rustc-link-arg-bin"><code>cargo:rustc-link-arg-bin=BIN=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-bin</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building
 the binary target with name <code>BIN</code>. Its usage is highly platform specific. It is useful
 to set a linker script or other linker options.</p>
-<p><a id="rustc-link-arg-bins"></a></p>
-<h4 id="cargorustc-link-arg-binsflag"><a class="header" href="#cargorustc-link-arg-binsflag"><code>cargo:rustc-link-arg-bins=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-bins"><a class="header" href="#rustc-link-arg-bins"><code>cargo:rustc-link-arg-bins=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-bins</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 binary target. Its usage is highly platform specific. It is useful
 to set a linker script or other linker options.</p>
-<p><a id="rustc-link-lib"></a></p>
-<h4 id="cargorustc-link-liblib"><a class="header" href="#cargorustc-link-liblib"><code>cargo:rustc-link-lib=LIB</code></a></h4>
+<h4 id="rustc-link-lib"><a class="header" href="#rustc-link-lib"><code>cargo:rustc-link-lib=LIB</code></a></h4>
 <p>The <code>rustc-link-lib</code> instruction tells Cargo to link the given library using
 the compiler’s <a href="reference/../../rustc/command-line-arguments.html#option-l-link-lib"><code>-l</code> flag</a>. This is typically used to link a
 native library using <a href="reference/../../nomicon/ffi.html">FFI</a>.</p>
@@ -4900,20 +4982,16 @@ access to the symbols from the given lib, and the binary should access them
 through the library target’s public API.</p>
 <p>The optional <code>KIND</code> may be one of <code>dylib</code>, <code>static</code>, or <code>framework</code>. See the
 <a href="reference/../../rustc/command-line-arguments.html#option-l-link-lib">rustc book</a> for more detail.</p>
-<p><a id="rustc-link-arg-tests"></a></p>
-<h4 id="cargorustc-link-arg-testsflag"><a class="header" href="#cargorustc-link-arg-testsflag"><code>cargo:rustc-link-arg-tests=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-tests"><a class="header" href="#rustc-link-arg-tests"><code>cargo:rustc-link-arg-tests=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-tests</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 tests target.</p>
-<p><a id="rustc-link-arg-examples"></a></p>
-<h4 id="cargorustc-link-arg-examplesflag"><a class="header" href="#cargorustc-link-arg-examplesflag"><code>cargo:rustc-link-arg-examples=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-examples"><a class="header" href="#rustc-link-arg-examples"><code>cargo:rustc-link-arg-examples=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-examples</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building an examples
 target.</p>
-<p><a id="rustc-link-arg-benches"></a></p>
-<h4 id="cargorustc-link-arg-benchesflag"><a class="header" href="#cargorustc-link-arg-benchesflag"><code>cargo:rustc-link-arg-benches=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-benches"><a class="header" href="#rustc-link-arg-benches"><code>cargo:rustc-link-arg-benches=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-benches</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a benchmark
 target.</p>
-<p><a id="rustc-link-search"></a></p>
-<h4 id="cargorustc-link-searchkindpath"><a class="header" href="#cargorustc-link-searchkindpath"><code>cargo:rustc-link-search=[KIND=]PATH</code></a></h4>
+<h4 id="rustc-link-search"><a class="header" href="#rustc-link-search"><code>cargo:rustc-link-search=[KIND=]PATH</code></a></h4>
 <p>The <code>rustc-link-search</code> instruction tells Cargo to pass the <a href="reference/../../rustc/command-line-arguments.html#option-l-search-path"><code>-L</code>
 flag</a> to the compiler to add a directory to the library search
 path.</p>
@@ -4925,14 +5003,12 @@ the <code>OUT_DIR</code>. Depending on this behavior is discouraged since this m
 difficult to use the resulting binary. In general, it is best to avoid
 creating dynamic libraries in a build script (using existing system libraries
 is fine).</p>
-<p><a id="rustc-flags"></a></p>
-<h4 id="cargorustc-flagsflags"><a class="header" href="#cargorustc-flagsflags"><code>cargo:rustc-flags=FLAGS</code></a></h4>
+<h4 id="rustc-flags"><a class="header" href="#rustc-flags"><code>cargo:rustc-flags=FLAGS</code></a></h4>
 <p>The <code>rustc-flags</code> instruction tells Cargo to pass the given space-separated
 flags to the compiler. This only allows the <code>-l</code> and <code>-L</code> flags, and is
 equivalent to using <a href="reference/build-scripts.html#rustc-link-lib"><code>rustc-link-lib</code></a> and
 <a href="reference/build-scripts.html#rustc-link-search"><code>rustc-link-search</code></a>.</p>
-<p><a id="rustc-cfg"></a></p>
-<h4 id="cargorustc-cfgkeyvalue"><a class="header" href="#cargorustc-cfgkeyvalue"><code>cargo:rustc-cfg=KEY[=&quot;VALUE&quot;]</code></a></h4>
+<h4 id="rustc-cfg"><a class="header" href="#rustc-cfg"><code>cargo:rustc-cfg=KEY[=&quot;VALUE&quot;]</code></a></h4>
 <p>The <code>rustc-cfg</code> instruction tells Cargo to pass the given value to the
 <a href="reference/../../rustc/command-line-arguments.html#option-cfg"><code>--cfg</code> flag</a> to the compiler. This may be used for compile-time
 detection of features to enable <a href="reference/../../reference/conditional-compilation.html">conditional compilation</a>.</p>
@@ -4945,8 +5021,7 @@ single identifier, or any arbitrary key/value pair. For example, emitting
 of <code>feature=</code>). Or an arbitrary key/value pair may be used with an <code>=</code> symbol
 like <code>cargo:rustc-cfg=my_component=&quot;foo&quot;</code>. The key should be a Rust
 identifier, the value should be a string.</p>
-<p><a id="rustc-env"></a></p>
-<h4 id="cargorustc-envvarvalue"><a class="header" href="#cargorustc-envvarvalue"><code>cargo:rustc-env=VAR=VALUE</code></a></h4>
+<h4 id="rustc-env"><a class="header" href="#rustc-env"><code>cargo:rustc-env=VAR=VALUE</code></a></h4>
 <p>The <code>rustc-env</code> instruction tells Cargo to set the given environment variable
 when compiling the package. The value can be then retrieved by the <a href="reference/../../std/macro.env.html"><code>env!</code>
 macro</a> in the compiled crate. This is useful for embedding
@@ -4961,13 +5036,11 @@ discouraged since it ties the executable to Cargo’s execution environment.
 Normally, these environment variables should only be checked at compile-time
 with the <code>env!</code> macro.</p>
 </blockquote>
-<p><a id="rustc-cdylib-link-arg"></a></p>
-<h4 id="cargorustc-cdylib-link-argflag"><a class="header" href="#cargorustc-cdylib-link-argflag"><code>cargo:rustc-cdylib-link-arg=FLAG</code></a></h4>
+<h4 id="rustc-cdylib-link-arg"><a class="header" href="#rustc-cdylib-link-arg"><code>cargo:rustc-cdylib-link-arg=FLAG</code></a></h4>
 <p>The <code>rustc-cdylib-link-arg</code> instruction tells Cargo to pass the <a href="reference/../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 <code>cdylib</code> library target. Its usage is highly platform specific. It is useful
 to set the shared library version or the runtime-path.</p>
-<p><a id="cargo-warning"></a></p>
-<h4 id="cargowarningmessage"><a class="header" href="#cargowarningmessage"><code>cargo:warning=MESSAGE</code></a></h4>
+<h4 id="cargo-warning"><a class="header" href="#cargo-warning"><code>cargo:warning=MESSAGE</code></a></h4>
 <p>The <code>warning</code> instruction tells Cargo to display a warning after the build
 script has finished running. Warnings are only shown for <code>path</code> dependencies
 (that is, those you’re working on locally), so for example warnings printed
@@ -5000,8 +5073,7 @@ are emitted, then Cargo will only re-run the script if the given value has
 changed. If Cargo is re-running the build scripts of your own crate or a
 dependency and you don’t know why, see <a href="reference/../faq.html#why-is-cargo-rebuilding-my-code">“Why is Cargo rebuilding my code?” in the
 FAQ</a>.</p>
-<p><a id="rerun-if-changed"></a></p>
-<h4 id="cargorerun-if-changedpath"><a class="header" href="#cargorerun-if-changedpath"><code>cargo:rerun-if-changed=PATH</code></a></h4>
+<h4 id="rerun-if-changed"><a class="header" href="#rerun-if-changed"><code>cargo:rerun-if-changed=PATH</code></a></h4>
 <p>The <code>rerun-if-changed</code> instruction tells Cargo to re-run the build script if
 the file at the given path has changed. Currently, Cargo only uses the
 filesystem last-modified “mtime” timestamp to determine if the file has
@@ -5016,8 +5088,7 @@ emitted is to scan the entire package directory for changes). Cargo
 automatically handles whether or not the script itself needs to be recompiled,
 and of course the script will be re-run after it has been recompiled.
 Otherwise, specifying <code>build.rs</code> is redundant and unnecessary.</p>
-<p><a id="rerun-if-env-changed"></a></p>
-<h4 id="cargorerun-if-env-changedname"><a class="header" href="#cargorerun-if-env-changedname"><code>cargo:rerun-if-env-changed=NAME</code></a></h4>
+<h4 id="rerun-if-env-changed"><a class="header" href="#rerun-if-env-changed"><code>cargo:rerun-if-env-changed=NAME</code></a></h4>
 <p>The <code>rerun-if-env-changed</code> instruction tells Cargo to re-run the build script
 if the value of an environment variable of the given name has changed.</p>
 <p>Note that the environment variables here are intended for global environment
@@ -6007,7 +6078,8 @@ following structure:</p>
     &quot;profile&quot;: {
         /* The optimization level. */
         &quot;opt_level&quot;: &quot;0&quot;,
-        /* The debug level, an integer of 0, 1, or 2. If `null`, it implies
+        /* The debug level, an integer of 0, 1, or 2, or a string
+           &quot;line-directives-only&quot; or &quot;line-tables-only&quot;. If `null`, it implies
            rustc's default of 0.
         */
         &quot;debuginfo&quot;: 2,
@@ -6977,8 +7049,7 @@ release. Non-numeric components are compared lexicographically.</p>
 <p>SemVer has the concept of “version metadata” with a plus in the version, such
 as <code>1.0.0+21AF26D3</code>. This metadata is usually ignored, and should not be used
 in a version requirement. You should never publish multiple versions that
-differ only in the metadata tag (note, this is a <a href="https://github.com/rust-lang/crates.io/issues/1059">known issue</a> with
-<a href="https://crates.io/">crates.io</a> that currently permits this).</p>
+differ only in the metadata tag.</p>
 <h2 id="other-constraints"><a class="header" href="#other-constraints">Other constraints</a></h2>
 <p>Version requirements aren’t the only constraint that the resolver considers
 when selecting and unifying dependencies. The following sections cover some of
@@ -7404,8 +7475,7 @@ considered incompatible.</p>
 after it has been modified, and an example usage of the code that could appear
 in another project. In a minor change, the example usage should successfully
 build with both the before and after versions.</p>
-<p><a id="item-remove"></a></p>
-<h3 id="major-renamingmovingremoving-any-public-items"><a class="header" href="#major-renamingmovingremoving-any-public-items">Major: renaming/moving/removing any public items</a></h3>
+<h3 id="item-remove"><a class="header" href="#item-remove">Major: renaming/moving/removing any public items</a></h3>
 <p>The absence of a publicly exposed <a href="reference/../../reference/items.html">item</a> will cause any uses of that item to
 fail to compile.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7432,8 +7502,7 @@ date in a SemVer-breaking release.</li>
 <li>Mark renamed items as <a href="reference/../../reference/attributes/diagnostics.html#the-deprecated-attribute">deprecated</a>, and use a <a href="reference/../../reference/items/use-declarations.html"><code>pub use</code></a> item to re-export
 to the old name.</li>
 </ul>
-<p><a id="item-new"></a></p>
-<h3 id="minor-adding-new-public-items"><a class="header" href="#minor-adding-new-public-items">Minor: adding new public items</a></h3>
+<h3 id="item-new"><a class="header" href="#item-new">Minor: adding new public items</a></h3>
 <p>Adding new, public <a href="reference/../../reference/items.html">items</a> is a minor change.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
 
@@ -7483,8 +7552,7 @@ fn main() {
 <p>This is not considered a major change because conventionally glob imports are
 a known forwards-compatibility hazard. Glob imports of items from external
 crates should be avoided.</p>
-<p><a id="struct-add-private-field-when-public"></a></p>
-<h3 id="major-adding-a-private-struct-field-when-all-current-fields-are-public"><a class="header" href="#major-adding-a-private-struct-field-when-all-current-fields-are-public">Major: adding a private struct field when all current fields are public</a></h3>
+<h3 id="struct-add-private-field-when-public"><a class="header" href="#struct-add-private-field-when-public">Major: adding a private struct field when all current fields are public</a></h3>
 <p>When a private field is added to a struct that previously had all public fields,
 this will break any code that attempts to construct it with a <a href="reference/../../reference/expressions/struct-expr.html">struct literal</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7514,8 +7582,7 @@ fn main() {
 a struct to prevent users from using struct literal syntax, and instead
 provide a constructor method and/or <a href="reference/../../std/default/trait.Default.html">Default</a> implementation.</li>
 </ul>
-<p><a id="struct-add-public-field-when-no-private"></a></p>
-<h3 id="major-adding-a-public-field-when-no-private-field-exists"><a class="header" href="#major-adding-a-public-field-when-no-private-field-exists">Major: adding a public field when no private field exists</a></h3>
+<h3 id="struct-add-public-field-when-no-private"><a class="header" href="#struct-add-public-field-when-no-private">Major: adding a public field when no private field exists</a></h3>
 <p>When a public field is added to a struct that has all public fields, this will
 break any code that attempts to construct it with a <a href="reference/../../reference/expressions/struct-expr.html">struct literal</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7545,8 +7612,7 @@ fn main() {
 a struct to prevent users from using struct literal syntax, and instead
 provide a constructor method and/or <a href="reference/../../std/default/trait.Default.html">Default</a> implementation.</li>
 </ul>
-<p><a id="struct-private-fields-with-private"></a></p>
-<h3 id="minor-adding-or-removing-private-fields-when-at-least-one-already-exists"><a class="header" href="#minor-adding-or-removing-private-fields-when-at-least-one-already-exists">Minor: adding or removing private fields when at least one already exists</a></h3>
+<h3 id="struct-private-fields-with-private"><a class="header" href="#struct-private-fields-with-private">Minor: adding or removing private fields when at least one already exists</a></h3>
 <p>It is safe to add or remove private fields from a struct when the struct
 already has at least one private field.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -7594,8 +7660,7 @@ fn main() {
     let x = updated_crate::Foo::default();
     let y = x.0; // Error: is private
 }</code></pre>
-<p><a id="struct-tuple-normal-with-private"></a></p>
-<h3 id="minor-going-from-a-tuple-struct-with-all-private-fields-with-at-least-one-field-to-a-normal-struct-or-vice-versa"><a class="header" href="#minor-going-from-a-tuple-struct-with-all-private-fields-with-at-least-one-field-to-a-normal-struct-or-vice-versa">Minor: going from a tuple struct with all private fields (with at least one field) to a normal struct, or vice versa</a></h3>
+<h3 id="struct-tuple-normal-with-private"><a class="header" href="#struct-tuple-normal-with-private">Minor: going from a tuple struct with all private fields (with at least one field) to a normal struct, or vice versa</a></h3>
 <p>Changing a tuple struct to a normal struct (or vice-versa) is safe if all
 fields are private.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -7620,8 +7685,7 @@ fn main() {
 }</code></pre>
 <p>This is safe because existing code cannot use a <a href="reference/../../reference/expressions/struct-expr.html">struct literal</a> to construct
 it, nor match its contents.</p>
-<p><a id="enum-variant-new"></a></p>
-<h3 id="major-adding-new-enum-variants-without-non_exhaustive"><a class="header" href="#major-adding-new-enum-variants-without-non_exhaustive">Major: adding new enum variants (without <code>non_exhaustive</code>)</a></h3>
+<h3 id="enum-variant-new"><a class="header" href="#enum-variant-new">Major: adding new enum variants (without <code>non_exhaustive</code>)</a></h3>
 <p>It is a breaking change to add a new enum variant if the enum does not use the
 <a href="reference/../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> attribute.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7653,8 +7717,7 @@ fn main() {
 <li>When introducing the enum, mark it as <a href="reference/../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a>
 to force users to use <a href="reference/../../reference/patterns.html#wildcard-pattern">wildcard patterns</a> to catch new variants.</li>
 </ul>
-<p><a id="enum-fields-new"></a></p>
-<h3 id="major-adding-new-fields-to-an-enum-variant"><a class="header" href="#major-adding-new-fields-to-an-enum-variant">Major: adding new fields to an enum variant</a></h3>
+<h3 id="enum-fields-new"><a class="header" href="#enum-fields-new">Major: adding new fields to an enum variant</a></h3>
 <p>It is a breaking change to add new fields to an enum variant because all
 fields are public, and constructors and matching will fail to compile.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7700,8 +7763,7 @@ pub enum E {
 }</code></pre>
 </li>
 </ul>
-<p><a id="trait-new-item-no-default"></a></p>
-<h3 id="major-adding-a-non-defaulted-trait-item"><a class="header" href="#major-adding-a-non-defaulted-trait-item">Major: adding a non-defaulted trait item</a></h3>
+<h3 id="trait-new-item-no-default"><a class="header" href="#trait-new-item-no-default">Major: adding a non-defaulted trait item</a></h3>
 <p>It is a breaking change to add a non-defaulted item to a trait. This will
 break any implementors of the trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7729,8 +7791,7 @@ items.</li>
 <li>When introducing the trait, use the <a href="https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed">sealed trait</a> technique to prevent
 users outside of the crate from implementing the trait.</li>
 </ul>
-<p><a id="trait-item-signature"></a></p>
-<h3 id="major-any-change-to-trait-item-signatures"><a class="header" href="#major-any-change-to-trait-item-signatures">Major: any change to trait item signatures</a></h3>
+<h3 id="trait-item-signature"><a class="header" href="#trait-item-signature">Major: any change to trait item signatures</a></h3>
 <p>It is a breaking change to make any change to a trait item signature. This can
 break external implementors of the trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7765,8 +7826,7 @@ functionality instead of modifying existing items.</li>
 <li>When introducing the trait, use the <a href="https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed">sealed trait</a> technique to prevent
 users outside of the crate from implementing the trait.</li>
 </ul>
-<p><a id="trait-new-default-item"></a></p>
-<h3 id="possibly-breaking-adding-a-defaulted-trait-item"><a class="header" href="#possibly-breaking-adding-a-defaulted-trait-item">Possibly-breaking: adding a defaulted trait item</a></h3>
+<h3 id="trait-new-default-item"><a class="header" href="#trait-new-default-item">Possibly-breaking: adding a defaulted trait item</a></h3>
 <p>It is usually safe to add a defaulted trait item. However, this can sometimes
 cause a compile error. For example, this can introduce an ambiguity if a
 method of the same name exists in another trait.</p>
@@ -7810,8 +7870,7 @@ carefully to help avoid these collisions. Additionally, it may be acceptable
 to require downstream users to add <a href="reference/../../reference/expressions/call-expr.html#disambiguating-function-calls">disambiguation syntax</a> to select the
 correct function when updating the dependency.</li>
 </ul>
-<p><a id="trait-object-safety"></a></p>
-<h3 id="major-adding-a-trait-item-that-makes-the-trait-non-object-safe"><a class="header" href="#major-adding-a-trait-item-that-makes-the-trait-non-object-safe">Major: adding a trait item that makes the trait non-object safe</a></h3>
+<h3 id="trait-object-safety"><a class="header" href="#trait-object-safety">Major: adding a trait item that makes the trait non-object safe</a></h3>
 <p>It is a breaking change to add a trait item that changes the trait to not be
 <a href="reference/../../reference/items/traits.html#object-safety">object safe</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7839,8 +7898,7 @@ fn main() {
 }</code></pre>
 <p>It is safe to do the converse (making a non-object safe trait into a safe
 one).</p>
-<p><a id="trait-new-parameter-no-default"></a></p>
-<h3 id="major-adding-a-type-parameter-without-a-default"><a class="header" href="#major-adding-a-type-parameter-without-a-default">Major: adding a type parameter without a default</a></h3>
+<h3 id="trait-new-parameter-no-default"><a class="header" href="#trait-new-parameter-no-default">Major: adding a type parameter without a default</a></h3>
 <p>It is a breaking change to add a type parameter without a default to a trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
 
@@ -7862,8 +7920,7 @@ impl Trait for Foo {}  // Error: missing generics</code></pre>
 <ul>
 <li>See <a href="reference/semver.html#trait-new-parameter-default">adding a defaulted trait type parameter</a>.</li>
 </ul>
-<p><a id="trait-new-parameter-default"></a></p>
-<h3 id="minor-adding-a-defaulted-trait-type-parameter"><a class="header" href="#minor-adding-a-defaulted-trait-type-parameter">Minor: adding a defaulted trait type parameter</a></h3>
+<h3 id="trait-new-parameter-default"><a class="header" href="#trait-new-parameter-default">Minor: adding a defaulted trait type parameter</a></h3>
 <p>It is safe to add a type parameter to a trait as long as it has a default.
 External implementors will use the default without needing to specify the
 parameter.</p>
@@ -7883,8 +7940,7 @@ use updated_crate::Trait;
 struct Foo;
 
 impl Trait for Foo {}</code></pre>
-<p><a id="impl-item-new"></a></p>
-<h3 id="possibly-breaking-change-adding-any-inherent-items"><a class="header" href="#possibly-breaking-change-adding-any-inherent-items">Possibly-breaking change: adding any inherent items</a></h3>
+<h3 id="impl-item-new"><a class="header" href="#impl-item-new">Possibly-breaking change: adding any inherent items</a></h3>
 <p>Usually adding inherent items to an implementation should be safe because
 inherent items take priority over trait items. However, in some cases the
 collision can cause problems if the name is the same as an implemented trait
@@ -7928,8 +7984,7 @@ carefully to help avoid these collisions. Additionally, it may be acceptable
 to require downstream users to add <a href="reference/../../reference/expressions/call-expr.html#disambiguating-function-calls">disambiguation syntax</a> to select the
 correct function when updating the dependency.</li>
 </ul>
-<p><a id="generic-bounds-tighten"></a></p>
-<h3 id="major-tightening-generic-bounds"><a class="header" href="#major-tightening-generic-bounds">Major: tightening generic bounds</a></h3>
+<h3 id="generic-bounds-tighten"><a class="header" href="#generic-bounds-tighten">Major: tightening generic bounds</a></h3>
 <p>It is a breaking change to tighten generic bounds on a type since this can
 break users expecting the looser bounds.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -7953,8 +8008,7 @@ use updated_crate::Foo;
 fn main() {
     let s = Foo { f1: 1.23 }; // Error: the trait bound `{float}: Eq` is not satisfied
 }</code></pre>
-<p><a id="generic-bounds-loosen"></a></p>
-<h3 id="minor-loosening-generic-bounds"><a class="header" href="#minor-loosening-generic-bounds">Minor: loosening generic bounds</a></h3>
+<h3 id="generic-bounds-loosen"><a class="header" href="#generic-bounds-loosen">Minor: loosening generic bounds</a></h3>
 <p>It is safe to loosen the generic bounds on a type, as it only expands what is
 allowed.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -7978,8 +8032,7 @@ use updated_crate::Foo;
 fn main() {
     let s = Foo { f1: 123 };
 }</code></pre>
-<p><a id="generic-new-default"></a></p>
-<h3 id="minor-adding-defaulted-type-parameters"><a class="header" href="#minor-adding-defaulted-type-parameters">Minor: adding defaulted type parameters</a></h3>
+<h3 id="generic-new-default"><a class="header" href="#generic-new-default">Minor: adding defaulted type parameters</a></h3>
 <p>It is safe to add a type parameter to a type as long as it has a default. All
 existing references will use the default without needing to specify the
 parameter.</p>
@@ -8004,8 +8057,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo = Default::default();
 }</code></pre>
-<p><a id="generic-generalize-identical"></a></p>
-<h3 id="minor-generalizing-a-type-to-use-generics-with-identical-types"><a class="header" href="#minor-generalizing-a-type-to-use-generics-with-identical-types">Minor: generalizing a type to use generics (with identical types)</a></h3>
+<h3 id="generic-generalize-identical"><a class="header" href="#generic-generalize-identical">Minor: generalizing a type to use generics (with identical types)</a></h3>
 <p>A struct or enum field can change from a concrete type to a generic type
 parameter, provided that the change results in an identical type for all
 existing use cases. For example, the following change is permitted:</p>
@@ -8028,8 +8080,7 @@ fn main() {
 }</code></pre>
 <p>because existing uses of <code>Foo</code> are shorthand for <code>Foo&lt;u8&gt;</code> which yields the
 identical field type.</p>
-<p><a id="generic-generalize-different"></a></p>
-<h3 id="major-generalizing-a-type-to-use-generics-with-possibly-different-types"><a class="header" href="#major-generalizing-a-type-to-use-generics-with-possibly-different-types">Major: generalizing a type to use generics (with possibly different types)</a></h3>
+<h3 id="generic-generalize-different"><a class="header" href="#generic-generalize-different">Major: generalizing a type to use generics (with possibly different types)</a></h3>
 <p>Changing a struct or enum field from a concrete type to a generic type
 parameter can break if the type can change.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -8049,8 +8100,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo&lt;f32&gt; = Foo(3.14, 123); // Error: mismatched types
 }</code></pre>
-<p><a id="generic-more-generic"></a></p>
-<h3 id="minor-changing-a-generic-type-to-a-more-generic-type"><a class="header" href="#minor-changing-a-generic-type-to-a-more-generic-type">Minor: changing a generic type to a more generic type</a></h3>
+<h3 id="generic-more-generic"><a class="header" href="#generic-more-generic">Minor: changing a generic type to a more generic type</a></h3>
 <p>It is safe to change a generic type to a more generic one. For example, the
 following adds a generic parameter that defaults to the original type, which
 is safe because all existing users will be using the same type for both
@@ -8072,8 +8122,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo&lt;f32&gt; = Foo(1.0, 2.0);
 }</code></pre>
-<p><a id="fn-change-arity"></a></p>
-<h3 id="major-addingremoving-function-parameters"><a class="header" href="#major-addingremoving-function-parameters">Major: adding/removing function parameters</a></h3>
+<h3 id="fn-change-arity"><a class="header" href="#fn-change-arity">Major: adding/removing function parameters</a></h3>
 <p>Changing the arity of a function is a breaking change.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
 
@@ -8098,8 +8147,7 @@ fn main() {
 with the builder pattern. This allows new fields to be added to the struct
 in the future.</li>
 </ul>
-<p><a id="fn-generic-new"></a></p>
-<h3 id="possibly-breaking-introducing-a-new-function-type-parameter"><a class="header" href="#possibly-breaking-introducing-a-new-function-type-parameter">Possibly-breaking: introducing a new function type parameter</a></h3>
+<h3 id="fn-generic-new"><a class="header" href="#fn-generic-new">Possibly-breaking: introducing a new function type parameter</a></h3>
 <p>Usually, adding a non-defaulted type parameter is safe, but in some
 cases it can be a breaking change:</p>
 <pre><code class="language-rust ignore">// Breaking change example
@@ -8123,8 +8171,7 @@ fn main() {
 other ways) that this breakage is usually acceptable. One should take into
 account how likely it is that the function in question is being called with
 explicit type arguments.</p>
-<p><a id="fn-generalize-compatible"></a></p>
-<h3 id="minor-generalizing-a-function-to-use-generics-supporting-original-type"><a class="header" href="#minor-generalizing-a-function-to-use-generics-supporting-original-type">Minor: generalizing a function to use generics (supporting original type)</a></h3>
+<h3 id="fn-generalize-compatible"><a class="header" href="#fn-generalize-compatible">Minor: generalizing a function to use generics (supporting original type)</a></h3>
 <p>The type of a parameter to a function, or its return value, can be
 <em>generalized</em> to use generics, including by introducing a new type parameter,
 as long as it can be instantiated to the original type. For example, the
@@ -8206,8 +8253,7 @@ use updated_crate::foo;
 fn main() {
     let x = foo(); // Error: type annotations needed
 }</code></pre>
-<p><a id="fn-generalize-mismatch"></a></p>
-<h3 id="major-generalizing-a-function-to-use-generics-with-type-mismatch"><a class="header" href="#major-generalizing-a-function-to-use-generics-with-type-mismatch">Major: generalizing a function to use generics with type mismatch</a></h3>
+<h3 id="fn-generalize-mismatch"><a class="header" href="#fn-generalize-mismatch">Major: generalizing a function to use generics with type mismatch</a></h3>
 <p>It is a breaking change to change a function parameter or return type if the
 generic type constrains or changes the types previously allowed. For example,
 the following adds a generic constraint that may not be satisfied by existing
@@ -8229,8 +8275,7 @@ use updated_crate::foo;
 fn main() {
     foo(vec![1, 2, 3]); // Error: `Copy` is not implemented for `Vec&lt;u8&gt;`
 }</code></pre>
-<p><a id="fn-unsafe-safe"></a></p>
-<h3 id="minor-making-an-unsafe-function-safe"><a class="header" href="#minor-making-an-unsafe-function-safe">Minor: making an <code>unsafe</code> function safe</a></h3>
+<h3 id="fn-unsafe-safe"><a class="header" href="#fn-unsafe-safe">Minor: making an <code>unsafe</code> function safe</a></h3>
 <p>A previously <code>unsafe</code> function can be made safe without breaking code.</p>
 <p>Note however that it may cause the <a href="reference/../../rustc/lints/listing/warn-by-default.html#unused-unsafe"><code>unused_unsafe</code></a> lint to
 trigger as in the example below, which will cause local crates that have
@@ -8262,8 +8307,7 @@ fn main() {
 <p>Making a previously <code>unsafe</code> associated function or method on structs / enums
 safe is also a minor change, while the same is not true for associated
 function on traits (see <a href="reference/semver.html#trait-item-signature">any change to trait item signatures</a>).</p>
-<p><a id="attr-no-std-to-std"></a></p>
-<h3 id="major-switching-from-no_std-support-to-requiring-std"><a class="header" href="#major-switching-from-no_std-support-to-requiring-std">Major: switching from <code>no_std</code> support to requiring <code>std</code></a></h3>
+<h3 id="attr-no-std-to-std"><a class="header" href="#attr-no-std-to-std">Major: switching from <code>no_std</code> support to requiring <code>std</code></a></h3>
 <p>If your library specifically supports a <a href="reference/../../reference/names/preludes.html#the-no_std-attribute"><code>no_std</code></a> environment, it is a
 breaking change to make a new release that requires <code>std</code>.</p>
 <pre><code class="language-rust ignore skip">// MAJOR CHANGE
@@ -8294,8 +8338,7 @@ fn example() {
 optionally enables <code>std</code> support, and when the feature is off, the library
 can be used in a <code>no_std</code> environment.</li>
 </ul>
-<p><a id="attr-adding-non-exhaustive"></a></p>
-<h3 id="major-adding-non_exhaustive-to-an-existing-enum-variant-or-struct-with-no-private-fields"><a class="header" href="#major-adding-non_exhaustive-to-an-existing-enum-variant-or-struct-with-no-private-fields">Major: adding <code>non_exhaustive</code> to an existing enum, variant, or struct with no private fields</a></h3>
+<h3 id="attr-adding-non-exhaustive"><a class="header" href="#attr-adding-non-exhaustive">Major: adding <code>non_exhaustive</code> to an existing enum, variant, or struct with no private fields</a></h3>
 <p>Making items <a href="reference/../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> changes how they may
 be used outside the crate where they are defined:</p>
 <ul>
@@ -8374,8 +8417,7 @@ fn main() {
 rather than adding <a href="reference/../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> later on.</li>
 </ul>
 <h2 id="tooling-and-environment-compatibility"><a class="header" href="#tooling-and-environment-compatibility">Tooling and environment compatibility</a></h2>
-<p><a id="env-new-rust"></a></p>
-<h3 id="possibly-breaking-changing-the-minimum-version-of-rust-required"><a class="header" href="#possibly-breaking-changing-the-minimum-version-of-rust-required">Possibly-breaking: changing the minimum version of Rust required</a></h3>
+<h3 id="env-new-rust"><a class="header" href="#env-new-rust">Possibly-breaking: changing the minimum version of Rust required</a></h3>
 <p>Introducing the use of new features in a new release of Rust can break
 projects that are using older versions of Rust. This also includes using new
 features in a new release of Cargo, and requiring the use of a nightly-only
@@ -8400,8 +8442,7 @@ of important bugfixes.</li>
 mechanism for new features. These are currently unstable and only available
 in the nightly channel.</li>
 </ul>
-<p><a id="env-change-requirements"></a></p>
-<h3 id="possibly-breaking-changing-the-platform-and-environment-requirements"><a class="header" href="#possibly-breaking-changing-the-platform-and-environment-requirements">Possibly-breaking: changing the platform and environment requirements</a></h3>
+<h3 id="env-change-requirements"><a class="header" href="#env-change-requirements">Possibly-breaking: changing the platform and environment requirements</a></h3>
 <p>There is a very wide range of assumptions a library makes about the
 environment that it runs in, such as the host platform, operating system
 version, available services, filesystem support, etc. It can be a breaking
@@ -8419,8 +8460,7 @@ reasonable to also discontinue support.</p>
 <li>Document the platforms and environments you specifically support.</li>
 <li>Test your code on a wide range of environments in CI.</li>
 </ul>
-<p><a id="new-lints"></a></p>
-<h3 id="minor-introducing-new-lints"><a class="header" href="#minor-introducing-new-lints">Minor: introducing new lints</a></h3>
+<h3 id="new-lints"><a class="header" href="#new-lints">Minor: introducing new lints</a></h3>
 <p>Some changes to a library may cause new lints to be triggered in users of that library.
 This should generally be considered a compatible change.</p>
 <pre><code class="language-rust ignore dont-deny">// MINOR CHANGE
@@ -8462,8 +8502,7 @@ This allows users to choose when to respond to deprecations without needing to i
 A downside is that it can be difficult to communicate to users that they need to take these manual steps to prepare for a major update.</li>
 </ul>
 <h3 id="cargo"><a class="header" href="#cargo">Cargo</a></h3>
-<p><a id="cargo-feature-add"></a></p>
-<h4 id="minor-adding-a-new-cargo-feature"><a class="header" href="#minor-adding-a-new-cargo-feature">Minor: adding a new Cargo feature</a></h4>
+<h4 id="cargo-feature-add"><a class="header" href="#cargo-feature-add">Minor: adding a new Cargo feature</a></h4>
 <p>It is usually safe to add new <a href="reference/features.html">Cargo features</a>. If the feature introduces new
 changes that cause a breaking change, this can cause difficulties for projects
 that have stricter backwards-compatibility needs. In that scenario, avoid
@@ -8481,8 +8520,7 @@ consequences of enabling the feature.</p>
 [features]
 std = []
 </code></pre>
-<p><a id="cargo-feature-remove"></a></p>
-<h4 id="major-removing-a-cargo-feature"><a class="header" href="#major-removing-a-cargo-feature">Major: removing a Cargo feature</a></h4>
+<h4 id="cargo-feature-remove"><a class="header" href="#cargo-feature-remove">Major: removing a Cargo feature</a></h4>
 <p>It is usually a breaking change to remove <a href="reference/features.html">Cargo features</a>. This will cause
 an error for any project that enabled the feature.</p>
 <pre><code class="language-toml"># MAJOR CHANGE
@@ -8505,8 +8543,7 @@ feature, mark it as such, so that users know the status of the feature.</li>
 functionality. Document that the feature is deprecated, and remove it in a
 future major SemVer release.</li>
 </ul>
-<p><a id="cargo-feature-remove-another"></a></p>
-<h4 id="major-removing-a-feature-from-a-feature-list-if-that-changes-functionality-or-public-items"><a class="header" href="#major-removing-a-feature-from-a-feature-list-if-that-changes-functionality-or-public-items">Major: removing a feature from a feature list if that changes functionality or public items</a></h4>
+<h4 id="cargo-feature-remove-another"><a class="header" href="#cargo-feature-remove-another">Major: removing a feature from a feature list if that changes functionality or public items</a></h4>
 <p>If removing a feature from another feature, this can break existing users if
 they are expecting that functionality to be available through that feature.</p>
 <pre><code class="language-toml"># Breaking change example
@@ -8523,8 +8560,7 @@ std = []
 default = []  # This may cause packages to fail if they are expecting std to be enabled.
 std = []
 </code></pre>
-<p><a id="cargo-remove-opt-dep"></a></p>
-<h4 id="possibly-breaking-removing-an-optional-dependency"><a class="header" href="#possibly-breaking-removing-an-optional-dependency">Possibly-breaking: removing an optional dependency</a></h4>
+<h4 id="cargo-remove-opt-dep"><a class="header" href="#cargo-remove-opt-dep">Possibly-breaking: removing an optional dependency</a></h4>
 <p>Removing an optional dependency can break a project using your library because
 another project may be enabling that dependency via <a href="reference/features.html">Cargo features</a>.</p>
 <pre><code class="language-toml"># Breaking change example
@@ -8554,8 +8590,7 @@ example, if your library has optional support for something like
 optional dependencies necessary to implement “networking”. Then document the
 “networking” feature.</li>
 </ul>
-<p><a id="cargo-change-dep-feature"></a></p>
-<h4 id="minor-changing-dependency-features"><a class="header" href="#minor-changing-dependency-features">Minor: changing dependency features</a></h4>
+<h4 id="cargo-change-dep-feature"><a class="header" href="#cargo-change-dep-feature">Minor: changing dependency features</a></h4>
 <p>It is usually safe to change the features on a dependency, as long as the
 feature does not introduce a breaking change.</p>
 <pre><code class="language-toml"># MINOR CHANGE
@@ -8571,8 +8606,7 @@ rand = { version = &quot;0.7.3&quot;, features = [&quot;small_rng&quot;] }
 [dependencies]
 rand = &quot;0.7.3&quot;
 </code></pre>
-<p><a id="cargo-dep-add"></a></p>
-<h4 id="minor-adding-dependencies"><a class="header" href="#minor-adding-dependencies">Minor: adding dependencies</a></h4>
+<h4 id="cargo-dep-add"><a class="header" href="#cargo-dep-add">Minor: adding dependencies</a></h4>
 <p>It is usually safe to add new dependencies, as long as the new dependency
 does not introduce new requirements that result in a breaking change.
 For example, adding a new dependency that requires nightly in a project
@@ -8725,7 +8759,8 @@ build-std = [&quot;core&quot;, &quot;alloc&quot;]
 </code></pre>
 </li>
 </ul>
-<p>Each new feature described below should explain how to use it.</p>
+<p>Each new feature described below should explain how to use it.
+For the latest nightly, see the <a href="https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#script">nightly version</a> of this page.</p>
 <h3 id="list-of-unstable-features"><a class="header" href="#list-of-unstable-features">List of unstable features</a></h3>
 <ul>
 <li>Unstable-specific features
@@ -8770,7 +8805,6 @@ build-std = [&quot;core&quot;, &quot;alloc&quot;]
 </li>
 <li>rustdoc
 <ul>
-<li><a href="reference/unstable.html#doctest-in-workspace"><code>doctest-in-workspace</code></a> — Fixes workspace-relative paths when running doctests.</li>
 <li><a href="reference/unstable.html#rustdoc-map">rustdoc-map</a> — Provides mappings for documentation to link to external sites like <a href="https://docs.rs/">docs.rs</a>.</li>
 <li><a href="reference/unstable.html#scrape-examples">scrape-examples</a> — Shows examples within documentation.</li>
 </ul>
@@ -9061,7 +9095,7 @@ the tracking repository, and if it’s not there please file a new issue!</p>
 <p>This flag is a sibling to the <code>-Zbuild-std</code> feature flag. This will configure
 the features enabled for the standard library itself when building the standard
 library. The default enabled features, at this time, are <code>backtrace</code> and
-<code>panic_unwind</code>. This flag expects a comma-separated list and, if provided, will
+<code>panic-unwind</code>. This flag expects a comma-separated list and, if provided, will
 override the default list of features enabled.</p>
 <h3 id="binary-dep-depinfo"><a class="header" href="#binary-dep-depinfo">binary-dep-depinfo</a></h3>
 <ul>
@@ -9107,20 +9141,30 @@ the one run first fails.</p>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/7723">#7723</a></li>
 </ul>
+<p>This feature requires the <code>-Zconfig-include</code> command-line option.</p>
 <p>The <code>include</code> key in a config file can be used to load another config file. It
-takes a string for a path to another file relative to the config file, or a
-list of strings. It requires the <code>-Zconfig-include</code> command-line option.</p>
-<pre><code class="language-toml"># .cargo/config
-include = '../../some-common-config.toml'
+takes a string for a path to another file relative to the config file, or an
+array of config file paths. Only path ending with <code>.toml</code> is accepted.</p>
+<pre><code class="language-toml"># a path ending with `.toml`
+include = &quot;path/to/mordor.toml&quot;
+
+# or an array of paths
+include = [&quot;frodo.toml&quot;, &quot;samwise.toml&quot;]
 </code></pre>
-<p>The config values are first loaded from the include path, and then the config
-file’s own values are merged on top of it.</p>
-<p>This can be paired with <a href="reference/unstable.html#config-cli">config-cli</a> to specify a file to load
-from the command-line. Pass a path to a config file as the argument to
-<code>--config</code>:</p>
-<pre><code class="language-console">cargo +nightly -Zunstable-options -Zconfig-include --config somefile.toml build
-</code></pre>
-<p>CLI paths are relative to the current working directory.</p>
+<p>Unlike other config values, the merge behavior of the <code>include</code> key is
+different. When a config file contains an <code>include</code> key:</p>
+<ol>
+<li>The config values are first loaded from the <code>include</code> path.
+<ul>
+<li>If the value of the <code>include</code> key is an array of paths, the config values
+are loaded and merged from left to right for each path.</li>
+<li>Recurse this step if the config values from the <code>include</code> path also
+contain an <code>include</code> key.</li>
+</ul>
+</li>
+<li>Then, the config file’s own values are merged on top of the config
+from the <code>include</code> path.</li>
+</ol>
 <h3 id="target-applies-to-host"><a class="header" href="#target-applies-to-host">target-applies-to-host</a></h3>
 <ul>
 <li>Original Pull Request: <a href="https://github.com/rust-lang/cargo/pull/9322">#9322</a></li>
@@ -9551,7 +9595,7 @@ can go to get a token.</p>
 This string will be included as part of an asymmetric token and should not be secret.
 It is intended for the rare use cases like “cryptographic proof that the central CA server authorized this action”. Cargo requires it to be non-whitespace printable ASCII. Registries that need non-ASCII data should base64 encode it.</p>
 <p>Both fields can be set with <code>cargo login --registry=name --private-key --private-key-subject=&quot;subject&quot;</code> which will prompt you to put in the key value.</p>
-<p>A registry can have at most one of <code>private-key</code>, <code>token</code>, or <code>credential-process</code> set.</p>
+<p>A registry can have at most one of <code>private-key</code> or <code>token</code> set.</p>
 <p>All PASETOs will include <code>iat</code>, the current time in ISO 8601 format. Cargo will include the following where appropriate:</p>
 <ul>
 <li><code>sub</code> an optional, non-secret string chosen by the registry that is expected to be claimed with every request. The value will be the <code>private-key-subject</code> from the <code>config.toml</code> file.</li>
@@ -9583,47 +9627,76 @@ If a claim should be expected for the request but is missing in the PASETO then 
 </ul>
 <p>The <code>credential-process</code> feature adds a config setting to fetch registry
 authentication tokens by calling an external process.</p>
-<p>Token authentication is used by the <a href="reference/../commands/cargo-login.html"><code>cargo login</code></a>, <a href="reference/../commands/cargo-publish.html"><code>cargo publish</code></a>,
-<a href="reference/../commands/cargo-owner.html"><code>cargo owner</code></a>, <a href="reference/../commands/cargo-yank.html"><code>cargo yank</code></a>, and <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> commands.</p>
 <p>To use this feature, you must pass the <code>-Z credential-process</code> flag on the
-command-line. Additionally, you must remove any current tokens currently saved
-in the <a href="reference/config.html#credentials"><code>credentials.toml</code> file</a> (which can be done with the <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> command).</p>
+command-line.</p>
 <h4 id="credential-process-configuration"><a class="header" href="#credential-process-configuration"><code>credential-process</code> Configuration</a></h4>
 <p>To configure which process to run to fetch the token, specify the process in
-the <code>registry</code> table in a <a href="reference/config.html">config file</a>:</p>
+the <code>registry</code> table in a <a href="reference/config.html">config file</a> with spaces separating arguments. If the
+path to the provider or its arguments contain spaces, then it mused be defined in
+the <code>credential-alias</code> table and referenced instead.</p>
 <pre><code class="language-toml">[registry]
-credential-process = &quot;/usr/bin/cargo-creds&quot;
+global-credential-providers = [&quot;/usr/bin/cargo-creds&quot;]
 </code></pre>
-<p>If you want to use a different process for a specific registry, it can be
+<p>The provider at the end of the list will be attempted first. This ensures
+that when config files are merged, files closer to the project (and ultimatly
+environment variables) have precedence.</p>
+<p>In this example, the <code>my-provider</code> provider will be attempted first, and if
+it cannot provide credentials, then the <code>cargo:token</code> provider will be used.</p>
+<pre><code class="language-toml">[registry]
+global-credential-providers = ['cargo:token', 'my-provider']
+</code></pre>
+<p>If you want to use a different provider for a specific registry, it can be
 specified in the <code>registries</code> table:</p>
 <pre><code class="language-toml">[registries.my-registry]
-credential-process = &quot;/usr/bin/cargo-creds&quot;
+global-credential-provider = &quot;/usr/bin/cargo-creds&quot;
 </code></pre>
 <p>The value can be a string with spaces separating arguments or it can be a TOML
 array of strings.</p>
-<p>Command-line arguments allow special placeholders which will be replaced with
-the corresponding value:</p>
-<ul>
-<li><code>{name}</code> — The name of the registry.</li>
-<li><code>{api_url}</code> — The base URL of the registry API endpoints.</li>
-<li><code>{action}</code> — The authentication action (described below).</li>
-</ul>
-<p>Process names with the prefix <code>cargo:</code> are loaded from the <code>libexec</code> directory
-next to cargo. Several experimental credential wrappers are included with
-Cargo, and this provides convenient access to them:</p>
-<pre><code class="language-toml">[registry]
-credential-process = &quot;cargo:macos-keychain&quot;
+<p>For commonly-used providers, or providers that need to contain spaces in the arguments
+or path, the <code>credential-alias</code> table can be used. These aliases can be referenced
+in <code>credential-provider</code> or <code>global-credential-providers</code>.</p>
+<pre><code class="language-toml">[credential-alias]
+my-alias = [&quot;/usr/bin/cargo-creds&quot;, &quot;--argument&quot;]
+
+[registry]
+global-credential-providers = [&quot;cargo:token&quot;, &quot;my-alias&quot;]
 </code></pre>
-<p>The current wrappers are:</p>
+<h4 id="built-in-providers"><a class="header" href="#built-in-providers">Built-in providers</a></h4>
+<p>Cargo now includes several built-in credential providers. These providers are
+executed within the Cargo process. They are identified with the <code>cargo:</code> prefix.</p>
 <ul>
-<li><code>cargo:macos-keychain</code>: Uses the macOS Keychain to store the token.</li>
-<li><code>cargo:wincred</code>: Uses the Windows Credential Manager to store the token.</li>
-<li><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
+<li>
+<p><code>cargo:token</code> - Uses Cargo’s config and <code>credentials.toml</code> to store the token (default).</p>
+</li>
+<li>
+<p><code>cargo:wincred</code> - Uses the Windows Credential Manager to store the token.</p>
+</li>
+<li>
+<p><code>cargo:macos-keychain</code> - Uses the macOS Keychain to store the token.</p>
+</li>
+<li>
+<p><code>cargo:basic</code> - A basic authenticator is a process that returns a token on stdout. Newlines
+will be trimmed. The process inherits the user’s stdin and stderr. It should
+exit 0 on success, and nonzero on error.</p>
+<p>With this form, <a href="reference/../commands/cargo-login.html"><code>cargo login</code></a> and <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
+return an error if used.</p>
+<p>The following environment variables will be provided to the executed command:</p>
+<ul>
+<li><code>CARGO</code> — Path to the <code>cargo</code> binary executing the command.</li>
+<li><code>CARGO_REGISTRY_INDEX_URL</code> — The URL of the registry index.</li>
+<li><code>CARGO_REGISTRY_NAME_OPT</code> — Optional name of the registry. Should not be used as a storage key. Not always available.</li>
+</ul>
+</li>
+<li>
+<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider.</p>
+</li>
+<li>
+<p><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
 install the <code>op</code> CLI from the <a href="https://1password.com/downloads/command-line/">1password
 website</a>. You must run <code>op signin</code> at least once with the appropriate arguments (such as <code>op signin my.1password.com user@example.com</code>), unless you provide the sign-in-address
 and email arguments. The master password will be required on each request
 unless the appropriate <code>OP_SESSION</code> environment variable is set. It supports
-the following command-line arguments:
+the following command-line arguments:</p>
 <ul>
 <li><code>--account</code>: The account shorthand name to use.</li>
 <li><code>--vault</code>: The vault name to use.</li>
@@ -9639,66 +9712,147 @@ pre-compiled binary. This can be built and installed manually. First, install
 libsecret using your system package manager (for example, <code>sudo apt install libsecret-1-dev</code>). Then build and install the wrapper with <code>cargo install cargo-credential-gnome-secret</code>.
 In the config, use a path to the binary like this:</p>
 <pre><code class="language-toml">[registry]
-credential-process = &quot;cargo-credential-gnome-secret {action}&quot;
+global-credential-providers = [&quot;cargo-credential-gnome-secret&quot;]
 </code></pre>
-<h4 id="credential-process-interface"><a class="header" href="#credential-process-interface"><code>credential-process</code> Interface</a></h4>
-<p>There are two different kinds of token processes that Cargo supports. The
-simple “basic” kind will only be called by Cargo when it needs a token. This
-is intended for simple and easy integration with password managers, that can
-often use pre-existing tooling. The more advanced “Cargo” kind supports
-different actions passed as a command-line argument. This is intended for more
-pleasant integration experience, at the expense of requiring a Cargo-specific
-process to glue to the password manager. Cargo will determine which kind is
-supported by the <code>credential-process</code> definition. If it contains the
-<code>{action}</code> argument, then it uses the advanced style, otherwise it assumes it
-only supports the “basic” kind.</p>
-<h5 id="basic-authenticator"><a class="header" href="#basic-authenticator">Basic authenticator</a></h5>
-<p>A basic authenticator is a process that returns a token on stdout. Newlines
-will be trimmed. The process inherits the user’s stdin and stderr. It should
-exit 0 on success, and nonzero on error.</p>
-<p>With this form, <a href="reference/../commands/cargo-login.html"><code>cargo login</code></a> and <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
-return an error if used.</p>
-<h5 id="cargo-authenticator"><a class="header" href="#cargo-authenticator">Cargo authenticator</a></h5>
-<p>The protocol between the Cargo and the process is very basic, intended to
-ensure the credential process is kept as simple as possible. Cargo will
-execute the process with the <code>{action}</code> argument indicating which action to
-perform:</p>
+<h4 id="json-interface"><a class="header" href="#json-interface">JSON Interface</a></h4>
+<p>When using an external credential provider, Cargo communicates with the credential
+provider using stdin/stdout messages passed as a single line of JSON.</p>
+<p>Cargo will always execute the credential provider with the <code>--cargo-plugin</code> argument.
+This enables a credential provider executable to have additional functionality beyond
+how Cargo uses it.</p>
+<p>The messages here have additional newlines added for readability.
+Actual messages must not contain newlines.</p>
+<h5 id="credential-hello"><a class="header" href="#credential-hello">Credential hello</a></h5>
 <ul>
-<li><code>store</code> — Store the given token in secure storage.</li>
-<li><code>get</code> — Get a token from storage.</li>
-<li><code>erase</code> — Remove a token from storage.</li>
+<li>Sent by: credential provider</li>
+<li>Purpose: used to identify the supported protocols on process startup</li>
 </ul>
-<p>The <code>cargo login</code> command uses <code>store</code> to save a token. Commands that require
-authentication, like <code>cargo publish</code>, uses <code>get</code> to retrieve a token. <code>cargo logout</code> uses the <code>erase</code> command to remove a token.</p>
-<p>The process inherits the user’s stderr, so the process can display messages.
-Some values are passed in via environment variables (see below). The expected
-interactions are:</p>
+<pre><code class="language-javascript">{
+    &quot;v&quot;:[1]
+}
+</code></pre>
+<h5 id="login-request"><a class="header" href="#login-request">Login request</a></h5>
 <ul>
-<li>
-<p><code>store</code> — The token is sent to the process’s stdin, terminated by a newline.
-The process should store the token keyed off the registry name. If the
-process fails, it should exit with a nonzero exit status.</p>
-</li>
-<li>
-<p><code>get</code> — The process should send the token to its stdout (trailing newline
-will be trimmed). The process inherits the user’s stdin, should it need to
-receive input.</p>
-<p>If the process is unable to fulfill the request, it should exit with a
-nonzero exit code.</p>
-</li>
-<li>
-<p><code>erase</code> — The process should remove the token associated with the registry
-name. If the token is not found, the process should exit with a 0 exit
-status.</p>
-</li>
+<li>Sent by: Cargo</li>
+<li>Purpose: collect and store credentials</li>
 </ul>
-<h5 id="environment"><a class="header" href="#environment">Environment</a></h5>
-<p>The following environment variables will be provided to the executed command:</p>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Action to perform: login
+    &quot;kind&quot;:&quot;login&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+}
+</code></pre>
+<h5 id="read-request"><a class="header" href="#read-request">Read request</a></h5>
 <ul>
-<li><code>CARGO</code> — Path to the <code>cargo</code> binary executing the command.</li>
-<li><code>CARGO_REGISTRY_INDEX_URL</code> — The URL of the registry index.</li>
-<li><code>CARGO_REGISTRY_NAME_OPT</code> — Optional name of the registry. Should not be used as a storage key. Not always available.</li>
+<li>Sent by: Cargo</li>
+<li>Purpose: Get the credential for reading crate information</li>
 </ul>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Request kind: get credentials
+    &quot;kind&quot;:&quot;get&quot;,
+    // Action to perform: read crate information
+    &quot;operation&quot;:&quot;read&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+    // Additional command-line args
+    &quot;args&quot;:[]
+}
+</code></pre>
+<h5 id="publish-request"><a class="header" href="#publish-request">Publish request</a></h5>
+<ul>
+<li>Sent by: Cargo</li>
+<li>Purpose: Get the credential for publishing a crate</li>
+</ul>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Request kind: get credentials
+    &quot;kind&quot;:&quot;get&quot;,
+    // Action to perform: publish crate
+    &quot;operation&quot;:&quot;publish&quot;,
+    // Crate name
+    &quot;name&quot;:&quot;sample&quot;,
+    // Crate version
+    &quot;vers&quot;:&quot;0.1.0&quot;,
+    // Crate checksum
+    &quot;cksum&quot;:&quot;...&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+    // Additional command-line args
+    &quot;args&quot;:[]
+}
+</code></pre>
+<h5 id="success-response"><a class="header" href="#success-response">Success response</a></h5>
+<ul>
+<li>Sent by: credential process</li>
+<li>Purpose: Gives the credential to Cargo</li>
+</ul>
+<pre><code class="language-javascript">{&quot;Ok&quot;:{
+    // Response kind: this was a get request kind
+    &quot;kind&quot;:&quot;get&quot;,
+    // Token to send to the registry
+    &quot;token&quot;:&quot;...&quot;,
+    // Cache control. Can be one of the following:
+    // * &quot;never&quot;
+    // * &quot;session&quot;
+    // * { &quot;expires&quot;: UNIX timestamp }
+    &quot;cache&quot;:{&quot;expires&quot;:1684251794},
+    // Is the token operation independent?
+    &quot;operation_independent&quot;:true
+}}
+</code></pre>
+<h5 id="failure-response"><a class="header" href="#failure-response">Failure response</a></h5>
+<ul>
+<li>Sent by: credential process</li>
+<li>Purpose: Gives error information to Cargo</li>
+</ul>
+<pre><code class="language-javascript">{&quot;Err&quot;:{
+    // Error: the credential provider does not support the
+    // registry
+    &quot;kind&quot;:&quot;url-not-supported&quot;,
+    
+    // Error: The credential could not be found in the provider.
+    // using `cargo login --registry ...`.
+    &quot;kind&quot;:&quot;not-found&quot;,
+    
+    // Error: something else has failed
+    &quot;kind&quot;:&quot;other&quot;,
+    &quot;detail&quot;: &quot;free form string error message&quot;
+}}
+</code></pre>
+<h5 id="example-communication-to-request-a-token-for-reading"><a class="header" href="#example-communication-to-request-a-token-for-reading">Example communication to request a token for reading:</a></h5>
+<ol>
+<li>Cargo spawns the credential process, capturing stdin and stdout.</li>
+<li>Credential process sends the Hello message to Cargo
+<pre><code class="language-javascript">{ &quot;v&quot;: [1] }
+</code></pre>
+</li>
+<li>Cargo sends the CredentialRequest message to the credential process (newlines added for readability).
+<pre><code class="language-javascript">{
+    &quot;v&quot;: 1,
+    &quot;kind&quot;: &quot;get&quot;,
+    &quot;operation&quot;: &quot;read&quot;,
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;:&quot;ado2&quot;},
+    &quot;args&quot;:[]
+}
+</code></pre>
+</li>
+<li>Credential process sends the CredentialResponse to Cargo (newlines added for readability).
+<pre><code class="language-javascript">{
+    &quot;token&quot;: &quot;...&quot;,
+    &quot;cache&quot;: &quot;session&quot;,
+    &quot;operation_independent&quot;: false
+}
+</code></pre>
+</li>
+<li>Credential process exits</li>
+<li>Cargo uses the token for the remainder of the session (until Cargo exits) when interacting with this registry.</li>
+</ol>
 <h3 id="cargo-config"><a class="header" href="#cargo-config"><code>cargo config</code></a></h3>
 <ul>
 <li>Original Issue: <a href="https://github.com/rust-lang/cargo/issues/2362">#2362</a></li>
@@ -9711,21 +9865,6 @@ can take an optional config value to display.</p>
 </code></pre>
 <p>If no config value is included, it will display all config values. See the
 <code>--help</code> output for more options available.</p>
-<h3 id="doctest-in-workspace"><a class="header" href="#doctest-in-workspace"><code>doctest-in-workspace</code></a></h3>
-<ul>
-<li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/9427">#9427</a></li>
-</ul>
-<p>The <code>-Z doctest-in-workspace</code> flag changes the behavior of the current working
-directory used when running doctests. Historically, Cargo has run <code>rustdoc --test</code> relative to the root of the package, with paths relative from that
-root. However, this is inconsistent with how <code>rustc</code> and <code>rustdoc</code> are
-normally run in a workspace, where they are run relative to the workspace
-root. This inconsistency causes problems in various ways, such as when passing
-RUSTDOCFLAGS with relative paths, or dealing with diagnostic output.</p>
-<p>The <code>-Z doctest-in-workspace</code> flag causes cargo to switch to running <code>rustdoc</code>
-from the root of the workspace. It also passes the <code>--test-run-directory</code> to
-<code>rustdoc</code> so that when <em>running</em> the tests, they are run from the root of the
-package. This preserves backwards compatibility and is consistent with how
-normal unittests are run.</p>
 <h3 id="rustc---print"><a class="header" href="#rustc---print">rustc <code>--print</code></a></h3>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/9357">#9357</a></li>
@@ -9886,12 +10025,12 @@ to run with <code>gitoxide</code> with the <code>-Zgitoxide=operation[,operation
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/12207">#12207</a></li>
 </ul>
 <p>Cargo can directly run <code>.rs</code> files as:</p>
-<pre><code class="language-console">$ cargo -Zscript file.rs
+<pre><code class="language-console">$ cargo +nightly -Zscript file.rs
 </code></pre>
 <p>where <code>file.rs</code> can be as simple as:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {}</code></pre></pre>
 <p>A user may optionally specify a manifest in a <code>cargo</code> code fence in a module-level comment, like:</p>
-<pre><pre class="playground"><code class="language-rust">#!/usr/bin/env cargo
+<pre><pre class="playground"><code class="language-rust">#!/usr/bin/env -S cargo +nightly -Zscript
 
 //! ```cargo
 //! [dependencies]
@@ -9916,6 +10055,8 @@ fn main() {
 files), we are adding the concept of single-file packages which may contain an
 embedded manifest.  There is no required distinguishment for a single-file
 <code>.rs</code> package from any other <code>.rs</code> file.</p>
+<p>Single-file packages may be selected via <code>--manifest-path</code>, like
+<code>cargo test --manifest-path foo.rs</code>. Unlike <code>Cargo.toml</code>, these files cannot be auto-discovered.</p>
 <p>A single-file package may contain an embedded manifest.  An embedded manifest
 is stored using <code>TOML</code> in a markdown code-fence with <code>cargo</code> at the start of the
 infostring inside a target-level doc-comment.  It is an error to have multiple
@@ -9943,9 +10084,7 @@ later add support for including them in a workspace.</li>
 <li><code>package.edition = &lt;current&gt;</code> to avoid always having to add an embedded
 manifest at the cost of potentially breaking scripts on rust upgrades
 <ul>
-<li>Warn when <code>edition</code> is unspecified.  While with single-file packages this will be
-silenced by default, users wanting stability are also likely to be using
-other commands, like <code>cargo test</code> and will see it.</li>
+<li>Warn when <code>edition</code> is unspecified to raise awareness of this</li>
 </ul>
 </li>
 </ul>
@@ -9954,25 +10093,35 @@ other commands, like <code>cargo test</code> and will see it.</li>
 <li><code>[workspace]</code>, <code>[lib]</code>, <code>[[bin]]</code>, <code>[[example]]</code>, <code>[[test]]</code>, <code>[[bench]]</code></li>
 <li><code>package.workspace</code>, <code>package.build</code>, <code>package.links</code>, <code>package.autobins</code>, <code>package.autoexamples</code>, <code>package.autotests</code>, <code>package.autobenches</code></li>
 </ul>
-<p>As the primary role for these files is exploratory programming which has a high
-edit-to-run ratio, building should be fast.  Therefore <code>CARGO_TARGET_DIR</code> will
-be shared between single-file packages to allow reusing intermediate build
-artifacts.</p>
+<p>The default <code>CARGO_TARGET_DIR</code> for single-file packages is at <code>$CARGO_HOME/target/&lt;hash&gt;</code>:</p>
+<ul>
+<li>Avoid conflicts from multiple single-file packages being in the same directory</li>
+<li>Avoid problems with the single-file package’s parent directory being read-only</li>
+<li>Avoid cluttering the user’s directory</li>
+</ul>
 <p>The lockfile for single-file packages will be placed in <code>CARGO_TARGET_DIR</code>.  In
 the future, when workspaces are supported, that will allow a user to have a
 persistent lockfile.</p>
 <h4 id="manifest-commands"><a class="header" href="#manifest-commands">Manifest-commands</a></h4>
-<p>You may pass single-file packages directly to the <code>cargo</code> command, without subcommand.  This is mostly intended for being put in <code>#!</code> lines.</p>
+<p>You may pass a manifest directly to the <code>cargo</code> command, without a subcommand,
+like <code>foo/Cargo.toml</code> or a single-file package like <code>foo.rs</code>.  This is mostly
+intended for being put in <code>#!</code> lines.</p>
 <p>The precedence for how to interpret <code>cargo &lt;subcommand&gt;</code> is</p>
 <ol>
 <li>Built-in xor single-file packages</li>
 <li>Aliases</li>
 <li>External subcommands</li>
 </ol>
-<p>A parameter is identified as a single-file package if it has one of:</p>
+<p>A parameter is identified as a manifest-command if it has one of:</p>
 <ul>
 <li>Path separators</li>
 <li>A <code>.rs</code> extension</li>
+<li>The file name is <code>Cargo.toml</code></li>
+</ul>
+<p>Differences between <code>cargo run --manifest-path &lt;path&gt;</code> and <code>cargo &lt;path&gt;</code></p>
+<ul>
+<li><code>cargo &lt;path&gt;</code> runs with the config for <code>&lt;path&gt;</code> and not the current dir, more like <code>cargo install --path &lt;path&gt;</code></li>
+<li><code>cargo &lt;path&gt;</code> is at a verbosity level below the normal default.  Pass <code>-v</code> to get normal output.</li>
 </ul>
 <h3 id="lints"><a class="header" href="#lints"><code>[lints]</code></a></h3>
 <ul>
@@ -10182,6 +10331,11 @@ terminal where Cargo can automatically detect the width.</p>
 See <a href="reference/registries.html#registry-protocols">Registry Protocols</a> for more information.</p>
 <h4 id="cargo-logout"><a class="header" href="#cargo-logout"><code>cargo logout</code></a></h4>
 <p>The <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> command has been stabilized in the 1.70 release.</p>
+<h3 id="doctest-in-workspace"><a class="header" href="#doctest-in-workspace"><code>doctest-in-workspace</code></a></h3>
+<p>The <code>-Z doctest-in-workspace</code> option for <code>cargo test</code> has been stabilized and
+enabled by default in the 1.72 release. See the
+<a href="reference/../commands/cargo-test.html#working-directory-of-tests"><code>cargo test</code> documentation</a>
+for more information about the working directory for compiling and running tests.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="cargo-commands"><a class="header" href="#cargo-commands">Cargo Commands</a></h1>
 <ul>
 <li><a href="commands/general-commands.html">General Commands</a></li>
@@ -10366,7 +10520,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo--Z"><a class="option-anchor" href="commands/cargo.html#option-cargo--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-1"><a class="header" href="#environment-1">ENVIRONMENT</a></h2>
+<h2 id="environment"><a class="header" href="#environment">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status"><a class="header" href="#exit-status">EXIT STATUS</a></h2>
@@ -10847,7 +11001,7 @@ Should not be 0.</dd>
 the build on the first one that fails to build. Unstable, requires
 <code>-Zunstable-options</code>.</dd>
 </dl>
-<h2 id="environment-2"><a class="header" href="#environment-2">ENVIRONMENT</a></h2>
+<h2 id="environment-1"><a class="header" href="#environment-1">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-1"><a class="header" href="#exit-status-1">EXIT STATUS</a></h2>
@@ -11155,7 +11309,7 @@ the build on the first one that fails to build. Unstable, requires
 produced during execution of this command</p>
 <p>See <a href="commands/cargo-report.html">cargo-report(1)</a></dd>
 </dl>
-<h2 id="environment-3"><a class="header" href="#environment-3">ENVIRONMENT</a></h2>
+<h2 id="environment-2"><a class="header" href="#environment-2">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-2"><a class="header" href="#exit-status-2">EXIT STATUS</a></h2>
@@ -11451,7 +11605,7 @@ the build on the first one that fails to build. Unstable, requires
 produced during execution of this command</p>
 <p>See <a href="commands/cargo-report.html">cargo-report(1)</a></dd>
 </dl>
-<h2 id="environment-4"><a class="header" href="#environment-4">ENVIRONMENT</a></h2>
+<h2 id="environment-3"><a class="header" href="#environment-3">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-3"><a class="header" href="#exit-status-3">EXIT STATUS</a></h2>
@@ -11594,7 +11748,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-clean--Z"><a class="option-anchor" href="commands/cargo-clean.html#option-cargo-clean--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-5"><a class="header" href="#environment-5">ENVIRONMENT</a></h2>
+<h2 id="environment-4"><a class="header" href="#environment-4">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-4"><a class="header" href="#exit-status-4">EXIT STATUS</a></h2>
@@ -11864,7 +12018,7 @@ Should not be 0.</dd>
 the build on the first one that fails to build. Unstable, requires
 <code>-Zunstable-options</code>.</dd>
 </dl>
-<h2 id="environment-6"><a class="header" href="#environment-6">ENVIRONMENT</a></h2>
+<h2 id="environment-5"><a class="header" href="#environment-5">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-5"><a class="header" href="#exit-status-5">EXIT STATUS</a></h2>
@@ -11988,7 +12142,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-fetch--Z"><a class="option-anchor" href="commands/cargo-fetch.html#option-cargo-fetch--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-7"><a class="header" href="#environment-7">ENVIRONMENT</a></h2>
+<h2 id="environment-6"><a class="header" href="#environment-6">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-6"><a class="header" href="#exit-status-6">EXIT STATUS</a></h2>
@@ -12329,7 +12483,7 @@ Should not be 0.</dd>
 the build on the first one that fails to build. Unstable, requires
 <code>-Zunstable-options</code>.</dd>
 </dl>
-<h2 id="environment-8"><a class="header" href="#environment-8">ENVIRONMENT</a></h2>
+<h2 id="environment-7"><a class="header" href="#environment-7">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-7"><a class="header" href="#exit-status-7">EXIT STATUS</a></h2>
@@ -12566,7 +12720,7 @@ Should not be 0.</dd>
 the build on the first one that fails to build. Unstable, requires
 <code>-Zunstable-options</code>.</dd>
 </dl>
-<h2 id="environment-9"><a class="header" href="#environment-9">ENVIRONMENT</a></h2>
+<h2 id="environment-8"><a class="header" href="#environment-8">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-8"><a class="header" href="#exit-status-8">EXIT STATUS</a></h2>
@@ -12874,7 +13028,7 @@ the build on the first one that fails to build. Unstable, requires
 produced during execution of this command</p>
 <p>See <a href="commands/cargo-report.html">cargo-report(1)</a></dd>
 </dl>
-<h2 id="environment-10"><a class="header" href="#environment-10">ENVIRONMENT</a></h2>
+<h2 id="environment-9"><a class="header" href="#environment-9">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-9"><a class="header" href="#exit-status-9">EXIT STATUS</a></h2>
@@ -13166,7 +13320,7 @@ Should not be 0.</dd>
 the build on the first one that fails to build. Unstable, requires
 <code>-Zunstable-options</code>.</dd>
 </dl>
-<h2 id="environment-11"><a class="header" href="#environment-11">ENVIRONMENT</a></h2>
+<h2 id="environment-10"><a class="header" href="#environment-10">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-10"><a class="header" href="#exit-status-10">EXIT STATUS</a></h2>
@@ -13225,11 +13379,17 @@ and may change in the future; beware of depending on it.</p>
 <p>See the <a href="https://doc.rust-lang.org/rustdoc/">rustdoc book</a> for more information
 on writing doc tests.</p>
 <h3 id="working-directory-of-tests"><a class="header" href="#working-directory-of-tests">Working directory of tests</a></h3>
-<p>The working directory of every test is set to the root directory of the package 
-the test belongs to.
-Setting the working directory of tests to the package’s root directory makes it 
+<p>The working directory when running each unit and integration test is set to the
+root directory of the package the test belongs to.
+Setting the working directory of tests to the package’s root directory makes it
 possible for tests to reliably access the package’s files using relative paths,
 regardless from where <code>cargo test</code> was executed from.</p>
+<p>For documentation tests, the working directory when invoking <code>rustdoc</code> is set to
+the workspace root directory, and is also the directory <code>rustdoc</code> uses as the
+compilation directory of each documentation test.
+The working directory when running each documentation test is set to the root
+directory of the package the test belongs to, and is controlled via <code>rustdoc</code>’s
+<code>--test-run-directory</code> option.</p>
 <h2 id="options-12"><a class="header" href="#options-12">OPTIONS</a></h2>
 <h3 id="test-options"><a class="header" href="#test-options">Test Options</a></h3>
 <dl>
@@ -13541,7 +13701,7 @@ the build on the first one that fails to build. Unstable, requires
 produced during execution of this command</p>
 <p>See <a href="commands/cargo-report.html">cargo-report(1)</a></dd>
 </dl>
-<h2 id="environment-12"><a class="header" href="#environment-12">ENVIRONMENT</a></h2>
+<h2 id="environment-11"><a class="header" href="#environment-11">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-11"><a class="header" href="#exit-status-11">EXIT STATUS</a></h2>
@@ -13774,7 +13934,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-add--Z"><a class="option-anchor" href="commands/cargo-add.html#option-cargo-add--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-13"><a class="header" href="#environment-13">ENVIRONMENT</a></h2>
+<h2 id="environment-12"><a class="header" href="#environment-12">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-12"><a class="header" href="#exit-status-12">EXIT STATUS</a></h2>
@@ -13901,7 +14061,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-generate-lockfile--Z"><a class="option-anchor" href="commands/cargo-generate-lockfile.html#option-cargo-generate-lockfile--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-14"><a class="header" href="#environment-14">ENVIRONMENT</a></h2>
+<h2 id="environment-13"><a class="header" href="#environment-13">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-13"><a class="header" href="#exit-status-13">EXIT STATUS</a></h2>
@@ -14001,7 +14161,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-locate-project--Z"><a class="option-anchor" href="commands/cargo-locate-project.html#option-cargo-locate-project--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-15"><a class="header" href="#environment-15">ENVIRONMENT</a></h2>
+<h2 id="environment-14"><a class="header" href="#environment-14">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-14"><a class="header" href="#exit-status-14">EXIT STATUS</a></h2>
@@ -14027,12 +14187,29 @@ details on environment variables that Cargo reads.</p>
 <h2 id="description-18"><a class="header" href="#description-18">DESCRIPTION</a></h2>
 <p>Output JSON to stdout containing information about the workspace members and
 resolved dependencies of the current package.</p>
-<p>It is recommended to include the <code>--format-version</code> flag to future-proof
-your code to ensure the output is in the format you are expecting.</p>
+<p>The format of the output is subject to change in futures versions of Cargo. It
+is recommended to include the <code>--format-version</code> flag to future-proof your code
+to ensure the output is in the format you are expecting. For more on the
+expectations, see <a href="commands/cargo-metadata.html#compatibility">“Compatibility”</a>.</p>
 <p>See the <a href="https://crates.io/crates/cargo_metadata">cargo_metadata crate</a>
 for a Rust API for reading the metadata.</p>
 <h2 id="output-format"><a class="header" href="#output-format">OUTPUT FORMAT</a></h2>
-<p>The output has the following format:</p>
+<h3 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h3>
+<p>Within the same output format version, the compatibility is maintained, except
+some scenarios. The following is a non-exhaustive list of changes that are not
+considersed as incompatibile:</p>
+<ul>
+<li><strong>Adding new fields</strong> — New fields will be added when needed. Reserving this
+helps Cargo evolve without bumping the format version too often.</li>
+<li><strong>Adding new values for enum-like fields</strong> — Same as adding new fields. It
+keeps metadata evolving without stagnation.</li>
+<li><strong>Changing opaque representations</strong> — The inner representations of some
+fields are implementation details. For example, fields related to “Package ID”
+or “Source ID” are treated as opaque identifiers to differentiate packages or
+sources. Consumers shouldn’t rely on those representations unless specified.</li>
+</ul>
+<h3 id="json-format"><a class="header" href="#json-format">JSON format</a></h3>
+<p>The JSON output has the following format:</p>
 <pre><code class="language-javascript">{
     /* Array of all packages in the workspace.
        It also includes all feature-enabled dependencies unless --no-deps is used.
@@ -14043,7 +14220,9 @@ for a Rust API for reading the metadata.</p>
             &quot;name&quot;: &quot;my-package&quot;,
             /* The version of the package. */
             &quot;version&quot;: &quot;0.1.0&quot;,
-            /* The Package ID, a unique identifier for referring to the package. */
+            /* The Package ID, an opaque and unique identifier for referring to the
+               package. See &quot;Compatibility&quot; above for the stability guarantee.
+            */
             &quot;id&quot;: &quot;my-package 0.1.0 (path+file:///path/to/my-package)&quot;,
             /* The license value from the manifest, or null. */
             &quot;license&quot;: &quot;MIT/Apache-2.0&quot;,
@@ -14051,14 +14230,25 @@ for a Rust API for reading the metadata.</p>
             &quot;license_file&quot;: &quot;LICENSE&quot;,
             /* The description value from the manifest, or null. */
             &quot;description&quot;: &quot;Package description.&quot;,
-            /* The source ID of the package. This represents where
-               a package is retrieved from.
+            /* The source ID of the package, an &quot;opaque&quot; identifier representing
+               where a package is retrieved from. See &quot;Compatibility&quot; above for
+               the stability guarantee.
+
                This is null for path dependencies and workspace members.
+
                For other dependencies, it is a string with the format:
                - &quot;registry+URL&quot; for registry-based dependencies.
                  Example: &quot;registry+https://github.com/rust-lang/crates.io-index&quot;
                - &quot;git+URL&quot; for git-based dependencies.
                  Example: &quot;git+https://github.com/rust-lang/cargo?rev=5e85ba14aaa20f8133863373404cb0af69eeef2c#5e85ba14aaa20f8133863373404cb0af69eeef2c&quot;
+               - &quot;sparse+URL&quot; for dependencies from a sparse registry
+                 Example: &quot;sparse+https://my-sparse-registry.org&quot;
+
+               The value after the `+` is not explicitly defined, and may change
+               between versions of Cargo and may not directly correlate to other
+               things, such as registry definitions in a config file. New source
+               kinds may be added in the future which will have different `+`
+               prefixed identifiers.
             */
             &quot;source&quot;: null,
             /* Array of dependencies declared in the package's manifest. */
@@ -14418,7 +14608,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-metadata--Z"><a class="option-anchor" href="commands/cargo-metadata.html#option-cargo-metadata--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-16"><a class="header" href="#environment-16">ENVIRONMENT</a></h2>
+<h2 id="environment-15"><a class="header" href="#environment-15">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-15"><a class="header" href="#exit-status-15">EXIT STATUS</a></h2>
@@ -14546,7 +14736,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-pkgid--Z"><a class="option-anchor" href="commands/cargo-pkgid.html#option-cargo-pkgid--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-17"><a class="header" href="#environment-17">ENVIRONMENT</a></h2>
+<h2 id="environment-16"><a class="header" href="#environment-16">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-16"><a class="header" href="#exit-status-16">EXIT STATUS</a></h2>
@@ -14685,7 +14875,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-remove--Z"><a class="option-anchor" href="commands/cargo-remove.html#option-cargo-remove--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-18"><a class="header" href="#environment-18">ENVIRONMENT</a></h2>
+<h2 id="environment-17"><a class="header" href="#environment-17">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-17"><a class="header" href="#exit-status-17">EXIT STATUS</a></h2>
@@ -14966,7 +15156,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-tree--Z"><a class="option-anchor" href="commands/cargo-tree.html#option-cargo-tree--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-19"><a class="header" href="#environment-19">ENVIRONMENT</a></h2>
+<h2 id="environment-18"><a class="header" href="#environment-18">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-18"><a class="header" href="#exit-status-18">EXIT STATUS</a></h2>
@@ -15153,7 +15343,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-update--Z"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-20"><a class="header" href="#environment-20">ENVIRONMENT</a></h2>
+<h2 id="environment-19"><a class="header" href="#environment-19">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-19"><a class="header" href="#exit-status-19">EXIT STATUS</a></h2>
@@ -15291,7 +15481,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-vendor--Z"><a class="option-anchor" href="commands/cargo-vendor.html#option-cargo-vendor--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-21"><a class="header" href="#environment-21">ENVIRONMENT</a></h2>
+<h2 id="environment-20"><a class="header" href="#environment-20">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-20"><a class="header" href="#exit-status-20">EXIT STATUS</a></h2>
@@ -15410,7 +15600,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-verify-project--Z"><a class="option-anchor" href="commands/cargo-verify-project.html#option-cargo-verify-project--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-22"><a class="header" href="#environment-22">ENVIRONMENT</a></h2>
+<h2 id="environment-21"><a class="header" href="#environment-21">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-21"><a class="header" href="#exit-status-21">EXIT STATUS</a></h2>
@@ -15529,7 +15719,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-init--Z"><a class="option-anchor" href="commands/cargo-init.html#option-cargo-init--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-23"><a class="header" href="#environment-23">ENVIRONMENT</a></h2>
+<h2 id="environment-22"><a class="header" href="#environment-22">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-22"><a class="header" href="#exit-status-22">EXIT STATUS</a></h2>
@@ -15559,7 +15749,7 @@ details on environment variables that Cargo reads.</p>
 <p>This command manages Cargo’s local set of installed binary crates. Only
 packages which have executable <code>[[bin]]</code> or <code>[[example]]</code> targets can be
 installed, and all executables are installed into the installation root’s
-<code>bin</code> folder.</p>
+<code>bin</code> folder. By default only binaries, not examples, are installed.</p>
 <p>The installation root is determined, in order of precedence:</p>
 <ul>
 <li><code>--root</code> option</li>
@@ -15656,7 +15846,7 @@ same time.</dd>
 <dt class="option-term" id="option-cargo-install---bin"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install---bin"></a><code>--bin</code> <em>name</em>…</dt>
 <dd class="option-desc">Install only the specified binary.</dd>
 <dt class="option-term" id="option-cargo-install---bins"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install---bins"></a><code>--bins</code></dt>
-<dd class="option-desc">Install all binaries.</dd>
+<dd class="option-desc">Install all binaries. This is the default behavior.</dd>
 <dt class="option-term" id="option-cargo-install---example"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install---example"></a><code>--example</code> <em>name</em>…</dt>
 <dd class="option-desc">Install only the specified example.</dd>
 <dt class="option-term" id="option-cargo-install---examples"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install---examples"></a><code>--examples</code></dt>
@@ -15843,7 +16033,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-install--Z"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-24"><a class="header" href="#environment-24">ENVIRONMENT</a></h2>
+<h2 id="environment-23"><a class="header" href="#environment-23">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-23"><a class="header" href="#exit-status-23">EXIT STATUS</a></h2>
@@ -15961,7 +16151,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-new--Z"><a class="option-anchor" href="commands/cargo-new.html#option-cargo-new--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-25"><a class="header" href="#environment-25">ENVIRONMENT</a></h2>
+<h2 id="environment-24"><a class="header" href="#environment-24">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-24"><a class="header" href="#exit-status-24">EXIT STATUS</a></h2>
@@ -16052,7 +16242,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-search--Z"><a class="option-anchor" href="commands/cargo-search.html#option-cargo-search--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-26"><a class="header" href="#environment-26">ENVIRONMENT</a></h2>
+<h2 id="environment-25"><a class="header" href="#environment-25">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-25"><a class="header" href="#exit-status-25">EXIT STATUS</a></h2>
@@ -16151,7 +16341,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-uninstall--Z"><a class="option-anchor" href="commands/cargo-uninstall.html#option-cargo-uninstall--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-27"><a class="header" href="#environment-27">ENVIRONMENT</a></h2>
+<h2 id="environment-26"><a class="header" href="#environment-26">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-26"><a class="header" href="#exit-status-26">EXIT STATUS</a></h2>
@@ -16251,7 +16441,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-login--Z"><a class="option-anchor" href="commands/cargo-login.html#option-cargo-login--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-28"><a class="header" href="#environment-28">ENVIRONMENT</a></h2>
+<h2 id="environment-27"><a class="header" href="#environment-27">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-27"><a class="header" href="#exit-status-27">EXIT STATUS</a></h2>
@@ -16345,7 +16535,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-logout--Z"><a class="option-anchor" href="commands/cargo-logout.html#option-cargo-logout--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-29"><a class="header" href="#environment-29">ENVIRONMENT</a></h2>
+<h2 id="environment-28"><a class="header" href="#environment-28">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-28"><a class="header" href="#exit-status-28">EXIT STATUS</a></h2>
@@ -16465,7 +16655,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-owner--Z"><a class="option-anchor" href="commands/cargo-owner.html#option-cargo-owner--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-30"><a class="header" href="#environment-30">ENVIRONMENT</a></h2>
+<h2 id="environment-29"><a class="header" href="#environment-29">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-29"><a class="header" href="#exit-status-29">EXIT STATUS</a></h2>
@@ -16715,7 +16905,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-package--Z"><a class="option-anchor" href="commands/cargo-package.html#option-cargo-package--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-31"><a class="header" href="#environment-31">ENVIRONMENT</a></h2>
+<h2 id="environment-30"><a class="header" href="#environment-30">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-30"><a class="header" href="#exit-status-30">EXIT STATUS</a></h2>
@@ -16922,7 +17112,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-publish--Z"><a class="option-anchor" href="commands/cargo-publish.html#option-cargo-publish--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-32"><a class="header" href="#environment-32">ENVIRONMENT</a></h2>
+<h2 id="environment-31"><a class="header" href="#environment-31">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-31"><a class="header" href="#exit-status-31">EXIT STATUS</a></h2>
@@ -17071,7 +17261,7 @@ requires the <code>-Z unstable-options</code> flag to enable (see
 <dt class="option-term" id="option-cargo-yank--Z"><a class="option-anchor" href="commands/cargo-yank.html#option-cargo-yank--Z"></a><code>-Z</code> <em>flag</em></dt>
 <dd class="option-desc">Unstable (nightly-only) flags to Cargo. Run <code>cargo -Z help</code> for details.</dd>
 </dl>
-<h2 id="environment-33"><a class="header" href="#environment-33">ENVIRONMENT</a></h2>
+<h2 id="environment-32"><a class="header" href="#environment-32">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
 <h2 id="exit-status-32"><a class="header" href="#exit-status-32">EXIT STATUS</a></h2>

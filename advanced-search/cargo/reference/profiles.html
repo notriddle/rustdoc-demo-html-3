@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -257,9 +279,10 @@ enabled, a panic will occur on overflow.</p>
 <li><code>false</code>: disabled</li>
 </ul>
 <h4 id="lto"><a class="header" href="#lto">lto</a></h4>
-<p>The <code>lto</code> setting controls the <a href="../../rustc/codegen-options/index.html#lto"><code>-C lto</code> flag</a> which controls LLVM’s <a href="https://llvm.org/docs/LinkTimeOptimization.html">link
-time optimizations</a>. LTO can produce better optimized code, using
-whole-program analysis, at the cost of longer linking time.</p>
+<p>The <code>lto</code> setting controls <code>rustc</code>’s <a href="../../rustc/codegen-options/index.html#lto"><code>-C lto</code></a>, <a href="../../rustc/codegen-options/index.html#linker-plugin-lto"><code>-C linker-plugin-lto</code></a>, and
+<a href="../../rustc/codegen-options/index.html#embed-bitcode"><code>-C embed-bitcode</code></a> options, which control LLVM’s <a href="https://llvm.org/docs/LinkTimeOptimization.html">link time optimizations</a>.
+LTO can produce better optimized code, using whole-program analysis, at the cost
+of longer linking time.</p>
 <p>The valid options are:</p>
 <ul>
 <li><code>false</code>: Performs “thin local LTO” which performs “thin” LTO on the local
@@ -272,7 +295,9 @@ substantially less time to run while still achieving performance gains
 similar to “fat”.</li>
 <li><code>&quot;off&quot;</code>: Disables LTO.</li>
 </ul>
-<p>See also the <a href="../../rustc/codegen-options/index.html#linker-plugin-lto"><code>-C linker-plugin-lto</code></a> <code>rustc</code> flag for cross-language LTO.</p>
+<p>See the <a href="../../rustc/linker-plugin-lto.html">linker-plugin-lto chapter</a> if you are interested in cross-language LTO.
+This is not yet supported natively in Cargo, but can be performed via
+<code>RUSTFLAGS</code>.</p>
 <h4 id="panic"><a class="header" href="#panic">panic</a></h4>
 <p>The <code>panic</code> setting controls the <a href="../../rustc/codegen-options/index.html#panic"><code>-C panic</code> flag</a> which controls which panic
 strategy to use.</p>

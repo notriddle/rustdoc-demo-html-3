@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sys/unix/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.72.0" data-rustdoc-version="1.72.0-dev" data-search-js="search-a95087894126b0f6.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files1.72.0.js"></script><script defer src="../../../../static.files/main-762bcae8c0777c4b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/sys/unix/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -418,9 +418,24 @@
 <a href="#418" id="418">418</a>
 <a href="#419" id="419">419</a>
 <a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(missing_docs, nonstandard_style)]
 
-</span><span class="kw">use </span><span class="kw">crate</span>::io::ErrorKind;
+</span><span class="kw">use </span><span class="kw">crate</span>::ffi::CStr;
+<span class="kw">use </span><span class="kw">crate</span>::io::ErrorKind;
 
 <span class="kw">pub use </span><span class="self">self</span>::rand::hashmap_random_keys;
 
@@ -494,7 +509,7 @@
     // thread-id for the main thread and so renaming the main thread will rename the
     // process and we only want to enable this on platforms we&#39;ve tested.
     </span><span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">&quot;macos&quot;</span>) {
-        thread::Thread::set_name(<span class="kw-2">&amp;</span><span class="string">c&quot;main&quot;</span>);
+        thread::Thread::set_name(<span class="kw-2">&amp;</span>CStr::from_bytes_with_nul_unchecked(<span class="string">b&quot;main\0&quot;</span>));
     }
 
     <span class="kw">unsafe fn </span>sanitize_standard_fds() {
@@ -507,6 +522,7 @@
             <span class="comment">// The poll on Darwin doesn&#39;t set POLLNVAL for closed fds.
             </span>target_os = <span class="string">&quot;macos&quot;</span>,
             target_os = <span class="string">&quot;ios&quot;</span>,
+            target_os = <span class="string">&quot;tvos&quot;</span>,
             target_os = <span class="string">&quot;watchos&quot;</span>,
             target_os = <span class="string">&quot;redox&quot;</span>,
             target_os = <span class="string">&quot;l4re&quot;</span>,
@@ -528,6 +544,11 @@
             <span class="kw">while </span>libc::poll(pfds.as_mut_ptr(), <span class="number">3</span>, <span class="number">0</span>) == -<span class="number">1 </span>{
                 <span class="kw">match </span>errno() {
                     libc::EINTR =&gt; <span class="kw">continue</span>,
+                    <span class="attr">#[cfg(target_vendor = <span class="string">&quot;unikraft&quot;</span>)]
+                    </span>libc::ENOSYS =&gt; {
+                        <span class="comment">// Not all configurations of Unikraft enable `LIBPOSIX_EVENT`.
+                        </span><span class="kw">break </span><span class="lifetime">&#39;poll</span>;
+                    }
                     libc::EINVAL | libc::EAGAIN | libc::ENOMEM =&gt; {
                         <span class="comment">// RLIMIT_NOFILE or temporary allocation failures
                         // may be preventing use of poll(), fall back to fcntl
@@ -540,7 +561,7 @@
                 <span class="kw">if </span>pfd.revents &amp; libc::POLLNVAL == <span class="number">0 </span>{
                     <span class="kw">continue</span>;
                 }
-                <span class="kw">if </span>open64(<span class="string">c&quot;/dev/null&quot;</span>.as_ptr().cast(), libc::O_RDWR, <span class="number">0</span>) == -<span class="number">1 </span>{
+                <span class="kw">if </span>open64(<span class="string">&quot;/dev/null\0&quot;</span>.as_ptr().cast(), libc::O_RDWR, <span class="number">0</span>) == -<span class="number">1 </span>{
                     <span class="comment">// If the stream is closed but we failed to reopen it, abort the
                     // process. Otherwise we wouldn&#39;t preserve the safety of
                     // operations on the corresponding Rust object Stdin, Stdout, or
@@ -570,7 +591,7 @@
             </span><span class="kw">use </span>libc::open64;
             <span class="kw">for </span>fd <span class="kw">in </span><span class="number">0</span>..<span class="number">3 </span>{
                 <span class="kw">if </span>libc::fcntl(fd, libc::F_GETFD) == -<span class="number">1 </span>&amp;&amp; errno() == libc::EBADF {
-                    <span class="kw">if </span>open64(<span class="string">c&quot;/dev/null&quot;</span>.as_ptr().cast(), libc::O_RDWR, <span class="number">0</span>) == -<span class="number">1 </span>{
+                    <span class="kw">if </span>open64(<span class="string">&quot;/dev/null\0&quot;</span>.as_ptr().cast(), libc::O_RDWR, <span class="number">0</span>) == -<span class="number">1 </span>{
                         <span class="comment">// If the stream is closed but we failed to reopen it, abort the
                         // process. Otherwise we wouldn&#39;t preserve the safety of
                         // operations on the corresponding Rust object Stdin, Stdout, or
@@ -583,7 +604,14 @@
     }
 
     <span class="kw">unsafe fn </span>reset_sigpipe(<span class="attr">#[allow(unused_variables)] </span>sigpipe: u8) {
-        <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;emscripten&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;horizon&quot;</span>)))]
+        <span class="attr">#[cfg(not(any(
+            target_os = <span class="string">&quot;emscripten&quot;</span>,
+            target_os = <span class="string">&quot;fuchsia&quot;</span>,
+            target_os = <span class="string">&quot;horizon&quot;</span>,
+            <span class="comment">// Unikraft&#39;s `signal` implementation is currently broken:
+            // https://github.com/unikraft/lib-musl/issues/57
+            </span>target_vendor = <span class="string">&quot;unikraft&quot;</span>,
+        )))]
         </span>{
             <span class="comment">// We don&#39;t want to add this as a public type to std, nor do we
             // want to `include!` a file from the compiler (which would break
@@ -807,7 +835,7 @@
     } <span class="kw">else if </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)] </span>{
         <span class="attr">#[link(name = <span class="string">&quot;System&quot;</span>)]
         </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span>{}
-    } <span class="kw">else if </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;watchos&quot;</span>))] </span>{
+    } <span class="kw">else if </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;tvos&quot;</span>, target_os = <span class="string">&quot;watchos&quot;</span>))] </span>{
         <span class="attr">#[link(name = <span class="string">&quot;System&quot;</span>)]
         #[link(name = <span class="string">&quot;objc&quot;</span>)]
         #[link(name = <span class="string">&quot;Security&quot;</span>, kind = <span class="string">&quot;framework&quot;</span>)]

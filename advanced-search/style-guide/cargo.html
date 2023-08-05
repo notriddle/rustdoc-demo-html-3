@@ -83,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Module-level items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Non-formatting conventions</a></li><li class="chapter-item expanded "><a href="cargo.html" class="active"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Principles used for deciding these guidelines</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html" class="active"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li><li class="chapter-item expanded "><a href="editions.html"><strong aria-hidden="true">8.</strong> Rust style editions</a></li><li class="chapter-item expanded "><a href="nightly.html"><strong aria-hidden="true">9.</strong> Nightly-only syntax</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -147,7 +169,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="cargotoml-conventions"><a class="header" href="#cargotoml-conventions">Cargo.toml conventions</a></h1>
+                        <h1 id="cargotoml-conventions"><a class="header" href="#cargotoml-conventions"><code>Cargo.toml</code> conventions</a></h1>
 <h2 id="formatting-conventions"><a class="header" href="#formatting-conventions">Formatting conventions</a></h2>
 <p>Use the same line width and indentation as Rust code.</p>
 <p>Put a blank line between the last key-value pair in a section and the header of
@@ -166,16 +188,17 @@ specification</a> for details.</p>
 not indent any key names; start all key names at the start of a line.</p>
 <p>Use multi-line strings (rather than newline escape sequences) for any string
 values that include multiple lines, such as the crate description.</p>
-<p>For array values, such as a list of authors, put the entire list on the same
+<p>For array values, such as a list of features, put the entire list on the same
 line as the key, if it fits. Otherwise, use block indentation: put a newline
 after the opening square bracket, indent each item by one indentation level,
 put a comma after each item (including the last), and put the closing square
 bracket at the start of a line by itself after the last item.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>authors = [
-    &quot;A Uthor &lt;a.uthor@example.org&gt;&quot;,
-    &quot;Another Author &lt;author@example.net&gt;&quot;,
+</span>some_feature = [
+    &quot;another_feature&quot;,
+    &quot;yet_another_feature&quot;,
+    &quot;some_dependency?/some_feature&quot;,
 ]
 <span class="boring">}</span></code></pre></pre>
 <p>For table values, such as a crate dependency with a path, write the entire
@@ -190,11 +213,10 @@ path = &quot;extremely_long_path_name_goes_right_here&quot;
 version = &quot;4.5.6&quot;
 </code></pre>
 <h2 id="metadata-conventions"><a class="header" href="#metadata-conventions">Metadata conventions</a></h2>
-<p>The authors list should consist of strings that each contain an author name
-followed by an email address in angle brackets: <code>Full Name &lt;email@address&gt;</code>.
-It should not contain bare email addresses, or names without email addresses.
-(The authors list may also include a mailing list address without an associated
-name.)</p>
+<p>The authors list, if present, should consist of strings that each contain an
+author name followed by an email address in angle brackets: <code>Full Name &lt;email@address&gt;</code>. It should not contain bare email addresses, or names without
+email addresses. (The authors list may also include a mailing list address
+without an associated name.)</p>
 <p>The license field must contain a valid <a href="https://spdx.org/spdx-specification-21-web-version#h.jxpfx0ykyb60">SPDX
 expression</a>,
 using valid <a href="https://spdx.org/licenses/">SPDX license names</a>. (As an exception,

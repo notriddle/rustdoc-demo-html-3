@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -184,7 +206,7 @@ fn main() {
 chapter</a> shows a variety of examples on how to write
 scripts.</p>
 <blockquote>
-<p>Note: The <a href="manifest.html#package-build"><code>package.build</code> manifest key</a> can be
+<p>Note: The <a href="manifest.html#the-build-field"><code>package.build</code> manifest key</a> can be
 used to change the name of the build script, or disable it entirely.</p>
 </blockquote>
 <h3 id="life-cycle-of-a-build-script"><a class="header" href="#life-cycle-of-a-build-script">Life Cycle of a Build Script</a></h3>
@@ -267,25 +289,21 @@ terminal.</li>
 <li><a href="#the-links-manifest-key"><code>cargo:KEY=VALUE</code></a> — Metadata, used by <code>links</code>
 scripts.</li>
 </ul>
-<p><a id="rustc-link-arg"></a></p>
-<h4 id="cargorustc-link-argflag"><a class="header" href="#cargorustc-link-argflag"><code>cargo:rustc-link-arg=FLAG</code></a></h4>
+<h4 id="rustc-link-arg"><a class="header" href="#rustc-link-arg"><code>cargo:rustc-link-arg=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code>
 option</a> to the compiler, but only when building supported targets
 (benchmarks, binaries, <code>cdylib</code> crates, examples, and tests). Its usage is
 highly platform specific. It is useful to set the shared library version or
 linker script.</p>
-<p><a id="rustc-link-arg-bin"></a></p>
-<h4 id="cargorustc-link-arg-binbinflag"><a class="header" href="#cargorustc-link-arg-binbinflag"><code>cargo:rustc-link-arg-bin=BIN=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-bin"><a class="header" href="#rustc-link-arg-bin"><code>cargo:rustc-link-arg-bin=BIN=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-bin</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building
 the binary target with name <code>BIN</code>. Its usage is highly platform specific. It is useful
 to set a linker script or other linker options.</p>
-<p><a id="rustc-link-arg-bins"></a></p>
-<h4 id="cargorustc-link-arg-binsflag"><a class="header" href="#cargorustc-link-arg-binsflag"><code>cargo:rustc-link-arg-bins=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-bins"><a class="header" href="#rustc-link-arg-bins"><code>cargo:rustc-link-arg-bins=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-bins</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 binary target. Its usage is highly platform specific. It is useful
 to set a linker script or other linker options.</p>
-<p><a id="rustc-link-lib"></a></p>
-<h4 id="cargorustc-link-liblib"><a class="header" href="#cargorustc-link-liblib"><code>cargo:rustc-link-lib=LIB</code></a></h4>
+<h4 id="rustc-link-lib"><a class="header" href="#rustc-link-lib"><code>cargo:rustc-link-lib=LIB</code></a></h4>
 <p>The <code>rustc-link-lib</code> instruction tells Cargo to link the given library using
 the compiler’s <a href="../../rustc/command-line-arguments.html#option-l-link-lib"><code>-l</code> flag</a>. This is typically used to link a
 native library using <a href="../../nomicon/ffi.html">FFI</a>.</p>
@@ -301,20 +319,16 @@ access to the symbols from the given lib, and the binary should access them
 through the library target’s public API.</p>
 <p>The optional <code>KIND</code> may be one of <code>dylib</code>, <code>static</code>, or <code>framework</code>. See the
 <a href="../../rustc/command-line-arguments.html#option-l-link-lib">rustc book</a> for more detail.</p>
-<p><a id="rustc-link-arg-tests"></a></p>
-<h4 id="cargorustc-link-arg-testsflag"><a class="header" href="#cargorustc-link-arg-testsflag"><code>cargo:rustc-link-arg-tests=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-tests"><a class="header" href="#rustc-link-arg-tests"><code>cargo:rustc-link-arg-tests=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-tests</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 tests target.</p>
-<p><a id="rustc-link-arg-examples"></a></p>
-<h4 id="cargorustc-link-arg-examplesflag"><a class="header" href="#cargorustc-link-arg-examplesflag"><code>cargo:rustc-link-arg-examples=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-examples"><a class="header" href="#rustc-link-arg-examples"><code>cargo:rustc-link-arg-examples=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-examples</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building an examples
 target.</p>
-<p><a id="rustc-link-arg-benches"></a></p>
-<h4 id="cargorustc-link-arg-benchesflag"><a class="header" href="#cargorustc-link-arg-benchesflag"><code>cargo:rustc-link-arg-benches=FLAG</code></a></h4>
+<h4 id="rustc-link-arg-benches"><a class="header" href="#rustc-link-arg-benches"><code>cargo:rustc-link-arg-benches=FLAG</code></a></h4>
 <p>The <code>rustc-link-arg-benches</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a benchmark
 target.</p>
-<p><a id="rustc-link-search"></a></p>
-<h4 id="cargorustc-link-searchkindpath"><a class="header" href="#cargorustc-link-searchkindpath"><code>cargo:rustc-link-search=[KIND=]PATH</code></a></h4>
+<h4 id="rustc-link-search"><a class="header" href="#rustc-link-search"><code>cargo:rustc-link-search=[KIND=]PATH</code></a></h4>
 <p>The <code>rustc-link-search</code> instruction tells Cargo to pass the <a href="../../rustc/command-line-arguments.html#option-l-search-path"><code>-L</code>
 flag</a> to the compiler to add a directory to the library search
 path.</p>
@@ -326,14 +340,12 @@ the <code>OUT_DIR</code>. Depending on this behavior is discouraged since this m
 difficult to use the resulting binary. In general, it is best to avoid
 creating dynamic libraries in a build script (using existing system libraries
 is fine).</p>
-<p><a id="rustc-flags"></a></p>
-<h4 id="cargorustc-flagsflags"><a class="header" href="#cargorustc-flagsflags"><code>cargo:rustc-flags=FLAGS</code></a></h4>
+<h4 id="rustc-flags"><a class="header" href="#rustc-flags"><code>cargo:rustc-flags=FLAGS</code></a></h4>
 <p>The <code>rustc-flags</code> instruction tells Cargo to pass the given space-separated
 flags to the compiler. This only allows the <code>-l</code> and <code>-L</code> flags, and is
 equivalent to using <a href="#rustc-link-lib"><code>rustc-link-lib</code></a> and
 <a href="#rustc-link-search"><code>rustc-link-search</code></a>.</p>
-<p><a id="rustc-cfg"></a></p>
-<h4 id="cargorustc-cfgkeyvalue"><a class="header" href="#cargorustc-cfgkeyvalue"><code>cargo:rustc-cfg=KEY[=&quot;VALUE&quot;]</code></a></h4>
+<h4 id="rustc-cfg"><a class="header" href="#rustc-cfg"><code>cargo:rustc-cfg=KEY[=&quot;VALUE&quot;]</code></a></h4>
 <p>The <code>rustc-cfg</code> instruction tells Cargo to pass the given value to the
 <a href="../../rustc/command-line-arguments.html#option-cfg"><code>--cfg</code> flag</a> to the compiler. This may be used for compile-time
 detection of features to enable <a href="../../reference/conditional-compilation.html">conditional compilation</a>.</p>
@@ -346,8 +358,7 @@ single identifier, or any arbitrary key/value pair. For example, emitting
 of <code>feature=</code>). Or an arbitrary key/value pair may be used with an <code>=</code> symbol
 like <code>cargo:rustc-cfg=my_component=&quot;foo&quot;</code>. The key should be a Rust
 identifier, the value should be a string.</p>
-<p><a id="rustc-env"></a></p>
-<h4 id="cargorustc-envvarvalue"><a class="header" href="#cargorustc-envvarvalue"><code>cargo:rustc-env=VAR=VALUE</code></a></h4>
+<h4 id="rustc-env"><a class="header" href="#rustc-env"><code>cargo:rustc-env=VAR=VALUE</code></a></h4>
 <p>The <code>rustc-env</code> instruction tells Cargo to set the given environment variable
 when compiling the package. The value can be then retrieved by the <a href="../../std/macro.env.html"><code>env!</code>
 macro</a> in the compiled crate. This is useful for embedding
@@ -362,13 +373,11 @@ discouraged since it ties the executable to Cargo’s execution environment.
 Normally, these environment variables should only be checked at compile-time
 with the <code>env!</code> macro.</p>
 </blockquote>
-<p><a id="rustc-cdylib-link-arg"></a></p>
-<h4 id="cargorustc-cdylib-link-argflag"><a class="header" href="#cargorustc-cdylib-link-argflag"><code>cargo:rustc-cdylib-link-arg=FLAG</code></a></h4>
+<h4 id="rustc-cdylib-link-arg"><a class="header" href="#rustc-cdylib-link-arg"><code>cargo:rustc-cdylib-link-arg=FLAG</code></a></h4>
 <p>The <code>rustc-cdylib-link-arg</code> instruction tells Cargo to pass the <a href="../../rustc/codegen-options/index.html#link-arg"><code>-C link-arg=FLAG</code> option</a> to the compiler, but only when building a
 <code>cdylib</code> library target. Its usage is highly platform specific. It is useful
 to set the shared library version or the runtime-path.</p>
-<p><a id="cargo-warning"></a></p>
-<h4 id="cargowarningmessage"><a class="header" href="#cargowarningmessage"><code>cargo:warning=MESSAGE</code></a></h4>
+<h4 id="cargo-warning"><a class="header" href="#cargo-warning"><code>cargo:warning=MESSAGE</code></a></h4>
 <p>The <code>warning</code> instruction tells Cargo to display a warning after the build
 script has finished running. Warnings are only shown for <code>path</code> dependencies
 (that is, those you’re working on locally), so for example warnings printed
@@ -401,8 +410,7 @@ are emitted, then Cargo will only re-run the script if the given value has
 changed. If Cargo is re-running the build scripts of your own crate or a
 dependency and you don’t know why, see <a href="../faq.html#why-is-cargo-rebuilding-my-code">“Why is Cargo rebuilding my code?” in the
 FAQ</a>.</p>
-<p><a id="rerun-if-changed"></a></p>
-<h4 id="cargorerun-if-changedpath"><a class="header" href="#cargorerun-if-changedpath"><code>cargo:rerun-if-changed=PATH</code></a></h4>
+<h4 id="rerun-if-changed"><a class="header" href="#rerun-if-changed"><code>cargo:rerun-if-changed=PATH</code></a></h4>
 <p>The <code>rerun-if-changed</code> instruction tells Cargo to re-run the build script if
 the file at the given path has changed. Currently, Cargo only uses the
 filesystem last-modified “mtime” timestamp to determine if the file has
@@ -417,8 +425,7 @@ emitted is to scan the entire package directory for changes). Cargo
 automatically handles whether or not the script itself needs to be recompiled,
 and of course the script will be re-run after it has been recompiled.
 Otherwise, specifying <code>build.rs</code> is redundant and unnecessary.</p>
-<p><a id="rerun-if-env-changed"></a></p>
-<h4 id="cargorerun-if-env-changedname"><a class="header" href="#cargorerun-if-env-changedname"><code>cargo:rerun-if-env-changed=NAME</code></a></h4>
+<h4 id="rerun-if-env-changed"><a class="header" href="#rerun-if-env-changed"><code>cargo:rerun-if-env-changed=NAME</code></a></h4>
 <p>The <code>rerun-if-env-changed</code> instruction tells Cargo to re-run the build script
 if the value of an environment variable of the given name has changed.</p>
 <p>Note that the environment variables here are intended for global environment

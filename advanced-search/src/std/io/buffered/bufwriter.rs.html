@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/buffered/bufwriter.rs`."><title>bufwriter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-2fcac8296ac587d8.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.72.0" data-rustdoc-version="1.72.0-dev" data-search-js="search-a95087894126b0f6.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files1.72.0.js"></script><script defer src="../../../../static.files/main-762bcae8c0777c4b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/buffered/bufwriter.rs`."><title>bufwriter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files1.73.0.js"></script><script defer src="../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../std/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -672,6 +672,8 @@
 <a href="#672" id="672">672</a>
 <a href="#673" id="673">673</a>
 <a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error;
 <span class="kw">use </span><span class="kw">crate</span>::fmt;
 <span class="kw">use </span><span class="kw">crate</span>::io::{
@@ -741,8 +743,7 @@
 /// [`TcpStream`]: crate::net::TcpStream
 /// [`flush`]: BufWriter::flush
 </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">pub struct </span>BufWriter&lt;W: Write&gt; {
-    inner: W,
+</span><span class="kw">pub struct </span>BufWriter&lt;W: <span class="question-mark">?</span>Sized + Write&gt; {
     <span class="comment">// The buffer. Avoid using this like a normal `Vec` in common code paths.
     // That is, don&#39;t use `buf.push`, `buf.extend_from_slice`, or any other
     // methods that require bounds checking or the like. This makes an enormous
@@ -752,10 +753,11 @@
     // write the buffered data a second time in BufWriter&#39;s destructor. This
     // flag tells the Drop impl if it should skip the flush.
     </span>panicked: bool,
+    inner: W,
 }
 
 <span class="kw">impl</span>&lt;W: Write&gt; BufWriter&lt;W&gt; {
-    <span class="doccomment">/// Creates a new `BufWriter&lt;W&gt;` with a default buffer capacity. The default is currently 8 KB,
+    <span class="doccomment">/// Creates a new `BufWriter&lt;W&gt;` with a default buffer capacity. The default is currently 8 KiB,
     /// but may change in the future.
     ///
     /// # Examples
@@ -789,6 +791,69 @@
         BufWriter { inner, buf: Vec::with_capacity(capacity), panicked: <span class="bool-val">false </span>}
     }
 
+    <span class="doccomment">/// Unwraps this `BufWriter&lt;W&gt;`, returning the underlying writer.
+    ///
+    /// The buffer is written out before returning the writer.
+    ///
+    /// # Errors
+    ///
+    /// An [`Err`] will be returned if an error occurs while flushing the buffer.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use std::io::BufWriter;
+    /// use std::net::TcpStream;
+    ///
+    /// let mut buffer = BufWriter::new(TcpStream::connect(&quot;127.0.0.1:34254&quot;).unwrap());
+    ///
+    /// // unwrap the TcpStream and flush the buffer
+    /// let stream = buffer.into_inner().unwrap();
+    /// ```
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
+    </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, IntoInnerError&lt;BufWriter&lt;W&gt;&gt;&gt; {
+        <span class="kw">match </span><span class="self">self</span>.flush_buf() {
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(IntoInnerError::new(<span class="self">self</span>, e)),
+            <span class="prelude-val">Ok</span>(()) =&gt; <span class="prelude-val">Ok</span>(<span class="self">self</span>.into_parts().<span class="number">0</span>),
+        }
+    }
+
+    <span class="doccomment">/// Disassembles this `BufWriter&lt;W&gt;`, returning the underlying writer, and any buffered but
+    /// unwritten data.
+    ///
+    /// If the underlying writer panicked, it is not known what portion of the data was written.
+    /// In this case, we return `WriterPanicked` for the buffered data (from which the buffer
+    /// contents can still be recovered).
+    ///
+    /// `into_parts` makes no attempt to flush data and cannot fail.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::io::{BufWriter, Write};
+    ///
+    /// let mut buffer = [0u8; 10];
+    /// let mut stream = BufWriter::new(buffer.as_mut());
+    /// write!(stream, &quot;too much data&quot;).unwrap();
+    /// stream.flush().expect_err(&quot;it doesn&#39;t fit&quot;);
+    /// let (recovered_writer, buffered_data) = stream.into_parts();
+    /// assert_eq!(recovered_writer.len(), 0);
+    /// assert_eq!(&amp;buffered_data.unwrap(), b&quot;ata&quot;);
+    /// ```
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;bufwriter_into_parts&quot;</span>, since = <span class="string">&quot;1.56.0&quot;</span>)]
+    </span><span class="kw">pub fn </span>into_parts(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; (W, <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, WriterPanicked&gt;) {
+        <span class="kw">let </span>buf = mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.buf);
+        <span class="kw">let </span>buf = <span class="kw">if </span>!<span class="self">self</span>.panicked { <span class="prelude-val">Ok</span>(buf) } <span class="kw">else </span>{ <span class="prelude-val">Err</span>(WriterPanicked { buf }) };
+
+        <span class="comment">// SAFETY: forget(self) prevents double dropping inner
+        </span><span class="kw">let </span>inner = <span class="kw">unsafe </span>{ ptr::read(<span class="kw-2">&amp;</span><span class="self">self</span>.inner) };
+        mem::forget(<span class="self">self</span>);
+
+        (inner, buf)
+    }
+}
+
+<span class="kw">impl</span>&lt;W: <span class="question-mark">?</span>Sized + Write&gt; BufWriter&lt;W&gt; {
     <span class="doccomment">/// Send data in our local buffer into the inner writer, looping as
     /// necessary until either it&#39;s all been sent or an error occurs.
     ///
@@ -958,67 +1023,6 @@
         <span class="self">self</span>.buf.capacity()
     }
 
-    <span class="doccomment">/// Unwraps this `BufWriter&lt;W&gt;`, returning the underlying writer.
-    ///
-    /// The buffer is written out before returning the writer.
-    ///
-    /// # Errors
-    ///
-    /// An [`Err`] will be returned if an error occurs while flushing the buffer.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use std::io::BufWriter;
-    /// use std::net::TcpStream;
-    ///
-    /// let mut buffer = BufWriter::new(TcpStream::connect(&quot;127.0.0.1:34254&quot;).unwrap());
-    ///
-    /// // unwrap the TcpStream and flush the buffer
-    /// let stream = buffer.into_inner().unwrap();
-    /// ```
-    </span><span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;W, IntoInnerError&lt;BufWriter&lt;W&gt;&gt;&gt; {
-        <span class="kw">match </span><span class="self">self</span>.flush_buf() {
-            <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(IntoInnerError::new(<span class="self">self</span>, e)),
-            <span class="prelude-val">Ok</span>(()) =&gt; <span class="prelude-val">Ok</span>(<span class="self">self</span>.into_parts().<span class="number">0</span>),
-        }
-    }
-
-    <span class="doccomment">/// Disassembles this `BufWriter&lt;W&gt;`, returning the underlying writer, and any buffered but
-    /// unwritten data.
-    ///
-    /// If the underlying writer panicked, it is not known what portion of the data was written.
-    /// In this case, we return `WriterPanicked` for the buffered data (from which the buffer
-    /// contents can still be recovered).
-    ///
-    /// `into_parts` makes no attempt to flush data and cannot fail.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::io::{BufWriter, Write};
-    ///
-    /// let mut buffer = [0u8; 10];
-    /// let mut stream = BufWriter::new(buffer.as_mut());
-    /// write!(stream, &quot;too much data&quot;).unwrap();
-    /// stream.flush().expect_err(&quot;it doesn&#39;t fit&quot;);
-    /// let (recovered_writer, buffered_data) = stream.into_parts();
-    /// assert_eq!(recovered_writer.len(), 0);
-    /// assert_eq!(&amp;buffered_data.unwrap(), b&quot;ata&quot;);
-    /// ```
-    </span><span class="attr">#[stable(feature = <span class="string">&quot;bufwriter_into_parts&quot;</span>, since = <span class="string">&quot;1.56.0&quot;</span>)]
-    </span><span class="kw">pub fn </span>into_parts(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; (W, <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, WriterPanicked&gt;) {
-        <span class="kw">let </span>buf = mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.buf);
-        <span class="kw">let </span>buf = <span class="kw">if </span>!<span class="self">self</span>.panicked { <span class="prelude-val">Ok</span>(buf) } <span class="kw">else </span>{ <span class="prelude-val">Err</span>(WriterPanicked { buf }) };
-
-        <span class="comment">// SAFETY: forget(self) prevents double dropping inner
-        </span><span class="kw">let </span>inner = <span class="kw">unsafe </span>{ ptr::read(<span class="kw-2">&amp;</span><span class="self">self</span>.inner) };
-        mem::forget(<span class="self">self</span>);
-
-        (inner, buf)
-    }
-
     <span class="comment">// Ensure this function does not get inlined into `write`, so that it
     // remains inlineable and its common path remains as short as possible.
     // If this function ends up being called frequently relative to `write`,
@@ -1185,7 +1189,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;W: Write&gt; Write <span class="kw">for </span>BufWriter&lt;W&gt; {
+</span><span class="kw">impl</span>&lt;W: <span class="question-mark">?</span>Sized + Write&gt; Write <span class="kw">for </span>BufWriter&lt;W&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="comment">// Use &lt; instead of &lt;= to avoid a needless trip through the buffer in some cases.
@@ -1314,20 +1318,20 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;W: Write&gt; fmt::Debug <span class="kw">for </span>BufWriter&lt;W&gt;
+</span><span class="kw">impl</span>&lt;W: <span class="question-mark">?</span>Sized + Write&gt; fmt::Debug <span class="kw">for </span>BufWriter&lt;W&gt;
 <span class="kw">where
     </span>W: fmt::Debug,
 {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         fmt.debug_struct(<span class="string">&quot;BufWriter&quot;</span>)
-            .field(<span class="string">&quot;writer&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.inner)
+            .field(<span class="string">&quot;writer&quot;</span>, &amp;&amp;<span class="self">self</span>.inner)
             .field(<span class="string">&quot;buffer&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format_args!</span>(<span class="string">&quot;{}/{}&quot;</span>, <span class="self">self</span>.buf.len(), <span class="self">self</span>.buf.capacity()))
             .finish()
     }
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;W: Write + Seek&gt; Seek <span class="kw">for </span>BufWriter&lt;W&gt; {
+</span><span class="kw">impl</span>&lt;W: <span class="question-mark">?</span>Sized + Write + Seek&gt; Seek <span class="kw">for </span>BufWriter&lt;W&gt; {
     <span class="doccomment">/// Seek to the offset, in bytes, in the underlying writer.
     ///
     /// Seeking always writes out the internal buffer before seeking.
@@ -1338,7 +1342,7 @@
 }
 
 <span class="attr">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
-</span><span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>BufWriter&lt;W&gt; {
+</span><span class="kw">impl</span>&lt;W: <span class="question-mark">?</span>Sized + Write&gt; Drop <span class="kw">for </span>BufWriter&lt;W&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if </span>!<span class="self">self</span>.panicked {
             <span class="comment">// dtors should not panic, so we ignore a failed flush

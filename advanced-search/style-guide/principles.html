@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Principles used for deciding these guidelines - The Rust Style Guide</title>
+        <title>Guiding principles and rationale - The Rust Style Guide</title>
 
 
         <!-- Custom HTML head -->
@@ -83,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Module-level items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Non-formatting conventions</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html" class="active"><strong aria-hidden="true">7.</strong> Principles used for deciding these guidelines</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html" class="active"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li><li class="chapter-item expanded "><a href="editions.html"><strong aria-hidden="true">8.</strong> Rust style editions</a></li><li class="chapter-item expanded "><a href="nightly.html"><strong aria-hidden="true">9.</strong> Nightly-only syntax</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -148,8 +170,8 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="guiding-principles-and-rationale"><a class="header" href="#guiding-principles-and-rationale">Guiding principles and rationale</a></h1>
-<p>When deciding on style guidelines, the style team tried to be guided by the
-following principles (in rough priority order):</p>
+<p>When deciding on style guidelines, the style team follows these guiding
+principles (in rough priority order):</p>
 <ul>
 <li>
 <p>readability</p>
@@ -175,7 +197,7 @@ plain-text contexts</li>
 <ul>
 <li>compatibility with version control practices - preserving diffs,
 merge-friendliness, etc.</li>
-<li>preventing right-ward drift</li>
+<li>preventing rightward drift</li>
 <li>minimising vertical space</li>
 </ul>
 </li>
@@ -183,31 +205,12 @@ merge-friendliness, etc.</li>
 <p>application</p>
 <ul>
 <li>ease of manual application</li>
-<li>ease of implementation (in Rustfmt, and in other tools/editors/code generators)</li>
+<li>ease of implementation (in <code>rustfmt</code>, and in other tools/editors/code generators)</li>
 <li>internal consistency</li>
 <li>simplicity of formatting rules</li>
 </ul>
 </li>
 </ul>
-<h2 id="overarching-guidelines"><a class="header" href="#overarching-guidelines">Overarching guidelines</a></h2>
-<p>Prefer block indent over visual indent. E.g.,</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// Block indent
-a_function_call(
-    foo,
-    bar,
-);
-
-// Visual indent
-a_function_call(foo,
-                bar);
-<span class="boring">}</span></code></pre></pre>
-<p>This makes for smaller diffs (e.g., if <code>a_function_call</code> is renamed in the above
-example) and less rightward drift.</p>
-<p>Lists should have a trailing comma when followed by a newline, see the block
-indent example above. This choice makes moving code (e.g., by copy and paste)
-easier and makes smaller diffs.</p>
 
                     </main>
 
@@ -217,6 +220,9 @@ easier and makes smaller diffs.</p>
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next" href="editions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -228,6 +234,9 @@ easier and makes smaller diffs.</p>
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next" href="editions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

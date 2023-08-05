@@ -83,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Module-level items</a></li><li class="chapter-item expanded "><a href="statements.html" class="active"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Non-formatting conventions</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Principles used for deciding these guidelines</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html" class="active"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li><li class="chapter-item expanded "><a href="editions.html"><strong aria-hidden="true">8.</strong> Rust style editions</a></li><li class="chapter-item expanded "><a href="nightly.html"><strong aria-hidden="true">9.</strong> Nightly-only syntax</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -147,9 +169,10 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h3 id="let-statements"><a class="header" href="#let-statements">Let statements</a></h3>
-<p>There should be spaces after the <code>:</code> and on both sides of the <code>=</code> (if they are
-present). No space before the semi-colon.</p>
+                        <h1 id="statements"><a class="header" href="#statements">Statements</a></h1>
+<h2 id="let-statements"><a class="header" href="#let-statements">Let statements</a></h2>
+<p>Put a space after the <code>:</code> and on both sides of the <code>=</code> (if they are present).
+Don't put a space before the semicolon.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// A comment.
@@ -159,18 +182,18 @@ let pattern;
 let pattern: Type;
 let pattern = expr;
 <span class="boring">}</span></code></pre></pre>
-<p>If possible the declaration should be formatted on a single line. If this is not
-possible, then try splitting after the <code>=</code>, if the declaration can fit on two
-lines. The expression should be block indented.</p>
+<p>If possible, format the declaration on a single line. If not possible, then try
+splitting after the <code>=</code>, if the declaration fits on two lines. Block-indent the
+expression.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let pattern: Type =
     expr;
 <span class="boring">}</span></code></pre></pre>
-<p>If the first line does not fit on a single line, then split after the colon,
-using block indentation. If the type covers multiple lines, even after line-
-breaking after the <code>:</code>, then the first line may be placed on the same line as
-the <code>:</code>, subject to the <a href="https://github.com/rust-lang-nursery/fmt-rfcs/issues/61">combining rules</a> (WIP).</p>
+<p>If the first line still does not fit on a single line, split after the <code>:</code>, and
+use block indentation. If the type requires multiple lines, even after
+line-breaking after the <code>:</code>, then place the first line on the same line as the
+<code>:</code>, subject to the <a href="expressions.html#combinable-expressions">combining rules</a>.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let pattern:
@@ -192,12 +215,12 @@ let (abcd,
 { ... }
 <span class="boring">}</span></code></pre></pre>
 <p>If the expression covers multiple lines, if the first line of the expression
-fits in the remaining space, it stays on the same line as the <code>=</code>, the rest of the
-expression is not indented. If the first line does not fit, then it should start
-on the next lines, and should be block indented. If the expression is a block
-and the type or pattern cover multiple lines, then the opening brace should be
-on a new line and not indented (this provides separation for the interior of the
-block from the type), otherwise the opening brace follows the <code>=</code>.</p>
+fits in the remaining space, it stays on the same line as the <code>=</code>, and the rest
+of the expression is not further indented. If the first line does not fit, then
+put the expression on subsequent lines, block indented. If the expression is a
+block and the type or pattern cover multiple lines, put the opening brace on a
+new line and not indented (this provides separation for the interior of the
+block from the type); otherwise, the opening brace follows the <code>=</code>.</p>
 <p>Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -240,22 +263,62 @@ let Foo {
     blamblamblam,
 );
 <span class="boring">}</span></code></pre></pre>
-<h4 id="else-blocks-let-else-statements"><a class="header" href="#else-blocks-let-else-statements">else blocks (let-else statements)</a></h4>
-<p>If a let statement contains an <code>else</code> component, also known as a let-else statement,
-then the <code>else</code> component should be formatted according to the same rules as the <code>else</code> block
-in <a href="./expressions.html#control-flow-expressions">control flow expressions (i.e. if-else, and if-let-else expressions)</a>.
-Apply the same formatting rules to the components preceding
-the <code>else</code> block (i.e. the <code>let pattern: Type = initializer_expr ...</code> portion)
-as described <a href="#let-statements">above</a></p>
-<p>Similarly to if-else expressions, if the initializer
-expression is multi-lined, then the <code>else</code> keyword and opening brace of the block (i.e. <code>else {</code>)
-should be put on the same line as the end of the initializer
-expression with a preceding space if all the following are true:</p>
+<h3 id="else-blocks-let-else-statements"><a class="header" href="#else-blocks-let-else-statements">else blocks (let-else statements)</a></h3>
+<p>A let statement can contain an <code>else</code> component, making it a let-else statement.
+In this case, always apply the same formatting rules to the components preceding
+the <code>else</code> block (i.e. the <code>let pattern: Type = initializer_expr</code> portion)
+as described <a href="#let-statements">for other let statements</a>.</p>
+<p>Format the entire let-else statement on a single line if all the following are
+true:</p>
+<ul>
+<li>the entire statement is <em>short</em></li>
+<li>the <code>else</code> block contains only a single-line expression and no statements</li>
+<li>the <code>else</code> block contains no comments</li>
+<li>the let statement components preceding the <code>else</code> block can be formatted on a single line</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let Some(1) = opt else { return };
+<span class="boring">}</span></code></pre></pre>
+<p>Otherwise, the let-else statement requires some line breaks.</p>
+<p>If breaking a let-else statement across multiple lines, never break between the
+<code>else</code> and the <code>{</code>, and always break before the <code>}</code>.</p>
+<p>If the let statement components preceding the <code>else</code> can be formatted on a
+single line, but the let-else does not qualify to be placed entirely on a
+single line, put the <code>else {</code> on the same line as the initializer expression,
+with a space between them, then break the line after the <code>{</code>. Indent the
+closing <code>}</code> to match the <code>let</code>, and indent the contained block one step
+further.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let Some(1) = opt else {
+    return;
+};
+
+let Some(1) = opt else {
+    // nope
+    return
+};
+<span class="boring">}</span></code></pre></pre>
+<p>If the let statement components preceding the <code>else</code> can be formatted on a
+single line, but the <code>else {</code> does not fit on the same line, break the line
+before the <code>else</code>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let Some(x) = some_really_really_really_really_really_really_really_really_really_long_name
+    else {
+        return;
+    };
+<span class="boring">}</span></code></pre></pre>
+<p>If the initializer expression is multi-line, put the <code>else</code> keyword and opening
+brace of the block (i.e. <code>else {</code>) on the same line as the end of the
+initializer expression, with a space between them, if and only if all the
+following are true:</p>
 <ul>
 <li>The initializer expression ends with one or more closing
 parentheses, square brackets, and/or braces</li>
 <li>There is nothing else on that line</li>
-<li>That line is not indented beyond the indent of the first line containing the <code>let</code> keyword</li>
+<li>That line has the same indentation level as the initial <code>let</code> keyword.</li>
 </ul>
 <p>For example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -271,7 +334,9 @@ parentheses, square brackets, and/or braces</li>
     bar()
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Otherwise, the <code>else</code> keyword and opening brace should be placed on the next line after the end of the initializer expression, and should not be indented (the <code>else</code> keyword should be aligned with the <code>let</code> keyword).</p>
+<p>Otherwise, put the <code>else</code> keyword and opening brace on the next line after the
+end of the initializer expression, with the <code>else</code> keyword at the same
+indentation level as the <code>let</code> keyword.</p>
 <p>For example:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     let Some(x) = abcdef()
@@ -288,55 +353,49 @@ parentheses, square brackets, and/or braces</li>
         return
     };
 
-    let Some(x) = some_really_really_really_really_really_really_really_really_really_long_name
-    else {
-        return;
-    };
-
     let Some(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) =
         bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
     else {
         return;
     };
+
+    let LongStructName(AnotherStruct {
+        multi,
+        line,
+        pattern,
+    }) = slice.as_ref()
+    else {
+        return;
+    };
+
+    let LongStructName(AnotherStruct {
+        multi,
+        line,
+        pattern,
+    }) = multi_line_function_call(
+        arg1,
+        arg2,
+        arg3,
+        arg4,
+    ) else {
+        return;
+    };
 }</code></pre></pre>
-<h5 id="single-line-let-else-statements"><a class="header" href="#single-line-let-else-statements">Single line let-else statements</a></h5>
-<p>The entire let-else statement may be formatted on a single line if all the following are true:</p>
-<ul>
-<li>the entire statement is <em>short</em></li>
-<li>the <code>else</code> block contains a single-line expression and no statements</li>
-<li>the <code>else</code> block contains no comments</li>
-<li>the let statement components preceding the <code>else</code> block can be formatted on a single line</li>
-</ul>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let Some(1) = opt else { return };
-
-let Some(1) = opt else {
-    return;
-};
-
-let Some(1) = opt else {
-    // nope
-    return
-};
-<span class="boring">}</span></code></pre></pre>
-<p>Formatters may allow users to configure the value of the threshold
-used to determine whether a let-else statement is <em>short</em>.</p>
-<h3 id="macros-in-statement-position"><a class="header" href="#macros-in-statement-position">Macros in statement position</a></h3>
-<p>A macro use in statement position should use parentheses or square brackets as
-delimiters and should be terminated with a semi-colon. There should be no spaces
-between the name, <code>!</code>, the delimiters, or the <code>;</code>.</p>
+<h2 id="macros-in-statement-position"><a class="header" href="#macros-in-statement-position">Macros in statement position</a></h2>
+<p>For a macro use in statement position, use parentheses or square brackets as
+delimiters, and terminate it with a semicolon. Do not put spaces around the
+name, <code>!</code>, the delimiters, or the <code>;</code>.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// A comment.
 a_macro!(...);
 <span class="boring">}</span></code></pre></pre>
-<h3 id="expressions-in-statement-position"><a class="header" href="#expressions-in-statement-position">Expressions in statement position</a></h3>
-<p>There should be no space between the expression and the semi-colon.</p>
+<h2 id="expressions-in-statement-position"><a class="header" href="#expressions-in-statement-position">Expressions in statement position</a></h2>
+<p>Do not put space between the expression and the semicolon.</p>
 <pre><code>&lt;expr&gt;;
 </code></pre>
-<p>All expressions in statement position should be terminated with a semi-colon,
-unless they end with a block or are used as the value for a block.</p>
+<p>Terminate all expressions in statement position with a semicolon, unless they
+end with a block or are used as the value for a block.</p>
 <p>E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -351,7 +410,7 @@ loop {
     break;
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Use a semi-colon where an expression has void type, even if it could be
+<p>Use a semicolon where an expression has void type, even if it could be
 propagated. E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {

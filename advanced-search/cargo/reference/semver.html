@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -287,8 +309,7 @@ considered incompatible.</p>
 after it has been modified, and an example usage of the code that could appear
 in another project. In a minor change, the example usage should successfully
 build with both the before and after versions.</p>
-<p><a id="item-remove"></a></p>
-<h3 id="major-renamingmovingremoving-any-public-items"><a class="header" href="#major-renamingmovingremoving-any-public-items">Major: renaming/moving/removing any public items</a></h3>
+<h3 id="item-remove"><a class="header" href="#item-remove">Major: renaming/moving/removing any public items</a></h3>
 <p>The absence of a publicly exposed <a href="../../reference/items.html">item</a> will cause any uses of that item to
 fail to compile.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -315,8 +336,7 @@ date in a SemVer-breaking release.</li>
 <li>Mark renamed items as <a href="../../reference/attributes/diagnostics.html#the-deprecated-attribute">deprecated</a>, and use a <a href="../../reference/items/use-declarations.html"><code>pub use</code></a> item to re-export
 to the old name.</li>
 </ul>
-<p><a id="item-new"></a></p>
-<h3 id="minor-adding-new-public-items"><a class="header" href="#minor-adding-new-public-items">Minor: adding new public items</a></h3>
+<h3 id="item-new"><a class="header" href="#item-new">Minor: adding new public items</a></h3>
 <p>Adding new, public <a href="../../reference/items.html">items</a> is a minor change.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
 
@@ -366,8 +386,7 @@ fn main() {
 <p>This is not considered a major change because conventionally glob imports are
 a known forwards-compatibility hazard. Glob imports of items from external
 crates should be avoided.</p>
-<p><a id="struct-add-private-field-when-public"></a></p>
-<h3 id="major-adding-a-private-struct-field-when-all-current-fields-are-public"><a class="header" href="#major-adding-a-private-struct-field-when-all-current-fields-are-public">Major: adding a private struct field when all current fields are public</a></h3>
+<h3 id="struct-add-private-field-when-public"><a class="header" href="#struct-add-private-field-when-public">Major: adding a private struct field when all current fields are public</a></h3>
 <p>When a private field is added to a struct that previously had all public fields,
 this will break any code that attempts to construct it with a <a href="../../reference/expressions/struct-expr.html">struct literal</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -397,8 +416,7 @@ fn main() {
 a struct to prevent users from using struct literal syntax, and instead
 provide a constructor method and/or <a href="../../std/default/trait.Default.html">Default</a> implementation.</li>
 </ul>
-<p><a id="struct-add-public-field-when-no-private"></a></p>
-<h3 id="major-adding-a-public-field-when-no-private-field-exists"><a class="header" href="#major-adding-a-public-field-when-no-private-field-exists">Major: adding a public field when no private field exists</a></h3>
+<h3 id="struct-add-public-field-when-no-private"><a class="header" href="#struct-add-public-field-when-no-private">Major: adding a public field when no private field exists</a></h3>
 <p>When a public field is added to a struct that has all public fields, this will
 break any code that attempts to construct it with a <a href="../../reference/expressions/struct-expr.html">struct literal</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -428,8 +446,7 @@ fn main() {
 a struct to prevent users from using struct literal syntax, and instead
 provide a constructor method and/or <a href="../../std/default/trait.Default.html">Default</a> implementation.</li>
 </ul>
-<p><a id="struct-private-fields-with-private"></a></p>
-<h3 id="minor-adding-or-removing-private-fields-when-at-least-one-already-exists"><a class="header" href="#minor-adding-or-removing-private-fields-when-at-least-one-already-exists">Minor: adding or removing private fields when at least one already exists</a></h3>
+<h3 id="struct-private-fields-with-private"><a class="header" href="#struct-private-fields-with-private">Minor: adding or removing private fields when at least one already exists</a></h3>
 <p>It is safe to add or remove private fields from a struct when the struct
 already has at least one private field.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -477,8 +494,7 @@ fn main() {
     let x = updated_crate::Foo::default();
     let y = x.0; // Error: is private
 }</code></pre>
-<p><a id="struct-tuple-normal-with-private"></a></p>
-<h3 id="minor-going-from-a-tuple-struct-with-all-private-fields-with-at-least-one-field-to-a-normal-struct-or-vice-versa"><a class="header" href="#minor-going-from-a-tuple-struct-with-all-private-fields-with-at-least-one-field-to-a-normal-struct-or-vice-versa">Minor: going from a tuple struct with all private fields (with at least one field) to a normal struct, or vice versa</a></h3>
+<h3 id="struct-tuple-normal-with-private"><a class="header" href="#struct-tuple-normal-with-private">Minor: going from a tuple struct with all private fields (with at least one field) to a normal struct, or vice versa</a></h3>
 <p>Changing a tuple struct to a normal struct (or vice-versa) is safe if all
 fields are private.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -503,8 +519,7 @@ fn main() {
 }</code></pre>
 <p>This is safe because existing code cannot use a <a href="../../reference/expressions/struct-expr.html">struct literal</a> to construct
 it, nor match its contents.</p>
-<p><a id="enum-variant-new"></a></p>
-<h3 id="major-adding-new-enum-variants-without-non_exhaustive"><a class="header" href="#major-adding-new-enum-variants-without-non_exhaustive">Major: adding new enum variants (without <code>non_exhaustive</code>)</a></h3>
+<h3 id="enum-variant-new"><a class="header" href="#enum-variant-new">Major: adding new enum variants (without <code>non_exhaustive</code>)</a></h3>
 <p>It is a breaking change to add a new enum variant if the enum does not use the
 <a href="../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> attribute.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -536,8 +551,7 @@ fn main() {
 <li>When introducing the enum, mark it as <a href="../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a>
 to force users to use <a href="../../reference/patterns.html#wildcard-pattern">wildcard patterns</a> to catch new variants.</li>
 </ul>
-<p><a id="enum-fields-new"></a></p>
-<h3 id="major-adding-new-fields-to-an-enum-variant"><a class="header" href="#major-adding-new-fields-to-an-enum-variant">Major: adding new fields to an enum variant</a></h3>
+<h3 id="enum-fields-new"><a class="header" href="#enum-fields-new">Major: adding new fields to an enum variant</a></h3>
 <p>It is a breaking change to add new fields to an enum variant because all
 fields are public, and constructors and matching will fail to compile.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -583,8 +597,7 @@ pub enum E {
 }</code></pre>
 </li>
 </ul>
-<p><a id="trait-new-item-no-default"></a></p>
-<h3 id="major-adding-a-non-defaulted-trait-item"><a class="header" href="#major-adding-a-non-defaulted-trait-item">Major: adding a non-defaulted trait item</a></h3>
+<h3 id="trait-new-item-no-default"><a class="header" href="#trait-new-item-no-default">Major: adding a non-defaulted trait item</a></h3>
 <p>It is a breaking change to add a non-defaulted item to a trait. This will
 break any implementors of the trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -612,8 +625,7 @@ items.</li>
 <li>When introducing the trait, use the <a href="https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed">sealed trait</a> technique to prevent
 users outside of the crate from implementing the trait.</li>
 </ul>
-<p><a id="trait-item-signature"></a></p>
-<h3 id="major-any-change-to-trait-item-signatures"><a class="header" href="#major-any-change-to-trait-item-signatures">Major: any change to trait item signatures</a></h3>
+<h3 id="trait-item-signature"><a class="header" href="#trait-item-signature">Major: any change to trait item signatures</a></h3>
 <p>It is a breaking change to make any change to a trait item signature. This can
 break external implementors of the trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -648,8 +660,7 @@ functionality instead of modifying existing items.</li>
 <li>When introducing the trait, use the <a href="https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed">sealed trait</a> technique to prevent
 users outside of the crate from implementing the trait.</li>
 </ul>
-<p><a id="trait-new-default-item"></a></p>
-<h3 id="possibly-breaking-adding-a-defaulted-trait-item"><a class="header" href="#possibly-breaking-adding-a-defaulted-trait-item">Possibly-breaking: adding a defaulted trait item</a></h3>
+<h3 id="trait-new-default-item"><a class="header" href="#trait-new-default-item">Possibly-breaking: adding a defaulted trait item</a></h3>
 <p>It is usually safe to add a defaulted trait item. However, this can sometimes
 cause a compile error. For example, this can introduce an ambiguity if a
 method of the same name exists in another trait.</p>
@@ -693,8 +704,7 @@ carefully to help avoid these collisions. Additionally, it may be acceptable
 to require downstream users to add <a href="../../reference/expressions/call-expr.html#disambiguating-function-calls">disambiguation syntax</a> to select the
 correct function when updating the dependency.</li>
 </ul>
-<p><a id="trait-object-safety"></a></p>
-<h3 id="major-adding-a-trait-item-that-makes-the-trait-non-object-safe"><a class="header" href="#major-adding-a-trait-item-that-makes-the-trait-non-object-safe">Major: adding a trait item that makes the trait non-object safe</a></h3>
+<h3 id="trait-object-safety"><a class="header" href="#trait-object-safety">Major: adding a trait item that makes the trait non-object safe</a></h3>
 <p>It is a breaking change to add a trait item that changes the trait to not be
 <a href="../../reference/items/traits.html#object-safety">object safe</a>.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -722,8 +732,7 @@ fn main() {
 }</code></pre>
 <p>It is safe to do the converse (making a non-object safe trait into a safe
 one).</p>
-<p><a id="trait-new-parameter-no-default"></a></p>
-<h3 id="major-adding-a-type-parameter-without-a-default"><a class="header" href="#major-adding-a-type-parameter-without-a-default">Major: adding a type parameter without a default</a></h3>
+<h3 id="trait-new-parameter-no-default"><a class="header" href="#trait-new-parameter-no-default">Major: adding a type parameter without a default</a></h3>
 <p>It is a breaking change to add a type parameter without a default to a trait.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
 
@@ -745,8 +754,7 @@ impl Trait for Foo {}  // Error: missing generics</code></pre>
 <ul>
 <li>See <a href="#trait-new-parameter-default">adding a defaulted trait type parameter</a>.</li>
 </ul>
-<p><a id="trait-new-parameter-default"></a></p>
-<h3 id="minor-adding-a-defaulted-trait-type-parameter"><a class="header" href="#minor-adding-a-defaulted-trait-type-parameter">Minor: adding a defaulted trait type parameter</a></h3>
+<h3 id="trait-new-parameter-default"><a class="header" href="#trait-new-parameter-default">Minor: adding a defaulted trait type parameter</a></h3>
 <p>It is safe to add a type parameter to a trait as long as it has a default.
 External implementors will use the default without needing to specify the
 parameter.</p>
@@ -766,8 +774,7 @@ use updated_crate::Trait;
 struct Foo;
 
 impl Trait for Foo {}</code></pre>
-<p><a id="impl-item-new"></a></p>
-<h3 id="possibly-breaking-change-adding-any-inherent-items"><a class="header" href="#possibly-breaking-change-adding-any-inherent-items">Possibly-breaking change: adding any inherent items</a></h3>
+<h3 id="impl-item-new"><a class="header" href="#impl-item-new">Possibly-breaking change: adding any inherent items</a></h3>
 <p>Usually adding inherent items to an implementation should be safe because
 inherent items take priority over trait items. However, in some cases the
 collision can cause problems if the name is the same as an implemented trait
@@ -811,8 +818,7 @@ carefully to help avoid these collisions. Additionally, it may be acceptable
 to require downstream users to add <a href="../../reference/expressions/call-expr.html#disambiguating-function-calls">disambiguation syntax</a> to select the
 correct function when updating the dependency.</li>
 </ul>
-<p><a id="generic-bounds-tighten"></a></p>
-<h3 id="major-tightening-generic-bounds"><a class="header" href="#major-tightening-generic-bounds">Major: tightening generic bounds</a></h3>
+<h3 id="generic-bounds-tighten"><a class="header" href="#generic-bounds-tighten">Major: tightening generic bounds</a></h3>
 <p>It is a breaking change to tighten generic bounds on a type since this can
 break users expecting the looser bounds.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -836,8 +842,7 @@ use updated_crate::Foo;
 fn main() {
     let s = Foo { f1: 1.23 }; // Error: the trait bound `{float}: Eq` is not satisfied
 }</code></pre>
-<p><a id="generic-bounds-loosen"></a></p>
-<h3 id="minor-loosening-generic-bounds"><a class="header" href="#minor-loosening-generic-bounds">Minor: loosening generic bounds</a></h3>
+<h3 id="generic-bounds-loosen"><a class="header" href="#generic-bounds-loosen">Minor: loosening generic bounds</a></h3>
 <p>It is safe to loosen the generic bounds on a type, as it only expands what is
 allowed.</p>
 <pre><code class="language-rust ignore">// MINOR CHANGE
@@ -861,8 +866,7 @@ use updated_crate::Foo;
 fn main() {
     let s = Foo { f1: 123 };
 }</code></pre>
-<p><a id="generic-new-default"></a></p>
-<h3 id="minor-adding-defaulted-type-parameters"><a class="header" href="#minor-adding-defaulted-type-parameters">Minor: adding defaulted type parameters</a></h3>
+<h3 id="generic-new-default"><a class="header" href="#generic-new-default">Minor: adding defaulted type parameters</a></h3>
 <p>It is safe to add a type parameter to a type as long as it has a default. All
 existing references will use the default without needing to specify the
 parameter.</p>
@@ -887,8 +891,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo = Default::default();
 }</code></pre>
-<p><a id="generic-generalize-identical"></a></p>
-<h3 id="minor-generalizing-a-type-to-use-generics-with-identical-types"><a class="header" href="#minor-generalizing-a-type-to-use-generics-with-identical-types">Minor: generalizing a type to use generics (with identical types)</a></h3>
+<h3 id="generic-generalize-identical"><a class="header" href="#generic-generalize-identical">Minor: generalizing a type to use generics (with identical types)</a></h3>
 <p>A struct or enum field can change from a concrete type to a generic type
 parameter, provided that the change results in an identical type for all
 existing use cases. For example, the following change is permitted:</p>
@@ -911,8 +914,7 @@ fn main() {
 }</code></pre>
 <p>because existing uses of <code>Foo</code> are shorthand for <code>Foo&lt;u8&gt;</code> which yields the
 identical field type.</p>
-<p><a id="generic-generalize-different"></a></p>
-<h3 id="major-generalizing-a-type-to-use-generics-with-possibly-different-types"><a class="header" href="#major-generalizing-a-type-to-use-generics-with-possibly-different-types">Major: generalizing a type to use generics (with possibly different types)</a></h3>
+<h3 id="generic-generalize-different"><a class="header" href="#generic-generalize-different">Major: generalizing a type to use generics (with possibly different types)</a></h3>
 <p>Changing a struct or enum field from a concrete type to a generic type
 parameter can break if the type can change.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
@@ -932,8 +934,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo&lt;f32&gt; = Foo(3.14, 123); // Error: mismatched types
 }</code></pre>
-<p><a id="generic-more-generic"></a></p>
-<h3 id="minor-changing-a-generic-type-to-a-more-generic-type"><a class="header" href="#minor-changing-a-generic-type-to-a-more-generic-type">Minor: changing a generic type to a more generic type</a></h3>
+<h3 id="generic-more-generic"><a class="header" href="#generic-more-generic">Minor: changing a generic type to a more generic type</a></h3>
 <p>It is safe to change a generic type to a more generic one. For example, the
 following adds a generic parameter that defaults to the original type, which
 is safe because all existing users will be using the same type for both
@@ -955,8 +956,7 @@ use updated_crate::Foo;
 fn main() {
     let s: Foo&lt;f32&gt; = Foo(1.0, 2.0);
 }</code></pre>
-<p><a id="fn-change-arity"></a></p>
-<h3 id="major-addingremoving-function-parameters"><a class="header" href="#major-addingremoving-function-parameters">Major: adding/removing function parameters</a></h3>
+<h3 id="fn-change-arity"><a class="header" href="#fn-change-arity">Major: adding/removing function parameters</a></h3>
 <p>Changing the arity of a function is a breaking change.</p>
 <pre><code class="language-rust ignore">// MAJOR CHANGE
 
@@ -981,8 +981,7 @@ fn main() {
 with the builder pattern. This allows new fields to be added to the struct
 in the future.</li>
 </ul>
-<p><a id="fn-generic-new"></a></p>
-<h3 id="possibly-breaking-introducing-a-new-function-type-parameter"><a class="header" href="#possibly-breaking-introducing-a-new-function-type-parameter">Possibly-breaking: introducing a new function type parameter</a></h3>
+<h3 id="fn-generic-new"><a class="header" href="#fn-generic-new">Possibly-breaking: introducing a new function type parameter</a></h3>
 <p>Usually, adding a non-defaulted type parameter is safe, but in some
 cases it can be a breaking change:</p>
 <pre><code class="language-rust ignore">// Breaking change example
@@ -1006,8 +1005,7 @@ fn main() {
 other ways) that this breakage is usually acceptable. One should take into
 account how likely it is that the function in question is being called with
 explicit type arguments.</p>
-<p><a id="fn-generalize-compatible"></a></p>
-<h3 id="minor-generalizing-a-function-to-use-generics-supporting-original-type"><a class="header" href="#minor-generalizing-a-function-to-use-generics-supporting-original-type">Minor: generalizing a function to use generics (supporting original type)</a></h3>
+<h3 id="fn-generalize-compatible"><a class="header" href="#fn-generalize-compatible">Minor: generalizing a function to use generics (supporting original type)</a></h3>
 <p>The type of a parameter to a function, or its return value, can be
 <em>generalized</em> to use generics, including by introducing a new type parameter,
 as long as it can be instantiated to the original type. For example, the
@@ -1089,8 +1087,7 @@ use updated_crate::foo;
 fn main() {
     let x = foo(); // Error: type annotations needed
 }</code></pre>
-<p><a id="fn-generalize-mismatch"></a></p>
-<h3 id="major-generalizing-a-function-to-use-generics-with-type-mismatch"><a class="header" href="#major-generalizing-a-function-to-use-generics-with-type-mismatch">Major: generalizing a function to use generics with type mismatch</a></h3>
+<h3 id="fn-generalize-mismatch"><a class="header" href="#fn-generalize-mismatch">Major: generalizing a function to use generics with type mismatch</a></h3>
 <p>It is a breaking change to change a function parameter or return type if the
 generic type constrains or changes the types previously allowed. For example,
 the following adds a generic constraint that may not be satisfied by existing
@@ -1112,8 +1109,7 @@ use updated_crate::foo;
 fn main() {
     foo(vec![1, 2, 3]); // Error: `Copy` is not implemented for `Vec&lt;u8&gt;`
 }</code></pre>
-<p><a id="fn-unsafe-safe"></a></p>
-<h3 id="minor-making-an-unsafe-function-safe"><a class="header" href="#minor-making-an-unsafe-function-safe">Minor: making an <code>unsafe</code> function safe</a></h3>
+<h3 id="fn-unsafe-safe"><a class="header" href="#fn-unsafe-safe">Minor: making an <code>unsafe</code> function safe</a></h3>
 <p>A previously <code>unsafe</code> function can be made safe without breaking code.</p>
 <p>Note however that it may cause the <a href="../../rustc/lints/listing/warn-by-default.html#unused-unsafe"><code>unused_unsafe</code></a> lint to
 trigger as in the example below, which will cause local crates that have
@@ -1145,8 +1141,7 @@ fn main() {
 <p>Making a previously <code>unsafe</code> associated function or method on structs / enums
 safe is also a minor change, while the same is not true for associated
 function on traits (see <a href="#trait-item-signature">any change to trait item signatures</a>).</p>
-<p><a id="attr-no-std-to-std"></a></p>
-<h3 id="major-switching-from-no_std-support-to-requiring-std"><a class="header" href="#major-switching-from-no_std-support-to-requiring-std">Major: switching from <code>no_std</code> support to requiring <code>std</code></a></h3>
+<h3 id="attr-no-std-to-std"><a class="header" href="#attr-no-std-to-std">Major: switching from <code>no_std</code> support to requiring <code>std</code></a></h3>
 <p>If your library specifically supports a <a href="../../reference/names/preludes.html#the-no_std-attribute"><code>no_std</code></a> environment, it is a
 breaking change to make a new release that requires <code>std</code>.</p>
 <pre><code class="language-rust ignore skip">// MAJOR CHANGE
@@ -1177,8 +1172,7 @@ fn example() {
 optionally enables <code>std</code> support, and when the feature is off, the library
 can be used in a <code>no_std</code> environment.</li>
 </ul>
-<p><a id="attr-adding-non-exhaustive"></a></p>
-<h3 id="major-adding-non_exhaustive-to-an-existing-enum-variant-or-struct-with-no-private-fields"><a class="header" href="#major-adding-non_exhaustive-to-an-existing-enum-variant-or-struct-with-no-private-fields">Major: adding <code>non_exhaustive</code> to an existing enum, variant, or struct with no private fields</a></h3>
+<h3 id="attr-adding-non-exhaustive"><a class="header" href="#attr-adding-non-exhaustive">Major: adding <code>non_exhaustive</code> to an existing enum, variant, or struct with no private fields</a></h3>
 <p>Making items <a href="../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> changes how they may
 be used outside the crate where they are defined:</p>
 <ul>
@@ -1257,8 +1251,7 @@ fn main() {
 rather than adding <a href="../../reference/attributes/type_system.html#the-non_exhaustive-attribute"><code>#[non_exhaustive]</code></a> later on.</li>
 </ul>
 <h2 id="tooling-and-environment-compatibility"><a class="header" href="#tooling-and-environment-compatibility">Tooling and environment compatibility</a></h2>
-<p><a id="env-new-rust"></a></p>
-<h3 id="possibly-breaking-changing-the-minimum-version-of-rust-required"><a class="header" href="#possibly-breaking-changing-the-minimum-version-of-rust-required">Possibly-breaking: changing the minimum version of Rust required</a></h3>
+<h3 id="env-new-rust"><a class="header" href="#env-new-rust">Possibly-breaking: changing the minimum version of Rust required</a></h3>
 <p>Introducing the use of new features in a new release of Rust can break
 projects that are using older versions of Rust. This also includes using new
 features in a new release of Cargo, and requiring the use of a nightly-only
@@ -1283,8 +1276,7 @@ of important bugfixes.</li>
 mechanism for new features. These are currently unstable and only available
 in the nightly channel.</li>
 </ul>
-<p><a id="env-change-requirements"></a></p>
-<h3 id="possibly-breaking-changing-the-platform-and-environment-requirements"><a class="header" href="#possibly-breaking-changing-the-platform-and-environment-requirements">Possibly-breaking: changing the platform and environment requirements</a></h3>
+<h3 id="env-change-requirements"><a class="header" href="#env-change-requirements">Possibly-breaking: changing the platform and environment requirements</a></h3>
 <p>There is a very wide range of assumptions a library makes about the
 environment that it runs in, such as the host platform, operating system
 version, available services, filesystem support, etc. It can be a breaking
@@ -1302,8 +1294,7 @@ reasonable to also discontinue support.</p>
 <li>Document the platforms and environments you specifically support.</li>
 <li>Test your code on a wide range of environments in CI.</li>
 </ul>
-<p><a id="new-lints"></a></p>
-<h3 id="minor-introducing-new-lints"><a class="header" href="#minor-introducing-new-lints">Minor: introducing new lints</a></h3>
+<h3 id="new-lints"><a class="header" href="#new-lints">Minor: introducing new lints</a></h3>
 <p>Some changes to a library may cause new lints to be triggered in users of that library.
 This should generally be considered a compatible change.</p>
 <pre><code class="language-rust ignore dont-deny">// MINOR CHANGE
@@ -1345,8 +1336,7 @@ This allows users to choose when to respond to deprecations without needing to i
 A downside is that it can be difficult to communicate to users that they need to take these manual steps to prepare for a major update.</li>
 </ul>
 <h3 id="cargo"><a class="header" href="#cargo">Cargo</a></h3>
-<p><a id="cargo-feature-add"></a></p>
-<h4 id="minor-adding-a-new-cargo-feature"><a class="header" href="#minor-adding-a-new-cargo-feature">Minor: adding a new Cargo feature</a></h4>
+<h4 id="cargo-feature-add"><a class="header" href="#cargo-feature-add">Minor: adding a new Cargo feature</a></h4>
 <p>It is usually safe to add new <a href="features.html">Cargo features</a>. If the feature introduces new
 changes that cause a breaking change, this can cause difficulties for projects
 that have stricter backwards-compatibility needs. In that scenario, avoid
@@ -1364,8 +1354,7 @@ consequences of enabling the feature.</p>
 [features]
 std = []
 </code></pre>
-<p><a id="cargo-feature-remove"></a></p>
-<h4 id="major-removing-a-cargo-feature"><a class="header" href="#major-removing-a-cargo-feature">Major: removing a Cargo feature</a></h4>
+<h4 id="cargo-feature-remove"><a class="header" href="#cargo-feature-remove">Major: removing a Cargo feature</a></h4>
 <p>It is usually a breaking change to remove <a href="features.html">Cargo features</a>. This will cause
 an error for any project that enabled the feature.</p>
 <pre><code class="language-toml"># MAJOR CHANGE
@@ -1388,8 +1377,7 @@ feature, mark it as such, so that users know the status of the feature.</li>
 functionality. Document that the feature is deprecated, and remove it in a
 future major SemVer release.</li>
 </ul>
-<p><a id="cargo-feature-remove-another"></a></p>
-<h4 id="major-removing-a-feature-from-a-feature-list-if-that-changes-functionality-or-public-items"><a class="header" href="#major-removing-a-feature-from-a-feature-list-if-that-changes-functionality-or-public-items">Major: removing a feature from a feature list if that changes functionality or public items</a></h4>
+<h4 id="cargo-feature-remove-another"><a class="header" href="#cargo-feature-remove-another">Major: removing a feature from a feature list if that changes functionality or public items</a></h4>
 <p>If removing a feature from another feature, this can break existing users if
 they are expecting that functionality to be available through that feature.</p>
 <pre><code class="language-toml"># Breaking change example
@@ -1406,8 +1394,7 @@ std = []
 default = []  # This may cause packages to fail if they are expecting std to be enabled.
 std = []
 </code></pre>
-<p><a id="cargo-remove-opt-dep"></a></p>
-<h4 id="possibly-breaking-removing-an-optional-dependency"><a class="header" href="#possibly-breaking-removing-an-optional-dependency">Possibly-breaking: removing an optional dependency</a></h4>
+<h4 id="cargo-remove-opt-dep"><a class="header" href="#cargo-remove-opt-dep">Possibly-breaking: removing an optional dependency</a></h4>
 <p>Removing an optional dependency can break a project using your library because
 another project may be enabling that dependency via <a href="features.html">Cargo features</a>.</p>
 <pre><code class="language-toml"># Breaking change example
@@ -1437,8 +1424,7 @@ example, if your library has optional support for something like
 optional dependencies necessary to implement “networking”. Then document the
 “networking” feature.</li>
 </ul>
-<p><a id="cargo-change-dep-feature"></a></p>
-<h4 id="minor-changing-dependency-features"><a class="header" href="#minor-changing-dependency-features">Minor: changing dependency features</a></h4>
+<h4 id="cargo-change-dep-feature"><a class="header" href="#cargo-change-dep-feature">Minor: changing dependency features</a></h4>
 <p>It is usually safe to change the features on a dependency, as long as the
 feature does not introduce a breaking change.</p>
 <pre><code class="language-toml"># MINOR CHANGE
@@ -1454,8 +1440,7 @@ rand = { version = &quot;0.7.3&quot;, features = [&quot;small_rng&quot;] }
 [dependencies]
 rand = &quot;0.7.3&quot;
 </code></pre>
-<p><a id="cargo-dep-add"></a></p>
-<h4 id="minor-adding-dependencies"><a class="header" href="#minor-adding-dependencies">Minor: adding dependencies</a></h4>
+<h4 id="cargo-dep-add"><a class="header" href="#cargo-dep-add">Minor: adding dependencies</a></h4>
 <p>It is usually safe to add new dependencies, as long as the new dependency
 does not introduce new requirements that result in a breaking change.
 For example, adding a new dependency that requires nightly in a project

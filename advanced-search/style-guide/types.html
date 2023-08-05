@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Types - The Rust Style Guide</title>
+        <title>Types and Bounds - The Rust Style Guide</title>
 
 
         <!-- Custom HTML head -->
@@ -83,16 +83,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Module-level items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html" class="active"><strong aria-hidden="true">4.</strong> Types</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Non-formatting conventions</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Principles used for deciding these guidelines</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html" class="active"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li><li class="chapter-item expanded "><a href="editions.html"><strong aria-hidden="true">8.</strong> Rust style editions</a></li><li class="chapter-item expanded "><a href="nightly.html"><strong aria-hidden="true">9.</strong> Nightly-only syntax</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -147,23 +169,23 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="types-and-bounds"><a class="header" href="#types-and-bounds">Types and Bounds</a></h2>
-<h3 id="single-line-formatting"><a class="header" href="#single-line-formatting">Single line formatting</a></h3>
+                        <h1 id="types-and-bounds"><a class="header" href="#types-and-bounds">Types and Bounds</a></h1>
+<h2 id="single-line-formatting"><a class="header" href="#single-line-formatting">Single line formatting</a></h2>
 <ul>
 <li><code>[T]</code> no spaces</li>
 <li><code>[T; expr]</code>, e.g., <code>[u32; 42]</code>, <code>[Vec&lt;Foo&gt;; 10 * 2 + foo()]</code> (space after colon, no spaces around square brackets)</li>
 <li><code>*const T</code>, <code>*mut T</code> (no space after <code>*</code>, space before type)</li>
 <li><code>&amp;'a T</code>, <code>&amp;T</code>, <code>&amp;'a mut T</code>, <code>&amp;mut T</code> (no space after <code>&amp;</code>, single spaces separating other words)</li>
 <li><code>unsafe extern &quot;C&quot; fn&lt;'a, 'b, 'c&gt;(T, U, V) -&gt; W</code> or <code>fn()</code> (single spaces around keywords and sigils, and after commas, no trailing commas, no spaces around brackets)</li>
-<li><code>!</code> should be treated like any other type name, <code>Name</code></li>
+<li><code>!</code> gets treated like any other type name, <code>Name</code></li>
 <li><code>(A, B, C, D)</code> (spaces after commas, no spaces around parens, no trailing comma unless it is a one-tuple)</li>
 <li><code>&lt;Baz&lt;T&gt; as SomeTrait&gt;::Foo::Bar</code> or <code>Foo::Bar</code> or <code>::Foo::Bar</code> (no spaces around <code>::</code> or angle brackets, single spaces around <code>as</code>)</li>
 <li><code>Foo::Bar&lt;T, U, V&gt;</code> (spaces after commas, no trailing comma, no spaces around angle brackets)</li>
 <li><code>T + T + T</code> (single spaces between types, and <code>+</code>).</li>
 <li><code>impl T + T + T</code> (single spaces between keyword, types, and <code>+</code>).</li>
 </ul>
-<p>Parentheses used in types should not be surrounded by whitespace, e.g., <code>(Foo)</code></p>
-<h3 id="line-breaks"><a class="header" href="#line-breaks">Line breaks</a></h3>
+<p>Do not put space around parentheses used in types, e.g., <code>(Foo)</code></p>
+<h2 id="line-breaks"><a class="header" href="#line-breaks">Line breaks</a></h2>
 <p>Avoid breaking lines in types where possible. Prefer breaking at outermost scope, e.g., prefer</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -180,10 +202,13 @@
     Type2,
 &gt;&gt;
 <span class="boring">}</span></code></pre></pre>
-<p><code>[T; expr]</code> may be broken after the <code>;</code> if necessary.</p>
-<p>Function types may be broken following the rules for function declarations.</p>
-<p>Generic types may be broken following the rules for generics.</p>
-<p>Types with <code>+</code> may be broken after any <code>+</code> using block indent and breaking before the <code>+</code>. When breaking such a type, all <code>+</code>s should be line broken, e.g.,</p>
+<p>If a type requires line-breaks in order to fit, this section outlines where to
+break such types if necessary.</p>
+<p>Break <code>[T; expr]</code> after the <code>;</code> if necessary.</p>
+<p>Break function types following the rules for function declarations.</p>
+<p>Break generic types following the rules for generics.</p>
+<p>Break types with <code>+</code> by breaking before the <code>+</code> and block-indenting the
+subsequent lines. When breaking such a type, break before <em>every</em> <code>+</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Clone

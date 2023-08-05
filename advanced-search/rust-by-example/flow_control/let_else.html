@@ -88,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -150,13 +172,13 @@
                         <h1 id="let-else"><a class="header" href="#let-else">let-else</a></h1>
 <blockquote>
 <p>🛈 stable since: rust 1.65</p>
+<p>🛈 you can target specific edition by compiling like this
+<code>rustc --edition=2021 main.rs</code></p>
 </blockquote>
 <p>With <code>let</code>-<code>else</code>, a refutable pattern can match and bind variables
 in the surrounding scope like a normal <code>let</code>, or else diverge (e.g. <code>break</code>,
 <code>return</code>, <code>panic!</code>) when the pattern doesn't match.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use std::str::FromStr;
+<pre><pre class="playground"><code class="language-rust edition2021">use std::str::FromStr;
 
 fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     let mut it = s.split(' ');
@@ -169,8 +191,9 @@ fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
     (count, item)
 }
 
-assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
-<span class="boring">}</span></code></pre></pre>
+fn main() {
+    assert_eq!(get_count_item(&quot;3 chairs&quot;), (3, &quot;chairs&quot;));
+}</code></pre></pre>
 <p>The scope of name bindings is the main thing that makes this different from
 <code>match</code> or <code>if let</code>-<code>else</code> expressions. You could previously approximate these
 patterns with an unfortunate bit of repetition and an outer <code>let</code>:</p>
