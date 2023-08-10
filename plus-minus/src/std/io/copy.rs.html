@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/copy.rs`."><title>copy.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f54dae90f11e879b.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.72.0" data-rustdoc-version="1.72.0-dev" data-channel="nightly" data-search-js="search-c507e026dd61038c.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-a2af8df5fead9d99.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files1.72.0.js"></script><script defer src="../../../static.files/main-3f1c0f808a5d7250.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-a2af8df5fead9d99.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/io/copy.rs`."><title>copy.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-8709040e3dfbc4a3.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-4c422e7f073bdaa3.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-3f1c0f808a5d7250.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-4c422e7f073bdaa3.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -245,7 +245,88 @@
 <a href="#245" id="245">245</a>
 <a href="#246" id="246">246</a>
 <a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{BorrowedBuf, BufReader, BufWriter, ErrorKind, Read, <span class="prelude-ty">Result</span>, Write, DEFAULT_BUF_SIZE};
+<span class="kw">use </span><span class="kw">crate</span>::alloc::Allocator;
+<span class="kw">use </span><span class="kw">crate</span>::cmp;
+<span class="kw">use </span><span class="kw">crate</span>::collections::VecDeque;
+<span class="kw">use </span><span class="kw">crate</span>::io::IoSlice;
 <span class="kw">use </span><span class="kw">crate</span>::mem::MaybeUninit;
 
 <span class="attr">#[cfg(test)]
@@ -333,7 +414,7 @@
 
 <span class="doccomment">/// Specialization of the read-write loop that reuses the internal
 /// buffer of a BufReader. If there&#39;s no buffer then the writer side
-/// should be used intead.
+/// should be used instead.
 </span><span class="kw">trait </span>BufferedReaderSpec {
     <span class="kw">fn </span>buffer_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize;
 
@@ -351,7 +432,39 @@
     </span>}
 
     default <span class="kw">fn </span>copy_to(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _to: <span class="kw-2">&amp;mut </span>(<span class="kw">impl </span>Write + <span class="question-mark">?</span>Sized)) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
-        <span class="macro">unimplemented!</span>(<span class="string">&quot;only called from specializations&quot;</span>);
+        <span class="macro">unreachable!</span>(<span class="string">&quot;only called from specializations&quot;</span>)
+    }
+}
+
+<span class="kw">impl </span>BufferedReaderSpec <span class="kw">for </span><span class="kw-2">&amp;</span>[u8] {
+    <span class="kw">fn </span>buffer_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="comment">// prefer this specialization since the source &quot;buffer&quot; is all we&#39;ll ever need,
+        // even if it&#39;s small
+        </span>usize::MAX
+    }
+
+    <span class="kw">fn </span>copy_to(<span class="kw-2">&amp;mut </span><span class="self">self</span>, to: <span class="kw-2">&amp;mut </span>(<span class="kw">impl </span>Write + <span class="question-mark">?</span>Sized)) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
+        <span class="kw">let </span>len = <span class="self">self</span>.len();
+        to.write_all(<span class="self">self</span>)<span class="question-mark">?</span>;
+        <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">&amp;</span><span class="self">self</span>[len..];
+        <span class="prelude-val">Ok</span>(len <span class="kw">as </span>u64)
+    }
+}
+
+<span class="kw">impl</span>&lt;A: Allocator&gt; BufferedReaderSpec <span class="kw">for </span>VecDeque&lt;u8, A&gt; {
+    <span class="kw">fn </span>buffer_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="comment">// prefer this specialization since the source &quot;buffer&quot; is all we&#39;ll ever need,
+        // even if it&#39;s small
+        </span>usize::MAX
+    }
+
+    <span class="kw">fn </span>copy_to(<span class="kw-2">&amp;mut </span><span class="self">self</span>, to: <span class="kw-2">&amp;mut </span>(<span class="kw">impl </span>Write + <span class="question-mark">?</span>Sized)) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
+        <span class="kw">let </span>len = <span class="self">self</span>.len();
+        <span class="kw">let </span>(front, back) = <span class="self">self</span>.as_slices();
+        <span class="kw">let </span>bufs = <span class="kw-2">&amp;mut </span>[IoSlice::new(front), IoSlice::new(back)];
+        to.write_all_vectored(bufs)<span class="question-mark">?</span>;
+        <span class="self">self</span>.clear();
+        <span class="prelude-val">Ok</span>(len <span class="kw">as </span>u64)
     }
 }
 
@@ -462,6 +575,47 @@
                 init = <span class="number">0</span>;
             }
         }
+    }
+}
+
+<span class="kw">impl</span>&lt;A: Allocator&gt; BufferedWriterSpec <span class="kw">for </span>Vec&lt;u8, A&gt; {
+    <span class="kw">fn </span>buffer_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        cmp::max(DEFAULT_BUF_SIZE, <span class="self">self</span>.capacity() - <span class="self">self</span>.len())
+    }
+
+    <span class="kw">fn </span>copy_from&lt;R: Read + <span class="question-mark">?</span>Sized&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reader: <span class="kw-2">&amp;mut </span>R) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="number">0</span>;
+
+        <span class="comment">// avoid allocating before we have determined that there&#39;s anything to read
+        </span><span class="kw">if </span><span class="self">self</span>.capacity() == <span class="number">0 </span>{
+            bytes = stack_buffer_copy(<span class="kw-2">&amp;mut </span>reader.take(DEFAULT_BUF_SIZE <span class="kw">as </span>u64), <span class="self">self</span>)<span class="question-mark">?</span>;
+            <span class="kw">if </span>bytes == <span class="number">0 </span>{
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
+            }
+        }
+
+        <span class="kw">loop </span>{
+            <span class="self">self</span>.reserve(DEFAULT_BUF_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>buf: BorrowedBuf&lt;<span class="lifetime">&#39;_</span>&gt; = <span class="self">self</span>.spare_capacity_mut().into();
+            <span class="kw">match </span>reader.read_buf(buf.unfilled()) {
+                <span class="prelude-val">Ok</span>(()) =&gt; {}
+                <span class="prelude-val">Err</span>(e) <span class="kw">if </span>e.kind() == ErrorKind::Interrupted =&gt; <span class="kw">continue</span>,
+                <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
+            };
+
+            <span class="kw">let </span>read = buf.filled().len();
+            <span class="kw">if </span>read == <span class="number">0 </span>{
+                <span class="kw">break</span>;
+            }
+
+            <span class="comment">// SAFETY: BorrowedBuf guarantees all of its filled bytes are init
+            // and the number of read bytes can&#39;t exceed the spare capacity since
+            // that&#39;s what the buffer is borrowing from.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.set_len(<span class="self">self</span>.len() + read) };
+            bytes += read <span class="kw">as </span>u64;
+        }
+
+        <span class="prelude-val">Ok</span>(bytes)
     }
 }
 

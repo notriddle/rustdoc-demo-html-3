@@ -84,16 +84,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="items.html"><strong aria-hidden="true">1.</strong> Items</a></li><li class="chapter-item expanded "><a href="statements.html"><strong aria-hidden="true">2.</strong> Statements</a></li><li class="chapter-item expanded "><a href="expressions.html"><strong aria-hidden="true">3.</strong> Expressions</a></li><li class="chapter-item expanded "><a href="types.html"><strong aria-hidden="true">4.</strong> Types and Bounds</a></li><li class="chapter-item expanded "><a href="advice.html"><strong aria-hidden="true">5.</strong> Other style advice</a></li><li class="chapter-item expanded "><a href="cargo.html"><strong aria-hidden="true">6.</strong> Cargo.toml conventions</a></li><li class="chapter-item expanded "><a href="principles.html"><strong aria-hidden="true">7.</strong> Guiding principles and rationale</a></li><li class="chapter-item expanded "><a href="editions.html"><strong aria-hidden="true">8.</strong> Rust style editions</a></li><li class="chapter-item expanded "><a href="nightly.html"><strong aria-hidden="true">9.</strong> Nightly-only syntax</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -177,10 +199,9 @@ options.</p>
 <h3 id="indentation-and-line-width"><a class="header" href="#indentation-and-line-width">Indentation and line width</a></h3>
 <ul>
 <li>Use spaces, not tabs.</li>
-<li>Each level of indentation must be four spaces (that is, all indentation
-outside of string literals and comments must be a multiple of four).</li>
+<li>Each level of indentation must be 4 spaces (that is, all indentation
+outside of string literals and comments must be a multiple of 4).</li>
 <li>The maximum width for a line is 100 characters.</li>
-<li>A tool may choose to make some of these configurable.</li>
 </ul>
 <h4 id="block-indent"><a class="header" href="#block-indent">Block indent</a></h4>
 <p>Prefer block indent over visual indent:</p>
@@ -199,7 +220,8 @@ a_function_call(foo,
 <p>This makes for smaller diffs (e.g., if <code>a_function_call</code> is renamed in the above
 example) and less rightward drift.</p>
 <h3 id="trailing-commas"><a class="header" href="#trailing-commas">Trailing commas</a></h3>
-<p>Lists should have a trailing comma when followed by a newline:</p>
+<p>In comma-separated lists of any kind, use a trailing comma when followed by a
+newline:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>function_call(
@@ -231,7 +253,6 @@ two newlines). E.g,</p>
 fn bar() {}
 fn baz() {}
 <span class="boring">}</span></code></pre></pre>
-<p>Formatting tools may wish to make the bounds on blank lines configurable.</p>
 <h3 id="module-level-items"><a class="header" href="#module-level-items"><a href="items.html">Module-level items</a></a></h3>
 <h3 id="statements"><a class="header" href="#statements"><a href="statements.html">Statements</a></a></h3>
 <h3 id="expressions"><a class="header" href="#expressions"><a href="expressions.html">Expressions</a></a></h3>
@@ -240,15 +261,15 @@ fn baz() {}
 <p>The following guidelines for comments are recommendations only, a mechanical
 formatter might skip formatting of comments.</p>
 <p>Prefer line comments (<code>//</code>) to block comments (<code>/* ... */</code>).</p>
-<p>When using line comments there should be a single space after the opening sigil.</p>
-<p>When using single-line block comments there should be a single space after the
-opening sigil and before the closing sigil. Multi-line block comments should
-have a newline after the opening sigil and before the closing sigil.</p>
-<p>Prefer to put a comment on its own line. Where a comment follows code, there
-should be a single space before it. Where a block comment is inline, there
-should be surrounding whitespace as if it were an identifier or keyword. There
-should be no trailing whitespace after a comment or at the end of any line in a
-multi-line comment. Examples:</p>
+<p>When using line comments, put a single space after the opening sigil.</p>
+<p>When using single-line block comments, put a single space after the opening
+sigil and before the closing sigil. For multi-line block comments, put a
+newline after the opening sigil, and a newline before the closing sigil.</p>
+<p>Prefer to put a comment on its own line. Where a comment follows code, put a
+single space before it. Where a block comment appears inline, use surrounding
+whitespace as if it were an identifier or keyword. Do not include trailing
+whitespace after a comment or at the end of any line in a multi-line comment.
+Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// A comment on an item.
@@ -291,7 +312,7 @@ smaller:</p>
 <p>Prefer line comments (<code>///</code>) to block comments (<code>/** ... */</code>).</p>
 <p>Prefer outer doc comments (<code>///</code> or <code>/** ... */</code>), only use inner doc comments
 (<code>//!</code> and <code>/*! ... */</code>) to write module-level or crate-level documentation.</p>
-<p>Doc comments should come before attributes.</p>
+<p>Put doc comments before attributes.</p>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p>Put each attribute on its own line, indented to the level of the item.
 In the case of inner attributes (<code>#!</code>), indent it to the level of the inside of
@@ -301,20 +322,28 @@ the item. Prefer outer attributes, where possible.</p>
 </span><span class="boring">fn main() {
 </span>#[repr(C)]
 #[foo(foo, bar)]
+#[long_multi_line_attribute(
+    split,
+    across,
+    lines,
+)]
 struct CRepr {
     #![repr(C)]
     x: f32,
     y: f32,
 }
 <span class="boring">}</span></code></pre></pre>
-<p>For attributes with an equal sign, there should be a single space before and
-after the <code>=</code>, e.g., <code>#[foo = 42]</code>.</p>
+<p>For attributes with an equal sign, put a single space before and after the <code>=</code>,
+e.g., <code>#[foo = 42]</code>.</p>
 <p>There must only be a single <code>derive</code> attribute. Note for tool authors: if
 combining multiple <code>derive</code> attributes into a single attribute, the ordering of
-the derived names should be preserved. E.g., <code>#[derive(bar)] #[derive(foo)] struct Baz;</code> should be formatted to <code>#[derive(bar, foo)] struct Baz;</code>.</p>
+the derived names must generally be preserved for correctness:
+<code>#[derive(Foo)] #[derive(Bar)] struct Baz;</code> must be formatted to
+<code>#[derive(Foo, Bar)] struct Baz;</code>.</p>
 <h3 id="small-items"><a class="header" href="#small-items"><em>small</em> items</a></h3>
-<p>In many places in this guide we specify that a formatter may format an item
-differently if it is <em>small</em>, for example struct literals:</p>
+<p>In many places in this guide we specify formatting that depends on a code
+construct being <em>small</em>. For example, single-line vs multi-line struct
+literals:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// Normal formatting
@@ -323,7 +352,7 @@ Foo {
     f2: another_expression(),
 }
 
-// *small* formatting
+// &quot;small&quot; formatting
 Foo { f1, f2 }
 <span class="boring">}</span></code></pre></pre>
 <p>We leave it to individual tools to decide on exactly what <em>small</em> means. In
@@ -333,12 +362,10 @@ circumstances.</p>
 complexity of an item (for example, that all components must be simple names,
 not more complex sub-expressions). For more discussion on suitable heuristics,
 see <a href="https://github.com/rust-lang-nursery/fmt-rfcs/issues/47">this issue</a>.</p>
-<p>Tools should give the user an option to ignore such heuristics and always use
-the normal formatting.</p>
 <h2 id="non-formatting-conventions"><a class="header" href="#non-formatting-conventions"><a href="advice.html">Non-formatting conventions</a></a></h2>
 <h2 id="cargotoml-conventions"><a class="header" href="#cargotoml-conventions"><a href="cargo.html">Cargo.toml conventions</a></a></h2>
 <h2 id="principles-used-for-deciding-these-guidelines"><a class="header" href="#principles-used-for-deciding-these-guidelines"><a href="principles.html">Principles used for deciding these guidelines</a></a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="items"><a class="header" href="#items">Items</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="items"><a class="header" href="#items">Items</a></h1>
 <p>Items consist of the set of things permitted at the top level of a module.
 However, Rust also allows some items to appear within some other types of
 items, such as within a function. The same formatting conventions apply whether
@@ -346,15 +373,14 @@ an item appears at module level or within another item.</p>
 <p><code>extern crate</code> statements must be first in a file. They must be ordered
 alphabetically.</p>
 <p><code>use</code> statements, and module <em>declarations</em> (<code>mod foo;</code>, not <code>mod { ... }</code>)
-must come before other items. We recommend that imports come before module
-declarations; if imports and modules are separated, then they should be ordered
-alphabetically. When sorting, <code>self</code> and <code>super</code> must come before any other
-names. Module declarations should not be moved if they are annotated with
-<code>#[macro_use]</code>, since that may be semantics changing.</p>
-<p>Tools should make the above ordering optional.</p>
-<h3 id="function-definitions"><a class="header" href="#function-definitions">Function definitions</a></h3>
+must come before other items. Put imports before module declarations. Sort each
+alphabetically, except that <code>self</code> and <code>super</code> must come before any other
+names.</p>
+<p>Don't automatically move module declarations annotated with <code>#[macro_use]</code>,
+since that might change semantics.</p>
+<h2 id="function-definitions"><a class="header" href="#function-definitions">Function definitions</a></h2>
 <p>In Rust, people often find functions by searching for <code>fn [function-name]</code>, so
-the formatting of function definitions shold enable this.</p>
+the formatting of function definitions must enable this.</p>
 <p>The proper ordering and spacing is:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -376,10 +402,10 @@ block-indented line. For example,</p>
 }
 <span class="boring">}</span></code></pre></pre>
 <p>Note the trailing comma on the last argument.</p>
-<h3 id="tuples-and-tuple-structs"><a class="header" href="#tuples-and-tuple-structs">Tuples and tuple structs</a></h3>
+<h2 id="tuples-and-tuple-structs"><a class="header" href="#tuples-and-tuple-structs">Tuples and tuple structs</a></h2>
 <p>Write the type list as you would a parameter list to a function.</p>
 <p>Build a tuple or tuple struct as you would call a function.</p>
-<h4 id="single-line"><a class="header" href="#single-line">Single-line</a></h4>
+<h3 id="single-line"><a class="header" href="#single-line">Single-line</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Bar(Type1, Type2);
@@ -387,7 +413,7 @@ block-indented line. For example,</p>
 let x = Bar(11, 22);
 let y = (11, 22, 33);
 <span class="boring">}</span></code></pre></pre>
-<h3 id="enums"><a class="header" href="#enums">Enums</a></h3>
+<h2 id="enums"><a class="header" href="#enums">Enums</a></h2>
 <p>In the declaration, put each variant on its own line, block indented.</p>
 <p>Format each variant accordingly as either a struct (but without the <code>struct</code>
 keyword), a tuple struct, or an identifier (which doesn't require special
@@ -403,9 +429,9 @@ formatting):</p>
     },
 }
 <span class="boring">}</span></code></pre></pre>
-<p>If a struct variant is <a href="index.html#small-items"><em>small</em></a>, it may be formatted on
-one line. In this case, do not use a trailing comma for the field list, but do
-put spaces around each brace:</p>
+<p>If a struct variant is <a href="index.html#small-items"><em>small</em></a>, format it on one
+line. In this case, do not use a trailing comma for the field list, but do put
+spaces around each brace:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>enum FooBar {
@@ -413,10 +439,10 @@ put spaces around each brace:</p>
 }
 <span class="boring">}</span></code></pre></pre>
 <p>In an enum with multiple struct variants, if any struct variant is written on
-multiple lines, then the multi-line formatting should be used for all struct
-variants. However, such a situation might be an indication that you should
-factor out the fields of the variant into their own struct.</p>
-<h3 id="structs-and-unions"><a class="header" href="#structs-and-unions">Structs and Unions</a></h3>
+multiple lines, use the multi-line formatting for all struct variants. However,
+such a situation might be an indication that you should factor out the fields
+of the variant into their own struct.</p>
+<h2 id="structs-and-unions"><a class="header" href="#structs-and-unions">Structs and Unions</a></h2>
 <p>Struct names follow on the same line as the <code>struct</code> keyword, with the opening
 brace on the same line when it fits within the right margin. All struct fields
 are indented once and end with a trailing comma. The closing brace is not
@@ -452,19 +478,20 @@ space between the braces: <code>struct Foo;</code> or <code>struct Foo {}</code>
         LongType,
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="tuple-structs"><a class="header" href="#tuple-structs">Tuple structs</a></h3>
-<p>Put the whole struct on one line if possible. Types in the parentheses should be
-separated by a comma and space with no trailing comma. No spaces around the
-parentheses or semicolon:</p>
+<h2 id="tuple-structs"><a class="header" href="#tuple-structs">Tuple structs</a></h2>
+<p>Put the whole struct on one line if possible. Separate types within the
+parentheses using a comma and space. Don't use a trailing comma for a
+single-line tuple struct. Don't put spaces around the parentheses or semicolon:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Foo(String, u8);
 <span class="boring">}</span></code></pre></pre>
 <p>Prefer unit structs to empty tuple structs (these only exist to simplify code
 generation), e.g., <code>struct Foo;</code> rather than <code>struct Foo();</code>.</p>
-<p>For more than a few fields, prefer a proper struct with named fields. Given
-this, a tuple struct should always fit on one line. If it does not, block format
-the fields with a field on each line and a trailing comma:</p>
+<p>For more than a few fields (in particular if the tuple struct does not fit on
+one line), prefer a proper struct with named fields.</p>
+<p>For a multi-line tuple struct, block-format the fields with a field on each
+line and a trailing comma:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Foo(
@@ -472,10 +499,10 @@ the fields with a field on each line and a trailing comma:</p>
     u8,
 );
 <span class="boring">}</span></code></pre></pre>
-<h3 id="traits"><a class="header" href="#traits">Traits</a></h3>
-<p>Trait items should be block-indented. If there are no items, the trait may be
-formatted on a single line. Otherwise there should be line-breaks after the
-opening brace and before the closing brace:</p>
+<h2 id="traits"><a class="header" href="#traits">Traits</a></h2>
+<p>Use block-indent for trait items. If there are no items, format the trait (including its <code>{}</code>)
+on a single line. Otherwise, break after the opening brace and before
+the closing brace:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>trait Foo {}
@@ -484,8 +511,8 @@ pub trait Bar {
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<p>If the trait has bounds, there should be a space after the colon but not before
-and before and after each <code>+</code>, e.g.,</p>
+<p>If the trait has bounds, put a space after the colon but not before,
+and put spaces around each <code>+</code>, e.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>trait Foo: Debug + Bar {}
@@ -506,10 +533,10 @@ line:</p>
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="impls"><a class="header" href="#impls">Impls</a></h3>
-<p>Impl items should be block indented. If there are no items, the impl may be
-formatted on a single line. Otherwise there should be line-breaks after the
-opening brace and before the closing brace:</p>
+<h2 id="impls"><a class="header" href="#impls">Impls</a></h2>
+<p>Use block-indent for impl items. If there are no items, format the impl
+(including its <code>{}</code>) on a single line. Otherwise, break after the opening brace
+and before the closing brace:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Foo {}
@@ -529,10 +556,10 @@ and put the opening brace on its own line:</p>
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="extern-crate"><a class="header" href="#extern-crate">Extern crate</a></h3>
+<h2 id="extern-crate"><a class="header" href="#extern-crate">Extern crate</a></h2>
 <p><code>extern crate foo;</code></p>
 <p>Use spaces around keywords, no spaces around the semicolon.</p>
-<h3 id="modules"><a class="header" href="#modules">Modules</a></h3>
+<h2 id="modules"><a class="header" href="#modules">Modules</a></h2>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>mod foo {
@@ -544,31 +571,30 @@ and put the opening brace on its own line:</p>
 <span class="boring">}</span></code></pre></pre>
 <p>Use spaces around keywords and before the opening brace, no spaces around the
 semicolon.</p>
-<h3 id="macro_rules"><a class="header" href="#macro_rules">macro_rules!</a></h3>
+<h2 id="macro_rules"><a class="header" href="#macro_rules"><code>macro_rules!</code></a></h2>
 <p>Use <code>{}</code> for the full definition of the macro.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>macro_rules! foo {
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="generics"><a class="header" href="#generics">Generics</a></h3>
+<h2 id="generics"><a class="header" href="#generics">Generics</a></h2>
 <p>Prefer to put a generics clause on one line. Break other parts of an item
 declaration rather than line-breaking a generics clause. If a generics clause is
-large enough to require line-breaking, you should prefer to use a <code>where</code> clause
-instead.</p>
-<p>Do not put spaces before or after <code>&lt;</code> nor before <code>&gt;</code>. Only put a space after <code>&gt;</code>
-if it is followed by a word or opening brace, not an opening parenthesis. There
-should be a space after each comma and no trailing comma.</p>
+large enough to require line-breaking, prefer a <code>where</code> clause instead.</p>
+<p>Do not put spaces before or after <code>&lt;</code> nor before <code>&gt;</code>. Only put a space after
+<code>&gt;</code> if it is followed by a word or opening brace, not an opening parenthesis.
+Put a space after each comma. Do not use a trailing comma for a single-line
+generics clause.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn foo&lt;T: Display, U: Debug&gt;(x: Vec&lt;T&gt;, y: Vec&lt;U&gt;) ...
 
 impl&lt;T: Display, U: Debug&gt; SomeType&lt;T, U&gt; { ...
 <span class="boring">}</span></code></pre></pre>
-<p>If the generics clause must be formatted across multiple lines, each parameter
-should have its own block-indented line, there should be newlines after the
-opening bracket and before the closing bracket, and the should be a trailing
-comma.</p>
+<p>If the generics clause must be formatted across multiple lines, put each
+parameter on its own block-indented line, break after the opening <code>&lt;</code> and
+before the closing <code>&gt;</code>, and use a trailing comma.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn foo&lt;
@@ -576,21 +602,21 @@ comma.</p>
     U: Debug,
 &gt;(x: Vec&lt;T&gt;, y: Vec&lt;U&gt;) ...
 <span class="boring">}</span></code></pre></pre>
-<p>If an associated type is bound in a generic type, then there should be spaces on
-either side of the <code>=</code>:</p>
+<p>If an associated type is bound in a generic type, put spaces around the <code>=</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>&lt;T: Example&lt;Item = u32&gt;&gt;
 <span class="boring">}</span></code></pre></pre>
 <p>Prefer to use single-letter names for generic parameters.</p>
-<h3 id="where-clauses"><a class="header" href="#where-clauses"><code>where</code> clauses</a></h3>
+<h2 id="where-clauses"><a class="header" href="#where-clauses"><code>where</code> clauses</a></h2>
 <p>These rules apply for <code>where</code> clauses on any item.</p>
-<p>A <code>where</code> clause may immediately follow a closing bracket of any kind.
-Otherwise, it must start a new line, with no indent. Each component of a <code>where</code>
-clause must be on its own line and be block indented. There should be a trailing
+<p>If immediately following a closing bracket of any kind, write the keyword
+<code>where</code> on the same line, with a space before it.</p>
+<p>Otherwise, put <code>where</code> on a new line at the same indentation level. Put each
+component of a <code>where</code> clause on its own line, block-indented. Use a trailing
 comma, unless the clause is terminated with a semicolon. If the <code>where</code> clause
-is followed by a block (or assignment), the block should be started on a new
-line. Examples:</p>
+is followed by a block (or assignment), start that block on a new line.
+Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn function&lt;T, U&gt;(args)
@@ -633,10 +659,11 @@ where
     T: Bound
 = Bar&lt;T&gt;;
 <span class="boring">}</span></code></pre></pre>
-<p>If a <code>where</code> clause is very short, we recommend using an inline bound on the
-type parameter.</p>
-<p>If a component of a <code>where</code> clause is long, it may be broken before <code>+</code> and
-further block indented. Each bound should go on its own line. E.g.,</p>
+<p>If a <code>where</code> clause is very short, prefer using an inline bound on the type
+parameter.</p>
+<p>If a component of a <code>where</code> clause does not fit and contains <code>+</code>, break it
+before each <code>+</code> and block-indent the continuation lines. Put each bound on its
+own line. E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl&lt;T: ?Sized, Idx&gt; IndexRanges&lt;Idx&gt; for T
@@ -645,35 +672,12 @@ where
         + Index&lt;RangeTo&lt;Idx&gt;, Output = Self::Output&gt;
         + Index&lt;RangeFrom&lt;Idx&gt;, Output = Self::Output&gt;
         + Index&lt;RangeInclusive&lt;Idx&gt;, Output = Self::Output&gt;
-        + Index&lt;RangeToInclusive&lt;Idx&gt;, Output = Self::Output&gt; + Index&lt;RangeFull&gt;
+        + Index&lt;RangeToInclusive&lt;Idx&gt;, Output = Self::Output&gt;
+        + Index&lt;RangeFull&gt;,
 <span class="boring">}</span></code></pre></pre>
-<h4 id="option---where_single_line"><a class="header" href="#option---where_single_line">Option - <code>where_single_line</code></a></h4>
-<p><code>where_single_line</code> is <code>false</code> by default. If <code>true</code>, then a where clause with
-exactly one component may be formatted on a single line if the rest of the
-item's signature is also kept on one line. In this case, there is no need for a
-trailing comma and if followed by a block, no need for a newline before the
-block. E.g.,</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// May be single-lined.
-fn foo&lt;T&gt;(args) -&gt; ReturnType
-where T: Bound {
-    body
-}
-
-// Must be multi-lined.
-fn foo&lt;T&gt;(
-    args
-) -&gt; ReturnType
-where
-    T: Bound,
-{
-    body
-}
-<span class="boring">}</span></code></pre></pre>
-<h3 id="type-aliases"><a class="header" href="#type-aliases">Type aliases</a></h3>
-<p>Type aliases should generally be kept on one line. If necessary to break the
-line, do so after the <code>=</code>; the right-hand-side should be block indented:</p>
+<h2 id="type-aliases"><a class="header" href="#type-aliases">Type aliases</a></h2>
+<p>Keep type aliases on one line when they fit. If necessary to break the line, do
+so after the <code>=</code>, and block-indent the right-hand side:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub type Foo = Bar&lt;T&gt;;
@@ -693,30 +697,28 @@ where
     U: SomeBound,
 = AnEvenLongerType&lt;T, U, Foo&lt;T&gt;&gt;;
 <span class="boring">}</span></code></pre></pre>
-<h3 id="associated-types"><a class="header" href="#associated-types">Associated types</a></h3>
-<p>Associated types should follow the guidelines above for type aliases. Where an
-associated type has a bound, there should be a space after the colon but not
-before:</p>
+<h2 id="associated-types"><a class="header" href="#associated-types">Associated types</a></h2>
+<p>Format associated types like type aliases. Where an associated type has a
+bound, put a space after the colon but not before:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub type Foo: Bar;
 <span class="boring">}</span></code></pre></pre>
-<h3 id="extern-items"><a class="header" href="#extern-items">extern items</a></h3>
-<p>When writing extern items (such as <code>extern &quot;C&quot; fn</code>), always be explicit about
-the ABI. For example, write <code>extern &quot;C&quot; fn foo ...</code>, not <code>extern fn foo ...</code>, or
+<h2 id="extern-items"><a class="header" href="#extern-items">extern items</a></h2>
+<p>When writing extern items (such as <code>extern &quot;C&quot; fn</code>), always specify the ABI.
+For example, write <code>extern &quot;C&quot; fn foo ...</code>, not <code>extern fn foo ...</code>, or
 <code>extern &quot;C&quot; { ... }</code>.</p>
-<h3 id="imports-use-statements"><a class="header" href="#imports-use-statements">Imports (<code>use</code> statements)</a></h3>
-<p>If an import can be formatted on one line, do so. There should be no spaces
-around braces.</p>
+<h2 id="imports-use-statements"><a class="header" href="#imports-use-statements">Imports (<code>use</code> statements)</a></h2>
+<p>Format imports on one line where possible. Don't put spaces around braces.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use a::b::c;
 use a::b::d::*;
 use a::b::{foo, bar, baz};
 <span class="boring">}</span></code></pre></pre>
-<h4 id="large-list-imports"><a class="header" href="#large-list-imports">Large list imports</a></h4>
+<h3 id="large-list-imports"><a class="header" href="#large-list-imports">Large list imports</a></h3>
 <p>Prefer to use multiple imports rather than a multi-line import. However, tools
-should not split imports by default (they may offer this as an option).</p>
+should not split imports by default.</p>
 <p>If an import does require multiple lines (either because a list of single names
 does not fit within the max width, or because of the rules for nested imports
 below), then break after the opening brace and before the closing brace, use a
@@ -733,7 +735,7 @@ foo::{
     imports,  // Note trailing comma
 };
 <span class="boring">}</span></code></pre></pre>
-<h4 id="ordering-of-imports"><a class="header" href="#ordering-of-imports">Ordering of imports</a></h4>
+<h3 id="ordering-of-imports"><a class="header" href="#ordering-of-imports">Ordering of imports</a></h3>
 <p>A <em>group</em> of imports is a set of imports on the same or sequential lines. One or
 more blank lines or other items (e.g., a function) separate groups of imports.</p>
 <p>Within a group of imports, imports must be sorted ASCIIbetically (uppercase
@@ -758,22 +760,21 @@ use b;
 <span class="boring">}</span></code></pre></pre>
 <p>Because of <code>macro_use</code>, attributes must also start a new group and prevent
 re-ordering.</p>
-<h4 id="ordering-list-import"><a class="header" href="#ordering-list-import">Ordering list import</a></h4>
+<h3 id="ordering-list-import"><a class="header" href="#ordering-list-import">Ordering list import</a></h3>
 <p>Names in a list import must be sorted ASCIIbetically, but with <code>self</code> and
 <code>super</code> first, and groups and glob imports last. This applies recursively. For
 example, <code>a::*</code> comes before <code>b::a</code> but <code>a::b</code> comes before <code>a::*</code>. E.g.,
 <code>use foo::bar::{a, b::c, b::d, b::d::{x, y, z}, b::{self, r, s}};</code>.</p>
-<h4 id="normalisation"><a class="header" href="#normalisation">Normalisation</a></h4>
-<p>Tools must make the following normalisations:</p>
+<h3 id="normalisation"><a class="header" href="#normalisation">Normalisation</a></h3>
+<p>Tools must make the following normalisations, recursively:</p>
 <ul>
 <li><code>use a::self;</code> -&gt; <code>use a;</code></li>
 <li><code>use a::{};</code> -&gt; (nothing)</li>
 <li><code>use a::{b};</code> -&gt; <code>use a::b;</code></li>
 </ul>
-<p>And must apply these recursively.</p>
 <p>Tools must not otherwise merge or un-merge import lists or adjust glob imports
 (without an explicit option).</p>
-<h4 id="nested-imports"><a class="header" href="#nested-imports">Nested imports</a></h4>
+<h3 id="nested-imports"><a class="header" href="#nested-imports">Nested imports</a></h3>
 <p>If there are any nested imports in a list import, then use the multi-line form,
 even if the import fits on one line. Each nested import must be on its own line,
 but non-nested imports must be grouped on as few lines as possible.</p>
@@ -786,7 +787,7 @@ but non-nested imports must be grouped on as few lines as possible.</p>
     w::{...},
 };
 <span class="boring">}</span></code></pre></pre>
-<h4 id="mergingun-merging-imports"><a class="header" href="#mergingun-merging-imports">Merging/un-merging imports</a></h4>
+<h3 id="mergingun-merging-imports"><a class="header" href="#mergingun-merging-imports">Merging/un-merging imports</a></h3>
 <p>An example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -799,10 +800,10 @@ use a::{b, c::d};
 <span class="boring">}</span></code></pre></pre>
 <p>Tools must not merge or un-merge imports by default. They may offer merging or
 un-merging as an option.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="statements-1"><a class="header" href="#statements-1">Statements</a></h2>
-<h3 id="let-statements"><a class="header" href="#let-statements">Let statements</a></h3>
-<p>There should be spaces after the <code>:</code> and on both sides of the <code>=</code> (if they are
-present). No space before the semicolon.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="statements-1"><a class="header" href="#statements-1">Statements</a></h1>
+<h2 id="let-statements"><a class="header" href="#let-statements">Let statements</a></h2>
+<p>Put a space after the <code>:</code> and on both sides of the <code>=</code> (if they are present).
+Don't put a space before the semicolon.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// A comment.
@@ -812,18 +813,18 @@ let pattern;
 let pattern: Type;
 let pattern = expr;
 <span class="boring">}</span></code></pre></pre>
-<p>If possible the declaration should be formatted on a single line. If this is not
-possible, then try splitting after the <code>=</code>, if the declaration can fit on two
-lines. The expression should be block indented.</p>
+<p>If possible, format the declaration on a single line. If not possible, then try
+splitting after the <code>=</code>, if the declaration fits on two lines. Block-indent the
+expression.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let pattern: Type =
     expr;
 <span class="boring">}</span></code></pre></pre>
-<p>If the first line does not fit on a single line, then split after the colon,
-using block indentation. If the type covers multiple lines, even after line-
-breaking after the <code>:</code>, then the first line may be placed on the same line as
-the <code>:</code>, subject to the <a href="https://github.com/rust-lang-nursery/fmt-rfcs/issues/61">combining rules</a> (WIP).</p>
+<p>If the first line still does not fit on a single line, split after the <code>:</code>, and
+use block indentation. If the type requires multiple lines, even after
+line-breaking after the <code>:</code>, then place the first line on the same line as the
+<code>:</code>, subject to the <a href="expressions.html#combinable-expressions">combining rules</a>.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let pattern:
@@ -845,12 +846,12 @@ let (abcd,
 { ... }
 <span class="boring">}</span></code></pre></pre>
 <p>If the expression covers multiple lines, if the first line of the expression
-fits in the remaining space, it stays on the same line as the <code>=</code>, the rest of the
-expression is not indented. If the first line does not fit, then it should start
-on the next lines, and should be block indented. If the expression is a block
-and the type or pattern cover multiple lines, then the opening brace should be
-on a new line and not indented (this provides separation for the interior of the
-block from the type), otherwise the opening brace follows the <code>=</code>.</p>
+fits in the remaining space, it stays on the same line as the <code>=</code>, and the rest
+of the expression is not further indented. If the first line does not fit, then
+put the expression on subsequent lines, block indented. If the expression is a
+block and the type or pattern cover multiple lines, put the opening brace on a
+new line and not indented (this provides separation for the interior of the
+block from the type); otherwise, the opening brace follows the <code>=</code>.</p>
 <p>Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -893,13 +894,13 @@ let Foo {
     blamblamblam,
 );
 <span class="boring">}</span></code></pre></pre>
-<h4 id="else-blocks-let-else-statements"><a class="header" href="#else-blocks-let-else-statements">else blocks (let-else statements)</a></h4>
+<h3 id="else-blocks-let-else-statements"><a class="header" href="#else-blocks-let-else-statements">else blocks (let-else statements)</a></h3>
 <p>A let statement can contain an <code>else</code> component, making it a let-else statement.
 In this case, always apply the same formatting rules to the components preceding
 the <code>else</code> block (i.e. the <code>let pattern: Type = initializer_expr</code> portion)
 as described <a href="statements.html#let-statements">for other let statements</a>.</p>
-<p>The entire let-else statement may be formatted on a single line if all the
-following are true:</p>
+<p>Format the entire let-else statement on a single line if all the following are
+true:</p>
 <ul>
 <li>the entire statement is <em>short</em></li>
 <li>the <code>else</code> block contains only a single-line expression and no statements</li>
@@ -910,8 +911,6 @@ following are true:</p>
 </span><span class="boring">fn main() {
 </span>let Some(1) = opt else { return };
 <span class="boring">}</span></code></pre></pre>
-<p>Formatters may allow users to configure the value of the threshold
-used to determine whether a let-else statement is <em>short</em>.</p>
 <p>Otherwise, the let-else statement requires some line breaks.</p>
 <p>If breaking a let-else statement across multiple lines, never break between the
 <code>else</code> and the <code>{</code>, and always break before the <code>}</code>.</p>
@@ -942,10 +941,10 @@ before the <code>else</code>.</p>
         return;
     };
 <span class="boring">}</span></code></pre></pre>
-<p>If the initializer expression is multi-line, the <code>else</code> keyword and opening
-brace of the block (i.e. <code>else {</code>) should be put on the same line as the end of
-the initializer expression, with a space between them, if all the following are
-true:</p>
+<p>If the initializer expression is multi-line, put the <code>else</code> keyword and opening
+brace of the block (i.e. <code>else {</code>) on the same line as the end of the
+initializer expression, with a space between them, if and only if all the
+following are true:</p>
 <ul>
 <li>The initializer expression ends with one or more closing
 parentheses, square brackets, and/or braces</li>
@@ -966,9 +965,9 @@ parentheses, square brackets, and/or braces</li>
     bar()
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Otherwise, the <code>else</code> keyword and opening brace should be placed on the next
-line after the end of the initializer expression, and the <code>else</code> keyword should
-have the same indentation level as the <code>let</code> keyword.</p>
+<p>Otherwise, put the <code>else</code> keyword and opening brace on the next line after the
+end of the initializer expression, with the <code>else</code> keyword at the same
+indentation level as the <code>let</code> keyword.</p>
 <p>For example:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     let Some(x) = abcdef()
@@ -990,22 +989,44 @@ have the same indentation level as the <code>let</code> keyword.</p>
     else {
         return;
     };
+
+    let LongStructName(AnotherStruct {
+        multi,
+        line,
+        pattern,
+    }) = slice.as_ref()
+    else {
+        return;
+    };
+
+    let LongStructName(AnotherStruct {
+        multi,
+        line,
+        pattern,
+    }) = multi_line_function_call(
+        arg1,
+        arg2,
+        arg3,
+        arg4,
+    ) else {
+        return;
+    };
 }</code></pre></pre>
-<h3 id="macros-in-statement-position"><a class="header" href="#macros-in-statement-position">Macros in statement position</a></h3>
-<p>A macro use in statement position should use parentheses or square brackets as
-delimiters and should be terminated with a semicolon. There should be no spaces
-between the name, <code>!</code>, the delimiters, or the <code>;</code>.</p>
+<h2 id="macros-in-statement-position"><a class="header" href="#macros-in-statement-position">Macros in statement position</a></h2>
+<p>For a macro use in statement position, use parentheses or square brackets as
+delimiters, and terminate it with a semicolon. Do not put spaces around the
+name, <code>!</code>, the delimiters, or the <code>;</code>.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// A comment.
 a_macro!(...);
 <span class="boring">}</span></code></pre></pre>
-<h3 id="expressions-in-statement-position"><a class="header" href="#expressions-in-statement-position">Expressions in statement position</a></h3>
-<p>There should be no space between the expression and the semicolon.</p>
+<h2 id="expressions-in-statement-position"><a class="header" href="#expressions-in-statement-position">Expressions in statement position</a></h2>
+<p>Do not put space between the expression and the semicolon.</p>
 <pre><code>&lt;expr&gt;;
 </code></pre>
-<p>All expressions in statement position should be terminated with a semicolon,
-unless they end with a block or are used as the value for a block.</p>
+<p>Terminate all expressions in statement position with a semicolon, unless they
+end with a block or are used as the value for a block.</p>
 <p>E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1030,12 +1051,14 @@ fn bar() {
     foo();
 }
 <span class="boring">}</span></code></pre></pre>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="expressions-1"><a class="header" href="#expressions-1">Expressions</a></h2>
-<h3 id="blocks"><a class="header" href="#blocks">Blocks</a></h3>
-<p>A block expression should have a newline after the initial <code>{</code> and before the
-terminal <code>}</code>. Any qualifier before the block (e.g., <code>unsafe</code>) should always be
-on the same line as the opening brace, and separated with a single space. The
-contents of the block should be block indented:</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="expressions-1"><a class="header" href="#expressions-1">Expressions</a></h1>
+<h2 id="blocks"><a class="header" href="#blocks">Blocks</a></h2>
+<p>A block expression must have a newline after the initial <code>{</code> and before the
+terminal <code>}</code>, unless it qualifies to be written as a single line based on
+another style rule.</p>
+<p>A keyword before the block (such as <code>unsafe</code> or <code>async</code>) must be on the same
+line as the opening brace, with a single space between the keyword and the
+opening brace. Indent the contents of the block.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn block_as_stmt() {
@@ -1069,7 +1092,7 @@ fn unsafe_block_as_stmt() {
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>If a block has an attribute, it should be on its own line:</p>
+<p>If a block has an attribute, put it on its own line before the block:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn block_as_stmt() {
@@ -1082,16 +1105,16 @@ fn unsafe_block_as_stmt() {
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Avoid writing comments on the same line as the braces.</p>
-<p>An empty block should be written as <code>{}</code>.</p>
-<p>A block may be written on a single line if:</p>
+<p>Avoid writing comments on the same lines as either of the braces.</p>
+<p>Write an empty block as <code>{}</code>.</p>
+<p>Write a block on a single line if:</p>
 <ul>
 <li>it is either used in expression position (not statement position) or is an
-unsafe block in statement position</li>
-<li>contains a single-line expression and no statements</li>
-<li>contains no comments</li>
+unsafe block in statement position,</li>
+<li>it contains a single-line expression and no statements, and</li>
+<li>it contains no comments</li>
 </ul>
-<p>A single line block should have spaces after the opening brace and before the
+<p>For a single-line block, put spaces after the opening brace and before the
 closing brace.</p>
 <p>Examples:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
@@ -1134,15 +1157,15 @@ closing brace.</p>
         )
     };
 }</code></pre></pre>
-<h3 id="closures"><a class="header" href="#closures">Closures</a></h3>
+<h2 id="closures"><a class="header" href="#closures">Closures</a></h2>
 <p>Don't put any extra spaces before the first <code>|</code> (unless the closure is prefixed
-by <code>move</code>); put a space between the second <code>|</code> and the expression of the
-closure. Between the <code>|</code>s, you should use function definition syntax, however,
-elide types where possible.</p>
+by a keyword such as <code>move</code>); put a space between the second <code>|</code> and the
+expression of the closure. Between the <code>|</code>s, use function definition syntax,
+but elide types where possible.</p>
 <p>Use closures without the enclosing <code>{}</code>, if possible. Add the <code>{}</code> when you have
-a return type, when there are statements, there are comments in the body, or the
-body expression spans multiple lines and is a control-flow expression. If using
-braces, follow the rules above for blocks. Examples:</p>
+a return type, when there are statements, when there are comments inside the
+closure, or when the body expression is a control-flow expression that spans
+multiple lines. If using braces, follow the rules above for blocks. Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>|arg1, arg2| expr
@@ -1169,13 +1192,13 @@ move |arg1: i32, arg2: i32| -&gt; i32 {
     expr
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="struct-literals"><a class="header" href="#struct-literals">Struct literals</a></h3>
-<p>If a struct literal is <em>small</em> it may be formatted on a single line. If not,
-each field should be on it's own, block-indented line. There should be a
-trailing comma in the multi-line form only. There should be a space after the
-colon only.</p>
-<p>There should be a space before the opening brace. In the single-line form there
-should be spaces after the opening brace and before the closing brace.</p>
+<h2 id="struct-literals"><a class="header" href="#struct-literals">Struct literals</a></h2>
+<p>If a struct literal is <em>small</em>, format it on a single line, and do not use a
+trailing comma. If not, split it across multiple lines, with each field on its
+own block-indented line, and use a trailing comma.</p>
+<p>For each <code>field: value</code> entry, put a space after the colon only.</p>
+<p>Put a space before the opening brace. In the single-line form, put spaces after
+the opening brace and before the closing brace.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>Foo { field1, field2: 0 }
@@ -1185,15 +1208,21 @@ let f = Foo {
 };
 <span class="boring">}</span></code></pre></pre>
 <p>Functional record update syntax is treated like a field, but it must never have
-a trailing comma. There should be no space after <code>..</code>.</p>
-<p>let f = Foo {
-field1,
-..an_expr
-};</p>
-<h3 id="tuple-literals"><a class="header" href="#tuple-literals">Tuple literals</a></h3>
-<p>Use a single-line form where possible. There should not be spaces around the
-parentheses. Where a single-line form is not possible, each element of the tuple
-should be on its own block-indented line and there should be a trailing comma.</p>
+a trailing comma. Do not put a space after <code>..</code>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let f = Foo {
+    field1,
+    ..an_expr
+};
+<span class="boring">}</span></code></pre></pre>
+<h2 id="tuple-literals"><a class="header" href="#tuple-literals">Tuple literals</a></h2>
+<p>Use a single-line form where possible. Do not put spaces between the opening
+parenthesis and the first element, or between the last element and the closing
+parenthesis. Separate elements with a comma followed by a space.</p>
+<p>Where a single-line form is not possible, write the tuple across
+multiple lines, with each element of the tuple on its own block-indented line,
+and use a trailing comma.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>(a, b, c)
@@ -1203,12 +1232,21 @@ let x = (
     another_very_long_expr,
 );
 <span class="boring">}</span></code></pre></pre>
-<h3 id="tuple-struct-literals"><a class="header" href="#tuple-struct-literals">Tuple struct literals</a></h3>
-<p>There should be no space between the identifier and the opening parenthesis.
-Otherwise, follow the rules for tuple literals, e.g., <code>Foo(a, b)</code>.</p>
-<h3 id="enum-literals"><a class="header" href="#enum-literals">Enum literals</a></h3>
+<h2 id="tuple-struct-literals"><a class="header" href="#tuple-struct-literals">Tuple struct literals</a></h2>
+<p>Do not put space between the identifier and the opening parenthesis. Otherwise,
+follow the rules for tuple literals:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Foo(a, b, c)
+
+let x = Foo(
+    a_long_expr,
+    another_very_long_expr,
+);
+<span class="boring">}</span></code></pre></pre>
+<h2 id="enum-literals"><a class="header" href="#enum-literals">Enum literals</a></h2>
 <p>Follow the formatting rules for the various struct literals. Prefer using the
-name of the enum as a qualifying name, unless the enum is in the prelude. E.g.,</p>
+name of the enum as a qualifying name, unless the enum is in the prelude:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>Foo::Bar(a, b)
@@ -1218,21 +1256,24 @@ Foo::Baz {
 }
 Ok(an_expr)
 <span class="boring">}</span></code></pre></pre>
-<h3 id="array-literals"><a class="header" href="#array-literals">Array literals</a></h3>
-<p>For simple array literals, avoid line breaking, no spaces around square
-brackets, contents of the array should be separated by commas and spaces. If
-using the repeating initialiser, there should be a space after the semicolon
-only. Apply the same rules if using the <code>vec!</code> or similar macros (always use
-square brackets here). Examples:</p>
+<h2 id="array-literals"><a class="header" href="#array-literals">Array literals</a></h2>
+<p>Write small array literals on a single line. Do not put spaces between the opening
+square bracket and the first element, or between the last element and the closing
+square bracket. Separate elements with a comma followed by a space.</p>
+<p>If using the repeating initializer, put a space after the semicolon
+only.</p>
+<p>Apply the same rules if using <code>vec!</code> or similar array-like macros; always use
+square brackets with such macros. Examples:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
-    [1, 2, 3];
-    vec![a, b, c, d];
+    let x = [1, 2, 3];
+    let y = vec![a, b, c, d];
     let a = [42; 10];
 }</code></pre></pre>
-<p>If a line must be broken, prefer breaking only after the <code>;</code>, if possible.
-Otherwise, follow the rules below for function calls. In any case, the contents
-of the initialiser should be block indented and there should be line breaks
-after the opening bracket and before the closing bracket:</p>
+<p>For arrays that have to be broken across lines, if using the repeating
+initializer, break after the <code>;</code>, not before. Otherwise, follow the rules below
+for function calls. In any case, block-indent the contents of the initializer,
+and put line breaks after the opening square bracket and before the closing
+square bracket:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     [
         a_long_expression();
@@ -1244,12 +1285,13 @@ after the opening bracket and before the closing bracket:</p>
         a_third_expression,
     ];
 }</code></pre></pre>
-<h3 id="array-accesses-indexing-and-slicing"><a class="header" href="#array-accesses-indexing-and-slicing">Array accesses, indexing, and slicing.</a></h3>
-<p>No spaces around the square brackets, avoid breaking lines if possible, never
-break a line between the target expression and the opening bracket. If the
-indexing expression covers multiple lines, then it should be block indented and
-there should be newlines after the opening brackets and before the closing
-bracket. However, this should be avoided where possible.</p>
+<h2 id="array-accesses-indexing-and-slicing"><a class="header" href="#array-accesses-indexing-and-slicing">Array accesses, indexing, and slicing</a></h2>
+<p>Don't put spaces around the square brackets. Avoid breaking lines if possible.
+Never break a line between the target expression and the opening square
+bracket. If the indexing expression must be broken onto a subsequent line, or
+spans multiple lines itself, then block-indent the indexing expression, and put
+newlines after the opening square bracket and before the closing square
+bracket:</p>
 <p>Examples:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
     foo[42];
@@ -1260,21 +1302,23 @@ bracket. However, this should be avoided where possible.</p>
         a_long_indexing_expression
     ];
 }</code></pre></pre>
-<h3 id="unary-operations"><a class="header" href="#unary-operations">Unary operations</a></h3>
+<h2 id="unary-operations"><a class="header" href="#unary-operations">Unary operations</a></h2>
 <p>Do not include a space between a unary op and its operand (i.e., <code>!x</code>, not
 <code>! x</code>). However, there must be a space after <code>&amp;mut</code>. Avoid line-breaking
 between a unary operator and its operand.</p>
-<h3 id="binary-operations"><a class="header" href="#binary-operations">Binary operations</a></h3>
+<h2 id="binary-operations"><a class="header" href="#binary-operations">Binary operations</a></h2>
 <p>Do include spaces around binary ops (i.e., <code>x + 1</code>, not <code>x+1</code>) (including <code>=</code>
 and other assignment operators such as <code>+=</code> or <code>*=</code>).</p>
 <p>For comparison operators, because for <code>T op U</code>, <code>&amp;T op &amp;U</code> is also implemented:
 if you have <code>t: &amp;T</code>, and <code>u: U</code>, prefer <code>*t op u</code> to <code>t op &amp;u</code>. In general,
-within expressions, prefer dereferencing to taking references.</p>
-<p>Use parentheses liberally, do not necessarily elide them due to precedence.
+within expressions, prefer dereferencing to taking references, unless necessary
+(e.g. to avoid an unnecessarily expensive operation).</p>
+<p>Use parentheses liberally; do not necessarily elide them due to precedence.
 Tools should not automatically insert or remove parentheses. Do not use spaces
 to indicate precedence.</p>
-<p>If line-breaking, put the operator on a new line and block indent. Put each
-sub-expression on its own line. E.g.,</p>
+<p>If line-breaking, block-indent each subsequent line. For assignment operators,
+break after the operator; for all other operators, put the operator on the
+subsequent line. Put each sub-expression on its own line:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>foo_bar
@@ -1285,7 +1329,7 @@ sub-expression on its own line. E.g.,</p>
 <span class="boring">}</span></code></pre></pre>
 <p>Prefer line-breaking at an assignment operator (either <code>=</code> or <code>+=</code>, etc.) rather
 than at other binary operators.</p>
-<h3 id="control-flow"><a class="header" href="#control-flow">Control flow</a></h3>
+<h2 id="control-flow"><a class="header" href="#control-flow">Control flow</a></h2>
 <p>Do not include extraneous parentheses for <code>if</code> and <code>while</code> expressions.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1300,12 +1344,12 @@ than at other binary operators.</p>
 <span class="boring">}</span></code></pre></pre>
 <p>Do include extraneous parentheses if it makes an arithmetic or logic expression
 easier to understand (<code>(x * 15) + (y * 20)</code> is fine)</p>
-<h3 id="function-calls"><a class="header" href="#function-calls">Function calls</a></h3>
+<h2 id="function-calls"><a class="header" href="#function-calls">Function calls</a></h2>
 <p>Do not put a space between the function name, and the opening parenthesis.</p>
 <p>Do not put a space between an argument, and the comma which follows.</p>
 <p>Do put a space between an argument, and the comma which precedes it.</p>
 <p>Prefer not to break a line in the callee expression.</p>
-<h4 id="single-line-calls"><a class="header" href="#single-line-calls">Single-line calls</a></h4>
+<h3 id="single-line-calls"><a class="header" href="#single-line-calls">Single-line calls</a></h3>
 <p>Do not put a space between the function name and open paren, between the open
 paren and the first argument, or between the last argument and the close paren.</p>
 <p>Do not put a comma after the last argument.</p>
@@ -1313,12 +1357,12 @@ paren and the first argument, or between the last argument and the close paren.<
 </span><span class="boring">fn main() {
 </span>foo(x, y, z)
 <span class="boring">}</span></code></pre></pre>
-<h4 id="multi-line-calls"><a class="header" href="#multi-line-calls">Multi-line calls</a></h4>
+<h3 id="multi-line-calls"><a class="header" href="#multi-line-calls">Multi-line calls</a></h3>
 <p>If the function call is not <em>small</em>, it would otherwise over-run the max width,
-or any argument or the callee is multi-line, then the call should be formatted
-across multiple lines. In this case, each argument should be on it's own block-
-indented line, there should be a newline after the opening parenthesis and
-before the closing parenthesis, and there should be a trailing comma. E.g.,</p>
+or any argument or the callee is multi-line, then format the call across
+multiple lines. In this case, put each argument on its own block-indented line,
+break after the opening parenthesis and before the closing parenthesis,
+and use a trailing comma:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>a_function_call(
@@ -1326,23 +1370,24 @@ before the closing parenthesis, and there should be a trailing comma. E.g.,</p>
     a_nested_call(a, b),
 )
 <span class="boring">}</span></code></pre></pre>
-<h3 id="method-calls"><a class="header" href="#method-calls">Method calls</a></h3>
+<h2 id="method-calls"><a class="header" href="#method-calls">Method calls</a></h2>
 <p>Follow the function rules for calling.</p>
 <p>Do not put any spaces around the <code>.</code>.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>x.foo().bar().baz(x, y, z);
 <span class="boring">}</span></code></pre></pre>
-<h3 id="macro-uses"><a class="header" href="#macro-uses">Macro uses</a></h3>
-<p>Macros which can be parsed like other constructs should be formatted like those
+<h2 id="macro-uses"><a class="header" href="#macro-uses">Macro uses</a></h2>
+<p>If a macro can be parsed like other constructs, format it like those
 constructs. For example, a macro use <code>foo!(a, b, c)</code> can be parsed like a
-function call (ignoring the <code>!</code>), therefore it should be formatted following the
-rules for function calls.</p>
-<h4 id="special-case-macros"><a class="header" href="#special-case-macros">Special case macros</a></h4>
-<p>Macros which take a format string and where all other arguments are <em>small</em> may
-be formatted with arguments before and after the format string on a single line
-and the format string on its own line, rather than putting each argument on its
-own line. For example,</p>
+function call (ignoring the <code>!</code>), so format it using the rules for function
+calls.</p>
+<h3 id="special-case-macros"><a class="header" href="#special-case-macros">Special case macros</a></h3>
+<p>For macros which take a format string, if all other arguments are <em>small</em>,
+format the arguments before the format string on a single line if they fit, and
+format the arguments after the format string on a single line if they fit, with
+the format string on its own line. If the arguments are not small or do not
+fit, put each on its own line as with a function. For example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>println!(
@@ -1356,19 +1401,19 @@ assert_eq!(
     reason,
 );
 <span class="boring">}</span></code></pre></pre>
-<h3 id="casts-as"><a class="header" href="#casts-as">Casts (<code>as</code>)</a></h3>
+<h2 id="casts-as"><a class="header" href="#casts-as">Casts (<code>as</code>)</a></h2>
 <p>Put spaces before and after <code>as</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let cstr = &quot;Hi\0&quot; as *const str as *const [u8] as *const std::os::raw::c_char;
 <span class="boring">}</span></code></pre></pre>
-<h3 id="chains-of-fields-and-method-calls"><a class="header" href="#chains-of-fields-and-method-calls">Chains of fields and method calls</a></h3>
-<p>A chain is a sequence of field accesses and/or method calls. A chain may also
-include the try operator ('?'). E.g., <code>a.b.c().d</code> or <code>foo?.bar().baz?</code>.</p>
-<p>Prefer formatting on one line if possible, and the chain is <em>small</em>. If
-formatting on multiple lines, each field access or method call in the chain
-should be on its own line with the line-break before the <code>.</code> and after any <code>?</code>.
-Each line should be block-indented. E.g.,</p>
+<h2 id="chains-of-fields-and-method-calls"><a class="header" href="#chains-of-fields-and-method-calls">Chains of fields and method calls</a></h2>
+<p>A chain is a sequence of field accesses, method calls, and/or uses of the try
+operator <code>?</code>. E.g., <code>a.b.c().d</code> or <code>foo?.bar().baz?</code>.</p>
+<p>Format the chain on one line if it is &quot;small&quot; and otherwise possible to do so.
+If formatting on multiple lines, put each field access or method call in the
+chain on its own line, with the line-break before the <code>.</code> and after any <code>?</code>.
+Block-indent each subsequent line:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let foo = bar
@@ -1376,11 +1421,14 @@ Each line should be block-indented. E.g.,</p>
     .qux();
 <span class="boring">}</span></code></pre></pre>
 <p>If the length of the last line of the first element plus its indentation is
-less than or equal to the indentation of the second line (and there is space),
-then combine the first and second lines, e.g.,</p>
+less than or equal to the indentation of the second line, then combine the
+first and second lines if they fit. Apply this rule recursively.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>x.baz?
+    .qux()
+
+x.y.z
     .qux()
 
 let foo = x
@@ -1393,13 +1441,12 @@ foo(
 ).baz?
     .qux();
 <span class="boring">}</span></code></pre></pre>
-<h4 id="multi-line-elements"><a class="header" href="#multi-line-elements">Multi-line elements</a></h4>
-<p>If any element in a chain is formatted across multiple lines, then that element
-and any later elements must be on their own line. Earlier elements may be kept
-on a single line. E.g.,</p>
+<h3 id="multi-line-elements"><a class="header" href="#multi-line-elements">Multi-line elements</a></h3>
+<p>If any element in a chain is formatted across multiple lines, put that element
+and any later elements on their own lines.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>a.b.c()?.d
+</span>a.b.c()?
     .foo(
         an_expr,
         another_expr,
@@ -1425,15 +1472,15 @@ self.pre_comment.as_ref().map_or(
     |comment| comment.starts_with(&quot;//&quot;),
 )
 <span class="boring">}</span></code></pre></pre>
-<h3 id="control-flow-expressions"><a class="header" href="#control-flow-expressions">Control flow expressions</a></h3>
+<h2 id="control-flow-expressions"><a class="header" href="#control-flow-expressions">Control flow expressions</a></h2>
 <p>This section covers <code>if</code>, <code>if let</code>, <code>loop</code>, <code>while</code>, <code>while let</code>, and <code>for</code>
 expressions.</p>
-<p>The keyword, any initial clauses, and the opening brace of the block should be
-on a single line. The usual rules for <a href="expressions.html#blocks">block formatting</a> should be
-applied to the block.</p>
-<p>If there is an <code>else</code> component, then the closing brace, <code>else</code>, any following
-clause, and the opening brace should all be on the same line. There should be a
-single space before and after the <code>else</code> keyword. For example:</p>
+<p>Put the keyword, any initial clauses, and the opening brace of the block all on
+a single line, if they fit. Apply the usual rules for <a href="expressions.html#blocks">block
+formatting</a> to the block.</p>
+<p>If there is an <code>else</code> component, then put the closing brace, <code>else</code>, any
+following clause, and the opening brace all on the same line, with a single
+space before and after the <code>else</code> keyword:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>if ... {
@@ -1450,10 +1497,9 @@ if let ... {
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<p>If the control line needs to be broken, then prefer to break before the <code>=</code> in
-<code>* let</code> expressions and before <code>in</code> in a <code>for</code> expression; the following line
-should be block indented. If the control line is broken for any reason, then the
-opening brace should be on its own line and not indented. Examples:</p>
+<p>If the control line needs to be broken, prefer to break before the <code>=</code> in <code>* let</code> expressions and before <code>in</code> in a <code>for</code> expression; block-indent the
+following line. If the control line is broken for any reason, put the opening
+brace on its own line, not indented. Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>while let Some(foo)
@@ -1475,10 +1521,10 @@ if a_long_expression
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Where the initial clause is multi-lined and ends with one or more closing
-parentheses, square brackets, or braces, and there is nothing else on that line,
-and that line is not indented beyond the indent on the first line of the control
-flow expression, then the opening brace of the block should be put on the same
+<p>Where the initial clause spans multiple lines and ends with one or more closing
+parentheses, square brackets, or braces, and there is nothing else on that
+line, and that line is not indented beyond the indent on the first line of the
+control flow expression, then put the opening brace of the block on the same
 line with a preceding space. For example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1490,10 +1536,10 @@ line with a preceding space. For example:</p>
     ...
 }
 <span class="boring">}</span></code></pre></pre>
-<h4 id="single-line-if-else"><a class="header" href="#single-line-if-else">Single line <code>if else</code></a></h4>
-<p>Formatters may place an <code>if else</code> or <code>if let else</code> on a single line if it occurs
-in expression context (i.e., is not a standalone statement), it contains a
-single <code>else</code> clause, and is <em>small</em>. For example:</p>
+<h3 id="single-line-if-else"><a class="header" href="#single-line-if-else">Single line <code>if else</code></a></h3>
+<p>Put an <code>if else</code> or <code>if let else</code> on a single line if it occurs in expression
+context (i.e., is not a standalone statement), it contains a single <code>else</code>
+clause, and is <em>small</em>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let y = if x { 0 } else { 1 };
@@ -1511,10 +1557,10 @@ if x {
     1
 }
 <span class="boring">}</span></code></pre></pre>
-<h3 id="match"><a class="header" href="#match">Match</a></h3>
-<p>Prefer not to line-break inside the discriminant expression. There must always
-be a line break after the opening brace and before the closing brace. The match
-arms must be block indented once:</p>
+<h2 id="match"><a class="header" href="#match">Match</a></h2>
+<p>Prefer not to line-break inside the discriminant expression. Always break after
+the opening brace and before the closing brace. Block-indent the match arms
+once:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>match foo {
@@ -1526,7 +1572,7 @@ let x = match foo.bar.baz() {
 };
 <span class="boring">}</span></code></pre></pre>
 <p>Use a trailing comma for a match arm if and only if not using a block.</p>
-<p>Never start a match arm pattern with <code>|</code>, e.g.,</p>
+<p>Never start a match arm pattern with <code>|</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>match foo {
@@ -1536,12 +1582,12 @@ let x = match foo.bar.baz() {
     | a_very_long_pattern
     | another_pattern
     | yet_another_pattern
-    | a_forth_pattern =&gt; {
+    | a_fourth_pattern =&gt; {
         ...
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>Prefer</p>
+<p>Prefer:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>match foo {
@@ -1549,7 +1595,7 @@ let x = match foo.bar.baz() {
     a_very_long_pattern
     | another_pattern
     | yet_another_pattern
-    | a_forth_pattern =&gt; {
+    | a_fourth_pattern =&gt; {
         ...
     }
 }
@@ -1557,10 +1603,11 @@ let x = match foo.bar.baz() {
 <p>Avoid splitting the left-hand side (before the <code>=&gt;</code>) of a match arm where
 possible. If the right-hand side of the match arm is kept on the same line,
 never use a block (unless the block is empty).</p>
-<p>If the right-hand side consists of multiple statements or has line comments or
-the start of the line cannot be fit on the same line as the left-hand side, use
-a block.</p>
-<p>The body of a block arm should be block indented once.</p>
+<p>If the right-hand side consists of multiple statements, or has line comments,
+or the start of the line does not fit on the same line as the left-hand side,
+use a block. Do not flatten a right-hand side block containing a single macro call
+because its expanded form could contain a trailing semicolon.</p>
+<p>Block-indent the body of a block arm.</p>
 <p>Examples:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1580,11 +1627,15 @@ a block.</p>
     bar =&gt; {}
     // Trailing comma on last item.
     foo =&gt; bar,
+    baz =&gt; qux!(),
+    lorem =&gt; {
+        ipsum!()
+    }
 }
 <span class="boring">}</span></code></pre></pre>
 <p>If the body is a single expression with no line comments and not a control flow
-expression, then it may be started on the same line as the right-hand side. If
-not, then it must be in a block. Example,</p>
+expression, start it on the same line as the left-hand side. If not, then it
+must be in a block. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>match foo {
@@ -1605,9 +1656,9 @@ not, then it must be in a block. Example,</p>
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<h4 id="line-breaking"><a class="header" href="#line-breaking">Line-breaking</a></h4>
-<p>Where it is possible to use a block form on the right-hand side and avoid
-breaking the left-hand side, do that. E.g.</p>
+<h3 id="line-breaking"><a class="header" href="#line-breaking">Line-breaking</a></h3>
+<p>If using a block form on the right-hand side of a match arm makes it possible
+to avoid breaking on the left-hand side, do that:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    // Assuming the following line does not fit in the max width
@@ -1636,7 +1687,7 @@ body on a new line:</p>
 <span class="boring">}</span></code></pre></pre>
 <p>If required to break the pattern, put each clause of the pattern on its own
 line with no additional indent, breaking before the <code>|</code>. If there is an <code>if</code>
-clause, then you must use the above form:</p>
+clause, use the above form:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    a_very_long_pattern
@@ -1655,7 +1706,7 @@ clause, then you must use the above form:</p>
     }
 <span class="boring">}</span></code></pre></pre>
 <p>If the pattern is multi-line, and the last line is less wide than the indent, do
-not put the <code>if</code> clause on a newline. E.g.,</p>
+not put the <code>if</code> clause on a new line. E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    Token::Dimension {
@@ -1666,9 +1717,9 @@ not put the <code>if</code> clause on a newline. E.g.,</p>
         ...
     }
 <span class="boring">}</span></code></pre></pre>
-<p>If every clause in a pattern is <em>small</em>, but does not fit on one line, then the
-pattern may be formatted across multiple lines with as many clauses per line as
-possible. Again break before a <code>|</code>:</p>
+<p>If every clause in a pattern is <em>small</em>, but the whole pattern does not fit on
+one line, then format the pattern across multiple lines with as many clauses
+per line as possible. Again, break before a <code>|</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    foo | bar | baz
@@ -1676,21 +1727,22 @@ possible. Again break before a <code>|</code>:</p>
         ...
     }
 <span class="boring">}</span></code></pre></pre>
-<p>We define a pattern clause to be <em>small</em> if it matches the following grammar:</p>
-<pre><code>[small, ntp]:
-    - single token
-    - `&amp;[single-line, ntp]`
+<p>We define a pattern clause to be <em>small</em> if it fits on a single line and
+matches &quot;small&quot; in the following grammar:</p>
+<pre><code>small:
+    - small_no_tuple
+    - unary tuple constructor: `(` small_no_tuple `,` `)`
+    - `&amp;` small
 
-[small]:
-    - `[small, ntp]`
-    - unary tuple constructor `([small, ntp])`
-    - `&amp;[small]`
+small_no_tuple:
+    - single token
+    - `&amp;` small_no_tuple
 </code></pre>
 <p>E.g., <code>&amp;&amp;Some(foo)</code> matches, <code>Foo(4, Bar)</code> does not.</p>
-<h3 id="combinable-expressions"><a class="header" href="#combinable-expressions">Combinable expressions</a></h3>
+<h2 id="combinable-expressions"><a class="header" href="#combinable-expressions">Combinable expressions</a></h2>
 <p>Where a function call has a single argument, and that argument is formatted
-across multiple-lines, the outer call may be formatted as if it were a single-
-line call. The same combining behaviour may be applied to any similar
+across multiple-lines, format the outer call as if it were a single-line call,
+if the result fits. Apply the same combining behaviour to any similar
 expressions which have multi-line, block-indented lists of sub-expressions
 delimited by parentheses (e.g., macros or tuple struct literals). E.g.,</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -1708,13 +1760,22 @@ foo(|param| {
     action();
     foo(param)
 })
+
+let x = combinable([
+    an_expr,
+    another_expr,
+]);
+
+let arr = [combinable(
+    an_expr,
+    another_expr,
+)];
 <span class="boring">}</span></code></pre></pre>
-<p>Such behaviour should extend recursively, however, tools may choose to limit the
-depth of nesting.</p>
-<p>Only where the multi-line sub-expression is a closure with an explicit block,
-this combining behaviour may be used where there are other arguments, as long as
-all the arguments and the first line of the closure fit on the first line, the
-closure is the last argument, and there is only one closure argument:</p>
+<p>Apply this behavior recursively.</p>
+<p>For a function with multiple arguments, if the last argument is a multi-line
+closure with an explicit block, there are no other closure arguments, and all
+the arguments and the first line of the closure fit on the first line, use the
+same combining behavior:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>foo(first_arg, x, |param| {
@@ -1722,44 +1783,43 @@ closure is the last argument, and there is only one closure argument:</p>
     foo(param)
 })
 <span class="boring">}</span></code></pre></pre>
-<h3 id="ranges"><a class="header" href="#ranges">Ranges</a></h3>
+<h2 id="ranges"><a class="header" href="#ranges">Ranges</a></h2>
 <p>Do not put spaces in ranges, e.g., <code>0..10</code>, <code>x..=y</code>, <code>..x.len()</code>, <code>foo..</code>.</p>
 <p>When writing a range with both upper and lower bounds, if the line must be
-broken, break before the range operator and block indent the second line:</p>
+broken within the range, break before the range operator and block indent the
+second line:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>a_long_expression
     ..another_long_expression
 <span class="boring">}</span></code></pre></pre>
-<p>For the sake of indicating precedence, we recommend that if either bound is a
-compound expression, then use parentheses around it, e.g., <code>..(x + 1)</code>,
-<code>(x.f)..(x.f.len())</code>, or <code>0..(x - 10)</code>.</p>
-<h3 id="hexadecimal-literals"><a class="header" href="#hexadecimal-literals">Hexadecimal literals</a></h3>
+<p>For the sake of indicating precedence, if either bound is a compound
+expression, use parentheses around it, e.g., <code>..(x + 1)</code>, <code>(x.f)..(x.f.len())</code>,
+or <code>0..(x - 10)</code>.</p>
+<h2 id="hexadecimal-literals"><a class="header" href="#hexadecimal-literals">Hexadecimal literals</a></h2>
 <p>Hexadecimal literals may use upper- or lower-case letters, but they must not be
 mixed within the same literal. Projects should use the same case for all
-literals, but we do not make a recommendation for either lower- or upper-case.
-Tools should have an option to convert mixed case literals to upper-case, and
-may have an option to convert all literals to either lower- or upper-case.</p>
+literals, but we do not make a recommendation for either lower- or upper-case.</p>
 <h2 id="patterns"><a class="header" href="#patterns">Patterns</a></h2>
-<p>Patterns should be formatted like their corresponding expressions. See the
-section on <code>match</code> for additional formatting for patterns in match arms.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="types-and-bounds"><a class="header" href="#types-and-bounds">Types and Bounds</a></h2>
-<h3 id="single-line-formatting"><a class="header" href="#single-line-formatting">Single line formatting</a></h3>
+<p>Format patterns like their corresponding expressions. See the section on
+<code>match</code> for additional formatting for patterns in match arms.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="types-and-bounds"><a class="header" href="#types-and-bounds">Types and Bounds</a></h1>
+<h2 id="single-line-formatting"><a class="header" href="#single-line-formatting">Single line formatting</a></h2>
 <ul>
 <li><code>[T]</code> no spaces</li>
 <li><code>[T; expr]</code>, e.g., <code>[u32; 42]</code>, <code>[Vec&lt;Foo&gt;; 10 * 2 + foo()]</code> (space after colon, no spaces around square brackets)</li>
 <li><code>*const T</code>, <code>*mut T</code> (no space after <code>*</code>, space before type)</li>
 <li><code>&amp;'a T</code>, <code>&amp;T</code>, <code>&amp;'a mut T</code>, <code>&amp;mut T</code> (no space after <code>&amp;</code>, single spaces separating other words)</li>
 <li><code>unsafe extern &quot;C&quot; fn&lt;'a, 'b, 'c&gt;(T, U, V) -&gt; W</code> or <code>fn()</code> (single spaces around keywords and sigils, and after commas, no trailing commas, no spaces around brackets)</li>
-<li><code>!</code> should be treated like any other type name, <code>Name</code></li>
+<li><code>!</code> gets treated like any other type name, <code>Name</code></li>
 <li><code>(A, B, C, D)</code> (spaces after commas, no spaces around parens, no trailing comma unless it is a one-tuple)</li>
 <li><code>&lt;Baz&lt;T&gt; as SomeTrait&gt;::Foo::Bar</code> or <code>Foo::Bar</code> or <code>::Foo::Bar</code> (no spaces around <code>::</code> or angle brackets, single spaces around <code>as</code>)</li>
 <li><code>Foo::Bar&lt;T, U, V&gt;</code> (spaces after commas, no trailing comma, no spaces around angle brackets)</li>
 <li><code>T + T + T</code> (single spaces between types, and <code>+</code>).</li>
 <li><code>impl T + T + T</code> (single spaces between keyword, types, and <code>+</code>).</li>
 </ul>
-<p>Parentheses used in types should not be surrounded by whitespace, e.g., <code>(Foo)</code></p>
-<h3 id="line-breaks"><a class="header" href="#line-breaks">Line breaks</a></h3>
+<p>Do not put space around parentheses used in types, e.g., <code>(Foo)</code></p>
+<h2 id="line-breaks"><a class="header" href="#line-breaks">Line breaks</a></h2>
 <p>Avoid breaking lines in types where possible. Prefer breaking at outermost scope, e.g., prefer</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1776,10 +1836,13 @@ section on <code>match</code> for additional formatting for patterns in match ar
     Type2,
 &gt;&gt;
 <span class="boring">}</span></code></pre></pre>
-<p><code>[T; expr]</code> may be broken after the <code>;</code> if necessary.</p>
-<p>Function types may be broken following the rules for function declarations.</p>
-<p>Generic types may be broken following the rules for generics.</p>
-<p>Types with <code>+</code> may be broken after any <code>+</code> using block indent and breaking before the <code>+</code>. When breaking such a type, all <code>+</code>s should be line broken, e.g.,</p>
+<p>If a type requires line-breaks in order to fit, this section outlines where to
+break such types if necessary.</p>
+<p>Break <code>[T; expr]</code> after the <code>;</code> if necessary.</p>
+<p>Break function types following the rules for function declarations.</p>
+<p>Break generic types following the rules for generics.</p>
+<p>Break types with <code>+</code> by breaking before the <code>+</code> and block-indenting the
+subsequent lines. When breaking such a type, break before <em>every</em> <code>+</code>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Clone
@@ -1925,6 +1988,47 @@ merge-friendliness, etc.</li>
 </ul>
 </li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rust-style-editions"><a class="header" href="#rust-style-editions">Rust style editions</a></h1>
+<p>The default Rust style evolves over time, as Rust does. However, to avoid
+breaking established code style, and CI jobs checking code style, changes to
+the default Rust style only appear in <em>style editions</em>.</p>
+<p>Code written in a given
+<a href="https://doc.rust-lang.org/edition-guide/">Rust edition</a>
+uses the corresponding Rust style edition by default. To make it easier to
+migrate code style separately from the semantic changes between Rust editions,
+formatting tools such as <code>rustfmt</code> allow updating the style edition separately
+from the Rust edition.</p>
+<p>The current version of the style guide describes the latest Rust style edition.
+Each distinct past style will have a corresponding archived version of the
+style guide.</p>
+<p>Note that archived versions of the style guide do not document formatting for
+newer Rust constructs that did not exist at the time that version of the style
+guide was archived. However, each style edition will still format all
+constructs valid in that Rust edition, with the style of newer constructs
+coming from the first subsequent style edition providing formatting rules for
+that construct (without any of the systematic/global changes from that style
+edition).</p>
+<p>Not all Rust editions have corresponding changes to the Rust style. For
+instance, Rust 2015, Rust 2018, and Rust 2021 all use the same style edition.</p>
+<h2 id="rust-2024-style-edition"><a class="header" href="#rust-2024-style-edition">Rust 2024 style edition</a></h2>
+<p>This style guide describes the Rust 2024 style edition. The Rust 2024 style
+edition is currently nightly-only and may change before the release of Rust
+2024.</p>
+<p>For a full history of changes in the Rust 2024 style edition, see the git
+history of the style guide. Notable changes in the Rust 2024 style edition
+include:</p>
+<ul>
+<li>Miscellaneous <code>rustfmt</code> bugfixes.</li>
+</ul>
+<h2 id="rust-201520182021-style-edition"><a class="header" href="#rust-201520182021-style-edition">Rust 2015/2018/2021 style edition</a></h2>
+<p>The archived version of the style guide at
+<a href="https://github.com/rust-lang/rust/tree/37343f4a4d4ed7ad0891cb79e8eb25acf43fb821/src/doc/style-guide/src">https://github.com/rust-lang/rust/tree/37343f4a4d4ed7ad0891cb79e8eb25acf43fb821/src/doc/style-guide/src</a>
+describes the style edition corresponding to Rust 2015, Rust 2018, and Rust
+2021.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="nightly"><a class="header" href="#nightly">Nightly</a></h1>
+<p>This chapter documents style and formatting for nightly-only syntax. The rest of the style guide documents style for stable Rust syntax; nightly syntax only appears in this chapter. Each section here includes the name of the feature gate, so that searches (e.g. <code>git grep</code>) for a nightly feature in the Rust repository also turn up the style guide section.</p>
+<p>Style and formatting for nightly-only syntax should be removed from this chapter and integrated into the appropriate sections of the style guide at the time of stabilization.</p>
+<p>There is no guarantee of the stability of this chapter in contrast to the rest of the style guide. Refer to the style team policy for nightly formatting procedure regarding breaking changes to this chapter.</p>
 
                     </main>
 

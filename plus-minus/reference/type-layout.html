@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -629,11 +651,30 @@ important consequence of these rules is that a type with <code>#[repr(packed(1))
 <p>The <code>align</code> modifier can also be applied on an <code>enum</code>.
 When it is, the effect on the <code>enum</code>'s alignment is the same as if the <code>enum</code>
 was wrapped in a newtype <code>struct</code> with the same <code>align</code> modifier.</p>
-<div class="warning">
-<p><em><strong>Warning:</strong></em> Dereferencing an unaligned pointer is <a href="behavior-considered-undefined.html">undefined behavior</a> and
-it is possible to <a href="https://github.com/rust-lang/rust/issues/27060">safely create unaligned pointers to <code>packed</code> fields</a>.
-Like all ways to create undefined behavior in safe Rust, this is a bug.</p>
-</div>
+<blockquote>
+<p>Note: References to unaligned fields are not allowed because it is <a href="behavior-considered-undefined.html">undefined behavior</a>.
+When fields are unaligned due to an alignment modifier, consider the following options for using references and dereferences:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[repr(packed)]
+struct Packed {
+    f1: u8,
+    f2: u16,
+}
+let mut e = Packed { f1: 1, f2: 2 };
+// Instead of creating a reference to a field, copy the value to a local variable.
+let x = e.f2;
+// Or in situations like `println!` which creates a reference, use braces
+// to change it to a copy of the value.
+println!(&quot;{}&quot;, {e.f2});
+// Or if you need a pointer, use the unaligned methods for reading and writing
+// instead of dereferencing the pointer directly.
+let ptr: *const u16 = std::ptr::addr_of!(e.f2);
+let value = unsafe { ptr.read_unaligned() };
+let mut_ptr: *mut u16 = std::ptr::addr_of_mut!(e.f2);
+unsafe { mut_ptr.write_unaligned(3) }
+<span class="boring">}</span></code></pre></pre>
+</blockquote>
 <h3 id="the-transparent-representation"><a class="header" href="#the-transparent-representation">The <code>transparent</code> Representation</a></h3>
 <p>The <code>transparent</code> representation can only be used on a <a href="items/structs.html"><code>struct</code></a>
 or an <a href="items/enumerations.html"><code>enum</code></a> with a single variant that has:</p>

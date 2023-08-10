@@ -90,11 +90,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -2252,6 +2274,7 @@ type Foo2&lt;A&gt; = Box&lt;A&gt;; // ok!
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0092"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -2264,6 +2287,7 @@ functions are defined in <code>compiler/rustc_codegen_llvm/src/intrinsic.rs</cod
 <code>library/core/src/intrinsics.rs</code> in the Rust source code. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -2274,6 +2298,7 @@ functions are defined in <code>compiler/rustc_codegen_llvm/src/intrinsic.rs</cod
 <p>An unknown intrinsic function was declared.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0093">#![feature(intrinsics)]
+#![allow(internal_features)]
 
 extern &quot;rust-intrinsic&quot; {
     fn foo(); // error: unrecognized intrinsic function: `foo`
@@ -2288,6 +2313,7 @@ fn main() {
 functions are defined in <code>compiler/rustc_codegen_llvm/src/intrinsic.rs</code> and in
 <code>library/core/src/intrinsics.rs</code> in the Rust source code. Example:</p>
 <pre><pre class="playground"><code class="language-rust">#![feature(intrinsics)]
+#![allow(internal_features)]
 
 extern &quot;rust-intrinsic&quot; {
     fn atomic_fence_seqcst(); // ok!
@@ -2303,6 +2329,7 @@ fn main() {
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0094"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -2316,6 +2343,7 @@ and verify with the function declaration in the Rust source code.
 Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -3868,6 +3896,7 @@ being used by an associated type.</p>
 </span><span class="boring">fn main() {
 </span>// NOTE: this feature is perma-unstable and should *only* be used for
 //       testing purposes.
+#![allow(internal_features)]
 #![feature(rustc_attrs)]
 
 #[rustc_variance]
@@ -3954,6 +3983,7 @@ see <a href="https://rust-lang.github.io/rfcs/2451-re-rebalancing-coherence.html
 <p>You used a function or type which doesn't fit the requirements for where it was
 used. Erroneous code examples:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail">#![feature(intrinsics)]
+#![allow(internal_features)]
 
 extern &quot;rust-intrinsic&quot; {
     #[rustc_safe_intrinsic]
@@ -3987,6 +4017,7 @@ impl Foo {
 <p>For the first code example, please check the function definition. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -4380,6 +4411,7 @@ position that needs that trait. For example, when the following code is
 compiled:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0230"><span class="boring">#![allow(unused)]
 </span>#![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_on_unimplemented = &quot;error on `{Self}` with params `&lt;{A},{B}&gt;`&quot;] // error
@@ -4403,6 +4435,7 @@ position that needs that trait. For example, when the following code is
 compiled:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0231"><span class="boring">#![allow(unused)]
 </span>#![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_on_unimplemented = &quot;error on `{Self}` with params `&lt;{A},{}&gt;`&quot;] // error!
@@ -4424,6 +4457,7 @@ position that needs that trait. For example, when the following code is
 compiled:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0232"><span class="boring">#![allow(unused)]
 </span>#![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_on_unimplemented(lorem=&quot;&quot;)] // error!
@@ -4731,6 +4765,7 @@ the second <code>'a</code> lifetime into something else (<code>'c</code> for exa
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0264"><span class="boring">#![allow(unused)]
 </span>#![feature(lang_items)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;C&quot; {
@@ -4742,6 +4777,7 @@ the second <code>'a</code> lifetime into something else (<code>'c</code> for exa
 <code>src/librustc_middle/middle/weak_lang_items.rs</code>. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(lang_items)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;C&quot; {
@@ -6652,6 +6688,8 @@ trait SecondTrait : FirstTrait {
 <span class="boring">}</span></code></pre></pre>
 <p>The previous example contains a circular dependency between two traits:
 <code>FirstTrait</code> depends on <code>SecondTrait</code> which itself depends on <code>FirstTrait</code>.</p>
+<p>See https://rustc-dev-guide.rust-lang.org/overview.html#queries and
+https://rustc-dev-guide.rust-lang.org/query.html for more information.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0392"><a class="header" href="#error-code-e0392">Error code E0392</a></h1>
 <p>A type or lifetime parameter has been declared but is not actually used.</p>
 <p>Erroneous code example:</p>
@@ -7705,14 +7743,11 @@ extern &quot;platform-intrinsic&quot; {
 }</code></pre>
 <p>The <code>simd_shuffle</code> function needs the length of the array passed as
 last parameter in its name. Example:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span>#![feature(platform_intrinsics)]
+<pre><code class="language-rust ignore (no longer compiles)">#![feature(platform_intrinsics)]
 
-<span class="boring">fn main() {
-</span>extern &quot;platform-intrinsic&quot; {
+extern &quot;platform-intrinsic&quot; {
     fn simd_shuffle8&lt;A,B&gt;(a: A, b: A, c: [u32; 8]) -&gt; B;
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0445"><a class="header" href="#error-code-e0445">Error code E0445</a></h1>
 <p>A private trait was used on a public type parameter bound.</p>
 <p>Erroneous code examples:</p>
@@ -10139,6 +10174,7 @@ fn deprecated_function() {}
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0539"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10162,6 +10198,7 @@ const fn stable_fn() {}
 To fix these issues you need to give required key-value pairs.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10212,6 +10249,7 @@ fn deprecated_function() {}
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0542"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10230,6 +10268,7 @@ fn _deprecated_fn() {}
 <p>To fix this issue, you need to provide the <code>since</code> field. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10254,6 +10293,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0543"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10266,6 +10306,7 @@ fn _deprecated_fn() {}
 <p>To fix this issue, you need to provide the <code>note</code> field. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10284,6 +10325,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0544"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;rust1&quot;)]
 
 <span class="boring">fn main() {
@@ -10294,6 +10336,7 @@ fn foo() {}
 <p>To fix this issue, ensure that each item has at most one stability attribute.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;rust1&quot;)]
 
 <span class="boring">fn main() {
@@ -10308,6 +10351,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0545"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10321,6 +10365,7 @@ const fn _unstable_const_fn() {}
 Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10338,6 +10383,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0546"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10350,6 +10396,7 @@ fn stable_fn() {}
 <p>To fix this issue, you need to provide the <code>feature</code> field. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10367,6 +10414,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0547"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10379,6 +10427,7 @@ const fn _unstable_const_fn() {}
 <p>To fix this issue, you need to provide the <code>issue</code> field. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10400,6 +10449,7 @@ Rustc Dev Guide for more details.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0549"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10413,6 +10463,7 @@ fn _deprecated_fn() {}
 Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -10912,7 +10963,7 @@ let _: &lt;u8 as Age&gt;::Empire; // ok!
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-code-e0577"><a class="header" href="#error-code-e0577">Error code E0577</a></h1>
 <p>Something other than a module was found in visibility scope.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0577 edition2018">pub struct Sea;
+<pre><pre class="playground"><code class="language-rust compile_fail E0577 edition2018">pub enum Sea {}
 
 pub (in crate::Sea) struct Shark; // error!
 
@@ -11856,6 +11907,8 @@ the type of <code>y</code> to <code>&amp;'a i32</code>, like so:</p>
 <p>An intrinsic was declared without being a function.</p>
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0622">#![feature(intrinsics)]
+#![allow(internal_features)]
+
 extern &quot;rust-intrinsic&quot; {
     pub static breakpoint: fn(); // error: intrinsic must be a function
 }
@@ -11865,6 +11918,8 @@ fn main() { unsafe { breakpoint(); } }</code></pre></pre>
 whose implementation is handled specially by the compiler. In order to fix this
 error, just declare a function. Example:</p>
 <pre><code class="language-no_run">#![feature(intrinsics)]
+#![allow(internal_features)]
+
 extern &quot;rust-intrinsic&quot; {
     pub fn breakpoint(); // ok!
 }
@@ -12878,7 +12933,8 @@ struct ForceAlign32;
 
 #[repr(transparent)]
 struct Wrapper(f32, ForceAlign32); // error: zero-sized field in transparent
-                                   //        struct has alignment larger than 1
+                                   //        struct has alignment of 32, which
+                                   //        is larger than 1
 <span class="boring">}</span></code></pre></pre>
 <p>A transparent struct, enum, or union is supposed to be represented exactly like
 the piece of data it contains. Zero-sized fields with different alignment
@@ -14769,6 +14825,7 @@ more information on trait object lifetimes.</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0773"><span class="boring">#![allow(unused)]
 </span>#![feature(decl_macro)]
 #![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_builtin_macro]
@@ -14787,6 +14844,7 @@ mod inner {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(decl_macro)]
 #![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_builtin_macro]
@@ -15092,6 +15150,7 @@ on an item with a <code>stable</code> attribute.</p>
 //       used outside of the compiler and standard library.
 #![feature(rustc_attrs)]
 #![feature(staged_api)]
+#![allow(internal_features)]
 
 #![unstable(feature = &quot;foo_module&quot;, reason = &quot;...&quot;, issue = &quot;123&quot;)]
 

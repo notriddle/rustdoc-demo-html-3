@@ -90,11 +90,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -265,17 +287,15 @@ fn main() {
     let a = A;
     a.foo();
 }</code></pre></pre>
-<p>Now we can run the test with <code>TESTNAME=foo_functions cargo uitest</code>, currently
+<p>Now we can run the test with <code>TESTNAME=foo_functions cargo uibless</code>, currently
 this test is meaningless though.</p>
 <p>While we are working on implementing our lint, we can keep running the UI test.
-That allows us to check if the output is turning into what we want.</p>
-<p>Once we are satisfied with the output, we need to run <code>cargo dev bless</code> to
-update the <code>.stderr</code> file for our lint. Please note that, we should run
-<code>TESTNAME=foo_functions cargo uitest</code> every time before running <code>cargo dev bless</code>. Running <code>TESTNAME=foo_functions cargo uitest</code> should pass then. When we
+That allows us to check if the output is turning into what we want by checking the
+<code>.stderr</code> file that gets updated on every test run.</p>
+<p>Running <code>TESTNAME=foo_functions cargo uitest</code> should pass on its own. When we
 commit our lint, we need to commit the generated <code>.stderr</code> files, too. In
-general, you should only commit files changed by <code>cargo dev bless</code> for the
-specific lint you are creating/editing. Note that if the generated files are
-empty, they should be removed.</p>
+general, you should only commit files changed by <code>cargo bless</code> for the
+specific lint you are creating/editing.</p>
 <blockquote>
 <p><em>Note:</em> you can run multiple test files by specifying a comma separated list:
 <code>TESTNAME=foo_functions,test2,test3</code>.</p>
@@ -302,7 +322,7 @@ file should include a <code>//@run-rustfix</code> comment at the top. This will
 additionally run <a href="https://github.com/rust-lang/rustfix">rustfix</a> for that test. Rustfix will apply the suggestions
 from the lint to the code of the test file and compare that to the contents of a
 <code>.fixed</code> file.</p>
-<p>Use <code>cargo dev bless</code> to automatically generate the <code>.fixed</code> file after running
+<p>Use <code>cargo bless</code> to automatically generate the <code>.fixed</code> file while running
 the tests.</p>
 <h2 id="testing-manually"><a class="header" href="#testing-manually">Testing manually</a></h2>
 <p>Manually testing against an example file can be useful if you have added some
@@ -491,7 +511,7 @@ fn is_foo_fn(fn_kind: FnKind&lt;'_&gt;) -&gt; bool {
 }
 <span class="boring">}</span></code></pre></pre>
 <p>Now we should also run the full test suite with <code>cargo test</code>. At this point
-running <code>cargo test</code> should produce the expected output. Remember to run <code>cargo dev bless</code> to update the <code>.stderr</code> file.</p>
+running <code>cargo test</code> should produce the expected output. Remember to run <code>cargo bless</code> to update the <code>.stderr</code> file.</p>
 <p><code>cargo test</code> (as opposed to <code>cargo uitest</code>) will also ensure that our lint
 implementation is not violating any Clippy lints itself.</p>
 <p>That should be it for the lint implementation. Running <code>cargo test</code> should now

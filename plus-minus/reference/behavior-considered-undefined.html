@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -198,9 +220,10 @@ types are passed in a (nested) field of a compound type, but not behind
 pointer indirections.</p>
 </li>
 <li>
-<p>Mutating immutable data. All data inside a <a href="items/constant-items.html"><code>const</code></a> item is immutable. Moreover, all
-data reached through a shared reference or data owned by an immutable binding
-is immutable, unless that data is contained within an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Mutating immutable bytes. All bytes inside a <a href="items/constant-items.html"><code>const</code></a> item are immutable.
+The bytes owned by an immutable binding are immutable, unless those bytes are part of an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Moreover, the bytes <a href="#pointed-to-bytes">pointed to</a> by a shared reference, including transitively through other references (both shared and mutable) and <code>Box</code>es, are immutable; transitivity includes those references stored in fields of compound types.</p>
+<p>A mutation is any write of more than 0 bytes which overlaps with any of the relevant bytes (even if that write does not change the memory contents).</p>
 </li>
 <li>
 <p>Invoking undefined behavior via compiler intrinsics.</p>
@@ -264,6 +287,13 @@ In the standard library, this affects <a href="../core/ptr/struct.NonNull.html">
 <p>Incorrect use of inline assembly. For more details, refer to the <a href="inline-assembly.html#rules-for-inline-assembly">rules</a> to
 follow when writing code that uses inline assembly.</p>
 </li>
+<li>
+<p><strong>In <a href="const_eval.html#const-context">const context</a></strong>: transmuting or otherwise
+reinterpreting a pointer (reference, raw pointer, or function pointer) into
+some allocated object as a non-pointer type (such as integers).
+'Reinterpreting' refers to loading the pointer value at integer type without a
+cast, e.g. by doing raw pointer casts or using a union.</p>
+</li>
 </ul>
 <p><strong>Note:</strong> Uninitialized memory is also implicitly invalid for any type that has
 a restricted set of valid values. In other words, the only cases in which
@@ -276,11 +306,12 @@ program contains undefined behaviour that can also affect the Rust code. And
 vice versa, undefined behavior in Rust can cause adverse affects on code
 executed by any FFI calls to other languages.</p>
 </blockquote>
+<h3 id="pointed-to-bytes"><a class="header" href="#pointed-to-bytes">Pointed-to bytes</a></h3>
+<p>The span of bytes a pointer or reference &quot;points to&quot; is determined by the pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
 <h3 id="dangling-pointers"><a class="header" href="#dangling-pointers">Dangling pointers</a></h3>
 <p>A reference/pointer is &quot;dangling&quot; if it is null or not all of the bytes it
-points to are part of the same live allocation (so in particular they all have to be
-part of <em>some</em> allocation). The span of bytes it points to is determined by the
-pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
+<a href="#pointed-to-bytes">points to</a> are part of the same live allocation (so in particular they all have to be
+part of <em>some</em> allocation).</p>
 <p>If the size is 0, then the pointer must either point inside of a live allocation
 (including pointing just after the last byte of the allocation), or it must be
 directly constructed from a non-zero integer literal.</p>

@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -1019,7 +1041,7 @@ which can be activated with <code>resolver = &quot;2&quot;</code> in <code>Cargo
 That is, writing <code>edition = &quot;2021&quot;</code> in <code>Cargo.toml</code> will imply <code>resolver = &quot;2&quot;</code>.</p>
 <p>The resolver is a global setting for a <a href="rust-2021/../../cargo/reference/workspaces.html">workspace</a>, and the setting is ignored in dependencies.
 The setting is only honored for the top-level package of the workspace.
-If you are using a <a href="rust-2021/../../cargo/reference/workspaces.html#virtual-manifest">virtual workspace</a>, you will still need to explicitly set the <a href="rust-2021/../../cargo/reference/resolver.html#resolver-versions"><code>resolver</code> field</a>
+If you are using a <a href="rust-2021/../../cargo/reference/workspaces.html#virtual-workspace">virtual workspace</a>, you will still need to explicitly set the <a href="rust-2021/../../cargo/reference/resolver.html#resolver-versions"><code>resolver</code> field</a>
 in the <code>[workspace]</code> definition if you want to opt-in to the new resolver.</p>
 <p>The new feature resolver no longer merges all requested features for
 crates that are depended on in multiple ways.
@@ -1413,7 +1435,7 @@ we've decided to reserve syntax for prefixed identifiers and literals:
 <code>prefix#identifier</code>, <code>prefix&quot;string&quot;</code>, <code>prefix'c'</code>, and <code>prefix#123</code>,
 where <code>prefix</code> can be any identifier.
 (Except those prefixes that already have a meaning, such as <code>b'...'</code> (byte
-strings) and <code>r&quot;...&quot;</code> (raw strings).)</p>
+chars) and <code>r&quot;...&quot;</code> (raw strings).)</p>
 <p>This provides syntax we can expand into in the future without requiring an
 edition boundary. We may use this for temporary syntax until the next edition,
 or for permanent syntax if appropriate.</p>

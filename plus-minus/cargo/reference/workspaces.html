@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -205,7 +227,6 @@ name = &quot;hello_world&quot; # the name of the package
 version = &quot;0.1.0&quot;    # the current version, obeying semver
 authors = [&quot;Alice &lt;a@example.com&gt;&quot;, &quot;Bob &lt;b@example.com&gt;&quot;]
 </code></pre>
-<p><a id="virtual-manifest"></a></p>
 <h4 id="virtual-workspace"><a class="header" href="#virtual-workspace">Virtual workspace</a></h4>
 <p>Alternatively, a <code>Cargo.toml</code> file can be created with a <code>[workspace]</code> section
 but without a <a href="manifest.html#the-package-section"><code>[package]</code> section</a>. This is called a <em>virtual
@@ -214,13 +235,19 @@ you want to keep all the packages organized in separate directories.</p>
 <pre><code class="language-toml"># [PROJECT_DIR]/Cargo.toml
 [workspace]
 members = [&quot;hello_world&quot;]
+resolver = &quot;2&quot;
 </code></pre>
 <pre><code class="language-toml"># [PROJECT_DIR]/hello_world/Cargo.toml
 [package]
 name = &quot;hello_world&quot; # the name of the package
 version = &quot;0.1.0&quot;    # the current version, obeying semver
+edition = &quot;2021&quot;     # the edition, will have no effect on a resolver used in the workspace
 authors = [&quot;Alice &lt;a@example.com&gt;&quot;, &quot;Bob &lt;b@example.com&gt;&quot;]
 </code></pre>
+<p>Note that in a virtual manifest the <a href="resolver.html#resolver-versions"><code>resolver = &quot;2&quot;</code></a>
+should be specified manually. It is usually deduced from the <a href="manifest.html#the-edition-field"><code>package.edition</code></a>
+field which is absent in virtual manifests and the edition field of a member
+won’t affect the resolver used by the workspace.</p>
 <h3 id="the-members-and-exclude-fields"><a class="header" href="#the-members-and-exclude-fields">The <code>members</code> and <code>exclude</code> fields</a></h3>
 <p>The <code>members</code> and <code>exclude</code> fields define which packages are members of
 the workspace:</p>
@@ -350,6 +377,19 @@ format for the content of either of these tables, it is suggested that
 external tools may wish to use them in a consistent fashion, such as referring
 to the data in <code>workspace.metadata</code> if data is missing from <code>package.metadata</code>,
 if that makes sense for the tool in question.</p>
+<script>
+(function() {
+    var fragments = {
+        "#virtual-manifest": "workspaces.html#virtual-workspace",
+    };
+    var target = fragments[window.location.hash];
+    if (target) {
+        var url = window.location.toString();
+        var base = url.substring(0, url.lastIndexOf('/'));
+        window.location.replace(base + "/" + target);
+    }
+})();
+</script>
 
                     </main>
 

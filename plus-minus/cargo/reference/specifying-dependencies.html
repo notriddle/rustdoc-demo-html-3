@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -172,7 +194,7 @@ time = &quot;0.1.12&quot;
 <p>The string <code>&quot;0.1.12&quot;</code> is a version requirement. Although it looks like a
 specific <em>version</em> of the <code>time</code> crate, it actually specifies a <em>range</em> of
 versions and allows <a href="https://semver.org">SemVer</a> compatible updates. An update is allowed if the new
-version number does not modify the left-most non-zero digit in the major, minor,
+version number does not modify the left-most non-zero number in the major, minor,
 patch grouping. In this case, if we ran <code>cargo update -p time</code>, cargo should
 update us to version <code>0.1.13</code> if it is the latest <code>0.1.z</code> release, but would not
 update us to <code>0.2.0</code>. If instead we had specified the version string as <code>1.0</code>,
@@ -231,6 +253,38 @@ exact version to depend on.</p>
 <h3 id="multiple-requirements"><a class="header" href="#multiple-requirements">Multiple requirements</a></h3>
 <p>As shown in the examples above, multiple version requirements can be
 separated with a comma, e.g., <code>&gt;= 1.2, &lt; 1.5</code>.</p>
+<blockquote>
+<p><strong>Recommendation:</strong> When in doubt, use the default version requirement operator.</p>
+<p>In rare circumstances, a package with a “public dependency”
+(re-exports the dependency or interoperates with it in its public API)
+that is compatible with multiple semver-incompatible versions
+(e.g. only uses a simple type that hasn’t changed between releases, like an <code>Id</code>)
+may support users choosing which version of the “public dependency” to use.
+In this case, a version requirement like <code>&quot;&gt;=0.4, &lt;2&quot;</code> may be of interest.
+<em>However</em> users of the package will likely run into errors and need to to
+manually select a version of the “public dependency” via <code>cargo update</code> if
+they also depend on it as Cargo might pick different versions of the “public
+dependency” when <a href="resolver.html">resolving dependency versions</a>  (see
+<a href="https://github.com/rust-lang/cargo/issues/10599">#10599</a>).</p>
+<p>Avoid constraining the upper bound of a version to be anything less than the
+next semver incompatible version
+(e.g. avoid <code>&quot;&gt;=2.0, &lt;2.4&quot;</code>) as other packages in the dependency tree may
+require a newer version, leading to an unresolvable error (see #6584).
+Consider whether controlling the version in your <a href="../guide/cargo-toml-vs-cargo-lock.html"><code>Cargo.lock</code></a> would be more
+appropriate.</p>
+<p>In some instances this won’t matter or the benefits might outweigh the cost, including:</p>
+<ul>
+<li>When no one else depends on your package e.g. it only has a <code>[[bin]]</code></li>
+<li>When depending on a pre-release package and wishing to avoid breaking
+changes then a fully specified <code>&quot;=1.2.3-alpha.3&quot;</code> might be warranted (see
+<a href="https://github.com/rust-lang/cargo/issues/2222">#2222</a>)</li>
+<li>When a library re-exports a proc-macro but the proc-macro generates code that
+calls into the re-exporting library then a fully specified <code>=1.2.3</code> might be
+warranted to ensure the proc-macro isn’t newer than the re-exporting library
+and generating code that uses parts of the API that don’t exist within the
+current version</li>
+</ul>
+</blockquote>
 <h3 id="specifying-dependencies-from-other-registries"><a class="header" href="#specifying-dependencies-from-other-registries">Specifying dependencies from other registries</a></h3>
 <p>To specify a dependency from a registry other than <a href="https://crates.io/">crates.io</a>, first the
 registry must be configured in a <code>.cargo/config.toml</code> file. See the <a href="registries.html">registries

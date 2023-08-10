@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -283,6 +305,7 @@ panic = 'unwind'         # The panic strategy.
 incremental = true       # Incremental compilation.
 codegen-units = 16       # Number of code generation units.
 rpath = false            # Sets the rpath linking option.
+strip = &quot;none&quot;           # Removes symbols or debuginfo.
 [profile.&lt;name&gt;.build-override]  # Overrides build-script settings.
 # Same keys for a normal profile.
 [profile.&lt;name&gt;.package.&lt;name&gt;]  # Override profile for a package.
@@ -955,6 +978,13 @@ the <a href="profiles.html#overrides">overrides section</a> for more details.</p
 <li>Environment: <code>CARGO_PROFILE_&lt;name&gt;_RPATH</code></li>
 </ul>
 <p>See <a href="profiles.html#rpath">rpath</a>.</p>
+<h5 id="profilenamestrip"><a class="header" href="#profilenamestrip"><code>profile.&lt;name&gt;.strip</code></a></h5>
+<ul>
+<li>Type: string</li>
+<li>default: See profile docs.</li>
+<li>Environment: <code>CARGO_PROFILE_&lt;name&gt;_STRIP</code></li>
+</ul>
+<p>See <a href="profiles.html#strip">strip</a>.</p>
 <h4 id="registries"><a class="header" href="#registries"><code>[registries]</code></a></h4>
 <p>The <code>[registries]</code> table is used for specifying additional <a href="registries.html">registries</a>. It
 consists of a sub-table for each named registry.</p>

@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -162,12 +184,29 @@
 <h2 id="description"><a class="header" href="#description">DESCRIPTION</a></h2>
 <p>Output JSON to stdout containing information about the workspace members and
 resolved dependencies of the current package.</p>
-<p>It is recommended to include the <code>--format-version</code> flag to future-proof
-your code to ensure the output is in the format you are expecting.</p>
+<p>The format of the output is subject to change in futures versions of Cargo. It
+is recommended to include the <code>--format-version</code> flag to future-proof your code
+to ensure the output is in the format you are expecting. For more on the
+expectations, see <a href="#compatibility">“Compatibility”</a>.</p>
 <p>See the <a href="https://crates.io/crates/cargo_metadata">cargo_metadata crate</a>
 for a Rust API for reading the metadata.</p>
 <h2 id="output-format"><a class="header" href="#output-format">OUTPUT FORMAT</a></h2>
-<p>The output has the following format:</p>
+<h3 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h3>
+<p>Within the same output format version, the compatibility is maintained, except
+some scenarios. The following is a non-exhaustive list of changes that are not
+considersed as incompatibile:</p>
+<ul>
+<li><strong>Adding new fields</strong> — New fields will be added when needed. Reserving this
+helps Cargo evolve without bumping the format version too often.</li>
+<li><strong>Adding new values for enum-like fields</strong> — Same as adding new fields. It
+keeps metadata evolving without stagnation.</li>
+<li><strong>Changing opaque representations</strong> — The inner representations of some
+fields are implementation details. For example, fields related to “Package ID”
+or “Source ID” are treated as opaque identifiers to differentiate packages or
+sources. Consumers shouldn’t rely on those representations unless specified.</li>
+</ul>
+<h3 id="json-format"><a class="header" href="#json-format">JSON format</a></h3>
+<p>The JSON output has the following format:</p>
 <pre><code class="language-javascript">{
     /* Array of all packages in the workspace.
        It also includes all feature-enabled dependencies unless --no-deps is used.
@@ -178,7 +217,9 @@ for a Rust API for reading the metadata.</p>
             &quot;name&quot;: &quot;my-package&quot;,
             /* The version of the package. */
             &quot;version&quot;: &quot;0.1.0&quot;,
-            /* The Package ID, a unique identifier for referring to the package. */
+            /* The Package ID, an opaque and unique identifier for referring to the
+               package. See &quot;Compatibility&quot; above for the stability guarantee.
+            */
             &quot;id&quot;: &quot;my-package 0.1.0 (path+file:///path/to/my-package)&quot;,
             /* The license value from the manifest, or null. */
             &quot;license&quot;: &quot;MIT/Apache-2.0&quot;,
@@ -186,14 +227,25 @@ for a Rust API for reading the metadata.</p>
             &quot;license_file&quot;: &quot;LICENSE&quot;,
             /* The description value from the manifest, or null. */
             &quot;description&quot;: &quot;Package description.&quot;,
-            /* The source ID of the package. This represents where
-               a package is retrieved from.
+            /* The source ID of the package, an &quot;opaque&quot; identifier representing
+               where a package is retrieved from. See &quot;Compatibility&quot; above for
+               the stability guarantee.
+
                This is null for path dependencies and workspace members.
+
                For other dependencies, it is a string with the format:
                - &quot;registry+URL&quot; for registry-based dependencies.
                  Example: &quot;registry+https://github.com/rust-lang/crates.io-index&quot;
                - &quot;git+URL&quot; for git-based dependencies.
                  Example: &quot;git+https://github.com/rust-lang/cargo?rev=5e85ba14aaa20f8133863373404cb0af69eeef2c#5e85ba14aaa20f8133863373404cb0af69eeef2c&quot;
+               - &quot;sparse+URL&quot; for dependencies from a sparse registry
+                 Example: &quot;sparse+https://my-sparse-registry.org&quot;
+
+               The value after the `+` is not explicitly defined, and may change
+               between versions of Cargo and may not directly correlate to other
+               things, such as registry definitions in a config file. New source
+               kinds may be added in the future which will have different `+`
+               prefixed identifiers.
             */
             &quot;source&quot;: null,
             /* Array of dependencies declared in the package's manifest. */

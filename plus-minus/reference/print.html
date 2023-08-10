@@ -90,11 +90,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -493,7 +515,7 @@ block (<code>/* ... */</code>) comment forms. Nested block comments are supporte
 <p>Non-doc comments are interpreted as a form of whitespace.</p>
 <h2 id="doc-comments"><a class="header" href="#doc-comments">Doc comments</a></h2>
 <p>Line doc comments beginning with exactly <em>three</em> slashes (<code>///</code>), and block
-doc comments (<code>/** ... */</code>), both inner doc comments, are interpreted as a
+doc comments (<code>/** ... */</code>), both outer doc comments, are interpreted as a
 special syntax for <a href="../rustdoc/the-doc-attribute.html"><code>doc</code> attributes</a>. That is, they are equivalent to writing
 <code>#[doc=&quot;...&quot;]</code> around the body of the comment, i.e., <code>/// Foo</code> turns into
 <code>#[doc=&quot;Foo&quot;]</code> and <code>/** Bar */</code> turns into <code>#[doc=&quot;Bar&quot;]</code>.</p>
@@ -2334,6 +2356,11 @@ on a configuration predicate.</p>
 <p>It is written as <code>cfg</code>, <code>(</code>, a configuration predicate, and finally <code>)</code>.</p>
 <p>If the predicate is true, the thing is rewritten to not have the <code>cfg</code> attribute
 on it. If the predicate is false, the thing is removed from the source code.</p>
+<p>When a crate-level <code>cfg</code> has a false predicate, the behavior is slightly
+different: any crate attributes preceding the <code>cfg</code> are kept, and any crate
+attributes following the <code>cfg</code> are removed. This allows <code>#![no_std]</code> and
+<code>#![no_core]</code> crates to avoid linking <code>std</code>/<code>core</code> even if a <code>#![cfg(...)]</code> has
+removed the entire crate.</p>
 <p>Some examples on functions:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -6861,7 +6888,7 @@ Explicitly, the assignee expressions are:</p>
 <li>Place expressions.</li>
 <li><a href="expressions/underscore-expr.html">Underscores</a>.</li>
 <li><a href="expressions/tuple-expr.html">Tuples</a> of assignee expressions.</li>
-<li><a href="expressions/array-expr.html">Slices</a> of assingee expressions.</li>
+<li><a href="expressions/array-expr.html">Slices</a> of assignee expressions.</li>
 <li><a href="expressions/struct-expr.html">Tuple structs</a> of assignee expressions.</li>
 <li><a href="expressions/struct-expr.html">Structs</a> of assignee expressions (with optionally named
 fields).</li>
@@ -7510,8 +7537,8 @@ The operands of all of these operators are evaluated in <a href="expressions/../
 <tr><td><code>+</code></td><td>Addition</td><td></td><td>Addition</td><td><code>std::ops::Add</code></td><td><code>std::ops::AddAssign</code></td></tr>
 <tr><td><code>-</code></td><td>Subtraction</td><td></td><td>Subtraction</td><td><code>std::ops::Sub</code></td><td><code>std::ops::SubAssign</code></td></tr>
 <tr><td><code>*</code></td><td>Multiplication</td><td></td><td>Multiplication</td><td><code>std::ops::Mul</code></td><td><code>std::ops::MulAssign</code></td></tr>
-<tr><td><code>/</code></td><td>Division*</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
-<tr><td><code>%</code></td><td>Remainder**</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
+<tr><td><code>/</code></td><td>Division*†</td><td></td><td>Division</td><td><code>std::ops::Div</code></td><td><code>std::ops::DivAssign</code></td></tr>
+<tr><td><code>%</code></td><td>Remainder**†</td><td></td><td>Remainder</td><td><code>std::ops::Rem</code></td><td><code>std::ops::RemAssign</code></td></tr>
 <tr><td><code>&amp;</code></td><td>Bitwise AND</td><td><a href="expressions/../types/boolean.html#logical-and">Logical AND</a></td><td></td><td><code>std::ops::BitAnd</code></td><td><code>std::ops::BitAndAssign</code></td></tr>
 <tr><td><code>|</code></td><td>Bitwise OR</td><td><a href="expressions/../types/boolean.html#logical-or">Logical OR</a></td><td></td><td><code>std::ops::BitOr</code></td><td><code>std::ops::BitOrAssign</code></td></tr>
 <tr><td><code>^</code></td><td>Bitwise XOR</td><td><a href="expressions/../types/boolean.html#logical-xor">Logical XOR</a></td><td></td><td><code>std::ops::BitXor</code></td><td><code>std::ops::BitXorAssign</code></td></tr>
@@ -7523,6 +7550,7 @@ The operands of all of these operators are evaluated in <a href="expressions/../
 <p>** Rust uses a remainder defined with <a href="https://en.wikipedia.org/wiki/Modulo_operation#Variants_of_the_definition">truncating division</a>. Given <code>remainder = dividend % divisor</code>, the remainder will have the same sign as the dividend.</p>
 <p>*** Arithmetic right shift on signed integer types, logical right shift on
 unsigned integer types.</p>
+<p>† For integer types, division by zero panics.</p>
 <p>Here are examples of these operators being used.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -8167,7 +8195,7 @@ These situations may include:</p>
 }
 
 trait Ugly {
-  fn print(&amp;self);
+    fn print(&amp;self);
 }
 
 struct Foo;
@@ -10033,7 +10061,7 @@ not a surrogate), represented as a 32-bit unsigned word in the 0x0000 to 0xD7FF
 or 0xE000 to 0x10FFFF range. It is immediate <a href="types/../behavior-considered-undefined.html">Undefined Behavior</a> to create a
 <code>char</code> that falls outside this range. A <code>[char]</code> is effectively a UCS-4 / UTF-32
 string of length 1.</p>
-<p>A value of type <code>str</code> is represented the same way as <code>[u8]</code>, it is a slice of
+<p>A value of type <code>str</code> is represented the same way as <code>[u8]</code>, a slice of
 8-bit unsigned bytes. However, the Rust standard library makes extra assumptions
 about <code>str</code>: methods working on <code>str</code> assume and ensure that the data in there
 is valid UTF-8. Calling a <code>str</code> method with a non-UTF-8 buffer can cause
@@ -10048,16 +10076,20 @@ pointer type, such as <code>&amp;str</code>.</p>
 <p>The never type <code>!</code> is a type with no values, representing the result of
 computations that never complete. Expressions of type <code>!</code> can be coerced into
 any other type.</p>
-<!-- ignore: unstable -->
-<pre><code class="language-rust ignore">let x: ! = panic!();
-// Can be coerced into any type.
-let y: u32 = x;</code></pre>
-<p><strong>NB.</strong> The never type was expected to be stabilized in 1.41, but due
-to some last minute regressions detected the stabilization was
-temporarily reverted. The <code>!</code> type can only appear in function return
-types presently. See <a href="https://github.com/rust-lang/rust/issues/35121">the tracking
-issue</a> for more
-details.</p>
+<p>The <code>!</code> type can <strong>only</strong> appear in function return types presently,
+indicating it is a diverging function that never returns.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn foo() -&gt; ! {
+    panic!(&quot;This call never returns.&quot;);
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>extern &quot;C&quot; {
+    pub fn no_return_extern_func() -&gt; !;
+}
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tuple-types"><a class="header" href="#tuple-types">Tuple types</a></h1>
 <blockquote>
 <p><strong><sup>Syntax</sup></strong><br />
@@ -11205,11 +11237,30 @@ important consequence of these rules is that a type with <code>#[repr(packed(1))
 <p>The <code>align</code> modifier can also be applied on an <code>enum</code>.
 When it is, the effect on the <code>enum</code>'s alignment is the same as if the <code>enum</code>
 was wrapped in a newtype <code>struct</code> with the same <code>align</code> modifier.</p>
-<div class="warning">
-<p><em><strong>Warning:</strong></em> Dereferencing an unaligned pointer is <a href="behavior-considered-undefined.html">undefined behavior</a> and
-it is possible to <a href="https://github.com/rust-lang/rust/issues/27060">safely create unaligned pointers to <code>packed</code> fields</a>.
-Like all ways to create undefined behavior in safe Rust, this is a bug.</p>
-</div>
+<blockquote>
+<p>Note: References to unaligned fields are not allowed because it is <a href="behavior-considered-undefined.html">undefined behavior</a>.
+When fields are unaligned due to an alignment modifier, consider the following options for using references and dereferences:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[repr(packed)]
+struct Packed {
+    f1: u8,
+    f2: u16,
+}
+let mut e = Packed { f1: 1, f2: 2 };
+// Instead of creating a reference to a field, copy the value to a local variable.
+let x = e.f2;
+// Or in situations like `println!` which creates a reference, use braces
+// to change it to a copy of the value.
+println!(&quot;{}&quot;, {e.f2});
+// Or if you need a pointer, use the unaligned methods for reading and writing
+// instead of dereferencing the pointer directly.
+let ptr: *const u16 = std::ptr::addr_of!(e.f2);
+let value = unsafe { ptr.read_unaligned() };
+let mut_ptr: *mut u16 = std::ptr::addr_of_mut!(e.f2);
+unsafe { mut_ptr.write_unaligned(3) }
+<span class="boring">}</span></code></pre></pre>
+</blockquote>
 <h3 id="the-transparent-representation"><a class="header" href="#the-transparent-representation">The <code>transparent</code> Representation</a></h3>
 <p>The <code>transparent</code> representation can only be used on a <a href="items/structs.html"><code>struct</code></a>
 or an <a href="items/enumerations.html"><code>enum</code></a> with a single variant that has:</p>
@@ -12024,7 +12075,7 @@ temporary scope.</p>
 <ul>
 <li>An <a href="patterns.html#identifier-patterns">identifier pattern</a> that binds by reference or mutable reference.</li>
 <li>A <a href="patterns.html#struct-patterns">struct</a>, <a href="patterns.html#tuple-patterns">tuple</a>, <a href="patterns.html#tuple-struct-patterns">tuple struct</a>, or <a href="patterns.html#slice-patterns">slice</a> pattern where at least one of the
-direct subpatterns is a extending pattern.</li>
+direct subpatterns is an extending pattern.</li>
 </ul>
 <p>So <code>ref x</code>, <code>V(ref x)</code> and <code>[ref x, y]</code> are all extending patterns, but <code>x</code>,
 <code>&amp;ref x</code> and <code>&amp;(ref x,)</code> are not.</p>
@@ -12806,7 +12857,7 @@ S::f();  // Calls the inherent impl.
 <em>TypePath</em> :<br />
    <code>::</code><sup>?</sup> <em>TypePathSegment</em> (<code>::</code> <em>TypePathSegment</em>)<sup>*</sup></p>
 <p><em>TypePathSegment</em> :<br />
-   <em>PathIdentSegment</em> <code>::</code><sup>?</sup> (<a href="paths.html#paths-in-expressions"><em>GenericArgs</em></a> | <em>TypePathFn</em>)<sup>?</sup></p>
+   <em>PathIdentSegment</em> (<code>::</code><sup>?</sup> (<a href="paths.html#paths-in-expressions"><em>GenericArgs</em></a> | <em>TypePathFn</em>))<sup>?</sup></p>
 <p><em>TypePathFn</em> :<br />
 <code>(</code> <em>TypePathFnInputs</em><sup>?</sup> <code>)</code> (<code>-&gt;</code> <a href="types.html#type-expressions"><em>Type</em></a>)<sup>?</sup></p>
 <p><em>TypePathFnInputs</em> :<br />
@@ -13503,6 +13554,7 @@ It can be used to embed handwritten assembly in the assembly output generated by
 <li>ARM</li>
 <li>AArch64</li>
 <li>RISC-V</li>
+<li>LoongArch</li>
 </ul>
 <p>The compiler will emit an error if <code>asm!</code> is used on an unsupported target.</p>
 <h2 id="example-1"><a class="header" href="#example-1">Example</a></h2>
@@ -13671,6 +13723,8 @@ This includes architecture-specific vector types defined in <code>std::arch</cod
 <tr><td>RISC-V</td><td><code>reg</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[9-15]</code>, <code>x[16-31]</code> (non-RV32E)</td><td><code>r</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f[0-31]</code></td><td><code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td><code>v[0-31]</code></td><td>Only clobbers</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$r[23,30]</code></td><td><code>r</code></td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td><code>$f[0-31]</code></td><td><code>f</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13715,6 +13769,8 @@ The availability of supported types for a particular register class may depend o
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>f</code></td><td><code>f32</code></td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td><code>d</code></td><td><code>f64</code></td></tr>
 <tr><td>RISC-V</td><td><code>vreg</code></td><td>N/A</td><td>Only clobbers</td></tr>
+<tr><td>LoongArch64</td><td><code>reg</code></td><td>None</td><td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>f32</code>, <code>f64</code></td></tr>
+<tr><td>LoongArch64</td><td><code>freg</code></td><td>None</td><td><code>f32</code>, <code>f64</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13773,14 +13829,26 @@ Here is the list of all supported register aliases:</p>
 <tr><td>RISC-V</td><td><code>f[10-17]</code></td><td><code>fa[0-7]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[18-27]</code></td><td><code>fs[2-11]</code></td></tr>
 <tr><td>RISC-V</td><td><code>f[28-31]</code></td><td><code>ft[8-11]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code></td><td><code>$zero</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r1</code></td><td><code>$ra</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code></td><td><code>$tp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r3</code></td><td><code>$sp</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[4-11]</code></td><td><code>$a[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[12-20]</code></td><td><code>$t[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td></td></tr>
+<tr><td>LoongArch</td><td><code>$r22</code></td><td><code>$fp</code>, <code>$s9</code></td></tr>
+<tr><td>LoongArch</td><td><code>$r[23-31]</code></td><td><code>$s[0-8]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[0-7]</code></td><td><code>$fa[0-7]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[8-23]</code></td><td><code>$ft[0-15]</code></td></tr>
+<tr><td>LoongArch</td><td><code>$f[24-31]</code></td><td><code>$fs[0-7]</code></td></tr>
 </tbody></table>
 </div>
 <p>Some registers cannot be used for input or output operands:</p>
 <div class="table-wrapper"><table><thead><tr><th>Architecture</th><th>Unsupported register</th><th>Reason</th></tr></thead><tbody>
 <tr><td>All</td><td><code>sp</code></td><td>The stack pointer must be restored to its original value at the end of an asm code block.</td></tr>
-<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
+<tr><td>All</td><td><code>bp</code> (x86), <code>x29</code> (AArch64), <code>x8</code> (RISC-V), <code>$fp</code> (LoongArch)</td><td>The frame pointer cannot be used as an input or output.</td></tr>
 <tr><td>ARM</td><td><code>r7</code> or <code>r11</code></td><td>On ARM the frame pointer can be either <code>r7</code> or <code>r11</code> depending on the target. The frame pointer cannot be used as an input or output.</td></tr>
-<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
+<tr><td>All</td><td><code>si</code> (x86-32), <code>bx</code> (x86-64), <code>r6</code> (ARM), <code>x19</code> (AArch64), <code>x9</code> (RISC-V), <code>$s8</code> (LoongArch)</td><td>This is used internally by LLVM as a &quot;base pointer&quot; for functions with complex stack frames.</td></tr>
 <tr><td>x86</td><td><code>ip</code></td><td>This is the program counter, not a real register.</td></tr>
 <tr><td>AArch64</td><td><code>xzr</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>AArch64</td><td><code>x18</code></td><td>This is an OS-reserved register on some AArch64 targets.</td></tr>
@@ -13788,6 +13856,9 @@ Here is the list of all supported register aliases:</p>
 <tr><td>ARM</td><td><code>r9</code></td><td>This is an OS-reserved register on some ARM targets.</td></tr>
 <tr><td>RISC-V</td><td><code>x0</code></td><td>This is a constant zero register which can't be modified.</td></tr>
 <tr><td>RISC-V</td><td><code>gp</code>, <code>tp</code></td><td>These registers are reserved and cannot be used as inputs or outputs.</td></tr>
+<tr><td>LoongArch</td><td><code>$r0</code> or <code>$zero</code></td><td>This is a constant zero register which can't be modified.</td></tr>
+<tr><td>LoongArch</td><td><code>$r2</code> or <code>$tp</code></td><td>This is reserved for TLS.</td></tr>
+<tr><td>LoongArch</td><td><code>$r21</code></td><td>This is reserved by the ABI.</td></tr>
 </tbody></table>
 </div>
 <p>The frame pointer and base pointer registers are reserved for internal use by LLVM. While <code>asm!</code> statements cannot explicitly specify the use of reserved registers, in some cases LLVM will allocate one of these reserved registers for <code>reg</code> operands. Assembly code making use of reserved registers should be careful since <code>reg</code> operands may use the same registers.</p>
@@ -13830,6 +13901,8 @@ Only one modifier is allowed per template placeholder.</p>
 <tr><td>ARM</td><td><code>qreg</code></td><td><code>e</code> / <code>f</code></td><td><code>d0</code> / <code>d1</code></td><td><code>e</code> / <code>f</code></td></tr>
 <tr><td>RISC-V</td><td><code>reg</code></td><td>None</td><td><code>x1</code></td><td>None</td></tr>
 <tr><td>RISC-V</td><td><code>freg</code></td><td>None</td><td><code>f0</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>reg</code></td><td>None</td><td><code>$r1</code></td><td>None</td></tr>
+<tr><td>LoongArch</td><td><code>freg</code></td><td>None</td><td><code>$f0</code></td><td>None</td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13859,6 +13932,7 @@ The following ABIs can be used with <code>clobber_abi</code>:</p>
 <tr><td>AArch64</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x[0-17]</code>, <code>x18</code>*, <code>x30</code>, <code>v[0-31]</code>, <code>p[0-15]</code>, <code>ffr</code></td></tr>
 <tr><td>ARM</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code>, <code>&quot;aapcs&quot;</code></td><td><code>r[0-3]</code>, <code>r12</code>, <code>r14</code>, <code>s[0-15]</code>, <code>d[0-7]</code>, <code>d[16-31]</code></td></tr>
 <tr><td>RISC-V</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>x1</code>, <code>x[5-7]</code>, <code>x[10-17]</code>, <code>x[28-31]</code>, <code>f[0-7]</code>, <code>f[10-17]</code>, <code>f[28-31]</code>, <code>v[0-31]</code></td></tr>
+<tr><td>LoongArch</td><td><code>&quot;C&quot;</code>, <code>&quot;system&quot;</code>, <code>&quot;efiapi&quot;</code></td><td><code>$r1</code>, <code>$r[4-20]</code>, <code>$f[0-23]</code></td></tr>
 </tbody></table>
 </div>
 <blockquote>
@@ -13980,6 +14054,11 @@ Behavior is also undefined if two executions of the <code>asm!</code> code with 
 <ul>
 <li>Floating-point exception flags in <code>fcsr</code> (<code>fflags</code>).</li>
 <li>Vector extension state (<code>vtype</code>, <code>vl</code>, <code>vcsr</code>).</li>
+</ul>
+</li>
+<li>LoongArch
+<ul>
+<li>Floating-point condition flags in <code>$fcc[0-7]</code>.</li>
 </ul>
 </li>
 </ul>
@@ -14188,9 +14267,9 @@ By default, the body of an unsafe function is also considered to be an unsafe bl
 this can be changed by enabling the <a href="../rustc/lints/listing/allowed-by-default.html#unsafe-op-in-unsafe-fn"><code>unsafe_op_in_unsafe_fn</code></a> lint.</p>
 <p>By putting operations into an unsafe block, the programmer states that they have taken care of satisfying the extra safety conditions of all operations inside that block.</p>
 <p>Unsafe blocks are the logical dual to unsafe functions:
-where unsafe functions define a proof obligation that callers must uphold, unsafe blocks state that all relevant proof obligations have been discharged.
+where unsafe functions define a proof obligation that callers must uphold, unsafe blocks state that all relevant proof obligations of functions or operations called inside the block have been discharged.
 There are many ways to discharge proof obligations;
-for example, there could be run-time checks or data structure invariants that guarantee that certain properties are definitely true, or the unsafe block could be inside an <code>unsafe fn</code> and use its own proof obligations to discharge the proof obligations of its callees.</p>
+for example, there could be run-time checks or data structure invariants that guarantee that certain properties are definitely true, or the unsafe block could be inside an <code>unsafe fn</code>, in which case the block can use the proof obligations of that function to discharge the proof obligations arising inside the block.</p>
 <p>Unsafe blocks are used to wrap foreign libraries, make direct use of hardware or implement features not directly present in the language.
 For example, Rust provides the language features necessary to implement memory-safe concurrency in the language but the implementation of threads and message passing in the standard library uses unsafe blocks.</p>
 <p>Rust's type system is a conservative approximation of the dynamic safety requirements, so in some cases there is a performance cost to using safe code.
@@ -14252,9 +14331,10 @@ types are passed in a (nested) field of a compound type, but not behind
 pointer indirections.</p>
 </li>
 <li>
-<p>Mutating immutable data. All data inside a <a href="items/constant-items.html"><code>const</code></a> item is immutable. Moreover, all
-data reached through a shared reference or data owned by an immutable binding
-is immutable, unless that data is contained within an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Mutating immutable bytes. All bytes inside a <a href="items/constant-items.html"><code>const</code></a> item are immutable.
+The bytes owned by an immutable binding are immutable, unless those bytes are part of an <a href="../std/cell/struct.UnsafeCell.html"><code>UnsafeCell&lt;U&gt;</code></a>.</p>
+<p>Moreover, the bytes <a href="behavior-considered-undefined.html#pointed-to-bytes">pointed to</a> by a shared reference, including transitively through other references (both shared and mutable) and <code>Box</code>es, are immutable; transitivity includes those references stored in fields of compound types.</p>
+<p>A mutation is any write of more than 0 bytes which overlaps with any of the relevant bytes (even if that write does not change the memory contents).</p>
 </li>
 <li>
 <p>Invoking undefined behavior via compiler intrinsics.</p>
@@ -14318,6 +14398,13 @@ In the standard library, this affects <a href="../core/ptr/struct.NonNull.html">
 <p>Incorrect use of inline assembly. For more details, refer to the <a href="inline-assembly.html#rules-for-inline-assembly">rules</a> to
 follow when writing code that uses inline assembly.</p>
 </li>
+<li>
+<p><strong>In <a href="const_eval.html#const-context">const context</a></strong>: transmuting or otherwise
+reinterpreting a pointer (reference, raw pointer, or function pointer) into
+some allocated object as a non-pointer type (such as integers).
+'Reinterpreting' refers to loading the pointer value at integer type without a
+cast, e.g. by doing raw pointer casts or using a union.</p>
+</li>
 </ul>
 <p><strong>Note:</strong> Uninitialized memory is also implicitly invalid for any type that has
 a restricted set of valid values. In other words, the only cases in which
@@ -14330,11 +14417,12 @@ program contains undefined behaviour that can also affect the Rust code. And
 vice versa, undefined behavior in Rust can cause adverse affects on code
 executed by any FFI calls to other languages.</p>
 </blockquote>
+<h3 id="pointed-to-bytes"><a class="header" href="#pointed-to-bytes">Pointed-to bytes</a></h3>
+<p>The span of bytes a pointer or reference &quot;points to&quot; is determined by the pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
 <h3 id="dangling-pointers"><a class="header" href="#dangling-pointers">Dangling pointers</a></h3>
 <p>A reference/pointer is &quot;dangling&quot; if it is null or not all of the bytes it
-points to are part of the same live allocation (so in particular they all have to be
-part of <em>some</em> allocation). The span of bytes it points to is determined by the
-pointer value and the size of the pointee type (using <code>size_of_val</code>).</p>
+<a href="behavior-considered-undefined.html#pointed-to-bytes">points to</a> are part of the same live allocation (so in particular they all have to be
+part of <em>some</em> allocation).</p>
 <p>If the size is 0, then the pointer must either point inside of a live allocation
 (including pointing just after the last byte of the allocation), or it must be
 directly constructed from a non-zero integer literal.</p>

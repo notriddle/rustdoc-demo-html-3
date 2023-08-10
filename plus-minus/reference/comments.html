@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -184,7 +206,7 @@ block (<code>/* ... */</code>) comment forms. Nested block comments are supporte
 <p>Non-doc comments are interpreted as a form of whitespace.</p>
 <h2 id="doc-comments"><a class="header" href="#doc-comments">Doc comments</a></h2>
 <p>Line doc comments beginning with exactly <em>three</em> slashes (<code>///</code>), and block
-doc comments (<code>/** ... */</code>), both inner doc comments, are interpreted as a
+doc comments (<code>/** ... */</code>), both outer doc comments, are interpreted as a
 special syntax for <a href="../rustdoc/the-doc-attribute.html"><code>doc</code> attributes</a>. That is, they are equivalent to writing
 <code>#[doc=&quot;...&quot;]</code> around the body of the comment, i.e., <code>/// Foo</code> turns into
 <code>#[doc=&quot;Foo&quot;]</code> and <code>/** Bar */</code> turns into <code>#[doc=&quot;Bar&quot;]</code>.</p>

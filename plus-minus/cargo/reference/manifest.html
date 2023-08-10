@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -216,7 +238,6 @@ the <code>cargo locate-project</code> section for more detail on how cargo finds
 <li><a href="profiles.html"><code>[profile]</code></a> — Compiler settings and optimizations.</li>
 <li><a href="workspaces.html"><code>[workspace]</code></a> — The workspace definition.</li>
 </ul>
-<p><a id="package-metadata"></a></p>
 <h3 id="the-package-section"><a class="header" href="#the-package-section">The <code>[package]</code> section</a></h3>
 <p>The first section in a <code>Cargo.toml</code> is <code>[package]</code>.</p>
 <pre><code class="language-toml">[package]
@@ -260,7 +281,6 @@ traits, fields, types, functions, methods or anything else.</li>
 resolve dependencies, and for guidelines on setting your own version. See the
 <a href="semver.html">SemVer compatibility</a> chapter for more details on exactly what constitutes a
 breaking change.</p>
-<p><a id="the-authors-field-optional"></a></p>
 <h4 id="the-authors-field"><a class="header" href="#the-authors-field">The <code>authors</code> field</a></h4>
 <p>The optional <code>authors</code> field lists in an array the people or organizations that are considered
 the “authors” of the package. The exact meaning is open to interpretation — it
@@ -279,7 +299,6 @@ user interface.</p>
 field cannot be changed or removed in already-published versions of a
 package.</p>
 </blockquote>
-<p><a id="the-edition-field-optional"></a></p>
 <h4 id="the-edition-field"><a class="header" href="#the-edition-field">The <code>edition</code> field</a></h4>
 <p>The <code>edition</code> key is an optional key that affects which <a href="../../edition-guide/index.html">Rust Edition</a> your package
 is compiled with. Setting the <code>edition</code> key in <code>[package]</code> will affect all
@@ -325,7 +344,6 @@ description = &quot;A short description of my package&quot;
 <blockquote>
 <p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> requires the <code>description</code> to be set.</p>
 </blockquote>
-<p><a id="the-documentation-field-optional"></a></p>
 <h4 id="the-documentation-field"><a class="header" href="#the-documentation-field">The <code>documentation</code> field</a></h4>
 <p>The <code>documentation</code> field specifies a URL to a website hosting the crate’s
 documentation. If no URL is specified in the manifest file, <a href="https://crates.io/">crates.io</a> will
@@ -421,7 +439,6 @@ belongs to.</p>
 match one of the strings available at <a href="https://crates.io/category_slugs">https://crates.io/category_slugs</a>, and
 must match exactly.</p>
 </blockquote>
-<p><a id="the-workspace--field-optional"></a></p>
 <h4 id="the-workspace-field"><a class="header" href="#the-workspace-field">The <code>workspace</code> field</a></h4>
 <p>The <code>workspace</code> field can be used to configure the workspace that this package
 will be a member of. If not specified this will be inferred as the first
@@ -436,8 +453,6 @@ table defined. That is, a crate cannot both be a root crate in a workspace
 (contain <code>[workspace]</code>) and also be a member crate of another workspace
 (contain <code>package.workspace</code>).</p>
 <p>For more information, see the <a href="workspaces.html">workspaces chapter</a>.</p>
-<p><a id="package-build"></a>
-<a id="the-build-field-optional"></a></p>
 <h4 id="the-build-field"><a class="header" href="#the-build-field">The <code>build</code> field</a></h4>
 <p>The <code>build</code> field specifies a file in the package root which is a <a href="build-scripts.html">build
 script</a> for building native code. More information can be found in the <a href="build-scripts.html">build
@@ -450,7 +465,6 @@ build = &quot;build.rs&quot;
 <code>build.rs</code> in the root of the package. Use <code>build = &quot;custom_build_name.rs&quot;</code> to
 specify a path to a different file or <code>build = false</code> to disable automatic
 detection of the build script.</p>
-<p><a id="the-links-field-optional"></a></p>
 <h4 id="the-links-field"><a class="header" href="#the-links-field">The <code>links</code> field</a></h4>
 <p>The <code>links</code> field specifies the name of a native library that is being linked
 to. More information can be found in the <a href="build-scripts.html#the-links-manifest-key"><code>links</code></a> section of the build
@@ -461,7 +475,6 @@ on Linux) may specify:</p>
 # ...
 links = &quot;git2&quot;
 </code></pre>
-<p><a id="the-exclude-and-include-fields-optional"></a></p>
 <h4 id="the-exclude-and-include-fields"><a class="header" href="#the-exclude-and-include-fields">The <code>exclude</code> and <code>include</code> fields</a></h4>
 <p>The <code>exclude</code> and <code>include</code> fields can be used to explicitly specify which
 files are included when packaging a project to be <a href="publishing.html">published</a>,
@@ -543,7 +556,6 @@ track to determine if the target should be rebuilt. If the package has a
 <a href="build-scripts.html">build script</a> that does not emit any <code>rerun-if-*</code> directives, then the
 include/exclude list is used for tracking if the build script should be re-run
 if any of those files change.</p>
-<p><a id="the-publish--field-optional"></a></p>
 <h4 id="the-publish-field"><a class="header" href="#the-publish-field">The <code>publish</code> field</a></h4>
 <p>The <code>publish</code> field can be used to prevent a package from being published to a
 package registry (like <em>crates.io</em>) by mistake, for instance to keep a package
@@ -560,7 +572,6 @@ publish = [&quot;some-registry-name&quot;]
 </code></pre>
 <p>If publish array contains a single registry, <code>cargo publish</code> command will use
 it when <code>--registry</code> flag is not specified.</p>
-<p><a id="the-metadata-table-optional"></a></p>
 <h4 id="the-metadata-table"><a class="header" href="#the-metadata-table">The <code>metadata</code> table</a></h4>
 <p>Cargo by default will warn about unused keys in <code>Cargo.toml</code> to assist in
 detecting typos and such. The <code>package.metadata</code> table, however, is completely
@@ -650,6 +661,17 @@ more detail.</p>
         "#the-patch-section": "overriding-dependencies.html#the-patch-section",
         "#using-patch-with-multiple-versions": "overriding-dependencies.html#using-patch-with-multiple-versions",
         "#the-replace-section": "overriding-dependencies.html#the-replace-section",
+        "#package-metadata": "manifest.html#the-package-section",
+        "#the-authors-field-optional": "manifest.html#the-authors-field",
+        "#the-edition-field-optional": "manifest.html#the-edition-field",
+        "#the-documentation-field-optional": "manifest.html#the-documentation-field",
+        "#the-workspace--field-optional": "manifest.html#the-workspace-field",
+        "#package-build": "manifest.html#the-build-field",
+        "#the-build-field-optional": "manifest.html#the-build-field",
+        "#the-links-field-optional": "manifest.html#the-links-field",
+        "#the-exclude-and-include-fields-optional": "manifest.html#the-exclude-and-include-fields",
+        "#the-publish--field-optional": "manifest.html#the-publish-field",
+        "#the-metadata-table-optional": "manifest.html#the-metadata-table",
     };
     var target = fragments[window.location.hash];
     if (target) {

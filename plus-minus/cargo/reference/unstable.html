@@ -92,11 +92,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -535,7 +557,7 @@ the tracking repository, and if it’s not there please file a new issue!</p>
 <p>This flag is a sibling to the <code>-Zbuild-std</code> feature flag. This will configure
 the features enabled for the standard library itself when building the standard
 library. The default enabled features, at this time, are <code>backtrace</code> and
-<code>panic_unwind</code>. This flag expects a comma-separated list and, if provided, will
+<code>panic-unwind</code>. This flag expects a comma-separated list and, if provided, will
 override the default list of features enabled.</p>
 <h3 id="binary-dep-depinfo"><a class="header" href="#binary-dep-depinfo">binary-dep-depinfo</a></h3>
 <ul>
@@ -1035,7 +1057,7 @@ can go to get a token.</p>
 This string will be included as part of an asymmetric token and should not be secret.
 It is intended for the rare use cases like “cryptographic proof that the central CA server authorized this action”. Cargo requires it to be non-whitespace printable ASCII. Registries that need non-ASCII data should base64 encode it.</p>
 <p>Both fields can be set with <code>cargo login --registry=name --private-key --private-key-subject=&quot;subject&quot;</code> which will prompt you to put in the key value.</p>
-<p>A registry can have at most one of <code>private-key</code>, <code>token</code>, or <code>credential-process</code> set.</p>
+<p>A registry can have at most one of <code>private-key</code> or <code>token</code> set.</p>
 <p>All PASETOs will include <code>iat</code>, the current time in ISO 8601 format. Cargo will include the following where appropriate:</p>
 <ul>
 <li><code>sub</code> an optional, non-secret string chosen by the registry that is expected to be claimed with every request. The value will be the <code>private-key-subject</code> from the <code>config.toml</code> file.</li>
@@ -1067,47 +1089,76 @@ If a claim should be expected for the request but is missing in the PASETO then 
 </ul>
 <p>The <code>credential-process</code> feature adds a config setting to fetch registry
 authentication tokens by calling an external process.</p>
-<p>Token authentication is used by the <a href="../commands/cargo-login.html"><code>cargo login</code></a>, <a href="../commands/cargo-publish.html"><code>cargo publish</code></a>,
-<a href="../commands/cargo-owner.html"><code>cargo owner</code></a>, <a href="../commands/cargo-yank.html"><code>cargo yank</code></a>, and <a href="../commands/cargo-logout.html"><code>cargo logout</code></a> commands.</p>
 <p>To use this feature, you must pass the <code>-Z credential-process</code> flag on the
-command-line. Additionally, you must remove any current tokens currently saved
-in the <a href="config.html#credentials"><code>credentials.toml</code> file</a> (which can be done with the <a href="../commands/cargo-logout.html"><code>cargo logout</code></a> command).</p>
+command-line.</p>
 <h4 id="credential-process-configuration"><a class="header" href="#credential-process-configuration"><code>credential-process</code> Configuration</a></h4>
 <p>To configure which process to run to fetch the token, specify the process in
-the <code>registry</code> table in a <a href="config.html">config file</a>:</p>
+the <code>registry</code> table in a <a href="config.html">config file</a> with spaces separating arguments. If the
+path to the provider or its arguments contain spaces, then it mused be defined in
+the <code>credential-alias</code> table and referenced instead.</p>
 <pre><code class="language-toml">[registry]
-credential-process = &quot;/usr/bin/cargo-creds&quot;
+global-credential-providers = [&quot;/usr/bin/cargo-creds&quot;]
 </code></pre>
-<p>If you want to use a different process for a specific registry, it can be
+<p>The provider at the end of the list will be attempted first. This ensures
+that when config files are merged, files closer to the project (and ultimatly
+environment variables) have precedence.</p>
+<p>In this example, the <code>my-provider</code> provider will be attempted first, and if
+it cannot provide credentials, then the <code>cargo:token</code> provider will be used.</p>
+<pre><code class="language-toml">[registry]
+global-credential-providers = ['cargo:token', 'my-provider']
+</code></pre>
+<p>If you want to use a different provider for a specific registry, it can be
 specified in the <code>registries</code> table:</p>
 <pre><code class="language-toml">[registries.my-registry]
-credential-process = &quot;/usr/bin/cargo-creds&quot;
+global-credential-provider = &quot;/usr/bin/cargo-creds&quot;
 </code></pre>
 <p>The value can be a string with spaces separating arguments or it can be a TOML
 array of strings.</p>
-<p>Command-line arguments allow special placeholders which will be replaced with
-the corresponding value:</p>
-<ul>
-<li><code>{name}</code> — The name of the registry.</li>
-<li><code>{api_url}</code> — The base URL of the registry API endpoints.</li>
-<li><code>{action}</code> — The authentication action (described below).</li>
-</ul>
-<p>Process names with the prefix <code>cargo:</code> are loaded from the <code>libexec</code> directory
-next to cargo. Several experimental credential wrappers are included with
-Cargo, and this provides convenient access to them:</p>
-<pre><code class="language-toml">[registry]
-credential-process = &quot;cargo:macos-keychain&quot;
+<p>For commonly-used providers, or providers that need to contain spaces in the arguments
+or path, the <code>credential-alias</code> table can be used. These aliases can be referenced
+in <code>credential-provider</code> or <code>global-credential-providers</code>.</p>
+<pre><code class="language-toml">[credential-alias]
+my-alias = [&quot;/usr/bin/cargo-creds&quot;, &quot;--argument&quot;]
+
+[registry]
+global-credential-providers = [&quot;cargo:token&quot;, &quot;my-alias&quot;]
 </code></pre>
-<p>The current wrappers are:</p>
+<h4 id="built-in-providers"><a class="header" href="#built-in-providers">Built-in providers</a></h4>
+<p>Cargo now includes several built-in credential providers. These providers are
+executed within the Cargo process. They are identified with the <code>cargo:</code> prefix.</p>
 <ul>
-<li><code>cargo:macos-keychain</code>: Uses the macOS Keychain to store the token.</li>
-<li><code>cargo:wincred</code>: Uses the Windows Credential Manager to store the token.</li>
-<li><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
+<li>
+<p><code>cargo:token</code> - Uses Cargo’s config and <code>credentials.toml</code> to store the token (default).</p>
+</li>
+<li>
+<p><code>cargo:wincred</code> - Uses the Windows Credential Manager to store the token.</p>
+</li>
+<li>
+<p><code>cargo:macos-keychain</code> - Uses the macOS Keychain to store the token.</p>
+</li>
+<li>
+<p><code>cargo:basic</code> - A basic authenticator is a process that returns a token on stdout. Newlines
+will be trimmed. The process inherits the user’s stdin and stderr. It should
+exit 0 on success, and nonzero on error.</p>
+<p>With this form, <a href="../commands/cargo-login.html"><code>cargo login</code></a> and <a href="../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
+return an error if used.</p>
+<p>The following environment variables will be provided to the executed command:</p>
+<ul>
+<li><code>CARGO</code> — Path to the <code>cargo</code> binary executing the command.</li>
+<li><code>CARGO_REGISTRY_INDEX_URL</code> — The URL of the registry index.</li>
+<li><code>CARGO_REGISTRY_NAME_OPT</code> — Optional name of the registry. Should not be used as a storage key. Not always available.</li>
+</ul>
+</li>
+<li>
+<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider.</p>
+</li>
+<li>
+<p><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
 install the <code>op</code> CLI from the <a href="https://1password.com/downloads/command-line/">1password
 website</a>. You must run <code>op signin</code> at least once with the appropriate arguments (such as <code>op signin my.1password.com user@example.com</code>), unless you provide the sign-in-address
 and email arguments. The master password will be required on each request
 unless the appropriate <code>OP_SESSION</code> environment variable is set. It supports
-the following command-line arguments:
+the following command-line arguments:</p>
 <ul>
 <li><code>--account</code>: The account shorthand name to use.</li>
 <li><code>--vault</code>: The vault name to use.</li>
@@ -1123,66 +1174,147 @@ pre-compiled binary. This can be built and installed manually. First, install
 libsecret using your system package manager (for example, <code>sudo apt install libsecret-1-dev</code>). Then build and install the wrapper with <code>cargo install cargo-credential-gnome-secret</code>.
 In the config, use a path to the binary like this:</p>
 <pre><code class="language-toml">[registry]
-credential-process = &quot;cargo-credential-gnome-secret {action}&quot;
+global-credential-providers = [&quot;cargo-credential-gnome-secret&quot;]
 </code></pre>
-<h4 id="credential-process-interface"><a class="header" href="#credential-process-interface"><code>credential-process</code> Interface</a></h4>
-<p>There are two different kinds of token processes that Cargo supports. The
-simple “basic” kind will only be called by Cargo when it needs a token. This
-is intended for simple and easy integration with password managers, that can
-often use pre-existing tooling. The more advanced “Cargo” kind supports
-different actions passed as a command-line argument. This is intended for more
-pleasant integration experience, at the expense of requiring a Cargo-specific
-process to glue to the password manager. Cargo will determine which kind is
-supported by the <code>credential-process</code> definition. If it contains the
-<code>{action}</code> argument, then it uses the advanced style, otherwise it assumes it
-only supports the “basic” kind.</p>
-<h5 id="basic-authenticator"><a class="header" href="#basic-authenticator">Basic authenticator</a></h5>
-<p>A basic authenticator is a process that returns a token on stdout. Newlines
-will be trimmed. The process inherits the user’s stdin and stderr. It should
-exit 0 on success, and nonzero on error.</p>
-<p>With this form, <a href="../commands/cargo-login.html"><code>cargo login</code></a> and <a href="../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
-return an error if used.</p>
-<h5 id="cargo-authenticator"><a class="header" href="#cargo-authenticator">Cargo authenticator</a></h5>
-<p>The protocol between the Cargo and the process is very basic, intended to
-ensure the credential process is kept as simple as possible. Cargo will
-execute the process with the <code>{action}</code> argument indicating which action to
-perform:</p>
+<h4 id="json-interface"><a class="header" href="#json-interface">JSON Interface</a></h4>
+<p>When using an external credential provider, Cargo communicates with the credential
+provider using stdin/stdout messages passed as a single line of JSON.</p>
+<p>Cargo will always execute the credential provider with the <code>--cargo-plugin</code> argument.
+This enables a credential provider executable to have additional functionality beyond
+how Cargo uses it.</p>
+<p>The messages here have additional newlines added for readability.
+Actual messages must not contain newlines.</p>
+<h5 id="credential-hello"><a class="header" href="#credential-hello">Credential hello</a></h5>
 <ul>
-<li><code>store</code> — Store the given token in secure storage.</li>
-<li><code>get</code> — Get a token from storage.</li>
-<li><code>erase</code> — Remove a token from storage.</li>
+<li>Sent by: credential provider</li>
+<li>Purpose: used to identify the supported protocols on process startup</li>
 </ul>
-<p>The <code>cargo login</code> command uses <code>store</code> to save a token. Commands that require
-authentication, like <code>cargo publish</code>, uses <code>get</code> to retrieve a token. <code>cargo logout</code> uses the <code>erase</code> command to remove a token.</p>
-<p>The process inherits the user’s stderr, so the process can display messages.
-Some values are passed in via environment variables (see below). The expected
-interactions are:</p>
+<pre><code class="language-javascript">{
+    &quot;v&quot;:[1]
+}
+</code></pre>
+<h5 id="login-request"><a class="header" href="#login-request">Login request</a></h5>
 <ul>
-<li>
-<p><code>store</code> — The token is sent to the process’s stdin, terminated by a newline.
-The process should store the token keyed off the registry name. If the
-process fails, it should exit with a nonzero exit status.</p>
-</li>
-<li>
-<p><code>get</code> — The process should send the token to its stdout (trailing newline
-will be trimmed). The process inherits the user’s stdin, should it need to
-receive input.</p>
-<p>If the process is unable to fulfill the request, it should exit with a
-nonzero exit code.</p>
-</li>
-<li>
-<p><code>erase</code> — The process should remove the token associated with the registry
-name. If the token is not found, the process should exit with a 0 exit
-status.</p>
-</li>
+<li>Sent by: Cargo</li>
+<li>Purpose: collect and store credentials</li>
 </ul>
-<h5 id="environment"><a class="header" href="#environment">Environment</a></h5>
-<p>The following environment variables will be provided to the executed command:</p>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Action to perform: login
+    &quot;kind&quot;:&quot;login&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+}
+</code></pre>
+<h5 id="read-request"><a class="header" href="#read-request">Read request</a></h5>
 <ul>
-<li><code>CARGO</code> — Path to the <code>cargo</code> binary executing the command.</li>
-<li><code>CARGO_REGISTRY_INDEX_URL</code> — The URL of the registry index.</li>
-<li><code>CARGO_REGISTRY_NAME_OPT</code> — Optional name of the registry. Should not be used as a storage key. Not always available.</li>
+<li>Sent by: Cargo</li>
+<li>Purpose: Get the credential for reading crate information</li>
 </ul>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Request kind: get credentials
+    &quot;kind&quot;:&quot;get&quot;,
+    // Action to perform: read crate information
+    &quot;operation&quot;:&quot;read&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+    // Additional command-line args
+    &quot;args&quot;:[]
+}
+</code></pre>
+<h5 id="publish-request"><a class="header" href="#publish-request">Publish request</a></h5>
+<ul>
+<li>Sent by: Cargo</li>
+<li>Purpose: Get the credential for publishing a crate</li>
+</ul>
+<pre><code class="language-javascript">{
+    // Protocol version
+    &quot;v&quot;:1,
+    // Request kind: get credentials
+    &quot;kind&quot;:&quot;get&quot;,
+    // Action to perform: publish crate
+    &quot;operation&quot;:&quot;publish&quot;,
+    // Crate name
+    &quot;name&quot;:&quot;sample&quot;,
+    // Crate version
+    &quot;vers&quot;:&quot;0.1.0&quot;,
+    // Crate checksum
+    &quot;cksum&quot;:&quot;...&quot;,
+    // Registry information
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;: &quot;my-registry&quot;},
+    // Additional command-line args
+    &quot;args&quot;:[]
+}
+</code></pre>
+<h5 id="success-response"><a class="header" href="#success-response">Success response</a></h5>
+<ul>
+<li>Sent by: credential process</li>
+<li>Purpose: Gives the credential to Cargo</li>
+</ul>
+<pre><code class="language-javascript">{&quot;Ok&quot;:{
+    // Response kind: this was a get request kind
+    &quot;kind&quot;:&quot;get&quot;,
+    // Token to send to the registry
+    &quot;token&quot;:&quot;...&quot;,
+    // Cache control. Can be one of the following:
+    // * &quot;never&quot;
+    // * &quot;session&quot;
+    // * { &quot;expires&quot;: UNIX timestamp }
+    &quot;cache&quot;:{&quot;expires&quot;:1684251794},
+    // Is the token operation independent?
+    &quot;operation_independent&quot;:true
+}}
+</code></pre>
+<h5 id="failure-response"><a class="header" href="#failure-response">Failure response</a></h5>
+<ul>
+<li>Sent by: credential process</li>
+<li>Purpose: Gives error information to Cargo</li>
+</ul>
+<pre><code class="language-javascript">{&quot;Err&quot;:{
+    // Error: the credential provider does not support the
+    // registry
+    &quot;kind&quot;:&quot;url-not-supported&quot;,
+    
+    // Error: The credential could not be found in the provider.
+    // using `cargo login --registry ...`.
+    &quot;kind&quot;:&quot;not-found&quot;,
+    
+    // Error: something else has failed
+    &quot;kind&quot;:&quot;other&quot;,
+    &quot;detail&quot;: &quot;free form string error message&quot;
+}}
+</code></pre>
+<h5 id="example-communication-to-request-a-token-for-reading"><a class="header" href="#example-communication-to-request-a-token-for-reading">Example communication to request a token for reading:</a></h5>
+<ol>
+<li>Cargo spawns the credential process, capturing stdin and stdout.</li>
+<li>Credential process sends the Hello message to Cargo
+<pre><code class="language-javascript">{ &quot;v&quot;: [1] }
+</code></pre>
+</li>
+<li>Cargo sends the CredentialRequest message to the credential process (newlines added for readability).
+<pre><code class="language-javascript">{
+    &quot;v&quot;: 1,
+    &quot;kind&quot;: &quot;get&quot;,
+    &quot;operation&quot;: &quot;read&quot;,
+    &quot;registry&quot;:{&quot;index-url&quot;:&quot;sparse+https://registry-url/index/&quot;, &quot;name&quot;:&quot;ado2&quot;},
+    &quot;args&quot;:[]
+}
+</code></pre>
+</li>
+<li>Credential process sends the CredentialResponse to Cargo (newlines added for readability).
+<pre><code class="language-javascript">{
+    &quot;token&quot;: &quot;...&quot;,
+    &quot;cache&quot;: &quot;session&quot;,
+    &quot;operation_independent&quot;: false
+}
+</code></pre>
+</li>
+<li>Credential process exits</li>
+<li>Cargo uses the token for the remainder of the session (until Cargo exits) when interacting with this registry.</li>
+</ol>
 <h3 id="cargo-config"><a class="header" href="#cargo-config"><code>cargo config</code></a></h3>
 <ul>
 <li>Original Issue: <a href="https://github.com/rust-lang/cargo/issues/2362">#2362</a></li>
