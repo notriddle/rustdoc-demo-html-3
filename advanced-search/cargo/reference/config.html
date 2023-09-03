@@ -205,7 +205,8 @@ with a configuration file in your home directory.</p>
 <p>If a key is specified in multiple config files, the values will get merged
 together. Numbers, strings, and booleans will use the value in the deeper
 config directory taking precedence over ancestor directories, where the
-home directory is the lowest priority. Arrays will be joined together.</p>
+home directory is the lowest priority. Arrays will be joined together
+with higher precedence items being placed later in the merged array.</p>
 <p>At present, when being invoked from a workspace, Cargo does not read config
 files from crates within the workspace. i.e. if a workspace has two crates in
 it, named <code>/projects/foo/bar/baz/mylib</code> and <code>/projects/foo/bar/baz/mybin</code>, and
@@ -463,6 +464,13 @@ variables. The token for <a href="https://crates.io/">crates.io</a> may be speci
 be specified with environment variables of the form
 <code>CARGO_REGISTRIES_&lt;name&gt;_TOKEN</code> where <code>&lt;name&gt;</code> is the name of the registry in
 all capital letters.</p>
+<blockquote>
+<p><strong>Note:</strong> Cargo also reads and writes credential files without the <code>.toml</code>
+extension, such as <code>.cargo/credentials</code>. Support for the <code>.toml</code> extension
+was added in version 1.39. In version 1.68, Cargo writes to the file with the
+extension by default. However, for backward compatibility reason, when both
+files exist, Cargo will read and write the file without the extension.</p>
+</blockquote>
 <h3 id="configuration-keys"><a class="header" href="#configuration-keys">Configuration keys</a></h3>
 <p>This section documents all configuration keys. The description for keys with
 variable parts are annotated with angled brackets like <code>target.&lt;triple&gt;</code> where
@@ -716,8 +724,8 @@ crate dependencies and accessing remote git repositories.</p>
 <li>Environment: <code>CARGO_HTTP_DEBUG</code></li>
 </ul>
 <p>If <code>true</code>, enables debugging of HTTP requests. The debug information can be
-seen by setting the <code>CARGO_LOG=cargo::ops::registry=debug</code> environment
-variable (or use <code>trace</code> for even more information).</p>
+seen by setting the <code>CARGO_LOG=network=debug</code> environment
+variable (or use <code>network=trace</code> for even more information).</p>
 <p>Be wary when posting logs from this output in a public location. The output
 may include headers with authentication tokens which you don’t want to leak!
 Be sure to review logs before posting them.</p>
@@ -1135,6 +1143,11 @@ For example <code>--target foo/bar.json</code> would match <code>[target.bar]</c
 </ul>
 <p>Specifies the linker which is passed to <code>rustc</code> (via <a href="../../rustc/codegen-options/index.html#linker"><code>-C linker</code></a>) when the
 <a href="../appendix/glossary.html#target" title="&quot;target&quot; (glossary)"><code>&lt;triple&gt;</code></a> is being compiled for. By default, the linker is not overridden.</p>
+<h5 id="targetcfglinker"><a class="header" href="#targetcfglinker"><code>target.&lt;cfg&gt;.linker</code></a></h5>
+<p>This is similar to the <a href="#targettriplelinker">target linker</a>, but using
+a <a href="../../reference/conditional-compilation.html"><code>cfg()</code> expression</a>. If both a <a href="../appendix/glossary.html#target" title="&quot;target&quot; (glossary)"><code>&lt;triple&gt;</code></a> and <code>&lt;cfg&gt;</code> runner match,
+the <code>&lt;triple&gt;</code> will take precedence. It is an error if more than one
+<code>&lt;cfg&gt;</code> runner matches the current target.</p>
 <h5 id="targettriplerunner"><a class="header" href="#targettriplerunner"><code>target.&lt;triple&gt;.runner</code></a></h5>
 <ul>
 <li>Type: string or array of strings (<a href="#executable-paths-with-arguments">program path with args</a>)</li>

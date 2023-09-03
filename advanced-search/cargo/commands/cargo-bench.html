@@ -511,11 +511,14 @@ the number of logical CPUs. If negative, it sets the maximum number of
 parallel jobs to the number of logical CPUs plus provided value. If
 a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
-<dt class="option-term" id="option-cargo-bench---keep-going"><a class="option-anchor" href="#option-cargo-bench---keep-going"></a><code>--keep-going</code></dt>
-<dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
 </dl>
+<p>While <code>cargo bench</code> involves compilation, it does not provide a <code>--keep-going</code>
+flag. Use <code>--no-fail-fast</code> to run as many benchmarks as possible without
+stopping at the first failure. To “compile” as many benchmarks as possible, use
+<code>--benches</code> to build benchmark binaries separately. For example:</p>
+<pre><code>cargo build --benches --release --keep-going
+cargo bench --no-fail-fast
+</code></pre>
 <h2 id="environment"><a class="header" href="#environment">ENVIRONMENT</a></h2>
 <p>See <a href="../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>

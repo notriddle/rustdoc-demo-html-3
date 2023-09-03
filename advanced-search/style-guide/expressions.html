@@ -500,7 +500,11 @@ and use a trailing comma:</p>
 constructs. For example, a macro use <code>foo!(a, b, c)</code> can be parsed like a
 function call (ignoring the <code>!</code>), so format it using the rules for function
 calls.</p>
-<h3 id="special-case-macros"><a class="header" href="#special-case-macros">Special case macros</a></h3>
+<p>The style guide defines specific formatting for particular macros in the
+language or standard library. The style guide does not define formatting for
+any third-party macros, even if similar to those in the language or standard
+library.</p>
+<h3 id="format-string-macros"><a class="header" href="#format-string-macros">Format string macros</a></h3>
 <p>For macros which take a format string, if all other arguments are <em>small</em>,
 format the arguments before the format string on a single line if they fit, and
 format the arguments after the format string on a single line if they fit, with

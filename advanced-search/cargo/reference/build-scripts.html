@@ -429,8 +429,10 @@ Otherwise, specifying <code>build.rs</code> is redundant and unnecessary.</p>
 <p>The <code>rerun-if-env-changed</code> instruction tells Cargo to re-run the build script
 if the value of an environment variable of the given name has changed.</p>
 <p>Note that the environment variables here are intended for global environment
-variables like <code>CC</code> and such, it is not necessary to use this for environment
-variables like <code>TARGET</code> that Cargo sets.</p>
+variables like <code>CC</code> and such, it is not possible to use this for environment
+variables like <code>TARGET</code> that <a href="environment-variables.html#environment-variables-cargo-sets-for-build-scripts">Cargo sets for build scripts</a>. The
+environment variables in use are those received by <code>cargo</code> invocations, not
+those received by the executable of the build script.</p>
 <h3 id="the-links-manifest-key"><a class="header" href="#the-links-manifest-key">The <code>links</code> Manifest Key</a></h3>
 <p>The <code>package.links</code> key may be set in the <code>Cargo.toml</code> manifest to declare
 that the package links with the given native library. The purpose of this

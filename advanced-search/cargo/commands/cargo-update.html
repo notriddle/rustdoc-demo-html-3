@@ -180,7 +180,7 @@
 <h2 id="name"><a class="header" href="#name">NAME</a></h2>
 <p>cargo-update — Update dependencies as recorded in the local lock file</p>
 <h2 id="synopsis"><a class="header" href="#synopsis">SYNOPSIS</a></h2>
-<p><code>cargo update</code> [<em>options</em>]</p>
+<p><code>cargo update</code> [<em>options</em>] <em>spec</em></p>
 <h2 id="description"><a class="header" href="#description">DESCRIPTION</a></h2>
 <p>This command will update dependencies in the <code>Cargo.lock</code> file to the latest
 version. If the <code>Cargo.lock</code> file does not exist, it will be created with the
@@ -188,21 +188,20 @@ latest available versions.</p>
 <h2 id="options"><a class="header" href="#options">OPTIONS</a></h2>
 <h3 id="update-options"><a class="header" href="#update-options">Update Options</a></h3>
 <dl>
-<dt class="option-term" id="option-cargo-update--p"><a class="option-anchor" href="#option-cargo-update--p"></a><code>-p</code> <em>spec</em>…</dt>
-<dt class="option-term" id="option-cargo-update---package"><a class="option-anchor" href="#option-cargo-update---package"></a><code>--package</code> <em>spec</em>…</dt>
+<dt class="option-term" id="option-cargo-update-spec…"><a class="option-anchor" href="#option-cargo-update-spec…"></a><em>spec</em>…</dt>
 <dd class="option-desc">Update only the specified packages. This flag may be specified
 multiple times. See <a href="cargo-pkgid.html">cargo-pkgid(1)</a> for the SPEC format.</p>
-<p>If packages are specified with the <code>-p</code> flag, then a conservative update of
+<p>If packages are specified with <em>spec</em>, then a conservative update of
 the lockfile will be performed. This means that only the dependency specified
 by SPEC will be updated. Its transitive dependencies will be updated only if
 SPEC cannot be updated without updating dependencies.  All other dependencies
 will remain locked at their currently recorded versions.</p>
-<p>If <code>-p</code> is not specified, all dependencies are updated.</dd>
+<p>If <em>spec</em> is not specified, all dependencies are updated.</dd>
 <dt class="option-term" id="option-cargo-update---aggressive"><a class="option-anchor" href="#option-cargo-update---aggressive"></a><code>--aggressive</code></dt>
-<dd class="option-desc">When used with <code>-p</code>, dependencies of <em>spec</em> are forced to update as well.
+<dd class="option-desc">When used with <em>spec</em>, dependencies of <em>spec</em> are forced to update as well.
 Cannot be used with <code>--precise</code>.</dd>
 <dt class="option-term" id="option-cargo-update---precise"><a class="option-anchor" href="#option-cargo-update---precise"></a><code>--precise</code> <em>precise</em></dt>
-<dd class="option-desc">When used with <code>-p</code>, allows you to specify a specific version number to set
+<dd class="option-desc">When used with <em>spec</em>, allows you to specify a specific version number to set
 the package to. If the package comes from a git repository, this can be a git
 revision (such as a SHA hash or tag).</dd>
 <dt class="option-term" id="option-cargo-update--w"><a class="option-anchor" href="#option-cargo-update--w"></a><code>-w</code></dt>
@@ -308,12 +307,12 @@ details on environment variables that Cargo reads.</p>
 </li>
 <li>
 <p>Update only specific dependencies:</p>
-<pre><code>cargo update -p foo -p bar
+<pre><code>cargo update foo bar
 </code></pre>
 </li>
 <li>
 <p>Set a specific dependency to a specific version:</p>
-<pre><code>cargo update -p foo --precise 1.2.3
+<pre><code>cargo update foo --precise 1.2.3
 </code></pre>
 </li>
 </ol>

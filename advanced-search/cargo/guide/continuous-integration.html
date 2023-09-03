@@ -177,22 +177,8 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h2>
-<h3 id="travis-ci"><a class="header" href="#travis-ci">Travis CI</a></h3>
-<p>To test your <a href="../appendix/glossary.html#package" title="&quot;package&quot; (glossary entry)">package</a> on Travis CI, here is a sample
-<code>.travis.yml</code> file:</p>
-<pre><code class="language-yaml">language: rust
-rust:
-  - stable
-  - beta
-  - nightly
-matrix:
-  allow_failures:
-    - rust: nightly
-</code></pre>
-<p>This will test all three release channels, but any breakage in nightly
-will not fail your overall build. Please see the <a href="https://docs.travis-ci.com/user/languages/rust/">Travis CI Rust
-documentation</a> for more
-information.</p>
+<h3 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h3>
+<p>A basic CI will build and test your projects:</p>
 <h3 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h3>
 <p>To test your package on GitHub Actions, here is a sample <code>.github/workflows/ci.yml</code> file:</p>
 <pre><code class="language-yaml">name: Cargo Build &amp; Test
@@ -279,6 +265,66 @@ tasks:
 channel, but any breakage in nightly will not fail your overall build. Please
 see the <a href="https://man.sr.ht/builds.sr.ht/">builds.sr.ht documentation</a> for more
 information.</p>
+<h3 id="verifying-latest-dependencies"><a class="header" href="#verifying-latest-dependencies">Verifying Latest Dependencies</a></h3>
+<p>When <a href="../reference/specifying-dependencies.html">specifying dependencies</a> in
+<code>Cargo.toml</code>, they generally match a range of versions.
+Exhaustively testing all version combination would be unwieldy.
+Verifying the latest versions would at least test for users who run <a href="../commands/cargo-add.html"><code>cargo add</code></a> or <a href="../commands/cargo-install.html"><code>cargo install</code></a>.</p>
+<p>When testing the latest versions some considerations are:</p>
+<ul>
+<li>Minimizing external factors affecting local development or CI</li>
+<li>Rate of new dependencies being published</li>
+<li>Level of risk a project is willing to accept</li>
+<li>CI costs, including indirect costs like if a CI service has a maximum for
+parallel runners, causing new jobs to be serialized when at the maxium.</li>
+</ul>
+<p>Some potential solutions include:</p>
+<ul>
+<li><a href="../faq.html#why-have-cargolock-in-version-control">Not checking in the <code>Cargo.lock</code></a>
+<ul>
+<li>Depending on PR velocity, many versions may go untested</li>
+<li>This comes at the cost of determinism</li>
+</ul>
+</li>
+<li>Have a CI job verify the latest dependencies but mark it to “continue on failure”
+<ul>
+<li>Depending on the CI service, failures might not be obvious</li>
+<li>Depending on PR velocity, may use more resources than necessary</li>
+</ul>
+</li>
+<li>Have a scheduled CI job to verify latest dependencies
+<ul>
+<li>A hosted CI service may disable scheduled jobs for repositories that
+haven’t been touched in a while, affecting passively maintained packages</li>
+<li>Depending on the CI service, notifications might not be routed to people
+who can act on the failure</li>
+<li>If not balanced with dependency publish rate, may not test enough versions
+or may do redundant testing</li>
+</ul>
+</li>
+<li>Regularly update dependencies through PRs, like with <a href="https://docs.github.com/en/code-security/dependabot/working-with-dependabot">Dependabot</a> or <a href="https://renovatebot.com/">RenovateBot</a>
+<ul>
+<li>Can isolate dependencies to their own PR or roll them up into a single PR</li>
+<li>Only uses the resources necessary</li>
+<li>Can configure the frequency to balance CI resources and coverage of dependency versions</li>
+</ul>
+</li>
+</ul>
+<p>An example CI job to verify latest dependencies, using Github Actions:</p>
+<pre><code class="language-yaml">jobs:
+  latest_deps:
+    name: Latest Dependencies
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup update stable &amp;&amp; rustup default stable
+      - run: cargo update --verbose
+      - run: cargo build --verbose
+      - run: cargo test --verbose
+</code></pre>
+<p>For projects with higher risks of per-platform or per-Rust version failures,
+more combinations may want to be tested.</p>
 
                     </main>
 

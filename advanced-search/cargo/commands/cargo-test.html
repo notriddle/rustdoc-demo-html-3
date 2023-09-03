@@ -530,15 +530,18 @@ the number of logical CPUs. If negative, it sets the maximum number of
 parallel jobs to the number of logical CPUs plus provided value. If
 a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
-<dt class="option-term" id="option-cargo-test---keep-going"><a class="option-anchor" href="#option-cargo-test---keep-going"></a><code>--keep-going</code></dt>
-<dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
 <dt class="option-term" id="option-cargo-test---future-incompat-report"><a class="option-anchor" href="#option-cargo-test---future-incompat-report"></a><code>--future-incompat-report</code></dt>
 <dd class="option-desc">Displays a future-incompat report for any future-incompatible warnings
 produced during execution of this command</p>
 <p>See <a href="cargo-report.html">cargo-report(1)</a></dd>
 </dl>
+<p>While <code>cargo test</code> involves compilation, it does not provide a <code>--keep-going</code>
+flag. Use <code>--no-fail-fast</code> to run as many tests as possible without stopping at
+the first failure. To “compile” as many tests as possible, use <code>--tests</code> to
+build test binaries separately. For example:</p>
+<pre><code>cargo build --tests --keep-going
+cargo test --tests --no-fail-fast
+</code></pre>
 <h2 id="environment"><a class="header" href="#environment">ENVIRONMENT</a></h2>
 <p>See <a href="../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>

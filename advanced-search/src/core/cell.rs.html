@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cell.rs`."><title>cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/core/src/cell.rs`."><title>cell.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core" data-themes="" data-resource-suffix="1.74.0" data-rustdoc-version="1.74.0-dev" data-channel="nightly" data-search-js="search-da1792af0b5558b7.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.74.0.js"></script><script defer src="../../static.files/main-ef3a2de404864b0b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2281,6 +2281,18 @@
 <a href="#2281" id="2281">2281</a>
 <a href="#2282" id="2282">2282</a>
 <a href="#2283" id="2283">2283</a>
+<a href="#2284" id="2284">2284</a>
+<a href="#2285" id="2285">2285</a>
+<a href="#2286" id="2286">2286</a>
+<a href="#2287" id="2287">2287</a>
+<a href="#2288" id="2288">2288</a>
+<a href="#2289" id="2289">2289</a>
+<a href="#2290" id="2290">2290</a>
+<a href="#2291" id="2291">2291</a>
+<a href="#2292" id="2292">2292</a>
+<a href="#2293" id="2293">2293</a>
+<a href="#2294" id="2294">2294</a>
+<a href="#2295" id="2295">2295</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Shareable mutable containers.
 //!
 //! Rust memory safety is based on this rule: Given an object `T`, it is only possible to
@@ -2520,6 +2532,7 @@
 
 </span><span class="kw">use </span><span class="kw">crate</span>::cmp::Ordering;
 <span class="kw">use </span><span class="kw">crate</span>::fmt::{<span class="self">self</span>, Debug, Display};
+<span class="kw">use </span><span class="kw">crate</span>::intrinsics::is_nonoverlapping;
 <span class="kw">use </span><span class="kw">crate</span>::marker::{PhantomData, Unsize};
 <span class="kw">use </span><span class="kw">crate</span>::mem;
 <span class="kw">use </span><span class="kw">crate</span>::ops::{CoerceUnsized, Deref, DerefMut, DispatchFromDyn};
@@ -2698,6 +2711,12 @@
     <span class="doccomment">/// Swaps the values of two `Cell`s.
     /// Difference with `std::mem::swap` is that this function doesn&#39;t require `&amp;mut` reference.
     ///
+    /// # Panics
+    ///
+    /// This function will panic if `self` and `other` are different `Cell`s that partially overlap.
+    /// (Using just standard library methods, it is impossible to create such partially overlapping `Cell`s.
+    /// However, unsafe code is allowed to e.g. create two `&amp;Cell&lt;[i32; 2]&gt;` that partially overlap.)
+    ///
     /// # Examples
     ///
     /// ```
@@ -2713,14 +2732,20 @@
     #[stable(feature = <span class="string">&quot;move_cell&quot;</span>, since = <span class="string">&quot;1.17.0&quot;</span>)]
     </span><span class="kw">pub fn </span>swap(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span>ptr::eq(<span class="self">self</span>, other) {
-            <span class="kw">return</span>;
+            <span class="comment">// Swapping wouldn&#39;t change anything.
+            </span><span class="kw">return</span>;
+        }
+        <span class="kw">if </span>!is_nonoverlapping(<span class="self">self</span>, other, <span class="number">1</span>) {
+            <span class="comment">// See &lt;https://github.com/rust-lang/rust/issues/80778&gt; for why we need to stop here.
+            </span><span class="macro">panic!</span>(<span class="string">&quot;`Cell::swap` on overlapping non-identical `Cell`s&quot;</span>);
         }
         <span class="comment">// SAFETY: This can be risky if called from separate threads, but `Cell`
         // is `!Sync` so this won&#39;t happen. This also won&#39;t invalidate any
         // pointers since `Cell` makes sure nothing else will be pointing into
-        // either of these `Cell`s.
+        // either of these `Cell`s. We also excluded shenanigans like partially overlapping `Cell`s,
+        // so `swap` will just properly copy two full values of type `T` back and forth.
         </span><span class="kw">unsafe </span>{
-            ptr::swap(<span class="self">self</span>.value.get(), other.value.get());
+            mem::swap(<span class="kw-2">&amp;mut *</span><span class="self">self</span>.value.get(), <span class="kw-2">&amp;mut *</span>other.value.get());
         }
     }
 
@@ -4176,9 +4201,8 @@
 /// on an _exclusive_ `UnsafeCell&lt;T&gt;`. Even though `T` and `UnsafeCell&lt;T&gt;` have the
 /// same memory layout, the following is not allowed and undefined behavior:
 ///
-</span><span class="attr">#[cfg_attr(bootstrap, doc = <span class="string">&quot;```rust,no_run&quot;</span>)]
-#[cfg_attr(not(bootstrap), doc = <span class="string">&quot;```rust,compile_fail&quot;</span>)]
-</span><span class="doccomment">/// # use std::cell::UnsafeCell;
+/// ```rust,compile_fail
+/// # use std::cell::UnsafeCell;
 /// unsafe fn not_allowed&lt;T&gt;(ptr: &amp;UnsafeCell&lt;T&gt;) -&gt; &amp;mut T {
 ///   let t = ptr as *const UnsafeCell&lt;T&gt; as *mut T;
 ///   // This is undefined behavior, because the `*mut T` pointer

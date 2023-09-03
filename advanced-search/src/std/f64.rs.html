@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/f64.rs`."><title>f64.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/f64.rs`."><title>f64.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.74.0" data-rustdoc-version="1.74.0-dev" data-channel="nightly" data-search-js="search-da1792af0b5558b7.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.74.0.js"></script><script defer src="../../static.files/main-ef3a2de404864b0b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../std/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -958,6 +958,61 @@
 <a href="#958" id="958">958</a>
 <a href="#959" id="959">959</a>
 <a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+<a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
+<a href="#995" id="995">995</a>
+<a href="#996" id="996">996</a>
+<a href="#997" id="997">997</a>
+<a href="#998" id="998">998</a>
+<a href="#999" id="999">999</a>
+<a href="#1000" id="1000">1000</a>
+<a href="#1001" id="1001">1001</a>
+<a href="#1002" id="1002">1002</a>
+<a href="#1003" id="1003">1003</a>
+<a href="#1004" id="1004">1004</a>
+<a href="#1005" id="1005">1005</a>
+<a href="#1006" id="1006">1006</a>
+<a href="#1007" id="1007">1007</a>
+<a href="#1008" id="1008">1008</a>
+<a href="#1009" id="1009">1009</a>
+<a href="#1010" id="1010">1010</a>
+<a href="#1011" id="1011">1011</a>
+<a href="#1012" id="1012">1012</a>
+<a href="#1013" id="1013">1013</a>
+<a href="#1014" id="1014">1014</a>
+<a href="#1015" id="1015">1015</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Constants for the `f64` double-precision floating point type.
 //!
 //! *[See also the `f64` primitive type](primitive@f64).*
@@ -1021,7 +1076,8 @@
     /// assert_eq!(f.ceil(), 4.0);
     /// assert_eq!(g.ceil(), 4.0);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;ceiling&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1095,7 +1151,8 @@
     /// assert_eq!(g.trunc(), 3.0);
     /// assert_eq!(h.trunc(), -3.0);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;truncate&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1281,7 +1338,8 @@
     /// // limitation due to round-off error
     /// assert!((-f64::EPSILON).rem_euclid(3.0) != 0.0);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;modulo&quot;</span>, alias = <span class="string">&quot;mod&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[inline]
     #[stable(feature = <span class="string">&quot;euclidean_division&quot;</span>, since = <span class="string">&quot;1.38.0&quot;</span>)]
@@ -1632,7 +1690,8 @@
     ///
     /// assert!(abs_difference &lt; 1e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arcsin&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1654,7 +1713,8 @@
     ///
     /// assert!(abs_difference &lt; 1e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arccos&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1675,7 +1735,8 @@
     ///
     /// assert!(abs_difference &lt; 1e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arctan&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1732,7 +1793,8 @@
     /// assert!(abs_difference_0 &lt; 1e-10);
     /// assert!(abs_difference_1 &lt; 1e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;sincos&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>sin_cos(<span class="self">self</span>) -&gt; (f64, f64) {
@@ -1775,7 +1837,8 @@
     ///
     /// assert!(abs_difference &lt; 1e-20);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;log1p&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1864,7 +1927,8 @@
     ///
     /// assert!(abs_difference &lt; 1.0e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arcsinh&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1886,7 +1950,8 @@
     ///
     /// assert!(abs_difference &lt; 1.0e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arccosh&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
@@ -1910,12 +1975,57 @@
     ///
     /// assert!(abs_difference &lt; 1.0e-10);
     /// ```
-    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    </span><span class="attr">#[doc(alias = <span class="string">&quot;arctanh&quot;</span>)]
+    #[rustc_allow_incoherent_impl]
     #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
     #[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>atanh(<span class="self">self</span>) -&gt; f64 {
         <span class="number">0.5 </span>* ((<span class="number">2.0 </span>* <span class="self">self</span>) / (<span class="number">1.0 </span>- <span class="self">self</span>)).ln_1p()
+    }
+
+    <span class="doccomment">/// Gamma function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(float_gamma)]
+    /// let x = 5.0f64;
+    ///
+    /// let abs_difference = (x.gamma() - 24.0).abs();
+    ///
+    /// assert!(abs_difference &lt;= f64::EPSILON);
+    /// ```
+    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
+    #[unstable(feature = <span class="string">&quot;float_gamma&quot;</span>, issue = <span class="string">&quot;99842&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>gamma(<span class="self">self</span>) -&gt; f64 {
+        <span class="kw">unsafe </span>{ cmath::tgamma(<span class="self">self</span>) }
+    }
+
+    <span class="doccomment">/// Natural logarithm of the absolute value of the gamma function
+    ///
+    /// The integer part of the tuple indicates the sign of the gamma function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// #![feature(float_gamma)]
+    /// let x = 2.0f64;
+    ///
+    /// let abs_difference = (x.ln_gamma().0 - 0.0).abs();
+    ///
+    /// assert!(abs_difference &lt;= f64::EPSILON);
+    /// ```
+    </span><span class="attr">#[rustc_allow_incoherent_impl]
+    #[must_use = <span class="string">&quot;method returns a new number and does not mutate the original value&quot;</span>]
+    #[unstable(feature = <span class="string">&quot;float_gamma&quot;</span>, issue = <span class="string">&quot;99842&quot;</span>)]
+    #[inline]
+    </span><span class="kw">pub fn </span>ln_gamma(<span class="self">self</span>) -&gt; (f64, i32) {
+        <span class="kw">let </span><span class="kw-2">mut </span>signgamp: i32 = <span class="number">0</span>;
+        <span class="kw">let </span>x = <span class="kw">unsafe </span>{ cmath::lgamma_r(<span class="self">self</span>, <span class="kw-2">&amp;mut </span>signgamp) };
+        (x, signgamp)
     }
 }
 </code></pre></div></section></main></body></html>

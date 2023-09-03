@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/thread/local.rs`."><title>local.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.73.0.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/std/src/thread/local.rs`."><title>local.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="std" data-themes="" data-resource-suffix="1.74.0" data-rustdoc-version="1.74.0-dev" data-channel="nightly" data-search-js="search-da1792af0b5558b7.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files1.74.0.js"></script><script defer src="../../../static.files/main-ef3a2de404864b0b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../std/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -594,15 +594,6 @@
 <a href="#594" id="594">594</a>
 <a href="#595" id="595">595</a>
 <a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
-<a href="#600" id="600">600</a>
-<a href="#601" id="601">601</a>
-<a href="#602" id="602">602</a>
-<a href="#603" id="603">603</a>
-<a href="#604" id="604">604</a>
-<a href="#605" id="605">605</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Thread local storage
 
 </span><span class="attr">#![unstable(feature = <span class="string">&quot;thread_local_internals&quot;</span>, issue = <span class="string">&quot;none&quot;</span>)]
@@ -918,7 +909,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::Cell;
     ///
     /// thread_local! {
@@ -931,7 +921,7 @@
     ///
     /// assert_eq!(X.get(), 123);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>set(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, value: T) {
         <span class="self">self</span>.initialize_with(Cell::new(value), |value, cell| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = value {
@@ -956,7 +946,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::Cell;
     ///
     /// thread_local! {
@@ -965,7 +954,7 @@
     ///
     /// assert_eq!(X.get(), 1);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>) -&gt; T
     <span class="kw">where
         </span>T: Copy,
@@ -986,7 +975,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::Cell;
     ///
     /// thread_local! {
@@ -996,7 +984,7 @@
     /// assert_eq!(X.take(), Some(1));
     /// assert_eq!(X.take(), None);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>take(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>) -&gt; T
     <span class="kw">where
         </span>T: Default,
@@ -1017,7 +1005,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::Cell;
     ///
     /// thread_local! {
@@ -1027,7 +1014,7 @@
     /// assert_eq!(X.replace(2), 1);
     /// assert_eq!(X.replace(3), 2);
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>replace(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, value: T) -&gt; T {
         <span class="self">self</span>.with(|cell| cell.replace(value))
     }
@@ -1049,7 +1036,6 @@
     /// # Example
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::RefCell;
     ///
     /// thread_local! {
@@ -1058,7 +1044,7 @@
     ///
     /// X.with_borrow(|v| assert!(v.is_empty()));
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>with_borrow&lt;F, R&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, f: F) -&gt; R
     <span class="kw">where
         </span>F: FnOnce(<span class="kw-2">&amp;</span>T) -&gt; R,
@@ -1081,7 +1067,6 @@
     /// # Example
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::RefCell;
     ///
     /// thread_local! {
@@ -1092,7 +1077,7 @@
     ///
     /// X.with_borrow(|v| assert_eq!(*v, vec![1]));
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>with_borrow_mut&lt;F, R&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, f: F) -&gt; R
     <span class="kw">where
         </span>F: FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; R,
@@ -1116,7 +1101,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::RefCell;
     ///
     /// thread_local! {
@@ -1129,7 +1113,7 @@
     ///
     /// X.with_borrow(|v| assert_eq!(*v, vec![1, 2, 3]));
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>set(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, value: T) {
         <span class="self">self</span>.initialize_with(RefCell::new(value), |value, cell| {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = value {
@@ -1156,7 +1140,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::RefCell;
     ///
     /// thread_local! {
@@ -1171,7 +1154,7 @@
     ///
     /// X.with_borrow(|v| assert!(v.is_empty()));
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>take(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>) -&gt; T
     <span class="kw">where
         </span>T: Default,
@@ -1191,7 +1174,6 @@
     /// # Examples
     ///
     /// ```
-    /// #![feature(local_key_cell_methods)]
     /// use std::cell::RefCell;
     ///
     /// thread_local! {
@@ -1203,7 +1185,7 @@
     ///
     /// X.with_borrow(|v| assert_eq!(*v, vec![1, 2, 3]));
     /// ```
-    </span><span class="attr">#[unstable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, issue = <span class="string">&quot;92122&quot;</span>)]
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;local_key_cell_methods&quot;</span>, since = <span class="string">&quot;1.73.0&quot;</span>)]
     </span><span class="kw">pub fn </span>replace(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span><span class="self">self</span>, value: T) -&gt; T {
         <span class="self">self</span>.with(|cell| cell.replace(value))
     }

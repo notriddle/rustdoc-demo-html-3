@@ -259,7 +259,6 @@ For the latest nightly, see the <a href="https://doc.rust-lang.org/nightly/cargo
 <li><a href="#build-std-features">build-std-features</a> — Sets features to use with the standard library.</li>
 <li><a href="#binary-dep-depinfo">binary-dep-depinfo</a> — Causes the dep-info file to track binary dependencies.</li>
 <li><a href="#panic-abort-tests">panic-abort-tests</a> — Allows running tests with the “abort” panic strategy.</li>
-<li><a href="#keep-going">keep-going</a> — Build as much as possible rather than aborting on the first error.</li>
 <li><a href="#check-cfg">check-cfg</a> — Compile-time validation of <code>cfg</code> expressions.</li>
 <li><a href="#host-config">host-config</a> — Allows setting <code>[target]</code>-like configuration settings for host build targets.</li>
 <li><a href="#target-applies-to-host">target-applies-to-host</a> — Alters whether certain flags will be passed to host build targets.</li>
@@ -583,22 +582,6 @@ the <code>test</code> crate supports <code>-C panic=abort</code> with a test-per
 avoid compiling crate graphs multiple times.</p>
 <p>It’s currently unclear how this feature will be stabilized in Cargo, but we’d
 like to stabilize it somehow!</p>
-<h3 id="keep-going"><a class="header" href="#keep-going">keep-going</a></h3>
-<ul>
-<li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/10496">#10496</a></li>
-</ul>
-<p><code>cargo build --keep-going</code> (and similarly for <code>check</code>, <code>test</code> etc) will build as
-many crates in the dependency graph as possible, rather than aborting the build
-at the first one that fails to build.</p>
-<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
-one of which fails to build, <code>cargo check -j1</code> may or may not build the one that
-succeeds (depending on which one of the two builds Cargo picked to run first),
-whereas <code>cargo check -j1 --keep-going</code> would definitely run both builds, even if
-the one run first fails.</p>
-<p>The <code>-Z unstable-options</code> command-line option must be used in order to use
-<code>--keep-going</code> while it is not yet stable:</p>
-<pre><code class="language-console">cargo check --keep-going -Z unstable-options
-</code></pre>
 <h3 id="config-include"><a class="header" href="#config-include">config-include</a></h3>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/7723">#7723</a></li>
@@ -1039,7 +1022,7 @@ with the authentication token included.</p>
 can go to get a token.</p>
 <pre><code>WWW-Authenticate: Cargo login_url=&quot;https://test-registry-login/me
 </code></pre>
-<p>This same flag is also used to enable asymmetric authentication tokens.</p>
+<h3 id="asymmetric-token"><a class="header" href="#asymmetric-token">asymmetric-token</a></h3>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/10519">10519</a></li>
 <li>RFC: <a href="https://github.com/rust-lang/rfcs/pull/3231">#3231</a></li>
@@ -1110,7 +1093,11 @@ global-credential-providers = ['cargo:token', 'my-provider']
 <p>If you want to use a different provider for a specific registry, it can be
 specified in the <code>registries</code> table:</p>
 <pre><code class="language-toml">[registries.my-registry]
-global-credential-provider = &quot;/usr/bin/cargo-creds&quot;
+credential-provider = &quot;/usr/bin/cargo-creds&quot;
+</code></pre>
+<p>The credential provider for crates.io can be specified as:</p>
+<pre><code class="language-toml">[registry]
+credential-provider = &quot;/usr/bin/cargo-creds&quot;
 </code></pre>
 <p>The value can be a string with spaces separating arguments or it can be a TOML
 array of strings.</p>
@@ -1137,9 +1124,12 @@ executed within the Cargo process. They are identified with the <code>cargo:</co
 <p><code>cargo:macos-keychain</code> - Uses the macOS Keychain to store the token.</p>
 </li>
 <li>
-<p><code>cargo:basic</code> - A basic authenticator is a process that returns a token on stdout. Newlines
-will be trimmed. The process inherits the user’s stdin and stderr. It should
-exit 0 on success, and nonzero on error.</p>
+<p><code>cargo:libsecret</code> - Uses <a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a> to store tokens on Linux systems.</p>
+</li>
+<li>
+<p><code>cargo:token-from-stdout &lt;command&gt;</code> - Launch a subprocess that returns a token
+on stdout. Newlines will be trimmed. The process inherits the user’s stdin and stderr.
+It should exit 0 on success, and nonzero on error.</p>
 <p>With this form, <a href="../commands/cargo-login.html"><code>cargo login</code></a> and <a href="../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
 return an error if used.</p>
 <p>The following environment variables will be provided to the executed command:</p>
@@ -1150,10 +1140,10 @@ return an error if used.</p>
 </ul>
 </li>
 <li>
-<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider.</p>
+<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider. Requires <code>-Zasymmetric-token</code>.</p>
 </li>
-<li>
-<p><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
+</ul>
+<p><code>cargo-credential-1password</code> uses the 1password <code>op</code> CLI to store the token. You must
 install the <code>op</code> CLI from the <a href="https://1password.com/downloads/command-line/">1password
 website</a>. You must run <code>op signin</code> at least once with the appropriate arguments (such as <code>op signin my.1password.com user@example.com</code>), unless you provide the sign-in-address
 and email arguments. The master password will be required on each request
@@ -1165,16 +1155,10 @@ the following command-line arguments:</p>
 <li><code>--sign-in-address</code>: The sign-in-address, which is a web address such as <code>my.1password.com</code>.</li>
 <li><code>--email</code>: The email address to sign in with.</li>
 </ul>
-</li>
-</ul>
-<p>A wrapper is available for GNOME
-<a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a> to store tokens on
-Linux systems. Due to build limitations, this wrapper is not available as a
-pre-compiled binary. This can be built and installed manually. First, install
-libsecret using your system package manager (for example, <code>sudo apt install libsecret-1-dev</code>). Then build and install the wrapper with <code>cargo install cargo-credential-gnome-secret</code>.
-In the config, use a path to the binary like this:</p>
+<p>Install the provider with <code>cargo install cargo-credential-1password</code>
+In the config, add it to <code>global-credential-providers</code>:</p>
 <pre><code class="language-toml">[registry]
-global-credential-providers = [&quot;cargo-credential-gnome-secret&quot;]
+global-credential-providers = [&quot;cargo-credential-1password&quot;]
 </code></pre>
 <h4 id="json-interface"><a class="header" href="#json-interface">JSON Interface</a></h4>
 <p>When using an external credential provider, Cargo communicates with the credential
@@ -1798,6 +1782,10 @@ See <a href="registries.html#registry-protocols">Registry Protocols</a> for more
 enabled by default in the 1.72 release. See the
 <a href="../commands/cargo-test.html#working-directory-of-tests"><code>cargo test</code> documentation</a>
 for more information about the working directory for compiling and running tests.</p>
+<h3 id="keep-going"><a class="header" href="#keep-going">keep-going</a></h3>
+<p>The <code>--keep-going</code> option has been stabilized in the 1.74 release. See the
+<a href="../commands/cargo-build.html#option-cargo-build---keep-going"><code>--keep-going</code> flag</a>
+in <code>cargo build</code> as an example for more details.</p>
 
                     </main>
 

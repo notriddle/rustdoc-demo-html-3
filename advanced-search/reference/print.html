@@ -4516,6 +4516,8 @@ API itself</li>
 <code>__fastcall</code> and GCC and clang's <code>__attribute__((fastcall))</code></li>
 <li><code>extern &quot;vectorcall&quot;</code> -- The <code>vectorcall</code> ABI -- corresponds to MSVC's
 <code>__vectorcall</code> and clang's <code>__attribute__((vectorcall))</code></li>
+<li><code>extern &quot;thiscall&quot;</code> -- The default for C++ member functions on MSVC -- corresponds to MSVC's
+<code>__thiscall</code> and GCC and clang's <code>__attribute__((thiscall))</code></li>
 <li><code>extern &quot;efiapi&quot;</code> -- The ABI used for <a href="https://uefi.org/specifications">UEFI</a> functions.</li>
 </ul>
 <h2 id="variadic-functions"><a class="header" href="#variadic-functions">Variadic functions</a></h2>
@@ -6325,14 +6327,15 @@ creation of a shim hides the implicit parameter from callers of the function poi
 soundness.</p>
 </blockquote>
 <h2 id="the-instruction_set-attribute"><a class="header" href="#the-instruction_set-attribute">The <code>instruction_set</code> attribute</a></h2>
-<p>The <em><code>instruction_set</code> attribute</em> may be applied to a function to enable code generation for a specific
-instruction set supported by the target architecture. It uses the <a href="attributes/../attributes.html#meta-item-attribute-syntax"><em>MetaListPath</em></a> syntax and a path
-comprised of the architecture and instruction set to specify how to generate the code for
-architectures where a single program may utilize multiple instruction sets.</p>
-<p>The following values are available on targets for the <code>ARMv4</code> and <code>ARMv5te</code> architectures:</p>
+<p>The <em><code>instruction_set</code> <a href="attributes/../attributes.html">attribute</a></em> may be applied to a function to control which instruction set the function will be generated for.
+This allows mixing more than one instruction set in a single program on CPU architectures that support it.
+It uses the <a href="attributes/../attributes.html#meta-item-attribute-syntax"><em>MetaListPath</em></a> syntax, and a path comprised of the architecture family name and instruction set name.</p>
+<p>It is a compilation error to use the <code>instruction_set</code> attribute on a target that does not support it.</p>
+<h3 id="on-arm"><a class="header" href="#on-arm">On ARM</a></h3>
+<p>For the <code>ARMv4T</code> and <code>ARMv5te</code> architectures, the following are supported:</p>
 <ul>
-<li><code>arm::a32</code> - Uses ARM code.</li>
-<li><code>arm::t32</code> - Uses Thumb code.</li>
+<li><code>arm::a32</code> - Generate the function as A32 &quot;ARM&quot; code.</li>
+<li><code>arm::t32</code> - Generate the function as T32 &quot;Thumb&quot; code.</li>
 </ul>
 <!-- ignore: arm-only -->
 <pre><code class="language-rust ignore">#[instruction_set(arm::a32)]
@@ -6340,6 +6343,11 @@ fn foo_arm_code() {}
 
 #[instruction_set(arm::t32)]
 fn bar_thumb_code() {}</code></pre>
+<p>Using the <code>instruction_set</code> attribute has the following effects:</p>
+<ul>
+<li>If the address of the function is taken as a function pointer, the low bit of the address will be set to 0 (arm) or 1 (thumb) depending on the instruction set.</li>
+<li>Any inline assembly in the function must use the specified instruction set instead of the target default.</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="limits"><a class="header" href="#limits">Limits</a></h1>
 <p>The following <a href="attributes/../attributes.html">attributes</a> affect compile-time limits.</p>
 <h2 id="the-recursion_limit-attribute"><a class="header" href="#the-recursion_limit-attribute">The <code>recursion_limit</code> attribute</a></h2>
@@ -11536,6 +11544,73 @@ equivalent to the last one.</p>
     let zero = 0;
     f(&amp;zero);
 }
+<span class="boring">}</span></code></pre></pre>
+<h2 id="implied-bounds"><a class="header" href="#implied-bounds">Implied bounds</a></h2>
+<p>Lifetime bounds required for types to be well-formed are sometimes inferred.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn requires_t_outlives_a&lt;'a, T&gt;(x: &amp;'a T) {}
+<span class="boring">}</span></code></pre></pre>
+<p>The type parameter <code>T</code> is required to outlive <code>'a</code> for the type <code>&amp;'a T</code> to be well-formed.
+This is inferred because the function signature contains the type <code>&amp;'a T</code> which is
+only valid if <code>T: 'a</code> holds.</p>
+<p>Implied bounds are added for all parameters and outputs of functions. Inside of <code>requires_t_outlives_a</code>
+you can assume <code>T: 'a</code> to hold even if you don't explicitly specify this:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn requires_t_outlives_a_not_implied&lt;'a, T: 'a&gt;() {}
+
+fn requires_t_outlives_a&lt;'a, T&gt;(x: &amp;'a T) {
+    // This compiles, because `T: 'a` is implied by
+    // the reference type `&amp;'a T`.
+    requires_t_outlives_a_not_implied::&lt;'a, T&gt;();
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust compile_fail E0309 edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">fn requires_t_outlives_a_not_implied&lt;'a, T: 'a&gt;() {}
+</span>fn not_implied&lt;'a, T&gt;() {
+    // This errors, because `T: 'a` is not implied by
+    // the function signature.
+    requires_t_outlives_a_not_implied::&lt;'a, T&gt;();
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Only lifetime bounds are implied, trait bounds still have to be explicitly added.
+The following example therefore causes an error:</p>
+<pre><pre class="playground"><code class="language-rust compile_fail E0277 edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::fmt::Debug;
+struct IsDebug&lt;T: Debug&gt;(T);
+// error[E0277]: `T` doesn't implement `Debug`
+fn doesnt_specify_t_debug&lt;T&gt;(x: IsDebug&lt;T&gt;) {}
+<span class="boring">}</span></code></pre></pre>
+<p>Lifetime bounds are also inferred for type definitions and impl blocks for any type:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Struct&lt;'a, T&gt; {
+    // This requires `T: 'a` to be well-formed
+    // which is inferred by the compiler.
+    field: &amp;'a T,
+}
+
+enum Enum&lt;'a, T&gt; {
+    // This requires `T: 'a` to be well-formed,
+    // which is inferred by the compiler.
+    //
+    // Note that `T: 'a` is required even when only
+    // using `Enum::OtherVariant`.
+    SomeVariant(&amp;'a T),
+    OtherVariant,
+}
+
+trait Trait&lt;'a, T: 'a&gt; {}
+
+// This would error because `T: 'a` is not implied by any type
+// in the impl header.
+//     impl&lt;'a, T&gt; Trait&lt;'a, T&gt; for () {}
+
+// This compiles as `T: 'a` is implied by the self type `&amp;'a T`.
+impl&lt;'a, T&gt; Trait&lt;'a, T&gt; for &amp;'a T {}
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="type-coercions"><a class="header" href="#type-coercions">Type coercions</a></h1>
 <p><strong>Type coercions</strong> are implicit operations that change the type of a value.

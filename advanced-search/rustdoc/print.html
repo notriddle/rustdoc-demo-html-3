@@ -698,10 +698,11 @@ the standard library and functions that are included in the results list:</p>
 <tr><td><a href="read-documentation/../../std/vec/struct.Vec.html?search=option%20-%3E%20default&amp;filter-crate=std"><code>option -&gt; default</code></a></td><td><code>Option::unwrap_or_default</code></td></tr>
 <tr><td><a href="read-documentation/../../std/vec/struct.Vec.html?search=stdout%2C%20%5Bu8%5D&amp;filter-crate=std"><code>stdout, [u8]</code></a></td><td><code>Stdout::write</code></td></tr>
 <tr><td><a href="read-documentation/../../std/vec/struct.Vec.html?search=any%20-%3E%20!&amp;filter-crate=std"><code>any -&gt; !</code></a></td><td><code>panic::panic_any</code></td></tr>
+<tr><td><a href="read-documentation/../../std/vec/struct.Vec.html?search=vec%3A%3Aintoiter%3CT%3E%20-%3E%20%5BT%5D&amp;filter-crate=std"><code>vec::intoiter&lt;T&gt; -&gt; [T]</code></a></td><td><code>IntoIter::as_slice</code></td></tr>
 </tbody></table>
 </div>
 <h3 id="how-type-based-search-works"><a class="header" href="#how-type-based-search-works">How type-based search works</a></h3>
-<p>In a complex type-based search, Rustdoc always treats every item as literal.
+<p>In a complex type-based search, Rustdoc always treats every item's name as literal.
 If a name is used and nothing in the docs matches the individual item, such as
 a typo-ed <a href="read-documentation/../../std/vec/struct.Vec.html?search=uize%20-%3E%20vec&amp;filter-crate=std"><code>uize -&gt; vec</code></a> search, the item <code>uize</code> is treated as a generic
 type parameter (resulting in <code>vec::from</code> and other generic vec constructors).</p>
@@ -771,9 +772,6 @@ wrapped types can be searched for, so a function that takes <code>&amp;File</cod
 be found with <code>File</code>, but you'll get a parse error when typing an <code>&amp;</code>
 into the search field. Similarly, <code>Option&lt;(T, U)&gt;</code> can be matched with
 <code>Option&lt;T, U&gt;</code>, but <code>(</code> will give a parse error.</p>
-</li>
-<li>
-<p>Path searches, like <code>hash_map::Entry</code>, don't work in type-based search.</p>
 </li>
 <li>
 <p>Searching for lifetimes is not supported.</p>
@@ -1062,6 +1060,15 @@ characters:</p>
 </tbody></table>
 </div>
 <p>So, no need to manually enter those Unicode characters!</p>
+<h3 id="adding-a-warning-block"><a class="header" href="#adding-a-warning-block">Adding a warning block</a></h3>
+<p>If you want to make a warning or similar note stand out in the documentation,
+you can wrap it like this:</p>
+<pre><code class="language-md">/// documentation
+///
+/// &lt;div class=&quot;warning&quot;&gt;A big warning!&lt;/div&gt;
+///
+/// more documentation
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="what-to-include-and-exclude"><a class="header" href="#what-to-include-and-exclude">What to include (and exclude)</a></h1>
 <p>It is easy to say everything must be documented in a project and often times
 that is correct, but how can we get there, and are there things that don't
@@ -2318,6 +2325,35 @@ help: if you meant to use a literal backtick, escape it
   |                                         +
 
 warning: 1 warning emitted
+</code></pre>
+<h2 id="redundant_explicit_links"><a class="header" href="#redundant_explicit_links"><code>redundant_explicit_links</code></a></h2>
+<p>This lint is <strong>warned by default</strong>. It detects explicit links that are same
+as computed automatic links.
+This usually means the explicit links is removeable. For example:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>#![warn(rustdoc::redundant_explicit_links)] // note: unnecessary - warns by default.
+
+<span class="boring">fn main() {
+</span>/// add takes 2 [`usize`](usize) and performs addition
+/// on them, then returns result.
+pub fn add(left: usize, right: usize) -&gt; usize {
+    left + right
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Which will give:</p>
+<pre><code class="language-text">error: redundant explicit rustdoc link
+  --&gt; src/lib.rs:3:27
+   |
+3  | /// add takes 2 [`usize`](usize) and performs addition
+   |                           ^^^^^
+   |
+   = note: Explicit link does not affect the original link
+note: the lint level is defined here
+  --&gt; src/lib.rs:1:9
+   |
+1  | #![deny(rustdoc::redundant_explicit_links)]
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: Remove explicit link instead
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="scraped-examples"><a class="header" href="#scraped-examples">Scraped examples</a></h1>
 <p>Rustdoc has an unstable feature where it can automatically scrape examples of items being documented from the <code>examples/</code> directory of a Cargo workspace. These examples will be included within the generated documentation for that item. For example, if your library contains a public function:</p>

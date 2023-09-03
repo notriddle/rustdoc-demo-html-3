@@ -171,16 +171,16 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="error-code-e0446"><a class="header" href="#error-code-e0446">Error code E0446</a></h1>
-<p>A private type was used in a public type signature.</p>
+<p>A private type or trait was used in a public associated type signature.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0446">#![deny(private_in_public)]
-struct Bar(u32);
+<pre><pre class="playground"><code class="language-rust compile_fail E0446">struct Bar;
 
-mod foo {
-    use crate::Bar;
-    pub fn bar() -&gt; Bar { // error: private type in public interface
-        Bar(0)
-    }
+pub trait PubTr {
+    type Alias;
+}
+
+impl PubTr for u8 {
+    type Alias = Bar; // error private type in public interface
 }
 
 fn main() {}</code></pre></pre>
@@ -188,24 +188,28 @@ fn main() {}</code></pre></pre>
 signature only public to a module that also has access to the private type.
 This is done by using pub(crate) or pub(in crate::my_mod::etc)
 Example:</p>
-<pre><pre class="playground"><code class="language-rust">struct Bar(u32);
+<pre><pre class="playground"><code class="language-rust">struct Bar;
 
-mod foo {
-    use crate::Bar;
-    pub(crate) fn bar() -&gt; Bar { // only public to crate root
-        Bar(0)
-    }
+pub(crate) trait PubTr { // only public to crate root
+    type Alias;
+}
+
+impl PubTr for u8 {
+    type Alias = Bar;
 }
 
 fn main() {}</code></pre></pre>
 <p>The other way to solve this error is to make the private type public.
 Example:</p>
-<pre><pre class="playground"><code class="language-rust">pub struct Bar(u32); // we set the Bar type public
-mod foo {
-    use crate::Bar;
-    pub fn bar() -&gt; Bar { // ok!
-        Bar(0)
-    }
+<pre><pre class="playground"><code class="language-rust">
+pub struct Bar; // we set the Bar trait public
+
+pub trait PubTr {
+    type Alias;
+}
+
+impl PubTr for u8 {
+    type Alias = Bar;
 }
 
 fn main() {}</code></pre></pre>

@@ -217,10 +217,11 @@ the standard library and functions that are included in the results list:</p>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=option%20-%3E%20default&amp;filter-crate=std"><code>option -&gt; default</code></a></td><td><code>Option::unwrap_or_default</code></td></tr>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=stdout%2C%20%5Bu8%5D&amp;filter-crate=std"><code>stdout, [u8]</code></a></td><td><code>Stdout::write</code></td></tr>
 <tr><td><a href="../../std/vec/struct.Vec.html?search=any%20-%3E%20!&amp;filter-crate=std"><code>any -&gt; !</code></a></td><td><code>panic::panic_any</code></td></tr>
+<tr><td><a href="../../std/vec/struct.Vec.html?search=vec%3A%3Aintoiter%3CT%3E%20-%3E%20%5BT%5D&amp;filter-crate=std"><code>vec::intoiter&lt;T&gt; -&gt; [T]</code></a></td><td><code>IntoIter::as_slice</code></td></tr>
 </tbody></table>
 </div>
 <h3 id="how-type-based-search-works"><a class="header" href="#how-type-based-search-works">How type-based search works</a></h3>
-<p>In a complex type-based search, Rustdoc always treats every item as literal.
+<p>In a complex type-based search, Rustdoc always treats every item's name as literal.
 If a name is used and nothing in the docs matches the individual item, such as
 a typo-ed <a href="../../std/vec/struct.Vec.html?search=uize%20-%3E%20vec&amp;filter-crate=std"><code>uize -&gt; vec</code></a> search, the item <code>uize</code> is treated as a generic
 type parameter (resulting in <code>vec::from</code> and other generic vec constructors).</p>
@@ -290,9 +291,6 @@ wrapped types can be searched for, so a function that takes <code>&amp;File</cod
 be found with <code>File</code>, but you'll get a parse error when typing an <code>&amp;</code>
 into the search field. Similarly, <code>Option&lt;(T, U)&gt;</code> can be matched with
 <code>Option&lt;T, U&gt;</code>, but <code>(</code> will give a parse error.</p>
-</li>
-<li>
-<p>Path searches, like <code>hash_map::Entry</code>, don't work in type-based search.</p>
 </li>
 <li>
 <p>Searching for lifetimes is not supported.</p>

@@ -185,14 +185,11 @@ written by you.</li>
 <li><code>Cargo.lock</code> contains exact information about your dependencies. It is
 maintained by Cargo and should not be manually edited.</li>
 </ul>
-<p>If you’re building a non-end product, such as a rust library that other rust
-<a href="../appendix/glossary.html#package" title="&quot;package&quot; (glossary entry)">packages</a> will depend on, put <code>Cargo.lock</code> in your
-<code>.gitignore</code>. If you’re building an end product, which are executable like
-command-line tool or an application, or a system library with crate-type of
-<code>staticlib</code> or <code>cdylib</code>, check <code>Cargo.lock</code> into <code>git</code>. If you’re curious
-about why that is, see
-<a href="../faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries">“Why do binaries have <code>Cargo.lock</code> in version control, but not libraries?” in the
-FAQ</a>.</p>
+<p>When in doubt, check <code>Cargo.lock</code> into the version control system (e.g. Git).
+For a better understanding of why and what the alternatives might be, see
+<a href="../faq.html#why-have-cargolock-in-version-control">“Why have Cargo.lock in version control?” in the FAQ</a>.
+We recommend pairing this with
+<a href="continuous-integration.html#verifying-latest-dependencies">Verifying Latest Dependencies</a></p>
 <p>Let’s dig in a little bit more.</p>
 <p><code>Cargo.toml</code> is a <a href="../appendix/glossary.html#manifest" title="&quot;manifest&quot; (glossary entry)"><strong>manifest</strong></a> file in which we can specify a
 bunch of different metadata about our package. For example, we can say that we
@@ -251,8 +248,8 @@ they’ll use the exact same SHA, even though we didn’t specify it in our
 <code>Cargo.toml</code>.</p>
 <p>When we’re ready to opt in to a new version of the library, Cargo can
 re-calculate the dependencies and update things for us:</p>
-<pre><code class="language-console">$ cargo update            # updates all dependencies
-$ cargo update -p regex   # updates just “regex”
+<pre><code class="language-console">$ cargo update         # updates all dependencies
+$ cargo update regex   # updates just “regex”
 </code></pre>
 <p>This will write out a new <code>Cargo.lock</code> with the new version information. Note
 that the argument to <code>cargo update</code> is actually a

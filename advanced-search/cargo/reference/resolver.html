@@ -529,10 +529,10 @@ of <code>bar=&quot;1.0.12&quot;</code>, and then in a future release you start u
 added in the <code>1.1.0</code> release of “bar”, update your dependency requirement to
 <code>bar=&quot;1.1.0&quot;</code>.</p>
 <p>If you fail to do this, it may not be immediately obvious because Cargo can
-opportunistically choose the newest version when you run a blanket <code>cargo update</code>. However, if another user depends on your library, and runs <code>cargo update -p your-library</code>, it will <em>not</em> automatically update “bar” if it is
+opportunistically choose the newest version when you run a blanket <code>cargo update</code>. However, if another user depends on your library, and runs <code>cargo update your-library</code>, it will <em>not</em> automatically update “bar” if it is
 locked in their <code>Cargo.lock</code>. It will only update “bar” in that situation if
 the dependency declaration is also updated. Failure to do so can cause
-confusing build errors for the user using <code>cargo update -p</code>.</p>
+confusing build errors for the user using <code>cargo update your-library</code>.</p>
 </li>
 <li>
 <p>If two packages are tightly coupled, then an <code>=</code> dependency requirement may

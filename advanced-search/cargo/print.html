@@ -544,14 +544,11 @@ written by you.</li>
 <li><code>Cargo.lock</code> contains exact information about your dependencies. It is
 maintained by Cargo and should not be manually edited.</li>
 </ul>
-<p>If you’re building a non-end product, such as a rust library that other rust
-<a href="guide/../appendix/glossary.html#package" title="&quot;package&quot; (glossary entry)">packages</a> will depend on, put <code>Cargo.lock</code> in your
-<code>.gitignore</code>. If you’re building an end product, which are executable like
-command-line tool or an application, or a system library with crate-type of
-<code>staticlib</code> or <code>cdylib</code>, check <code>Cargo.lock</code> into <code>git</code>. If you’re curious
-about why that is, see
-<a href="guide/../faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries">“Why do binaries have <code>Cargo.lock</code> in version control, but not libraries?” in the
-FAQ</a>.</p>
+<p>When in doubt, check <code>Cargo.lock</code> into the version control system (e.g. Git).
+For a better understanding of why and what the alternatives might be, see
+<a href="guide/../faq.html#why-have-cargolock-in-version-control">“Why have Cargo.lock in version control?” in the FAQ</a>.
+We recommend pairing this with
+<a href="guide/continuous-integration.html#verifying-latest-dependencies">Verifying Latest Dependencies</a></p>
 <p>Let’s dig in a little bit more.</p>
 <p><code>Cargo.toml</code> is a <a href="guide/../appendix/glossary.html#manifest" title="&quot;manifest&quot; (glossary entry)"><strong>manifest</strong></a> file in which we can specify a
 bunch of different metadata about our package. For example, we can say that we
@@ -610,8 +607,8 @@ they’ll use the exact same SHA, even though we didn’t specify it in our
 <code>Cargo.toml</code>.</p>
 <p>When we’re ready to opt in to a new version of the library, Cargo can
 re-calculate the dependencies and update things for us:</p>
-<pre><code class="language-console">$ cargo update            # updates all dependencies
-$ cargo update -p regex   # updates just “regex”
+<pre><code class="language-console">$ cargo update         # updates all dependencies
+$ cargo update regex   # updates just “regex”
 </code></pre>
 <p>This will write out a new <code>Cargo.lock</code> with the new version information. Note
 that the argument to <code>cargo update</code> is actually a
@@ -647,22 +644,8 @@ Please see the <a href="guide/../../book/ch11-00-testing.html">testing guide</a>
 view of writing and organizing tests. See <a href="guide/../reference/cargo-targets.html#tests">Cargo Targets: Tests</a> to learn more
 about different styles of tests in Cargo.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h2>
-<h3 id="travis-ci"><a class="header" href="#travis-ci">Travis CI</a></h3>
-<p>To test your <a href="guide/../appendix/glossary.html#package" title="&quot;package&quot; (glossary entry)">package</a> on Travis CI, here is a sample
-<code>.travis.yml</code> file:</p>
-<pre><code class="language-yaml">language: rust
-rust:
-  - stable
-  - beta
-  - nightly
-matrix:
-  allow_failures:
-    - rust: nightly
-</code></pre>
-<p>This will test all three release channels, but any breakage in nightly
-will not fail your overall build. Please see the <a href="https://docs.travis-ci.com/user/languages/rust/">Travis CI Rust
-documentation</a> for more
-information.</p>
+<h3 id="getting-started-1"><a class="header" href="#getting-started-1">Getting Started</a></h3>
+<p>A basic CI will build and test your projects:</p>
 <h3 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h3>
 <p>To test your package on GitHub Actions, here is a sample <code>.github/workflows/ci.yml</code> file:</p>
 <pre><code class="language-yaml">name: Cargo Build &amp; Test
@@ -749,6 +732,66 @@ tasks:
 channel, but any breakage in nightly will not fail your overall build. Please
 see the <a href="https://man.sr.ht/builds.sr.ht/">builds.sr.ht documentation</a> for more
 information.</p>
+<h3 id="verifying-latest-dependencies"><a class="header" href="#verifying-latest-dependencies">Verifying Latest Dependencies</a></h3>
+<p>When <a href="guide/../reference/specifying-dependencies.html">specifying dependencies</a> in
+<code>Cargo.toml</code>, they generally match a range of versions.
+Exhaustively testing all version combination would be unwieldy.
+Verifying the latest versions would at least test for users who run <a href="guide/../commands/cargo-add.html"><code>cargo add</code></a> or <a href="guide/../commands/cargo-install.html"><code>cargo install</code></a>.</p>
+<p>When testing the latest versions some considerations are:</p>
+<ul>
+<li>Minimizing external factors affecting local development or CI</li>
+<li>Rate of new dependencies being published</li>
+<li>Level of risk a project is willing to accept</li>
+<li>CI costs, including indirect costs like if a CI service has a maximum for
+parallel runners, causing new jobs to be serialized when at the maxium.</li>
+</ul>
+<p>Some potential solutions include:</p>
+<ul>
+<li><a href="guide/../faq.html#why-have-cargolock-in-version-control">Not checking in the <code>Cargo.lock</code></a>
+<ul>
+<li>Depending on PR velocity, many versions may go untested</li>
+<li>This comes at the cost of determinism</li>
+</ul>
+</li>
+<li>Have a CI job verify the latest dependencies but mark it to “continue on failure”
+<ul>
+<li>Depending on the CI service, failures might not be obvious</li>
+<li>Depending on PR velocity, may use more resources than necessary</li>
+</ul>
+</li>
+<li>Have a scheduled CI job to verify latest dependencies
+<ul>
+<li>A hosted CI service may disable scheduled jobs for repositories that
+haven’t been touched in a while, affecting passively maintained packages</li>
+<li>Depending on the CI service, notifications might not be routed to people
+who can act on the failure</li>
+<li>If not balanced with dependency publish rate, may not test enough versions
+or may do redundant testing</li>
+</ul>
+</li>
+<li>Regularly update dependencies through PRs, like with <a href="https://docs.github.com/en/code-security/dependabot/working-with-dependabot">Dependabot</a> or <a href="https://renovatebot.com/">RenovateBot</a>
+<ul>
+<li>Can isolate dependencies to their own PR or roll them up into a single PR</li>
+<li>Only uses the resources necessary</li>
+<li>Can configure the frequency to balance CI resources and coverage of dependency versions</li>
+</ul>
+</li>
+</ul>
+<p>An example CI job to verify latest dependencies, using Github Actions:</p>
+<pre><code class="language-yaml">jobs:
+  latest_deps:
+    name: Latest Dependencies
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup update stable &amp;&amp; rustup default stable
+      - run: cargo update --verbose
+      - run: cargo build --verbose
+      - run: cargo test --verbose
+</code></pre>
+<p>For projects with higher risks of per-platform or per-Rust version failures,
+more combinations may want to be tested.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="cargo-home"><a class="header" href="#cargo-home">Cargo Home</a></h2>
 <p>The “Cargo home” functions as a download and source cache.
 When building a <a href="guide/../appendix/glossary.html#crate" title="&quot;crate&quot; (glossary entry)">crate</a>, Cargo stores downloaded build dependencies in the Cargo home.
@@ -967,7 +1010,7 @@ time = &quot;0.1.12&quot;
 specific <em>version</em> of the <code>time</code> crate, it actually specifies a <em>range</em> of
 versions and allows <a href="https://semver.org">SemVer</a> compatible updates. An update is allowed if the new
 version number does not modify the left-most non-zero number in the major, minor,
-patch grouping. In this case, if we ran <code>cargo update -p time</code>, cargo should
+patch grouping. In this case, if we ran <code>cargo update time</code>, cargo should
 update us to version <code>0.1.13</code> if it is the latest <code>0.1.z</code> release, but would not
 update us to <code>0.2.0</code>. If instead we had specified the version string as <code>1.0</code>,
 cargo should update to <code>1.1</code> if it is the latest <code>1.y</code> release, but not <code>2.0</code>.
@@ -989,10 +1032,11 @@ versions before 1.0.0. While SemVer says there is no compatibility before
 and <code>x &gt; 0</code>.</p>
 <p>It is possible to further tweak the logic for selecting compatible versions
 using special operators, though it shouldn’t be necessary most of the time.</p>
-<h3 id="caret-requirements"><a class="header" href="#caret-requirements">Caret requirements</a></h3>
+<h3 id="version-requirement-syntax"><a class="header" href="#version-requirement-syntax">Version requirement syntax</a></h3>
+<h4 id="caret-requirements"><a class="header" href="#caret-requirements">Caret requirements</a></h4>
 <p><strong>Caret requirements</strong> are an alternative syntax for the default strategy,
 <code>^1.2.3</code> is exactly equivalent to <code>1.2.3</code>.</p>
-<h3 id="tilde-requirements"><a class="header" href="#tilde-requirements">Tilde requirements</a></h3>
+<h4 id="tilde-requirements"><a class="header" href="#tilde-requirements">Tilde requirements</a></h4>
 <p><strong>Tilde requirements</strong> specify a minimal version with some ability to update.
 If you specify a major, minor, and patch version or only a major and minor
 version, only patch-level changes are allowed. If you only specify a major
@@ -1002,7 +1046,7 @@ version, then minor- and patch-level changes are allowed.</p>
 ~1.2    := &gt;=1.2.0, &lt;1.3.0
 ~1      := &gt;=1.0.0, &lt;2.0.0
 </code></pre>
-<h3 id="wildcard-requirements"><a class="header" href="#wildcard-requirements">Wildcard requirements</a></h3>
+<h4 id="wildcard-requirements"><a class="header" href="#wildcard-requirements">Wildcard requirements</a></h4>
 <p><strong>Wildcard requirements</strong> allow for any version where the wildcard is
 positioned.</p>
 <p><code>*</code>, <code>1.*</code> and <code>1.2.*</code> are examples of wildcard requirements.</p>
@@ -1013,7 +1057,7 @@ positioned.</p>
 <blockquote>
 <p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow bare <code>*</code> versions.</p>
 </blockquote>
-<h3 id="comparison-requirements"><a class="header" href="#comparison-requirements">Comparison requirements</a></h3>
+<h4 id="comparison-requirements"><a class="header" href="#comparison-requirements">Comparison requirements</a></h4>
 <p><strong>Comparison requirements</strong> allow manually specifying a version range or an
 exact version to depend on.</p>
 <p>Here are some examples of comparison requirements:</p>
@@ -1022,7 +1066,7 @@ exact version to depend on.</p>
 &lt; 2
 = 1.2.3
 </code></pre>
-<h3 id="multiple-requirements"><a class="header" href="#multiple-requirements">Multiple requirements</a></h3>
+<h4 id="multiple-version-requirements"><a class="header" href="#multiple-version-requirements">Multiple version requirements</a></h4>
 <p>As shown in the examples above, multiple version requirements can be
 separated with a comma, e.g., <code>&gt;= 1.2, &lt; 1.5</code>.</p>
 <blockquote>
@@ -1067,7 +1111,7 @@ some-crate = { version = &quot;1.0&quot;, registry = &quot;my-registry&quot; }
 </code></pre>
 <blockquote>
 <p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow packages to be published with
-dependencies on other registries.</p>
+dependencies on code published outside of <a href="https://crates.io/">crates.io</a>.</p>
 </blockquote>
 <h3 id="specifying-dependencies-from-git-repositories"><a class="header" href="#specifying-dependencies-from-git-repositories">Specifying dependencies from <code>git</code> repositories</a></h3>
 <p>To depend on a library located in a <code>git</code> repository, the minimum information
@@ -1100,9 +1144,20 @@ once the lock is in place. However, they can be pulled down manually with
 <code>cargo update</code>.</p>
 <p>See <a href="reference/../appendix/git-authentication.html">Git Authentication</a> for help with git authentication for private repos.</p>
 <blockquote>
-<p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow packages to be published with <code>git</code>
-dependencies (<code>git</code> <a href="reference/specifying-dependencies.html#development-dependencies">dev-dependencies</a> are ignored). See the <a href="reference/specifying-dependencies.html#multiple-locations">Multiple
-locations</a> section for a fallback alternative.</p>
+<p><strong>Note</strong>: Neither the <code>git</code> key nor the <code>path</code> key changes the meaning of the
+<code>version</code> key: the <code>version</code> key always implies that the package is available
+in a registry. <code>version</code>, <code>git</code>, and <code>path</code> keys are considered <a href="reference/specifying-dependencies.html#multiple-locations">separate
+locations</a> for resolving the dependency.</p>
+<p>When the dependency is retrieved from <code>git</code>, the <code>version</code> key will <em>not</em>
+affect which commit is used, but the version information in the dependency’s
+<code>Cargo.toml</code> file will still be validated against the <code>version</code> requirement.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow packages to be published with
+dependencies on code published outside of <a href="https://crates.io/">crates.io</a> itself
+(<a href="reference/specifying-dependencies.html#development-dependencies">dev-dependencies</a> are ignored). See the <a href="reference/specifying-dependencies.html#multiple-locations">Multiple
+locations</a> section for a fallback alternative for <code>git</code>
+and <code>path</code> dependencies.</p>
 </blockquote>
 <h3 id="specifying-path-dependencies"><a class="header" href="#specifying-path-dependencies">Specifying path dependencies</a></h3>
 <p>Over time, our <code>hello_world</code> package from <a href="reference/../guide/index.html">the guide</a> has
@@ -1131,9 +1186,17 @@ and specify its version in the dependencies line as well:</p>
 hello_utils = { path = &quot;hello_utils&quot;, version = &quot;0.1.0&quot; }
 </code></pre>
 <blockquote>
-<p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow packages to be published with <code>path</code>
-dependencies (<code>path</code> <a href="reference/specifying-dependencies.html#development-dependencies">dev-dependencies</a> are ignored). See the <a href="reference/specifying-dependencies.html#multiple-locations">Multiple
-locations</a> section for a fallback alternative.</p>
+<p><strong>Note</strong>: Neither the <code>git</code> key nor the <code>path</code> key changes the meaning of the
+<code>version</code> key: the <code>version</code> key always implies that the package is available
+in a registry. <code>version</code>, <code>git</code>, and <code>path</code> keys are considered <a href="reference/specifying-dependencies.html#multiple-locations">separate
+locations</a> for resolving the dependency.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: <a href="https://crates.io/">crates.io</a> does not allow packages to be published with
+dependencies on code published outside of <a href="https://crates.io/">crates.io</a> itself
+(<a href="reference/specifying-dependencies.html#development-dependencies">dev-dependencies</a> are ignored). See the <a href="reference/specifying-dependencies.html#multiple-locations">Multiple
+locations</a> section for a fallback alternative for <code>git</code>
+and <code>path</code> dependencies.</p>
 </blockquote>
 <h3 id="multiple-locations"><a class="header" href="#multiple-locations">Multiple locations</a></h3>
 <p>It is possible to specify both a registry version and a <code>git</code> or <code>path</code>
@@ -1451,7 +1514,7 @@ important to keep this in mind!</p>
 </code></pre>
 <p>And that’s it! You’re now building with the local version of <code>uuid</code> (note the
 path in parentheses in the build output). If you don’t see the local path version getting
-built then you may need to run <code>cargo update -p uuid --precise $version</code> where
+built then you may need to run <code>cargo update uuid --precise $version</code> where
 <code>$version</code> is the version of the locally checked out copy of <code>uuid</code>.</p>
 <p>Once you’ve fixed the bug you originally found the next thing you’ll want to do
 is to likely submit that as a pull request to the <code>uuid</code> crate itself. Once
@@ -3500,7 +3563,8 @@ with a configuration file in your home directory.</p>
 <p>If a key is specified in multiple config files, the values will get merged
 together. Numbers, strings, and booleans will use the value in the deeper
 config directory taking precedence over ancestor directories, where the
-home directory is the lowest priority. Arrays will be joined together.</p>
+home directory is the lowest priority. Arrays will be joined together
+with higher precedence items being placed later in the merged array.</p>
 <p>At present, when being invoked from a workspace, Cargo does not read config
 files from crates within the workspace. i.e. if a workspace has two crates in
 it, named <code>/projects/foo/bar/baz/mylib</code> and <code>/projects/foo/bar/baz/mybin</code>, and
@@ -3758,6 +3822,13 @@ variables. The token for <a href="https://crates.io/">crates.io</a> may be speci
 be specified with environment variables of the form
 <code>CARGO_REGISTRIES_&lt;name&gt;_TOKEN</code> where <code>&lt;name&gt;</code> is the name of the registry in
 all capital letters.</p>
+<blockquote>
+<p><strong>Note:</strong> Cargo also reads and writes credential files without the <code>.toml</code>
+extension, such as <code>.cargo/credentials</code>. Support for the <code>.toml</code> extension
+was added in version 1.39. In version 1.68, Cargo writes to the file with the
+extension by default. However, for backward compatibility reason, when both
+files exist, Cargo will read and write the file without the extension.</p>
+</blockquote>
 <h3 id="configuration-keys"><a class="header" href="#configuration-keys">Configuration keys</a></h3>
 <p>This section documents all configuration keys. The description for keys with
 variable parts are annotated with angled brackets like <code>target.&lt;triple&gt;</code> where
@@ -4011,8 +4082,8 @@ crate dependencies and accessing remote git repositories.</p>
 <li>Environment: <code>CARGO_HTTP_DEBUG</code></li>
 </ul>
 <p>If <code>true</code>, enables debugging of HTTP requests. The debug information can be
-seen by setting the <code>CARGO_LOG=cargo::ops::registry=debug</code> environment
-variable (or use <code>trace</code> for even more information).</p>
+seen by setting the <code>CARGO_LOG=network=debug</code> environment
+variable (or use <code>network=trace</code> for even more information).</p>
 <p>Be wary when posting logs from this output in a public location. The output
 may include headers with authentication tokens which you don’t want to leak!
 Be sure to review logs before posting them.</p>
@@ -4430,6 +4501,11 @@ For example <code>--target foo/bar.json</code> would match <code>[target.bar]</c
 </ul>
 <p>Specifies the linker which is passed to <code>rustc</code> (via <a href="reference/../../rustc/codegen-options/index.html#linker"><code>-C linker</code></a>) when the
 <a href="reference/../appendix/glossary.html#target" title="&quot;target&quot; (glossary)"><code>&lt;triple&gt;</code></a> is being compiled for. By default, the linker is not overridden.</p>
+<h5 id="targetcfglinker"><a class="header" href="#targetcfglinker"><code>target.&lt;cfg&gt;.linker</code></a></h5>
+<p>This is similar to the <a href="reference/config.html#targettriplelinker">target linker</a>, but using
+a <a href="reference/../../reference/conditional-compilation.html"><code>cfg()</code> expression</a>. If both a <a href="reference/../appendix/glossary.html#target" title="&quot;target&quot; (glossary)"><code>&lt;triple&gt;</code></a> and <code>&lt;cfg&gt;</code> runner match,
+the <code>&lt;triple&gt;</code> will take precedence. It is an error if more than one
+<code>&lt;cfg&gt;</code> runner matches the current target.</p>
 <h5 id="targettriplerunner"><a class="header" href="#targettriplerunner"><code>target.&lt;triple&gt;.runner</code></a></h5>
 <ul>
 <li>Type: string or array of strings (<a href="reference/config.html#executable-paths-with-arguments">program path with args</a>)</li>
@@ -4534,7 +4610,7 @@ with them:</p>
 <p>You can override these environment variables to change Cargo’s behavior on your
 system:</p>
 <ul>
-<li><code>CARGO_LOG</code> — Cargo uses the <a href="https://docs.rs/env_logger"><code>env_logger</code></a> crate to display debug log messages.
+<li><code>CARGO_LOG</code> — Cargo uses the <a href="https://docs.rs/tracing"><code>tracing</code></a> crate to display debug log messages.
 The <code>CARGO_LOG</code> environment variable can be set to enable debug logging,
 with a value such as <code>trace</code>, <code>debug</code>, or <code>warn</code>.
 Usually it is only used during debugging. For more details refer to the
@@ -5092,8 +5168,10 @@ Otherwise, specifying <code>build.rs</code> is redundant and unnecessary.</p>
 <p>The <code>rerun-if-env-changed</code> instruction tells Cargo to re-run the build script
 if the value of an environment variable of the given name has changed.</p>
 <p>Note that the environment variables here are intended for global environment
-variables like <code>CC</code> and such, it is not necessary to use this for environment
-variables like <code>TARGET</code> that Cargo sets.</p>
+variables like <code>CC</code> and such, it is not possible to use this for environment
+variables like <code>TARGET</code> that <a href="reference/environment-variables.html#environment-variables-cargo-sets-for-build-scripts">Cargo sets for build scripts</a>. The
+environment variables in use are those received by <code>cargo</code> invocations, not
+those received by the executable of the build script.</p>
 <h3 id="the-links-manifest-key"><a class="header" href="#the-links-manifest-key">The <code>links</code> Manifest Key</a></h3>
 <p>The <code>package.links</code> key may be set in the <code>Cargo.toml</code> manifest to declare
 that the package links with the given native library. The purpose of this
@@ -7263,10 +7341,10 @@ of <code>bar=&quot;1.0.12&quot;</code>, and then in a future release you start u
 added in the <code>1.1.0</code> release of “bar”, update your dependency requirement to
 <code>bar=&quot;1.1.0&quot;</code>.</p>
 <p>If you fail to do this, it may not be immediately obvious because Cargo can
-opportunistically choose the newest version when you run a blanket <code>cargo update</code>. However, if another user depends on your library, and runs <code>cargo update -p your-library</code>, it will <em>not</em> automatically update “bar” if it is
+opportunistically choose the newest version when you run a blanket <code>cargo update</code>. However, if another user depends on your library, and runs <code>cargo update your-library</code>, it will <em>not</em> automatically update “bar” if it is
 locked in their <code>Cargo.lock</code>. It will only update “bar” in that situation if
 the dependency declaration is also updated. Failure to do so can cause
-confusing build errors for the user using <code>cargo update -p</code>.</p>
+confusing build errors for the user using <code>cargo update your-library</code>.</p>
 </li>
 <li>
 <p>If two packages are tightly coupled, then an <code>=</code> dependency requirement may
@@ -7393,6 +7471,11 @@ considered incompatible.</p>
 <ul>
 <li><a href="reference/semver.html#item-remove">Major: renaming/moving/removing any public items</a></li>
 <li><a href="reference/semver.html#item-new">Minor: adding new public items</a></li>
+</ul>
+</li>
+<li>Types
+<ul>
+<li><a href="reference/semver.html#type-layout">Major: Changing the alignment, layout, or size of a well-defined type</a></li>
 </ul>
 </li>
 <li>Structs
@@ -7552,6 +7635,641 @@ fn main() {
 <p>This is not considered a major change because conventionally glob imports are
 a known forwards-compatibility hazard. Glob imports of items from external
 crates should be avoided.</p>
+<h3 id="type-layout"><a class="header" href="#type-layout">Major: Changing the alignment, layout, or size of a well-defined type</a></h3>
+<p>It is a breaking change to change the alignment, layout, or size of a type that was previously well-defined.</p>
+<p>In general, types that use the <a href="reference/../../reference/type-layout.html#the-default-representation">the default representation</a> do not have a well-defined alignment, layout, or size.
+The compiler is free to alter the alignment, layout, or size, so code should not make any assumptions about it.</p>
+<blockquote>
+<p><strong>Note</strong>: It may be possible for external crates to break if they make assumptions about the alignment, layout, or size of a type even if it is not well-defined.
+This is not considered a SemVer breaking change since those assumptions should not be made.</p>
+</blockquote>
+<p>Some examples of changes that are not a breaking change are (assuming no other rules in this guide are violated):</p>
+<ul>
+<li>Adding, removing, reordering, or changing fields of a default representation struct, union, or enum in such a way that the change follows the other rules in this guide (for example, using <code>non_exhaustive</code> to allow those changes, or changes to private fields that are already private).
+See <a href="reference/semver.html#struct-add-private-field-when-public">struct-add-private-field-when-public</a>, <a href="reference/semver.html#struct-add-public-field-when-no-private">struct-add-public-field-when-no-private</a>, <a href="reference/semver.html#struct-private-fields-with-private">struct-private-fields-with-private</a>, <a href="reference/semver.html#enum-fields-new">enum-fields-new</a>.</li>
+<li>Adding variants to a default representation enum, if the enum uses <code>non_exhaustive</code>.
+This may change the alignment or size of the enumeration, but those are not well-defined.
+See <a href="reference/semver.html#enum-variant-new">enum-variant-new</a>.</li>
+<li>Adding, removing, reordering, or changing private fields of a <code>repr(C)</code> struct, union, or enum, following the other rules in this guide (for example, using <code>non_exhaustive</code>, or adding private fields when other private fields already exist).
+See <a href="reference/semver.html#repr-c-private-change">repr-c-private-change</a>.</li>
+<li>Adding variants to a <code>repr(C)</code> enum, if the enum uses <code>non_exhaustive</code>.
+See <a href="reference/semver.html#repr-c-enum-variant-new">repr-c-enum-variant-new</a>.</li>
+<li>Adding <code>repr(C)</code> to a default representation struct, union, or enum.
+See <a href="reference/semver.html#repr-c-add">repr-c-add</a>.</li>
+<li>Adding <code>repr(&lt;int&gt;)</code> <a href="reference/../../reference/type-layout.html#primitive-representations">primitive representation</a> to an enum.
+See <a href="reference/semver.html#repr-int-enum-add">repr-int-enum-add</a>.</li>
+<li>Adding <code>repr(transparent)</code> to a default representation struct or enum.
+See <a href="reference/semver.html#repr-transparent-add">repr-transparent-add</a>.</li>
+</ul>
+<p>Types that use the <a href="reference/../../reference/type-layout.html#representations"><code>repr</code> attribute</a> can be said to have an alignment and layout that is defined in some way that code may make some assumptions about that may break as a result of changing that type.</p>
+<p>In some cases, types with a <code>repr</code> attribute may not have an alignment, layout, or size that is well-defined.
+In these cases, it may be safe to make changes to the types, though care should be exercised.
+For example, types with private fields that do not otherwise document their alignment, layout, or size guarantees cannot be relied upon by external crates since the public API does not fully define the alignment, layout, or size of the type.</p>
+<p>A common example where a type with <em>private</em> fields is well-defined is a type with a single private field with a generic type, using <code>repr(transparent)</code>,
+and the prose of the documentation discusses that it is transparent to the generic type.
+For example, see <a href="reference/../../std/cell/struct.UnsafeCell.html#memory-layout"><code>UnsafeCell</code></a>.</p>
+<p>Some examples of breaking changes are:</p>
+<ul>
+<li>Adding <code>repr(packed)</code> to a struct or union.
+See <a href="reference/semver.html#repr-packed-add">repr-packed-add</a>.</li>
+<li>Adding <code>repr(align)</code> to a struct, union, or enum.
+See <a href="reference/semver.html#repr-align-add">repr-align-add</a>.</li>
+<li>Removing <code>repr(packed)</code> from a struct or union.
+See <a href="reference/semver.html#repr-packed-remove">repr-packed-remove</a>.</li>
+<li>Changing the value N of <code>repr(packed(N))</code> if that changes the alignment or layout.
+See <a href="reference/semver.html#repr-packed-n-change">repr-packed-n-change</a>.</li>
+<li>Changing the value N of <code>repr(align(N))</code> if that changes the alignment.
+See <a href="reference/semver.html#repr-align-n-change">repr-align-n-change</a>.</li>
+<li>Removing <code>repr(align)</code> from a struct, union, or enum.
+See <a href="reference/semver.html#repr-align-remove">repr-align-remove</a>.</li>
+<li>Changing the order of public fields of a <code>repr(C)</code> type.
+See <a href="reference/semver.html#repr-c-shuffle">repr-c-shuffle</a>.</li>
+<li>Removing <code>repr(C)</code> from a struct, union, or enum.
+See <a href="reference/semver.html#repr-c-remove">repr-c-remove</a>.</li>
+<li>Removing <code>repr(&lt;int&gt;)</code> from an enum.
+See <a href="reference/semver.html#repr-int-enum-remove">repr-int-enum-remove</a>.</li>
+<li>Changing the primitive representation of a <code>repr(&lt;int&gt;)</code> enum.
+See <a href="reference/semver.html#repr-int-enum-change">repr-int-enum-change</a>.</li>
+<li>Removing <code>repr(transparent)</code> from a struct or enum.
+See <a href="reference/semver.html#repr-transparent-remove">repr-transparent-remove</a>.</li>
+</ul>
+<h4 id="repr-c-private-change"><a class="header" href="#repr-c-private-change">Minor: <code>repr(C)</code> add, remove, or change a private field</a></h4>
+<p>It is usually safe to add, remove, or change a private field of a <code>repr(C)</code> struct, union, or enum, assuming it follows the other guidelines in this guide (see <a href="reference/semver.html#struct-add-private-field-when-public">struct-add-private-field-when-public</a>, <a href="reference/semver.html#struct-add-public-field-when-no-private">struct-add-public-field-when-no-private</a>, <a href="reference/semver.html#struct-private-fields-with-private">struct-private-fields-with-private</a>, <a href="reference/semver.html#enum-fields-new">enum-fields-new</a>).</p>
+<p>For example, adding private fields can only be done if there are already other private fields, or it is <code>non_exhaustive</code>.
+Public fields may be added if there are private fields, or it is <code>non_exhaustive</code>, and the addition does not alter the layout of the other fields.</p>
+<p>However, this may change the size and alignment of the type.
+Care should be taken if the size or alignment changes.
+Code should not make assumptions about the size or alignment of types with private fields or <code>non_exhaustive</code> unless it has a documented size or alignment.</p>
+<pre><code class="language-rust ignore">// MINOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[derive(Default)]
+#[repr(C)]
+pub struct Example {
+    pub f1: i32,
+    f2: i32, // a private field
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[derive(Default)]
+#[repr(C)]
+pub struct Example {
+    pub f1: i32,
+    f2: i32,
+    f3: i32, // a new field
+}
+
+///////////////////////////////////////////////////////////
+// Example use of the library that will safely work.
+fn main() {
+    // NOTE: Users should not make assumptions about the size or alignment
+    // since they are not documented.
+    let f = updated_crate::Example::default();
+}</code></pre>
+<h4 id="repr-c-enum-variant-new"><a class="header" href="#repr-c-enum-variant-new">Minor: <code>repr(C)</code> add enum variant</a></h4>
+<p>It is usually safe to add variants to a <code>repr(C)</code> enum, if the enum uses <code>non_exhastive</code>.
+See <a href="reference/semver.html#enum-variant-new">enum-variant-new</a> for more discussion.</p>
+<p>Note that this may be a breaking change since it changes the size and alignment of the type.
+See <a href="reference/semver.html#repr-c-private-change">repr-c-private-change</a> for similar concerns.</p>
+<pre><code class="language-rust ignore">// MINOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C)]
+#[non_exhaustive]
+pub enum Example {
+    Variant1 { f1: i16 },
+    Variant2 { f1: i32 },
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)]
+#[non_exhaustive]
+pub enum Example {
+    Variant1 { f1: i16 },
+    Variant2 { f1: i32 },
+    Variant3 { f1: i64 }, // added
+}
+
+///////////////////////////////////////////////////////////
+// Example use of the library that will safely work.
+fn main() {
+    // NOTE: Users should not make assumptions about the size or alignment
+    // since they are not specified. For example, this raised the size from 8
+    // to 16 bytes.
+    let f = updated_crate::Example::Variant2 { f1: 123 };
+}</code></pre>
+<h4 id="repr-c-add"><a class="header" href="#repr-c-add">Minor: Adding <code>repr(C)</code> to a default representation</a></h4>
+<p>It is safe to add <code>repr(C)</code> to a struct, union, or enum with <a href="reference/../../reference/type-layout.html#the-default-representation">the default representation</a>.
+This is safe because users should not make assumptions about the alignment, layout, or size of types with with the default representation.</p>
+<pre><code class="language-rust ignore">// MINOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+pub struct Example {
+    pub f1: i32,
+    pub f2: i16,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)] // added
+pub struct Example {
+    pub f1: i32,
+    pub f2: i16,
+}
+
+///////////////////////////////////////////////////////////
+// Example use of the library that will safely work.
+fn main() {
+    let f = updated_crate::Example { f1: 123, f2: 456 };
+}</code></pre>
+<h4 id="repr-int-enum-add"><a class="header" href="#repr-int-enum-add">Minor: Adding <code>repr(&lt;int&gt;)</code> to an enum</a></h4>
+<p>It is safe to add <code>repr(&lt;int&gt;)</code> <a href="reference/../../reference/type-layout.html#primitive-representations">primitive representation</a> to an enum with <a href="reference/../../reference/type-layout.html#the-default-representation">the default representation</a>.
+This is safe because users should not make assumptions about the alignment, layout, or size of an enum with the default representation.</p>
+<pre><code class="language-rust ignore">// MINOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+pub enum E {
+    Variant1,
+    Variant2(i32),
+    Variant3 { f1: f64 },
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(i32)] // added
+pub enum E {
+    Variant1,
+    Variant2(i32),
+    Variant3 { f1: f64 },
+}
+
+///////////////////////////////////////////////////////////
+// Example use of the library that will safely work.
+fn main() {
+    let x = updated_crate::E::Variant3 { f1: 1.23 };
+}</code></pre>
+<h4 id="repr-transparent-add"><a class="header" href="#repr-transparent-add">Minor: Adding <code>repr(transparent)</code> to a default representation struct or enum</a></h4>
+<p>It is safe to add <code>repr(transparent)</code> to a struct or enum with <a href="reference/../../reference/type-layout.html#the-default-representation">the default representation</a>.
+This is safe because users should not make assumptions about the alignment, layout, or size of a struct or enum with the default representation.</p>
+<pre><code class="language-rust ignore">// MINOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[derive(Default)]
+pub struct Example&lt;T&gt;(T);
+
+///////////////////////////////////////////////////////////
+// After
+#[derive(Default)]
+#[repr(transparent)] // added
+pub struct Example&lt;T&gt;(T);
+
+///////////////////////////////////////////////////////////
+// Example use of the library that will safely work.
+fn main() {
+    let x = updated_crate::Example::&lt;i32&gt;::default();
+}</code></pre>
+<h4 id="repr-packed-add"><a class="header" href="#repr-packed-add">Major: Adding <code>repr(packed)</code> to a struct or union</a></h4>
+<p>It is a breaking change to add <code>repr(packed)</code> to a struct or union.
+Making a type <code>repr(packed)</code> makes changes that can break code, such as being invalid to take a reference to a field, or causing truncation of disjoint closure captures.</p>
+<!-- TODO: If all fields are private, should this be safe to do? -->
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+pub struct Example {
+    pub f1: u8,
+    pub f2: u16,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(packed)] // added
+pub struct Example {
+    pub f1: u8,
+    pub f2: u16,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+fn main() {
+    let f = updated_crate::Example { f1: 1, f2: 2 };
+    let x = &amp;f.f2; // Error: reference to packed field is unaligned
+}</code></pre>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+pub struct Example(pub i32, pub i32);
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(packed)]
+pub struct Example(pub i32, pub i32);
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+fn main() {
+    let mut f = updated_crate::Example(123, 456);
+    let c = || {
+        // Without repr(packed), the closure precisely captures `&amp;f.0`.
+        // With repr(packed), the closure captures `&amp;f` to avoid undefined behavior.
+        let a = f.0;
+    };
+    f.1 = 789; // Error: cannot assign to `f.1` because it is borrowed
+    c();
+}</code></pre>
+<h4 id="repr-align-add"><a class="header" href="#repr-align-add">Major: Adding <code>repr(align)</code> to a struct, union, or enum</a></h4>
+<p>It is a breaking change to add <code>repr(align)</code> to a struct, union, or enum.
+Making a type <code>repr(align)</code> would break any use of that type in a <code>repr(packed)</code> type because that combination is not allowed.</p>
+<!-- TODO: This seems like it should be extraordinarily rare. Should there be any exceptions carved out for this? -->
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+pub struct Aligned {
+    pub a: i32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(align(8))] // added
+pub struct Aligned {
+    pub a: i32,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Aligned;
+
+#[repr(packed)]
+pub struct Packed { // Error: packed type cannot transitively contain a `#[repr(align)]` type
+    f1: Aligned,
+}
+
+fn main() {
+    let p = Packed {
+        f1: Aligned { a: 123 },
+    };
+}</code></pre>
+<h4 id="repr-packed-remove"><a class="header" href="#repr-packed-remove">Major: Removing <code>repr(packed)</code> from a struct or union</a></h4>
+<p>It is a breaking change to remove <code>repr(packed)</code> from a struct or union.
+This may change the alignment or layout that extern crates are relying on.</p>
+<p>If any fields are public, then removing <code>repr(packed)</code> may change the way disjoint closure captures work.
+In some cases, this can cause code to break, similar to those outlined in the <a href="reference/../../edition-guide/rust-2021/disjoint-capture-in-closures.html">edition guide</a>.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C, packed)]
+pub struct Packed {
+    pub a: u8,
+    pub b: u16,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)] // removed packed
+pub struct Packed {
+    pub a: u8,
+    pub b: u16,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Packed;
+
+fn main() {
+    let p = Packed { a: 1, b: 2 };
+    // Some assumption about the size of the type.
+    // Without `packed`, this fails since the size is 4.
+    const _: () = assert!(std::mem::size_of::&lt;Packed&gt;() == 3); // Error: evaluation of constant value failed
+}</code></pre>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C, packed)]
+pub struct Packed {
+    pub a: *mut i32,
+    pub b: i32,
+}
+unsafe impl Send for Packed {}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)] // removed packed
+pub struct Packed {
+    pub a: *mut i32,
+    pub b: i32,
+}
+unsafe impl Send for Packed {}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Packed;
+
+fn main() {
+    let mut x = 123;
+
+    let p = Packed {
+        a: &amp;mut x as *mut i32,
+        b: 456,
+    };
+
+    // When the structure was packed, the closure captures `p` which is Send.
+    // When `packed` is removed, this ends up capturing `p.a` which is not Send.
+    std::thread::spawn(move || unsafe {
+        *(p.a) += 1; // Error: cannot be sent between threads safely
+    });
+}</code></pre>
+<h4 id="repr-packed-n-change"><a class="header" href="#repr-packed-n-change">Major: Changing the value N of <code>repr(packed(N))</code> if that changes the alignment or layout</a></h4>
+<p>It is a breaking change to change the value of N of <code>repr(packed(N))</code> if that changes the alignment or layout.
+This may change the alignment or layout that external crates are relying on.</p>
+<p>If the value <code>N</code> is lowered below the alignment of a public field, then that would break any code that attempts to take a reference of that field.</p>
+<p>Note that some changes to <code>N</code> may not change the alignment or layout, for example increasing it when the current value is already equal to the natural alignment of the type.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(packed(4))]
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(packed(2))] // changed to 2
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Packed;
+
+fn main() {
+    let p = Packed { a: 1, b: 2 };
+    let x = &amp;p.b; // Error: reference to packed field is unaligned
+}</code></pre>
+<h4 id="repr-align-n-change"><a class="header" href="#repr-align-n-change">Major: Changing the value N of <code>repr(align(N))</code> if that changes the alignment</a></h4>
+<p>It is a breaking change to change the value <code>N</code> of <code>repr(align(N))</code> if that changes the alignment.
+This may change the alignment that external crates are relying on.</p>
+<p>This change should be safe to make if the type is not well-defined as discussed in <a href="reference/semver.html#type-layout">type layout</a> (such as having any private fields and having an undocumented alignment or layout).</p>
+<p>Note that some changes to <code>N</code> may not change the alignment or layout, for example decreasing it when the current value is already equal to or less than the natural alignment of the type.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(align(8))]
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(align(4))] // changed to 4
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Packed;
+
+fn main() {
+    let p = Packed { a: 1, b: 2 };
+    // Some assumption about the size of the type.
+    // The alignment has changed from 8 to 4.
+    const _: () = assert!(std::mem::align_of::&lt;Packed&gt;() == 8); // Error: evaluation of constant value failed
+}</code></pre>
+<h4 id="repr-align-remove"><a class="header" href="#repr-align-remove">Major: Removing <code>repr(align)</code> from a struct, union, or enum</a></h4>
+<p>It is a breaking change to remove <code>repr(align)</code> from a struct, union, or enum, if their layout was well-defined.
+This may change the alignment or layout that external crates are relying on.</p>
+<p>This change should be safe to make if the type is not well-defined as discussed in <a href="reference/semver.html#type-layout">type layout</a> (such as having any private fields and having an undocumented alignment).</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C, align(8))]
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)] // removed align
+pub struct Packed {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::Packed;
+
+fn main() {
+    let p = Packed { a: 1, b: 2 };
+    // Some assumption about the size of the type.
+    // The alignment has changed from 8 to 4.
+    const _: () = assert!(std::mem::align_of::&lt;Packed&gt;() == 8); // Error: evaluation of constant value failed
+}</code></pre>
+<h4 id="repr-c-shuffle"><a class="header" href="#repr-c-shuffle">Major: Changing the order of public fields of a <code>repr(C)</code> type</a></h4>
+<p>It is a breaking change to change the order of public fields of a <code>repr(C)</code> type.
+External crates may be relying on the specific ordering of the fields.</p>
+<pre><code class="language-rust ignore run-fail">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C)]
+pub struct SpecificLayout {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(C)]
+pub struct SpecificLayout {
+    pub b: u32, // changed order
+    pub a: u8,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::SpecificLayout;
+
+extern &quot;C&quot; {
+    // This C function is assuming a specific layout defined in a C header.
+    fn c_fn_get_b(x: &amp;SpecificLayout) -&gt; u32;
+}
+
+fn main() {
+    let p = SpecificLayout { a: 1, b: 2 };
+    unsafe { assert_eq!(c_fn_get_b(&amp;p), 2) } // Error: value not equal to 2
+}
+
+<span class="boring">mod cdep {
+</span><span class="boring">    // This simulates what would normally be something included from a build script.
+</span><span class="boring">    // This definition would be in a C header.
+</span><span class="boring">    #[repr(C)]
+</span><span class="boring">    pub struct SpecificLayout {
+</span><span class="boring">        pub a: u8,
+</span><span class="boring">        pub b: u32,
+</span><span class="boring">    }
+</span><span class="boring">
+</span><span class="boring">    #[no_mangle]
+</span><span class="boring">    pub fn c_fn_get_b(x: &amp;SpecificLayout) -&gt; u32 {
+</span><span class="boring">        x.b
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<h4 id="repr-c-remove"><a class="header" href="#repr-c-remove">Major: Removing <code>repr(C)</code> from a struct, union, or enum</a></h4>
+<p>It is a breaking change to remove <code>repr(C)</code> from a struct, union, or enum.
+External crates may be relying on the specific layout of the type.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(C)]
+pub struct SpecificLayout {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// After
+// removed repr(C)
+pub struct SpecificLayout {
+    pub a: u8,
+    pub b: u32,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+use updated_crate::SpecificLayout;
+
+extern &quot;C&quot; {
+    // This C function is assuming a specific layout defined in a C header.
+    fn c_fn_get_b(x: &amp;SpecificLayout) -&gt; u32; // Error: is not FFI-safe
+}
+
+fn main() {
+    let p = SpecificLayout { a: 1, b: 2 };
+    unsafe { assert_eq!(c_fn_get_b(&amp;p), 2) }
+}
+
+<span class="boring">mod cdep {
+</span><span class="boring">    // This simulates what would normally be something included from a build script.
+</span><span class="boring">    // This definition would be in a C header.
+</span><span class="boring">    #[repr(C)]
+</span><span class="boring">    pub struct SpecificLayout {
+</span><span class="boring">        pub a: u8,
+</span><span class="boring">        pub b: u32,
+</span><span class="boring">    }
+</span><span class="boring">
+</span><span class="boring">    #[no_mangle]
+</span><span class="boring">    pub fn c_fn_get_b(x: &amp;SpecificLayout) -&gt; u32 {
+</span><span class="boring">        x.b
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<h4 id="repr-int-enum-remove"><a class="header" href="#repr-int-enum-remove">Major: Removing <code>repr(&lt;int&gt;)</code> from an enum</a></h4>
+<p>It is a breaking change to remove <code>repr(&lt;int&gt;)</code> from an enum.
+External crates may be assuming that the discriminant is a specific size.
+For example, <a href="reference/../../std/mem/fn.transmute.html"><code>std::mem::transmute</code></a> of an enum may fail.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(u16)]
+pub enum Example {
+    Variant1,
+    Variant2,
+    Variant3,
+}
+
+///////////////////////////////////////////////////////////
+// After
+// removed repr(u16)
+pub enum Example {
+    Variant1,
+    Variant2,
+    Variant3,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+
+fn main() {
+    let e = updated_crate::Example::Variant2;
+    let i: u16 = unsafe { std::mem::transmute(e) }; // Error: cannot transmute between types of different sizes
+}</code></pre>
+<h4 id="repr-int-enum-change"><a class="header" href="#repr-int-enum-change">Major: Changing the primitive representation of a <code>repr(&lt;int&gt;)</code> enum</a></h4>
+<p>It is a breaking change to change the primitive representation of a <code>repr(&lt;int&gt;)</code> enum.
+External crates may be assuming that the discriminant is a specific size.
+For example, <a href="reference/../../std/mem/fn.transmute.html"><code>std::mem::transmute</code></a> of an enum may fail.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(u16)]
+pub enum Example {
+    Variant1,
+    Variant2,
+    Variant3,
+}
+
+///////////////////////////////////////////////////////////
+// After
+#[repr(u8)] // changed repr size
+pub enum Example {
+    Variant1,
+    Variant2,
+    Variant3,
+}
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+
+fn main() {
+    let e = updated_crate::Example::Variant2;
+    let i: u16 = unsafe { std::mem::transmute(e) }; // Error: cannot transmute between types of different sizes
+}</code></pre>
+<h4 id="repr-transparent-remove"><a class="header" href="#repr-transparent-remove">Major: Removing <code>repr(transparent)</code> from a struct or enum</a></h4>
+<p>It is a breaking change to remove <code>repr(transparent)</code> from a struct or enum.
+External crates may be relying on the type having the alignment, layout, or size of the transparent field.</p>
+<pre><code class="language-rust ignore">// MAJOR CHANGE
+
+///////////////////////////////////////////////////////////
+// Before
+#[repr(transparent)]
+pub struct Transparent&lt;T&gt;(T);
+
+///////////////////////////////////////////////////////////
+// After
+// removed repr
+pub struct Transparent&lt;T&gt;(T);
+
+///////////////////////////////////////////////////////////
+// Example usage that will break.
+#![deny(improper_ctypes)]
+use updated_crate::Transparent;
+
+extern &quot;C&quot; {
+    fn c_fn() -&gt; Transparent&lt;f64&gt;; // Error: is not FFI-safe
+}
+
+fn main() {}</code></pre>
 <h3 id="struct-add-private-field-when-public"><a class="header" href="#struct-add-private-field-when-public">Major: adding a private struct field when all current fields are public</a></h3>
 <p>When a private field is added to a struct that previously had all public fields,
 this will break any code that attempts to construct it with a <a href="reference/../../reference/expressions/struct-expr.html">struct literal</a>.</p>
@@ -8797,7 +9515,6 @@ For the latest nightly, see the <a href="https://doc.rust-lang.org/nightly/cargo
 <li><a href="reference/unstable.html#build-std-features">build-std-features</a> — Sets features to use with the standard library.</li>
 <li><a href="reference/unstable.html#binary-dep-depinfo">binary-dep-depinfo</a> — Causes the dep-info file to track binary dependencies.</li>
 <li><a href="reference/unstable.html#panic-abort-tests">panic-abort-tests</a> — Allows running tests with the “abort” panic strategy.</li>
-<li><a href="reference/unstable.html#keep-going">keep-going</a> — Build as much as possible rather than aborting on the first error.</li>
 <li><a href="reference/unstable.html#check-cfg">check-cfg</a> — Compile-time validation of <code>cfg</code> expressions.</li>
 <li><a href="reference/unstable.html#host-config">host-config</a> — Allows setting <code>[target]</code>-like configuration settings for host build targets.</li>
 <li><a href="reference/unstable.html#target-applies-to-host">target-applies-to-host</a> — Alters whether certain flags will be passed to host build targets.</li>
@@ -9121,22 +9838,6 @@ the <code>test</code> crate supports <code>-C panic=abort</code> with a test-per
 avoid compiling crate graphs multiple times.</p>
 <p>It’s currently unclear how this feature will be stabilized in Cargo, but we’d
 like to stabilize it somehow!</p>
-<h3 id="keep-going"><a class="header" href="#keep-going">keep-going</a></h3>
-<ul>
-<li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/10496">#10496</a></li>
-</ul>
-<p><code>cargo build --keep-going</code> (and similarly for <code>check</code>, <code>test</code> etc) will build as
-many crates in the dependency graph as possible, rather than aborting the build
-at the first one that fails to build.</p>
-<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
-one of which fails to build, <code>cargo check -j1</code> may or may not build the one that
-succeeds (depending on which one of the two builds Cargo picked to run first),
-whereas <code>cargo check -j1 --keep-going</code> would definitely run both builds, even if
-the one run first fails.</p>
-<p>The <code>-Z unstable-options</code> command-line option must be used in order to use
-<code>--keep-going</code> while it is not yet stable:</p>
-<pre><code class="language-console">cargo check --keep-going -Z unstable-options
-</code></pre>
 <h3 id="config-include"><a class="header" href="#config-include">config-include</a></h3>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/7723">#7723</a></li>
@@ -9577,7 +10278,7 @@ with the authentication token included.</p>
 can go to get a token.</p>
 <pre><code>WWW-Authenticate: Cargo login_url=&quot;https://test-registry-login/me
 </code></pre>
-<p>This same flag is also used to enable asymmetric authentication tokens.</p>
+<h3 id="asymmetric-token"><a class="header" href="#asymmetric-token">asymmetric-token</a></h3>
 <ul>
 <li>Tracking Issue: <a href="https://github.com/rust-lang/cargo/issues/10519">10519</a></li>
 <li>RFC: <a href="https://github.com/rust-lang/rfcs/pull/3231">#3231</a></li>
@@ -9648,7 +10349,11 @@ global-credential-providers = ['cargo:token', 'my-provider']
 <p>If you want to use a different provider for a specific registry, it can be
 specified in the <code>registries</code> table:</p>
 <pre><code class="language-toml">[registries.my-registry]
-global-credential-provider = &quot;/usr/bin/cargo-creds&quot;
+credential-provider = &quot;/usr/bin/cargo-creds&quot;
+</code></pre>
+<p>The credential provider for crates.io can be specified as:</p>
+<pre><code class="language-toml">[registry]
+credential-provider = &quot;/usr/bin/cargo-creds&quot;
 </code></pre>
 <p>The value can be a string with spaces separating arguments or it can be a TOML
 array of strings.</p>
@@ -9675,9 +10380,12 @@ executed within the Cargo process. They are identified with the <code>cargo:</co
 <p><code>cargo:macos-keychain</code> - Uses the macOS Keychain to store the token.</p>
 </li>
 <li>
-<p><code>cargo:basic</code> - A basic authenticator is a process that returns a token on stdout. Newlines
-will be trimmed. The process inherits the user’s stdin and stderr. It should
-exit 0 on success, and nonzero on error.</p>
+<p><code>cargo:libsecret</code> - Uses <a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a> to store tokens on Linux systems.</p>
+</li>
+<li>
+<p><code>cargo:token-from-stdout &lt;command&gt;</code> - Launch a subprocess that returns a token
+on stdout. Newlines will be trimmed. The process inherits the user’s stdin and stderr.
+It should exit 0 on success, and nonzero on error.</p>
 <p>With this form, <a href="reference/../commands/cargo-login.html"><code>cargo login</code></a> and <a href="reference/../commands/cargo-logout.html"><code>cargo logout</code></a> are not supported and
 return an error if used.</p>
 <p>The following environment variables will be provided to the executed command:</p>
@@ -9688,10 +10396,10 @@ return an error if used.</p>
 </ul>
 </li>
 <li>
-<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider.</p>
+<p><code>cargo:paseto</code> - implements asymmetric token support (RFC3231) as a credential provider. Requires <code>-Zasymmetric-token</code>.</p>
 </li>
-<li>
-<p><code>cargo:1password</code>: Uses the 1password <code>op</code> CLI to store the token. You must
+</ul>
+<p><code>cargo-credential-1password</code> uses the 1password <code>op</code> CLI to store the token. You must
 install the <code>op</code> CLI from the <a href="https://1password.com/downloads/command-line/">1password
 website</a>. You must run <code>op signin</code> at least once with the appropriate arguments (such as <code>op signin my.1password.com user@example.com</code>), unless you provide the sign-in-address
 and email arguments. The master password will be required on each request
@@ -9703,16 +10411,10 @@ the following command-line arguments:</p>
 <li><code>--sign-in-address</code>: The sign-in-address, which is a web address such as <code>my.1password.com</code>.</li>
 <li><code>--email</code>: The email address to sign in with.</li>
 </ul>
-</li>
-</ul>
-<p>A wrapper is available for GNOME
-<a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a> to store tokens on
-Linux systems. Due to build limitations, this wrapper is not available as a
-pre-compiled binary. This can be built and installed manually. First, install
-libsecret using your system package manager (for example, <code>sudo apt install libsecret-1-dev</code>). Then build and install the wrapper with <code>cargo install cargo-credential-gnome-secret</code>.
-In the config, use a path to the binary like this:</p>
+<p>Install the provider with <code>cargo install cargo-credential-1password</code>
+In the config, add it to <code>global-credential-providers</code>:</p>
 <pre><code class="language-toml">[registry]
-global-credential-providers = [&quot;cargo-credential-gnome-secret&quot;]
+global-credential-providers = [&quot;cargo-credential-1password&quot;]
 </code></pre>
 <h4 id="json-interface"><a class="header" href="#json-interface">JSON Interface</a></h4>
 <p>When using an external credential provider, Cargo communicates with the credential
@@ -10336,6 +11038,10 @@ See <a href="reference/registries.html#registry-protocols">Registry Protocols</a
 enabled by default in the 1.72 release. See the
 <a href="reference/../commands/cargo-test.html#working-directory-of-tests"><code>cargo test</code> documentation</a>
 for more information about the working directory for compiling and running tests.</p>
+<h3 id="keep-going"><a class="header" href="#keep-going">keep-going</a></h3>
+<p>The <code>--keep-going</code> option has been stabilized in the 1.74 release. See the
+<a href="reference/../commands/cargo-build.html#option-cargo-build---keep-going"><code>--keep-going</code> flag</a>
+in <code>cargo build</code> as an example for more details.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="cargo-commands"><a class="header" href="#cargo-commands">Cargo Commands</a></h1>
 <ul>
 <li><a href="commands/general-commands.html">General Commands</a></li>
@@ -10996,11 +11702,14 @@ the number of logical CPUs. If negative, it sets the maximum number of
 parallel jobs to the number of logical CPUs plus provided value. If
 a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
-<dt class="option-term" id="option-cargo-bench---keep-going"><a class="option-anchor" href="commands/cargo-bench.html#option-cargo-bench---keep-going"></a><code>--keep-going</code></dt>
-<dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
 </dl>
+<p>While <code>cargo bench</code> involves compilation, it does not provide a <code>--keep-going</code>
+flag. Use <code>--no-fail-fast</code> to run as many benchmarks as possible without
+stopping at the first failure. To “compile” as many benchmarks as possible, use
+<code>--benches</code> to build benchmark binaries separately. For example:</p>
+<pre><code>cargo build --benches --release --keep-going
+cargo bench --no-fail-fast
+</code></pre>
 <h2 id="environment-1"><a class="header" href="#environment-1">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
@@ -11302,8 +12011,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-build---keep-going"><a class="option-anchor" href="commands/cargo-build.html#option-cargo-build---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo build -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo build -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 <dt class="option-term" id="option-cargo-build---future-incompat-report"><a class="option-anchor" href="commands/cargo-build.html#option-cargo-build---future-incompat-report"></a><code>--future-incompat-report</code></dt>
 <dd class="option-desc">Displays a future-incompat report for any future-incompatible warnings
 produced during execution of this command</p>
@@ -11598,8 +12311,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-check---keep-going"><a class="option-anchor" href="commands/cargo-check.html#option-cargo-check---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo check -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo check -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 <dt class="option-term" id="option-cargo-check---future-incompat-report"><a class="option-anchor" href="commands/cargo-check.html#option-cargo-check---future-incompat-report"></a><code>--future-incompat-report</code></dt>
 <dd class="option-desc">Displays a future-incompat report for any future-incompatible warnings
 produced during execution of this command</p>
@@ -12015,8 +12732,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-doc---keep-going"><a class="option-anchor" href="commands/cargo-doc.html#option-cargo-doc---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo doc -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo doc -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h2 id="environment-5"><a class="header" href="#environment-5">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
@@ -12480,8 +13201,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-fix---keep-going"><a class="option-anchor" href="commands/cargo-fix.html#option-cargo-fix---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo fix -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo fix -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h2 id="environment-7"><a class="header" href="#environment-7">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
@@ -12717,8 +13442,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-run---keep-going"><a class="option-anchor" href="commands/cargo-run.html#option-cargo-run---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo run -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo run -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h2 id="environment-8"><a class="header" href="#environment-8">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
@@ -13021,8 +13750,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-rustc---keep-going"><a class="option-anchor" href="commands/cargo-rustc.html#option-cargo-rustc---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo rustc -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo rustc -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 <dt class="option-term" id="option-cargo-rustc---future-incompat-report"><a class="option-anchor" href="commands/cargo-rustc.html#option-cargo-rustc---future-incompat-report"></a><code>--future-incompat-report</code></dt>
 <dd class="option-desc">Displays a future-incompat report for any future-incompatible warnings
 produced during execution of this command</p>
@@ -13317,8 +14050,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-rustdoc---keep-going"><a class="option-anchor" href="commands/cargo-rustdoc.html#option-cargo-rustdoc---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo rustdoc -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo rustdoc -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h2 id="environment-10"><a class="header" href="#environment-10">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
@@ -13692,15 +14429,18 @@ the number of logical CPUs. If negative, it sets the maximum number of
 parallel jobs to the number of logical CPUs plus provided value. If
 a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
-<dt class="option-term" id="option-cargo-test---keep-going"><a class="option-anchor" href="commands/cargo-test.html#option-cargo-test---keep-going"></a><code>--keep-going</code></dt>
-<dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
 <dt class="option-term" id="option-cargo-test---future-incompat-report"><a class="option-anchor" href="commands/cargo-test.html#option-cargo-test---future-incompat-report"></a><code>--future-incompat-report</code></dt>
 <dd class="option-desc">Displays a future-incompat report for any future-incompatible warnings
 produced during execution of this command</p>
 <p>See <a href="commands/cargo-report.html">cargo-report(1)</a></dd>
 </dl>
+<p>While <code>cargo test</code> involves compilation, it does not provide a <code>--keep-going</code>
+flag. Use <code>--no-fail-fast</code> to run as many tests as possible without stopping at
+the first failure. To “compile” as many tests as possible, use <code>--tests</code> to
+build test binaries separately. For example:</p>
+<pre><code>cargo build --tests --keep-going
+cargo test --tests --no-fail-fast
+</code></pre>
 <h2 id="environment-11"><a class="header" href="#environment-11">ENVIRONMENT</a></h2>
 <p>See <a href="commands/../reference/environment-variables.html">the reference</a> for
 details on environment variables that Cargo reads.</p>
@@ -15232,7 +15972,7 @@ entries, try with the <code>--no-dedupe</code> flag to get the full output.</p>
 <h2 id="name-22"><a class="header" href="#name-22">NAME</a></h2>
 <p>cargo-update — Update dependencies as recorded in the local lock file</p>
 <h2 id="synopsis-22"><a class="header" href="#synopsis-22">SYNOPSIS</a></h2>
-<p><code>cargo update</code> [<em>options</em>]</p>
+<p><code>cargo update</code> [<em>options</em>] <em>spec</em></p>
 <h2 id="description-22"><a class="header" href="#description-22">DESCRIPTION</a></h2>
 <p>This command will update dependencies in the <code>Cargo.lock</code> file to the latest
 version. If the <code>Cargo.lock</code> file does not exist, it will be created with the
@@ -15240,21 +15980,20 @@ latest available versions.</p>
 <h2 id="options-21"><a class="header" href="#options-21">OPTIONS</a></h2>
 <h3 id="update-options"><a class="header" href="#update-options">Update Options</a></h3>
 <dl>
-<dt class="option-term" id="option-cargo-update--p"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update--p"></a><code>-p</code> <em>spec</em>…</dt>
-<dt class="option-term" id="option-cargo-update---package"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update---package"></a><code>--package</code> <em>spec</em>…</dt>
+<dt class="option-term" id="option-cargo-update-spec…"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update-spec…"></a><em>spec</em>…</dt>
 <dd class="option-desc">Update only the specified packages. This flag may be specified
 multiple times. See <a href="commands/cargo-pkgid.html">cargo-pkgid(1)</a> for the SPEC format.</p>
-<p>If packages are specified with the <code>-p</code> flag, then a conservative update of
+<p>If packages are specified with <em>spec</em>, then a conservative update of
 the lockfile will be performed. This means that only the dependency specified
 by SPEC will be updated. Its transitive dependencies will be updated only if
 SPEC cannot be updated without updating dependencies.  All other dependencies
 will remain locked at their currently recorded versions.</p>
-<p>If <code>-p</code> is not specified, all dependencies are updated.</dd>
+<p>If <em>spec</em> is not specified, all dependencies are updated.</dd>
 <dt class="option-term" id="option-cargo-update---aggressive"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update---aggressive"></a><code>--aggressive</code></dt>
-<dd class="option-desc">When used with <code>-p</code>, dependencies of <em>spec</em> are forced to update as well.
+<dd class="option-desc">When used with <em>spec</em>, dependencies of <em>spec</em> are forced to update as well.
 Cannot be used with <code>--precise</code>.</dd>
 <dt class="option-term" id="option-cargo-update---precise"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update---precise"></a><code>--precise</code> <em>precise</em></dt>
-<dd class="option-desc">When used with <code>-p</code>, allows you to specify a specific version number to set
+<dd class="option-desc">When used with <em>spec</em>, allows you to specify a specific version number to set
 the package to. If the package comes from a git repository, this can be a git
 revision (such as a SHA hash or tag).</dd>
 <dt class="option-term" id="option-cargo-update--w"><a class="option-anchor" href="commands/cargo-update.html#option-cargo-update--w"></a><code>-w</code></dt>
@@ -15360,12 +16099,12 @@ details on environment variables that Cargo reads.</p>
 </li>
 <li>
 <p>Update only specific dependencies:</p>
-<pre><code>cargo update -p foo -p bar
+<pre><code>cargo update foo bar
 </code></pre>
 </li>
 <li>
 <p>Set a specific dependency to a specific version:</p>
-<pre><code>cargo update -p foo --precise 1.2.3
+<pre><code>cargo update foo --precise 1.2.3
 </code></pre>
 </li>
 </ol>
@@ -15958,8 +16697,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-install---keep-going"><a class="option-anchor" href="commands/cargo-install.html#option-cargo-install---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo install -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo install -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h3 id="display-options-23"><a class="header" href="#display-options-23">Display Options</a></h3>
 <dl>
@@ -16851,8 +17594,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-package---keep-going"><a class="option-anchor" href="commands/cargo-package.html#option-cargo-package---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo package -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo package -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h3 id="display-options-30"><a class="header" href="#display-options-30">Display Options</a></h3>
 <dl>
@@ -17058,8 +17805,12 @@ a string <code>default</code> is provided, it sets the value back to defaults.
 Should not be 0.</dd>
 <dt class="option-term" id="option-cargo-publish---keep-going"><a class="option-anchor" href="commands/cargo-publish.html#option-cargo-publish---keep-going"></a><code>--keep-going</code></dt>
 <dd class="option-desc">Build as many crates in the dependency graph as possible, rather than aborting
-the build on the first one that fails to build. Unstable, requires
-<code>-Zunstable-options</code>.</dd>
+the build on the first one that fails to build.</p>
+<p>For example if the current package depends on dependencies <code>fails</code> and <code>works</code>,
+one of which fails to build, <code>cargo publish -j1</code> may or may not build the
+one that succeeds (depending on which one of the two builds Cargo picked to run
+first), whereas <code>cargo publish -j1 --keep-going</code> would definitely run both
+builds, even if the one run first fails.</dd>
 </dl>
 <h3 id="display-options-31"><a class="header" href="#display-options-31">Display Options</a></h3>
 <dl>
@@ -17163,7 +17914,7 @@ requirements, following a given release being yanked:</p>
 <div class="table-wrapper"><table><thead><tr><th>Yanked Version / SemVer requirement</th><th><code>bar = &quot;1.5.0&quot;</code></th><th><code>bar = &quot;=1.5.0&quot;</code></th><th><code>bar = &quot;2.0.0&quot;</code></th></tr></thead><tbody>
 <tr><td><code>1.5.0</code></td><td>Use either <code>1.5.1</code> or <code>1.5.2</code></td><td><strong>Return Error</strong></td><td>Use <code>2.0.0</code></td></tr>
 <tr><td><code>1.5.1</code></td><td>Use either <code>1.5.0</code> or <code>1.5.2</code></td><td>Use <code>1.5.0</code></td><td>Use <code>2.0.0</code></td></tr>
-<tr><td><code>2.0.0</code></td><td>Use either <code>1.5.0</code>, <code>1.5.1</code> or <code>0.22.2</code></td><td>Use <code>1.5.0</code></td><td><strong>Return Error</strong></td></tr>
+<tr><td><code>2.0.0</code></td><td>Use either <code>1.5.0</code>, <code>1.5.1</code> or <code>1.5.2</code></td><td>Use <code>1.5.0</code></td><td><strong>Return Error</strong></td></tr>
 </tbody></table>
 </div>
 <h3 id="when-to-yank"><a class="header" href="#when-to-yank">When to yank</a></h3>
@@ -17351,28 +18102,42 @@ and <code>--opt-level=3</code> for production).</li>
 <p>All commits to Cargo are required to pass the local test suite on Windows.
 If you encounter an issue while running on Windows, we consider it a bug, so <a href="https://github.com/rust-lang/cargo/issues">please file an
 issue</a>.</p>
-<h3 id="why-do-binaries-have-cargolock-in-version-control-but-not-libraries"><a class="header" href="#why-do-binaries-have-cargolock-in-version-control-but-not-libraries">Why do binaries have <code>Cargo.lock</code> in version control, but not libraries?</a></h3>
+<h3 id="why-have-cargolock-in-version-control"><a class="header" href="#why-have-cargolock-in-version-control">Why have <code>Cargo.lock</code> in version control?</a></h3>
+<p>While <a href="commands/cargo-new.html"><code>cargo new</code></a> defaults to tracking <code>Cargo.lock</code> in version control,
+whether you do is dependent on the needs of your package.</p>
 <p>The purpose of a <code>Cargo.lock</code> lockfile is to describe the state of the world at
-the time of a successful build. Cargo uses the lockfile to provide
-deterministic builds on different times and different systems, by ensuring that
-the exact same dependencies and versions are used as when the <code>Cargo.lock</code> file
-was originally generated.</p>
-<p>This property is most desirable from applications and packages which are at the
-very end of the dependency chain (binaries). As a result, it is recommended that
-all binaries check in their <code>Cargo.lock</code>.</p>
-<p>For libraries the situation is somewhat different. A library is not only used by
-the library developers, but also any downstream consumers of the library. Users
-dependent on the library will not inspect the library’s <code>Cargo.lock</code> (even if it
-exists). This is precisely because a library should <strong>not</strong> be deterministically
-recompiled for all users of the library.</p>
-<p>If a library ends up being used transitively by several dependencies, it’s
-likely that just a single copy of the library is desired (based on semver
-compatibility). If Cargo used all of the dependencies’ <code>Cargo.lock</code> files,
-then multiple copies of the library could be used, and perhaps even a version
-conflict.</p>
-<p>In other words, libraries specify SemVer requirements for their dependencies but
-cannot see the full picture. Only end products like binaries have a full
-picture to decide what versions of dependencies should be used.</p>
+the time of a successful build.
+Cargo uses the lockfile to provide deterministic builds at different times and
+on different systems,
+by ensuring that the exact same dependencies and versions are used as when the
+<code>Cargo.lock</code> file was originally generated.</p>
+<p>Deterministic builds help with</p>
+<ul>
+<li>Running <code>git bisect</code> to find the root cause of a bug</li>
+<li>Ensuring CI only fails due to new commits and not external factors</li>
+<li>Reducing confusion when contributors see different behavior as compared to
+other contributors or CI</li>
+</ul>
+<p>Having this snapshot of dependencies can also help when projects need to be
+verified against consistent versions of dependencies, like when</p>
+<ul>
+<li>Verifying a minimum-supported Rust version (MSRV) that is less than the latest
+version of a dependency supports</li>
+<li>Verifying human readable output which won’t have compatibility guarantees
+(e.g. snapshot testing error messages to ensure they are “understandable”, a
+metric too fuzzy to automate)</li>
+</ul>
+<p>However, this determinism can give a false sense of security because
+<code>Cargo.lock</code> does not affect the consumers of your package, only <code>Cargo.toml</code> does that.
+For example:</p>
+<ul>
+<li><a href="commands/cargo-install.html"><code>cargo install</code></a> will select the latest dependencies unless <code>--locked</code> is
+passed in.</li>
+<li>New dependencies, like those added with <a href="commands/cargo-add.html"><code>cargo add</code></a>, will be locked to the latest version</li>
+</ul>
+<p>The lockfile can also be a source of merge conflicts.</p>
+<p>For strategies to verify newer versions of dependencies via CI,
+see <a href="guide/continuous-integration.html#verifying-latest-dependencies">Verifying Latest Dependencies</a>.</p>
 <h3 id="can-libraries-use--as-a-version-for-their-dependencies"><a class="header" href="#can-libraries-use--as-a-version-for-their-dependencies">Can libraries use <code>*</code> as a version for their dependencies?</a></h3>
 <p><strong>As of January 22nd, 2016, <a href="https://crates.io/">crates.io</a> rejects all packages (not just libraries)
 with wildcard dependency constraints.</strong></p>

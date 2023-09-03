@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/string.rs`."><title>string.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-8bef669ff27a6eab.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/alloc/src/string.rs`."><title>string.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="alloc" data-themes="" data-resource-suffix="1.74.0" data-rustdoc-version="1.74.0-dev" data-channel="nightly" data-search-js="search-da1792af0b5558b7.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.74.0.js"></script><script defer src="../../static.files/main-ef3a2de404864b0b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../alloc/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2949,77 +2949,6 @@
 <a href="#2949" id="2949">2949</a>
 <a href="#2950" id="2950">2950</a>
 <a href="#2951" id="2951">2951</a>
-<a href="#2952" id="2952">2952</a>
-<a href="#2953" id="2953">2953</a>
-<a href="#2954" id="2954">2954</a>
-<a href="#2955" id="2955">2955</a>
-<a href="#2956" id="2956">2956</a>
-<a href="#2957" id="2957">2957</a>
-<a href="#2958" id="2958">2958</a>
-<a href="#2959" id="2959">2959</a>
-<a href="#2960" id="2960">2960</a>
-<a href="#2961" id="2961">2961</a>
-<a href="#2962" id="2962">2962</a>
-<a href="#2963" id="2963">2963</a>
-<a href="#2964" id="2964">2964</a>
-<a href="#2965" id="2965">2965</a>
-<a href="#2966" id="2966">2966</a>
-<a href="#2967" id="2967">2967</a>
-<a href="#2968" id="2968">2968</a>
-<a href="#2969" id="2969">2969</a>
-<a href="#2970" id="2970">2970</a>
-<a href="#2971" id="2971">2971</a>
-<a href="#2972" id="2972">2972</a>
-<a href="#2973" id="2973">2973</a>
-<a href="#2974" id="2974">2974</a>
-<a href="#2975" id="2975">2975</a>
-<a href="#2976" id="2976">2976</a>
-<a href="#2977" id="2977">2977</a>
-<a href="#2978" id="2978">2978</a>
-<a href="#2979" id="2979">2979</a>
-<a href="#2980" id="2980">2980</a>
-<a href="#2981" id="2981">2981</a>
-<a href="#2982" id="2982">2982</a>
-<a href="#2983" id="2983">2983</a>
-<a href="#2984" id="2984">2984</a>
-<a href="#2985" id="2985">2985</a>
-<a href="#2986" id="2986">2986</a>
-<a href="#2987" id="2987">2987</a>
-<a href="#2988" id="2988">2988</a>
-<a href="#2989" id="2989">2989</a>
-<a href="#2990" id="2990">2990</a>
-<a href="#2991" id="2991">2991</a>
-<a href="#2992" id="2992">2992</a>
-<a href="#2993" id="2993">2993</a>
-<a href="#2994" id="2994">2994</a>
-<a href="#2995" id="2995">2995</a>
-<a href="#2996" id="2996">2996</a>
-<a href="#2997" id="2997">2997</a>
-<a href="#2998" id="2998">2998</a>
-<a href="#2999" id="2999">2999</a>
-<a href="#3000" id="3000">3000</a>
-<a href="#3001" id="3001">3001</a>
-<a href="#3002" id="3002">3002</a>
-<a href="#3003" id="3003">3003</a>
-<a href="#3004" id="3004">3004</a>
-<a href="#3005" id="3005">3005</a>
-<a href="#3006" id="3006">3006</a>
-<a href="#3007" id="3007">3007</a>
-<a href="#3008" id="3008">3008</a>
-<a href="#3009" id="3009">3009</a>
-<a href="#3010" id="3010">3010</a>
-<a href="#3011" id="3011">3011</a>
-<a href="#3012" id="3012">3012</a>
-<a href="#3013" id="3013">3013</a>
-<a href="#3014" id="3014">3014</a>
-<a href="#3015" id="3015">3015</a>
-<a href="#3016" id="3016">3016</a>
-<a href="#3017" id="3017">3017</a>
-<a href="#3018" id="3018">3018</a>
-<a href="#3019" id="3019">3019</a>
-<a href="#3020" id="3020">3020</a>
-<a href="#3021" id="3021">3021</a>
-<a href="#3022" id="3022">3022</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! A UTF-8–encoded, growable string.
 //!
 //! This module contains the [`String`] type, the [`ToString`] trait for
@@ -3410,8 +3339,6 @@
 ///
 /// # Examples
 ///
-/// Basic usage:
-///
 /// ```
 /// // some invalid bytes, in a vector
 /// let bytes = vec![0, 159];
@@ -3434,9 +3361,8 @@
 /// This type is the error type for the [`from_utf16`] method on [`String`].
 ///
 /// [`from_utf16`]: String::from_utf16
-/// # Examples
 ///
-/// Basic usage:
+/// # Examples
 ///
 /// ```
 /// // 𝄞mu&lt;invalid&gt;ic
@@ -3462,8 +3388,6 @@
     /// [`with_capacity`]: String::with_capacity
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s = String::new();
@@ -3493,8 +3417,6 @@
     /// [`new`]: String::new
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::with_capacity(10);
@@ -3683,8 +3605,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// // 𝄞music
     /// let v = &amp;[0xD834, 0xDD1E, 0x006d, 0x0075,
@@ -3725,8 +3645,6 @@
     /// [U+FFFD]: core::char::REPLACEMENT_CHARACTER
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// // 𝄞mus&lt;invalid&gt;ic&lt;invalid&gt;
@@ -3806,8 +3724,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// use std::mem;
     ///
@@ -3849,8 +3765,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// // some bytes, in a vector
     /// let sparkle_heart = vec![240, 159, 146, 150];
@@ -3874,8 +3788,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = String::from(&quot;hello&quot;);
     /// let bytes = s.into_bytes();
@@ -3893,8 +3805,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = String::from(&quot;foo&quot;);
     ///
@@ -3910,8 +3820,6 @@
     <span class="doccomment">/// Converts a `String` into a mutable string slice.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::from(&quot;foobar&quot;);
@@ -3931,8 +3839,6 @@
     <span class="doccomment">/// Appends a given string slice onto the end of this `String`.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::from(&quot;foo&quot;);
@@ -3987,8 +3893,6 @@
     <span class="doccomment">/// Returns this `String`&#39;s capacity, in bytes.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s = String::with_capacity(10);
@@ -4179,8 +4083,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;foo&quot;);
     ///
@@ -4228,8 +4130,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;abc&quot;);
     ///
@@ -4257,8 +4157,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = String::from(&quot;hello&quot;);
     ///
@@ -4285,8 +4183,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;hello&quot;);
     ///
@@ -4308,8 +4204,6 @@
     /// Returns [`None`] if this `String` is empty.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::from(&quot;abč&quot;);
@@ -4342,8 +4236,6 @@
     /// or if it does not lie on a [`char`] boundary.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::from(&quot;abç&quot;);
@@ -4536,8 +4428,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::with_capacity(3);
     ///
@@ -4585,8 +4475,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;bar&quot;);
     ///
@@ -4617,8 +4505,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;hello&quot;);
     ///
@@ -4642,8 +4528,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let a = String::from(&quot;foo&quot;);
     /// assert_eq!(a.len(), 3);
@@ -4662,8 +4546,6 @@
     <span class="doccomment">/// Returns `true` if this `String` has a length of zero, and `false` otherwise.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut v = String::new();
@@ -4719,8 +4601,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;foo&quot;);
     ///
@@ -4755,8 +4635,6 @@
     /// including characters outside the range.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let mut s = String::from(&quot;α is alpha, β is beta&quot;);
@@ -4806,8 +4684,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let mut s = String::from(&quot;α is alpha, β is beta&quot;);
     /// let beta_offset = s.find(&#39;β&#39;).unwrap_or(s.len());
@@ -4856,8 +4732,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s = String::from(&quot;hello&quot;);
     ///
@@ -4888,8 +4762,6 @@
     ///
     /// # Examples
     ///
-    /// Simple usage:
-    ///
     /// ```
     /// let x = String::from(&quot;bucket&quot;);
     /// let static_ref: &amp;&#39;static mut str = x.leak();
@@ -4907,8 +4779,6 @@
     <span class="doccomment">/// Returns a slice of [`u8`]s bytes that were attempted to convert to a `String`.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// // some invalid bytes, in a vector
@@ -4931,8 +4801,6 @@
     /// does not need to be made.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// // some invalid bytes, in a vector
@@ -4959,8 +4827,6 @@
     /// [`&amp;str`]: prim@str &quot;&amp;str&quot;
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// // some invalid bytes, in a vector
@@ -5512,8 +5378,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let i = 5;
     /// let five = String::from(&quot;5&quot;);
@@ -5733,8 +5597,6 @@
     ///
     /// # Examples
     ///
-    /// Basic usage:
-    ///
     /// ```
     /// let s1: String = String::from(&quot;hello world&quot;);
     /// let s2: Box&lt;str&gt; = s1.into_boxed_str();
@@ -5753,8 +5615,6 @@
     <span class="doccomment">/// Converts the given [`String`] to a boxed `str` slice that is owned.
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s1: String = String::from(&quot;hello world&quot;);
@@ -5887,8 +5747,6 @@
     <span class="doccomment">/// Converts the given [`String`] to a vector [`Vec`] that holds values of type [`u8`].
     ///
     /// # Examples
-    ///
-    /// Basic usage:
     ///
     /// ```
     /// let s1 = String::from(&quot;hello world&quot;);

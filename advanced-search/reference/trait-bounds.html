@@ -314,6 +314,73 @@ equivalent to the last one.</p>
     f(&amp;zero);
 }
 <span class="boring">}</span></code></pre></pre>
+<h2 id="implied-bounds"><a class="header" href="#implied-bounds">Implied bounds</a></h2>
+<p>Lifetime bounds required for types to be well-formed are sometimes inferred.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn requires_t_outlives_a&lt;'a, T&gt;(x: &amp;'a T) {}
+<span class="boring">}</span></code></pre></pre>
+<p>The type parameter <code>T</code> is required to outlive <code>'a</code> for the type <code>&amp;'a T</code> to be well-formed.
+This is inferred because the function signature contains the type <code>&amp;'a T</code> which is
+only valid if <code>T: 'a</code> holds.</p>
+<p>Implied bounds are added for all parameters and outputs of functions. Inside of <code>requires_t_outlives_a</code>
+you can assume <code>T: 'a</code> to hold even if you don't explicitly specify this:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn requires_t_outlives_a_not_implied&lt;'a, T: 'a&gt;() {}
+
+fn requires_t_outlives_a&lt;'a, T&gt;(x: &amp;'a T) {
+    // This compiles, because `T: 'a` is implied by
+    // the reference type `&amp;'a T`.
+    requires_t_outlives_a_not_implied::&lt;'a, T&gt;();
+}
+<span class="boring">}</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust compile_fail E0309 edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">fn requires_t_outlives_a_not_implied&lt;'a, T: 'a&gt;() {}
+</span>fn not_implied&lt;'a, T&gt;() {
+    // This errors, because `T: 'a` is not implied by
+    // the function signature.
+    requires_t_outlives_a_not_implied::&lt;'a, T&gt;();
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Only lifetime bounds are implied, trait bounds still have to be explicitly added.
+The following example therefore causes an error:</p>
+<pre><pre class="playground"><code class="language-rust compile_fail E0277 edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::fmt::Debug;
+struct IsDebug&lt;T: Debug&gt;(T);
+// error[E0277]: `T` doesn't implement `Debug`
+fn doesnt_specify_t_debug&lt;T&gt;(x: IsDebug&lt;T&gt;) {}
+<span class="boring">}</span></code></pre></pre>
+<p>Lifetime bounds are also inferred for type definitions and impl blocks for any type:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Struct&lt;'a, T&gt; {
+    // This requires `T: 'a` to be well-formed
+    // which is inferred by the compiler.
+    field: &amp;'a T,
+}
+
+enum Enum&lt;'a, T&gt; {
+    // This requires `T: 'a` to be well-formed,
+    // which is inferred by the compiler.
+    //
+    // Note that `T: 'a` is required even when only
+    // using `Enum::OtherVariant`.
+    SomeVariant(&amp;'a T),
+    OtherVariant,
+}
+
+trait Trait&lt;'a, T: 'a&gt; {}
+
+// This would error because `T: 'a` is not implied by any type
+// in the impl header.
+//     impl&lt;'a, T&gt; Trait&lt;'a, T&gt; for () {}
+
+// This compiles as `T: 'a` is implied by the self type `&amp;'a T`.
+impl&lt;'a, T&gt; Trait&lt;'a, T&gt; for &amp;'a T {}
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
