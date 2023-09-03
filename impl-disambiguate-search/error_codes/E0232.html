@@ -177,6 +177,7 @@ position that needs that trait. For example, when the following code is
 compiled:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0232"><span class="boring">#![allow(unused)]
 </span>#![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_on_unimplemented(lorem=&quot;&quot;)] // error!

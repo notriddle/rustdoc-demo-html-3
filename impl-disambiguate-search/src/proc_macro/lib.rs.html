@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/proc_macro/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="proc_macro" data-themes="" data-resource-suffix="1.73.0" data-rustdoc-version="1.73.0-dev" data-channel="nightly" data-search-js="search-d0d1295f5f295ccf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-6d2c9675f3d09c26.css" data-theme-dark-css="dark-45ceb8f2e522f4d1.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.73.0.js"></script><script defer src="../../static.files/main-b0956fab6fd0f312.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-6d2c9675f3d09c26.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-45ceb8f2e522f4d1.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../proc_macro/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `library/proc_macro/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="proc_macro" data-themes="" data-resource-suffix="1.74.0" data-rustdoc-version="1.74.0-dev" data-channel="nightly" data-search-js="search-e20c6dd0e41d76e9.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files1.74.0.js"></script><script defer src="../../static.files/main-8c80359cf95cf1e4.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../proc_macro/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1495,6 +1495,18 @@
 <a href="#1495" id="1495">1495</a>
 <a href="#1496" id="1496">1496</a>
 <a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! A support library for macro authors when defining new macros.
 //!
 //! This library, provided by the standard distribution, provides the types
@@ -1521,7 +1533,6 @@
 #![feature(staged_api)]
 #![feature(allow_internal_unstable)]
 #![feature(decl_macro)]
-#![feature(local_key_cell_methods)]
 #![feature(maybe_uninit_write_slice)]
 #![feature(negative_impls)]
 #![feature(new_uninit)]
@@ -1530,6 +1541,7 @@
 #![feature(min_specialization)]
 #![feature(strict_provenance)]
 #![recursion_limit = <span class="string">&quot;256&quot;</span>]
+#![allow(internal_features)]
 
 #[unstable(feature = <span class="string">&quot;proc_macro_internals&quot;</span>, issue = <span class="string">&quot;27812&quot;</span>)]
 #[doc(hidden)]
@@ -2413,21 +2425,34 @@
 <span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
 </span><span class="kw">impl </span>!Sync <span class="kw">for </span>Punct {}
 
-<span class="doccomment">/// Describes whether a `Punct` is followed immediately by another `Punct` ([`Spacing::Joint`]) or
-/// by a different token or whitespace ([`Spacing::Alone`]).
+<span class="doccomment">/// Indicates whether a `Punct` token can join with the following token
+/// to form a multi-character operator.
 </span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
 </span><span class="kw">pub enum </span>Spacing {
-    <span class="doccomment">/// A `Punct` is not immediately followed by another `Punct`.
-    /// E.g. `+` is `Alone` in `+ =`, `+ident` and `+()`.
-    </span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
-    </span>Alone,
-    <span class="doccomment">/// A `Punct` is immediately followed by another `Punct`.
-    /// E.g. `+` is `Joint` in `+=` and `++`.
+    <span class="doccomment">/// A `Punct` token can join with the following token to form a multi-character operator.
     ///
-    /// Additionally, single quote `&#39;` can join with identifiers to form lifetimes: `&#39;ident`.
+    /// In token streams constructed using proc macro interfaces `Joint` punctuation tokens can be
+    /// followed by any other tokens. \
+    /// However, in token streams parsed from source code compiler will only set spacing to `Joint`
+    /// in the following cases:
+    /// - A `Punct` is immediately followed by another `Punct` without a whitespace. \
+    ///   E.g. `+` is `Joint` in `+=` and `++`.
+    /// - A single quote `&#39;` is immediately followed by an identifier without a whitespace. \
+    ///   E.g. `&#39;` is `Joint` in `&#39;lifetime`.
+    ///
+    /// This list may be extended in the future to enable more token combinations.
     </span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
     </span>Joint,
+    <span class="doccomment">/// A `Punct` token cannot join with the following token to form a multi-character operator.
+    ///
+    /// `Alone` punctuation tokens can be followed by any other tokens. \
+    /// In token streams parsed from source code compiler will set spacing to `Alone` in all cases
+    /// not covered by the conditions for `Joint` above. \
+    /// E.g. `+` is `Alone` in `+ =`, `+ident` and `+()`.
+    /// In particular, token not followed by anything  will also be marked as `Alone`.
+    </span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
+    </span>Alone,
 }
 
 <span class="kw">impl </span>Punct {
@@ -2459,10 +2484,9 @@
         <span class="self">self</span>.<span class="number">0</span>.ch <span class="kw">as </span>char
     }
 
-    <span class="doccomment">/// Returns the spacing of this punctuation character, indicating whether it&#39;s immediately
-    /// followed by another `Punct` in the token stream, so they can potentially be combined into
-    /// a multi-character operator (`Joint`), or it&#39;s followed by some other token or whitespace
-    /// (`Alone`) so the operator has certainly ended.
+    <span class="doccomment">/// Returns the spacing of this punctuation character, indicating whether it can be potentially
+    /// combined into a multi-character operator with the following token (`Joint`), or the operator
+    /// has certainly ended (`Alone`).
     </span><span class="attr">#[stable(feature = <span class="string">&quot;proc_macro_lib2&quot;</span>, since = <span class="string">&quot;1.29.0&quot;</span>)]
     </span><span class="kw">pub fn </span>spacing(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Spacing {
         <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.joint { Spacing::Joint } <span class="kw">else </span>{ Spacing::Alone }

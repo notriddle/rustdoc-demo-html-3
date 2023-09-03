@@ -173,7 +173,7 @@
                         <h1 id="error-code-e0577"><a class="header" href="#error-code-e0577">Error code E0577</a></h1>
 <p>Something other than a module was found in visibility scope.</p>
 <p>Erroneous code example:</p>
-<pre><pre class="playground"><code class="language-rust compile_fail E0577 edition2018">pub struct Sea;
+<pre><pre class="playground"><code class="language-rust compile_fail E0577 edition2018">pub enum Sea {}
 
 pub (in crate::Sea) struct Shark; // error!
 

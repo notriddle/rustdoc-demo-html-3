@@ -182,14 +182,11 @@ extern &quot;platform-intrinsic&quot; {
 }</code></pre>
 <p>The <code>simd_shuffle</code> function needs the length of the array passed as
 last parameter in its name. Example:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span>#![feature(platform_intrinsics)]
+<pre><code class="language-rust ignore (no longer compiles)">#![feature(platform_intrinsics)]
 
-<span class="boring">fn main() {
-</span>extern &quot;platform-intrinsic&quot; {
+extern &quot;platform-intrinsic&quot; {
     fn simd_shuffle8&lt;A,B&gt;(a: A, b: A, c: [u32; 8]) -&gt; B;
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 
                     </main>
 

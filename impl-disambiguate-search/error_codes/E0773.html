@@ -176,6 +176,7 @@
 <pre><pre class="playground"><code class="language-rust compile_fail E0773"><span class="boring">#![allow(unused)]
 </span>#![feature(decl_macro)]
 #![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_builtin_macro]
@@ -194,6 +195,7 @@ mod inner {
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(decl_macro)]
 #![feature(rustc_attrs)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>#[rustc_builtin_macro]

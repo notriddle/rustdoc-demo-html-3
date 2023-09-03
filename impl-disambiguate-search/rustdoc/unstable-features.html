@@ -321,6 +321,7 @@ to enable.</p>
 <p>To do so, the <code>#[doc(keyword = &quot;...&quot;)]</code> attribute is used. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(rustdoc_internals)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>/// Some documentation about the keyword.

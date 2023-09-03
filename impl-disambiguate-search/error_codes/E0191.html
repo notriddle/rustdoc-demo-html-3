@@ -179,8 +179,8 @@
     type Bar;
 }
 
-type Foo = Trait; // error: the value of the associated type `Bar` (from
-                  //        the trait `Trait`) must be specified
+type Foo = dyn Trait; // error: the value of the associated type `Bar` (from
+                      //        the trait `Trait`) must be specified
 <span class="boring">}</span></code></pre></pre>
 <p>Trait objects need to have all associated types specified. Please verify that
 all associated types of the trait were specified and the correct trait was used.
@@ -191,7 +191,7 @@ Example:</p>
     type Bar;
 }
 
-type Foo = Trait&lt;Bar=i32&gt;; // ok!
+type Foo = dyn Trait&lt;Bar=i32&gt;; // ok!
 <span class="boring">}</span></code></pre></pre>
 
                     </main>

@@ -175,6 +175,7 @@
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0544"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;rust1&quot;)]
 
 <span class="boring">fn main() {
@@ -185,6 +186,7 @@ fn foo() {}
 <p>To fix this issue, ensure that each item has at most one stability attribute.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;rust1&quot;)]
 
 <span class="boring">fn main() {

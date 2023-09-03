@@ -175,6 +175,7 @@
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0546"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -187,6 +188,7 @@ fn stable_fn() {}
 <p>To fix this issue, you need to provide the <code>feature</code> field. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {

@@ -175,6 +175,7 @@
 <p>You used a function or type which doesn't fit the requirements for where it was
 used. Erroneous code examples:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail">#![feature(intrinsics)]
+#![allow(internal_features)]
 
 extern &quot;rust-intrinsic&quot; {
     #[rustc_safe_intrinsic]
@@ -208,6 +209,7 @@ impl Foo {
 <p>For the first code example, please check the function definition. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {

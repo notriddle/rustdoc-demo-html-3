@@ -448,14 +448,15 @@ creation of a shim hides the implicit parameter from callers of the function poi
 soundness.</p>
 </blockquote>
 <h2 id="the-instruction_set-attribute"><a class="header" href="#the-instruction_set-attribute">The <code>instruction_set</code> attribute</a></h2>
-<p>The <em><code>instruction_set</code> attribute</em> may be applied to a function to enable code generation for a specific
-instruction set supported by the target architecture. It uses the <a href="../attributes.html#meta-item-attribute-syntax"><em>MetaListPath</em></a> syntax and a path
-comprised of the architecture and instruction set to specify how to generate the code for
-architectures where a single program may utilize multiple instruction sets.</p>
-<p>The following values are available on targets for the <code>ARMv4</code> and <code>ARMv5te</code> architectures:</p>
+<p>The <em><code>instruction_set</code> <a href="../attributes.html">attribute</a></em> may be applied to a function to control which instruction set the function will be generated for.
+This allows mixing more than one instruction set in a single program on CPU architectures that support it.
+It uses the <a href="../attributes.html#meta-item-attribute-syntax"><em>MetaListPath</em></a> syntax, and a path comprised of the architecture family name and instruction set name.</p>
+<p>It is a compilation error to use the <code>instruction_set</code> attribute on a target that does not support it.</p>
+<h3 id="on-arm"><a class="header" href="#on-arm">On ARM</a></h3>
+<p>For the <code>ARMv4T</code> and <code>ARMv5te</code> architectures, the following are supported:</p>
 <ul>
-<li><code>arm::a32</code> - Uses ARM code.</li>
-<li><code>arm::t32</code> - Uses Thumb code.</li>
+<li><code>arm::a32</code> - Generate the function as A32 &quot;ARM&quot; code.</li>
+<li><code>arm::t32</code> - Generate the function as T32 &quot;Thumb&quot; code.</li>
 </ul>
 <!-- ignore: arm-only -->
 <pre><code class="language-rust ignore">#[instruction_set(arm::a32)]
@@ -463,6 +464,11 @@ fn foo_arm_code() {}
 
 #[instruction_set(arm::t32)]
 fn bar_thumb_code() {}</code></pre>
+<p>Using the <code>instruction_set</code> attribute has the following effects:</p>
+<ul>
+<li>If the address of the function is taken as a function pointer, the low bit of the address will be set to 0 (arm) or 1 (thumb) depending on the instruction set.</li>
+<li>Any inline assembly in the function must use the specified instruction set instead of the target default.</li>
+</ul>
 
                     </main>
 

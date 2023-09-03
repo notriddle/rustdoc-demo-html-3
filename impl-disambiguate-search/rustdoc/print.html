@@ -901,6 +901,15 @@ characters:</p>
 </tbody></table>
 </div>
 <p>So, no need to manually enter those Unicode characters!</p>
+<h3 id="adding-a-warning-block"><a class="header" href="#adding-a-warning-block">Adding a warning block</a></h3>
+<p>If you want to make a warning or similar note stand out in the documentation,
+you can wrap it like this:</p>
+<pre><code class="language-md">/// documentation
+///
+/// &lt;div class=&quot;warning&quot;&gt;A big warning!&lt;/div&gt;
+///
+/// more documentation
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="what-to-include-and-exclude"><a class="header" href="#what-to-include-and-exclude">What to include (and exclude)</a></h1>
 <p>It is easy to say everything must be documented in a project and often times
 that is correct, but how can we get there, and are there things that don't
@@ -2158,6 +2167,35 @@ help: if you meant to use a literal backtick, escape it
 
 warning: 1 warning emitted
 </code></pre>
+<h2 id="redundant_explicit_links"><a class="header" href="#redundant_explicit_links"><code>redundant_explicit_links</code></a></h2>
+<p>This lint is <strong>warned by default</strong>. It detects explicit links that are same
+as computed automatic links.
+This usually means the explicit links is removeable. For example:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>#![warn(rustdoc::redundant_explicit_links)] // note: unnecessary - warns by default.
+
+<span class="boring">fn main() {
+</span>/// add takes 2 [`usize`](usize) and performs addition
+/// on them, then returns result.
+pub fn add(left: usize, right: usize) -&gt; usize {
+    left + right
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Which will give:</p>
+<pre><code class="language-text">error: redundant explicit rustdoc link
+  --&gt; src/lib.rs:3:27
+   |
+3  | /// add takes 2 [`usize`](usize) and performs addition
+   |                           ^^^^^
+   |
+   = note: Explicit link does not affect the original link
+note: the lint level is defined here
+  --&gt; src/lib.rs:1:9
+   |
+1  | #![deny(rustdoc::redundant_explicit_links)]
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = help: Remove explicit link instead
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="scraped-examples"><a class="header" href="#scraped-examples">Scraped examples</a></h1>
 <p>Rustdoc has an unstable feature where it can automatically scrape examples of items being documented from the <code>examples/</code> directory of a Cargo workspace. These examples will be included within the generated documentation for that item. For example, if your library contains a public function:</p>
 <pre><code class="language-rust ignore (needs-other-file)">// a_crate/src/lib.rs
@@ -2418,6 +2456,7 @@ to enable.</p>
 <p>To do so, the <code>#[doc(keyword = &quot;...&quot;)]</code> attribute is used. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(rustdoc_internals)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>/// Some documentation about the keyword.

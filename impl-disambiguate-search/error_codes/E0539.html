@@ -175,6 +175,7 @@
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0539"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {
@@ -198,6 +199,7 @@ const fn stable_fn() {}
 To fix these issues you need to give required key-value pairs.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(staged_api)]
+#![allow(internal_features)]
 #![stable(since = &quot;1.0.0&quot;, feature = &quot;test&quot;)]
 
 <span class="boring">fn main() {

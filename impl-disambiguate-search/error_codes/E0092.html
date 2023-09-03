@@ -175,6 +175,7 @@
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0092"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {
@@ -187,6 +188,7 @@ functions are defined in <code>compiler/rustc_codegen_llvm/src/intrinsic.rs</cod
 <code>library/core/src/intrinsics.rs</code> in the Rust source code. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(intrinsics)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;rust-intrinsic&quot; {

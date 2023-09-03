@@ -175,6 +175,7 @@
 <p>Erroneous code example:</p>
 <pre><pre class="playground"><code class="language-rust compile_fail E0264"><span class="boring">#![allow(unused)]
 </span>#![feature(lang_items)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;C&quot; {
@@ -186,6 +187,7 @@
 <code>src/librustc_middle/middle/weak_lang_items.rs</code>. Example:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>#![feature(lang_items)]
+#![allow(internal_features)]
 
 <span class="boring">fn main() {
 </span>extern &quot;C&quot; {
